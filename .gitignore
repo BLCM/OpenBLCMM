@@ -1,0 +1,50 @@
+#   IDEA files
+.idea/
+out/
+blcmm.iml
+
+#   Netbeans files (For some reason it doesn't work without ** in front of it?)
+**/nbproject/private
+
+#   build files
+build/
+dist/
+
+#   BLCMM files
+logs/
+blcmm_logs/
+backups/
+general.options
+versions.options
+hints.txt
+data/
+multitool/
+BLCMM/plugins/
+plugin output/
+plugin_output/
+
+# BLCMM Data package generator data files
+BLCMM Data/input/
+BLCMM Data/output/
+BLCMM Data/cj_data/BL2/raw/
+BLCMM Data/cj_data/BL2/raw-sorted/
+BLCMM Data/cj_data/BL2/organized/
+BLCMM Data/cj_data/TPS/raw/
+BLCMM Data/cj_data/TPS/raw-sorted/
+BLCMM Data/cj_data/TPS/organized/
+
+#BLCMM Lib distributor files
+BLCMM Lib Distributor/other_locations.txt
+
+#Launcher files
+BLCMM Launcher/store/
+BLCMM Launcher/stock/
+
+#   Random other files
+Borderlands 2/
+FT/
+src/testing/
+testfiles/
+flag files/
+crash.boom
+BLCMM Data/cj_data/BL2/BL2-all-classes.zip
