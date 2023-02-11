@@ -1,7 +1,8 @@
 BLCMM Changelog
 ===============
 
-**v1.2.1** Unreleased
+**v1.3.0** Unreleased
+- Released under GPLv3
 - When creating and saving a new file, it now opens on the next boot
 - BL2 gets detected properly again on mac
 - Mac (and native Linux) "online" patch saving was fixed
