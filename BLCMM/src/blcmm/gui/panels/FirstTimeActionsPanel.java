@@ -30,7 +30,6 @@ import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
-import blcmm.utilities.AutoExecFile;
 import blcmm.utilities.GameDetection;
 import blcmm.utilities.Utilities;
 import blcmm.utilities.hex.HexDictionary;
@@ -388,73 +387,6 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             actions.add(arraySetup);
 
             String plugins = win32 + "Plugins/";
-            if (VIRTUAL_OS == OSInfo.OS.WINDOWS && 1 == 0) {
-                if (1 == 0) {//The old autoexec, can be deleted most likely.
-                    File steam_dll = new File(win32 + "steam_api.dll");
-                    File steam_dllBackup = new File(win32 + "steam_api_org.dll");
-                    File physx_dll = new File(win32 + "PhysXExtensions.dll");
-                    File physx_dllBackup = new File(win32 + "PhysXExtensions_org.dll");
-                    SingleFileSetupAction autoExecAction_old = new SingleFileSetupAction("", steam_dll, steam_dllBackup,
-                            new ClassStreamProvider(String.format("resources/%s/steam_api.dll", gameName)));
-                    autoExecAction_old.setShaOfOriginal(BL2 ? SHA256_BL2_STEAM_API_DLL_ORIGINAL : SHA256_TPS_STEAM_API_DLL_ORIGINAL);
-                    autoExecAction_old.setSourceForOriginal(new ClassStreamProvider(String.format("resources/%s/steam_api_org.dll", gameName)));
-                    autoExecAction_old.setAllowWeakCheck();
-
-                    SingleFileSetupAction autoExecAction_new = new SingleFileSetupAction("", physx_dll, physx_dllBackup,
-                            new ClassStreamProvider(String.format("resources/%s/PhysXExtensions.dll", gameName)));
-                    autoExecAction_new.setShaOfOriginal(BL2 ? SHA256_WINDOWS_BL2_PHYSX_DLL_ORIGINAL : SHA256_WINDOWS_TPS_PHYSX_DLL_ORIGINAL);
-                    autoExecAction_new.setSourceForOriginal(new ClassStreamProvider(String.format("resources/%s/PhysXExtensions_org.dll", gameName)));
-                    autoExecAction_new.setAllowWeakCheck();
-                    autoExecAction_new.setRevertOnly("Deprecated");
-
-                    File AEFile = new File(GameDetection.getBinariesDir(BL2) + "\\autoexec.txt");
-                    SingleFileSetupAction autoExecAction2 = new SingleFileSetupAction("", AEFile, null, new StreamProvider() {
-                        @Override
-                        public InputStream provideStream() throws IOException {
-                            return new ByteArrayInputStream("exec patch.txt\nFastmode=true".getBytes());
-                        }
-                    });
-                    autoExecAction2.setJustCheckExistence();
-                    autoExecAction2.neverRevert();
-
-                    SetupAction autoExec = new CompoundSetupAction("Install old auto-exec", autoExecAction_old, autoExecAction2, autoExecAction_new);
-                    autoExec.setDescription("<html>Installs c0dycode's autoExec, making it so you no longer need to manually execute your patch each time you start the game!<br/>"
-                            + "<i>This installs an older version of AutoExec. May cause you to be unable to start the game from steam!</i>");
-                    if (autoExec.getCurrentStatus() == SetupStatus.INACTIVE) {
-                        autoExec.disable("<html>Autoexec is not yet stable enough for widespread use.<br/>"
-                                + "Stay tuned for updates!  If you want to help test, head to<br/>"
-                                + "<a href=https://github.com/c0dycode/BL-AutoexecDLL>c0dycode's page</a>.", true);
-                        autoExec.updateComponents();
-                    }
-                    actions.add(autoExec);
-                } else {
-                    File autoexec_dll = new File(plugins + "autoexec.dll");
-                    SingleFileSetupAction autoExecDllAction = new SingleFileSetupAction("", autoexec_dll, null,
-                            new ClassStreamProvider(String.format("resources/%s/autoexec.dll", gameName)));
-
-                    autoExecDllAction.setJustCheckExistence();
-                    File AEFile = new File(GameDetection.getBinariesDir(BL2) + File.separator + "autoexec.txt");
-                    SingleFileSetupAction autoExecAction2 = new SingleFileSetupAction("", AEFile, null, new StreamProvider() {
-                        @Override
-                        public InputStream provideStream() throws IOException {
-                            return new ByteArrayInputStream(AutoExecFile.getDefaultFile(BL2 ? PatchType.BL2 : PatchType.TPS).toString().getBytes());
-                        }
-                    });
-                    autoExecAction2.setJustCheckExistence();
-                    autoExecAction2.neverRevert();
-
-                    SetupAction autoExec = new CompoundSetupAction("Auto-exec", autoExecDllAction, autoExecAction2);
-                    autoExec.setDescription("Installs c0dycode's autoExec, making it so you no longer need to manually execute your patch each time you start the game!");
-                    actions.add(autoExec);
-                }
-
-                String concertName = BL2 ? "CommandInjector.dll" : "CommandInjectorTPS.dll";
-                File concertInjector = new File(plugins + concertName);
-                SingleFileSetupAction concertSetup = new SingleFileSetupAction("Command Injector", concertInjector, null, new ClassStreamProvider("resources/CommandInjector/" + concertName));
-                concertSetup.setDescription("A borderlands plugin required by some mod tools like mopioids \"Borderlands Commander\"");
-                concertSetup.setJustCheckExistence();
-                actions.add(concertSetup);
-            }
 
             // A few extra advanced options which for now are only in dev mode.
             if (Utilities.isCreatorMode()) {

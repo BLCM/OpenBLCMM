@@ -29,7 +29,6 @@ package blcmm.gui;
 import blcmm.Startup;
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.GlobalDictionary;
-import blcmm.gui.components.AutoExecMenu;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.DefaultTextTextField;
 import blcmm.gui.components.ForceClosingJFrame;
@@ -142,8 +141,6 @@ public final class MainGUI extends ForceClosingJFrame {
     private boolean startedMaximized = false;
     private PatchType openedType;
     private JMenu fileHistoryMenu;
-    private final JMenu launchGameMenu = new JMenu();
-    private final AutoExecMenu autoExecMenu = new AutoExecMenu();
     private JTextField searchField;
 
     private boolean editWindowOpen = false;
@@ -207,7 +204,6 @@ public final class MainGUI extends ForceClosingJFrame {
             initializeTree(toOpen);
             setChangePatchTypeEnabled(patch != null);
             backupThread = startupBackupThread();
-            updateLaunchGameButton();
         };
         boolean showGUIPriorToLoading = true;
         if (showGUIPriorToLoading) {
@@ -225,80 +221,6 @@ public final class MainGUI extends ForceClosingJFrame {
             runnable.run();
         }
 
-    }
-
-    private void updateLaunchGameButton() {
-        if (OSInfo.CURRENT_OS == OSInfo.OS.WINDOWS) {
-            if (launchGameMenu.getText().equals("")) {
-                jMenuBar1.add(Box.createHorizontalGlue());
-                autoExecMenu.setVisible(false);
-                jMenuBar1.add(autoExecMenu);
-                launchGameMenu.setText("Launch");
-                launchGameMenu.setHorizontalTextPosition(SwingConstants.LEADING);
-                jMenuBar1.add(launchGameMenu);
-            }
-            if (patch == null) {
-                launchGameMenu.setToolTipText("Open a file to enable this button");
-                launchGameMenu.setIcon(null);
-                launchGameMenu.setEnabled(false);
-                launchGameMenu.setToolTipText(null);
-                autoExecMenu.setPatchType(null);
-                return;
-            }
-            final PatchType curType = patch.getType();
-            launchGameMenu.setIcon(new ImageIcon(curType.getIcon()));
-            Arrays.stream(launchGameMenu.getMouseListeners()).skip(1).forEach(launchGameMenu::removeMouseListener);
-            File exe = GameDetection.getExe(curType == PatchType.BL2);
-            launchGameMenu.setEnabled(exe != null);
-            launchGameMenu.setToolTipText(exe == null ? "Could not detect the game" : "Launches " + curType + ", skips the launcher");
-            launchGameMenu.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    launchGameMenu.setSelected(false);
-                }
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    mouseReleased(e);
-                    //See if we need to potentially save this file
-                    if (//
-                            AutoExecFile.hasAutoExecInstalled(curType)//Auto exec needs to be installed
-                            && currentFile != null //We must already be a file
-                            && currentFile.getParentFile().equals(new File(GameDetection.getBinariesDir(curType))))//We must be inside the correct binaries dir
-                    {
-                        try {
-                            AutoExecFile AEFile = AutoExecFile.read(curType);
-                            if (currentFile.getName().equalsIgnoreCase(AEFile.getOnlinePatch()) || currentFile.getName().equalsIgnoreCase(AEFile.getOfflinePatch())) {
-                                //If the current file is either the online or offline file, prompt to save, if there are changes
-                                if (!promptUnsavedContinue()) {
-                                    return;
-                                }
-                            }
-
-                        } catch (IOException ex) {
-                        }
-
-                    }
-                    try {
-                        GlobalLogger.log("Launching " + exe);
-                        Runtime.getRuntime().exec(new String[]{exe.getAbsolutePath()}, null, exe.getParentFile());
-                        //parentfile == win32 on windows.
-                        //This is the working directory of the exe. If the working directory is not equal to win32, you get the BL launcher, rather than the splash screen.
-                    } catch (IOException ex) {
-                        GlobalLogger.log("Something went wrong while starting " + curType);
-                        GlobalLogger.log(ex);
-                        JOptionPane.showMessageDialog(INSTANCE, ""
-                                + "An error occured trying to launch " + curType + ".\n"
-                                + "Please start it the conventional way.",
-                                "Error while launching game", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            });
-            if (AutoExecFile.hasAutoExecInstalled(curType)) {
-                autoExecMenu.setVisible(true);
-            }
-            autoExecMenu.setPatchType(curType);
-        }
     }
 
     private void addSearchLayer() {
@@ -1175,7 +1097,6 @@ public final class MainGUI extends ForceClosingJFrame {
                 }
             }
         }
-        updateLaunchGameButton();
     }
 
     @Override
@@ -1412,7 +1333,6 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         jTree1.getInputMap().put(KeyStroke.getKeyStroke("control F"), "Search");
         updateProfileMenu();
-        updateLaunchGameButton();
     }
 
     /**
@@ -1480,8 +1400,6 @@ public final class MainGUI extends ForceClosingJFrame {
         if (patch == null) {
             throw new NullPointerException();
         }
-        AutoExecFile AEF = null;
-        boolean doubleSave = false;
         if (exporting) {
             exportPath = file;
             this.getTimedLabel().showTemporary(
@@ -1493,58 +1411,6 @@ public final class MainGUI extends ForceClosingJFrame {
             getTimedLabel().putString("saveStatus", createNewDynamicString(true), 9);
             getTimedLabel().showTemporary("Mod saved", ThemeManager.getColor(ThemeManager.ColorType.UIText));
             addCurrentFileToFrontOfPreviousFiles();
-            PatchType type = patch.getType();
-            if (//
-                    GameDetection.getBinariesDir(type) != null //We have the game
-                    && file.getParentFile().equals(new File(GameDetection.getBinariesDir(type)))//We're in its binaries
-                    && AutoExecFile.hasAutoExecInstalled(type)//Autoexec is installed
-                    ) {
-                try {
-                    AEF = AutoExecFile.read(type);
-                    if (AEF.shouldAdaptAfterEachSave()) {
-                        if (AEF.isForceOffline() && !AEF.shouldSaveBothVersionsOnEachSave() && !patch.isOffline()) {
-                            String[] options = {"Disable Force-Offline", "Change patch to offline", "Continue anyway", "Cancel save"};
-                            int resIndex = JOptionPane.showOptionDialog(MainGUI.INSTANCE,
-                                    "<html><center>Your AutoExec is set to force offline hotfixes, but the file you are saving is set to online hotfixes.<br/>"
-                                    + "<b>When AutoExec runs your file in this setting, your hotfixes won't apply!</b></center></html>",
-                                    "Conflicting settings detected", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                            switch (resIndex) {
-                                case 0:
-                                    AEF.setForceOffline(false);
-                                    break;
-                                case 1:
-                                    offlineCheckBox.setSelected(true);
-                                    patch.setOffline(true);
-                                    break;
-                                case 2://Cancel save
-                                    break;
-                                case 3://Cancel save
-                                default://Close button
-                                    return false;
-                            }
-                        }
-                        if (AEF.shouldSaveBothVersionsOnEachSave()) {
-                            doubleSave = true;
-                            if (!patch.isOffline()) {
-                                AEF.setOnlinePatch(file.getName());
-                                AEF.setOfflinePatch(AutoExecFile.FILENAME_ADJUSTER.apply(file.getName()));
-                            } else {
-                                AEF.setOnlinePatch(AutoExecFile.FILENAME_ADJUSTER.apply(file.getName()));
-                                AEF.setOfflinePatch(file.getName());
-                            }
-                        } else {
-                            if (AEF.shouldSaveOnlineAndOfflineSeperately() && patch.isOffline()) {
-                                AEF.setOfflinePatch(file.getName());
-                            } else {
-                                AEF.setOnlinePatch(file.getName());
-                            }
-                        }
-                    }
-                } catch (IOException ex) {
-                    GlobalLogger.log(ex);
-                }
-
-            }
         }
         if (file.exists() && !file.canWrite()) {
             int confirm = JOptionPane.showConfirmDialog(this, ""
@@ -1559,27 +1425,6 @@ public final class MainGUI extends ForceClosingJFrame {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             List<String> res = PatchIO.writeToFile(patch, format, bw, exporting);
             bw.close();
-            if (doubleSave) {
-                File f2 = new File(file.getParent() + File.separator + AutoExecFile.FILENAME_ADJUSTER.apply(file.getName()));
-                if (!f2.canWrite()) {
-                    int confirm = JOptionPane.showConfirmDialog(this, ""
-                            + "The file " + f2.getName() + " appears to be set to read-only.\n"
-                            + "Can not save to a read-only file.\n"
-                            + "Remove the read-only restriction?",
-                            "Read-only detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        f2.setWritable(true, false);
-                    }
-                }
-                try (BufferedWriter bw2 = new BufferedWriter(new FileWriter(f2))) {
-                    patch.setOffline(!patch.isOffline());
-                    PatchIO.writeToFile(patch, format, bw2, exporting);
-                    patch.setOffline(!patch.isOffline());
-                }
-            }
-            if (AEF != null && AEF.shouldAdaptAfterEachSave()) {
-                AEF.save();
-            }
             ((CheckBoxTree) jTree1).setChanged(false);
             for (String report : res) {
                 JOptionPane.showMessageDialog(null, report, "Warning", JOptionPane.WARNING_MESSAGE);
