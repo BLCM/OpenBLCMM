@@ -103,9 +103,6 @@ abstract class TreeTransferHandler extends TransferHandler {
         if (!support.isDrop()) {
             return false;
         }
-        if (!Options.INSTANCE.getStructuralEdits()) {
-            return false;
-        }
         importMode = null;
         if (support.isDataFlavorSupported(NODES_FLAVOR)) {
             importMode = ImportMode.TREE_ELEMENTS;

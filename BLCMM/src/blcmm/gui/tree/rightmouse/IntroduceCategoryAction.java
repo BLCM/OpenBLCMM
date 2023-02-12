@@ -42,7 +42,7 @@ import javax.swing.tree.TreePath;
 public class IntroduceCategoryAction extends RightMouseButtonAction {
 
     public IntroduceCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Wrap in new category", hotkey, ctrl, new Requirements(true, false, true, false));
+        super(tree, "Wrap in new category", hotkey, ctrl, new Requirements(true, false));
     }
 
     @Override

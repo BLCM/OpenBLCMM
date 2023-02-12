@@ -205,7 +205,7 @@ public final class MainGUI extends ForceClosingJFrame {
         Utilities.changeCTRLMasks(this.getRootPane());
         Runnable runnable = () -> {
             initializeTree(toOpen);
-            setChangePatchTypeEnabled(Options.INSTANCE.isInDeveloperMode() && patch != null);
+            setChangePatchTypeEnabled(patch != null);
             backupThread = startupBackupThread();
             updateLaunchGameButton();
         };
@@ -1394,7 +1394,7 @@ public final class MainGUI extends ForceClosingJFrame {
         saveMenuButton.setEnabled(true);
         saveToFileMenuButton.setEnabled(true);
         offlineCheckBox.setEnabled(true);
-        getGameSelectionPanel().setEnabled(Options.INSTANCE.isInDeveloperMode());
+        getGameSelectionPanel().setEnabled(true);
     }
 
     void SetUIModel(CompletePatch patch) {

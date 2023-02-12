@@ -61,7 +61,7 @@ abstract class AbstractCopyAction extends RightMouseButtonAction {
     private final boolean cut;
 
     AbstractCopyAction(CheckBoxTree tree, int hotkey, boolean ctrl, String name, boolean cut) {
-        super(tree, name, hotkey, ctrl, new Requirements(true, !cut, cut, false));
+        super(tree, name, hotkey, ctrl, new Requirements(cut, false));
         this.cut = cut;
     }
 

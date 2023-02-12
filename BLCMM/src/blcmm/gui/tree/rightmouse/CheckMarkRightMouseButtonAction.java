@@ -36,7 +36,7 @@ import javax.swing.JCheckBoxMenuItem;
 public abstract class CheckMarkRightMouseButtonAction extends RightMouseButtonAction {
 
     public CheckMarkRightMouseButtonAction(CheckBoxTree tree, String buttonName, boolean requiresUnlocked) {
-        super(tree, new JCheckBoxMenuItem(buttonName), new Requirements(true, true, requiresUnlocked, false));
+        super(tree, new JCheckBoxMenuItem(buttonName), new Requirements(requiresUnlocked, false));
         super.getButton().addActionListener(e -> action());
     }
 

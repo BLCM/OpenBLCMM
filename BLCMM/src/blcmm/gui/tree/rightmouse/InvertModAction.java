@@ -45,7 +45,7 @@ import javax.swing.tree.TreePath;
 public class InvertModAction extends RightMouseButtonAction {
 
     public InvertModAction(CheckBoxTree tree) {
-        super(tree, "Invert mod", new Requirements(true, true, true, false));
+        super(tree, "Invert mod", new Requirements(true, false));
     }
 
     @Override

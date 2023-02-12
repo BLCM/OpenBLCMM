@@ -42,7 +42,7 @@ import javax.swing.tree.TreePath;
 public class CopyModListAction extends RightMouseButtonAction {
 
     public CopyModListAction(CheckBoxTree tree) {
-        super(tree, "Copy modlist to clipboard", new Requirements(false, false, false, false));
+        super(tree, "Copy modlist to clipboard", new Requirements(false, false));
     }
 
     @Override

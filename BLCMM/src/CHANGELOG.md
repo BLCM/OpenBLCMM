@@ -6,6 +6,7 @@ BLCMM Changelog
 - Compatibility through Java 19
 - Removed Plugin feature
 - Removed first-startup dialogs (welcome, game setup, question-mark/TINS prompt)
+- Removed "structural edits" and "developer mode" settings.  These are now always enabled.
 - When creating and saving a new file, it now opens on the next boot
 - BL2 gets detected properly again on mac
 - Mac (and native Linux) "online" patch saving was fixed

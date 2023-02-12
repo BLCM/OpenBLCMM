@@ -49,7 +49,7 @@ import javax.swing.tree.TreePath;
 public class DeleteAction extends RightMouseButtonAction {
 
     public DeleteAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Delete", hotkey, ctrl, new Requirements(true, false, true, false));
+        super(tree, "Delete", hotkey, ctrl, new Requirements(true, false));
     }
 
     @Override
@@ -60,9 +60,6 @@ public class DeleteAction extends RightMouseButtonAction {
         }
         for (TreePath path : paths) {
             if (path.getPath().length == 1) {
-                return false;
-            }
-            if (!Options.INSTANCE.isInDeveloperMode() && !(((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject() instanceof Category)) {
                 return false;
             }
         }

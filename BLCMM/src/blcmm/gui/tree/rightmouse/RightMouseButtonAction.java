@@ -178,11 +178,7 @@ public abstract class RightMouseButtonAction {
     }
 
     public final boolean isEnabled(Requirements requirementsToIgnore) {
-        if (!Options.INSTANCE.getStructuralEdits() && (reqs.struct && !requirementsToIgnore.struct)) {
-            return false;
-        } else if (!Options.INSTANCE.isInDeveloperMode() && (reqs.edit && !requirementsToIgnore.edit)) {
-            return false;
-        } else if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
+        if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
             return false;
         }
 
@@ -203,11 +199,7 @@ public abstract class RightMouseButtonAction {
     }
 
     public final String getDisabledTooltip(Requirements requirementsToIgnore) {
-        if (!Options.INSTANCE.getStructuralEdits() && (reqs.struct && !requirementsToIgnore.struct)) {
-            return "Enable structural edits to access this button";
-        } else if (!Options.INSTANCE.isInDeveloperMode() && (reqs.edit && !requirementsToIgnore.edit)) {
-            return "Enable developer mode to access this button";
-        } else if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
+        if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
             return "The edit window is already open";
         }
 
@@ -432,13 +424,11 @@ public abstract class RightMouseButtonAction {
 
     public static class Requirements {
 
-        public static final Requirements NO_REQUIREMENTS = new Requirements(false, false, false, false);
+        public static final Requirements NO_REQUIREMENTS = new Requirements(false, false);
 
-        private final boolean struct, edit, unlocked, window;
+        private final boolean unlocked, window;
 
-        public Requirements(boolean struct, boolean edit, boolean unlocked, boolean window) {
-            this.struct = struct;
-            this.edit = edit;
+        public Requirements(boolean unlocked, boolean window) {
             this.unlocked = unlocked;
             this.window = window;
         }

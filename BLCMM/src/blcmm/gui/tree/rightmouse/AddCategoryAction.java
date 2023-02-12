@@ -44,7 +44,7 @@ import javax.swing.tree.TreePath;
 public class AddCategoryAction extends RightMouseButtonAction {
 
     public AddCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Create new empty category", hotkey, ctrl, new Requirements(true, false, true, false));
+        super(tree, "Create new empty category", hotkey, ctrl, new Requirements(true, false));
     }
 
     /**
@@ -57,8 +57,7 @@ public class AddCategoryAction extends RightMouseButtonAction {
     public boolean couldBeEnabled() {
         TreePath[] paths = tree.getSelectionPaths();
         if (paths == null
-                || paths.length != 1
-                || !Options.INSTANCE.getStructuralEdits()) {
+                || paths.length != 1) {
             return false;
         }
         TreePath path = paths[0];

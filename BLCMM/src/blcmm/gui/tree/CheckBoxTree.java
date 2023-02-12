@@ -705,33 +705,8 @@ public final class CheckBoxTree extends JTree {
             if (mouseEvent.getClickCount() >= 2) {
                 if (editAction.isEnabled()) {
                     editAction.action();
-                } else if (editAction.isEnabled(new RightMouseButtonAction.Requirements(false, false, false, true))) {
+                } else if (editAction.isEnabled(new RightMouseButtonAction.Requirements(false, true))) {
                     RightMouseButtonAction.bringEditWindowToFront();
-                } else {
-                    if (!(userObject instanceof Category) && (userObject instanceof ModelElement) && !Options.INSTANCE.isInDeveloperMode()) {
-                        JLabel label = new JLabel("You can't edit code until you enable developer mode.\n");
-                        JPanel panel = new JPanel();
-                        JCheckBox box = new JCheckBox("Enable now");
-                        box.setHorizontalTextPosition(SwingConstants.LEFT);
-
-                        panel.setLayout(new GridBagLayout());
-                        GridBagConstraints c = new GridBagConstraints();
-                        c.gridx = c.gridy = 0;
-                        c.gridheight = c.gridwidth = 1;
-                        c.insets = new Insets(0, 0, 0, 0);
-                        c.anchor = GridBagConstraints.EAST;
-                        panel.add(label, c);
-                        c.gridy = 1;
-                        c.insets.top = 10;
-                        panel.add(box, c);
-                        JOptionPane.showMessageDialog(null, panel, "Enable developer mode first", JOptionPane.INFORMATION_MESSAGE);
-                        if (box.isSelected()) {
-                            int option = JOptionPane.showConfirmDialog(null, "Enabling this will allow you to insert, edit and delete the actual lines of code.\nDo not enable this feature if you do not know what you're doing.\nProceed?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-                            if (option == JOptionPane.YES_OPTION) {
-                                Options.INSTANCE.setContentEdits(true);
-                            }
-                        }
-                    }
                 }
                 orig.mouseClicked(mouseEvent);
                 MainGUI.INSTANCE.requestFocus();
@@ -748,7 +723,7 @@ public final class CheckBoxTree extends JTree {
                 boolean cancelbecauseLeaf = false;
                 if (((DefaultMutableTreeNode) tp.getLastPathComponent()).isLeaf() && !Options.INSTANCE.getLeafSelectionAllowed()) {
                     invalidLeafSelectionAttemptCounter++;
-                    if (invalidLeafSelectionAttemptCounter > 5 && Options.INSTANCE.isInDeveloperMode()) {
+                    if (invalidLeafSelectionAttemptCounter > 5) {
                         int allow = JOptionPane.showConfirmDialog(tree, "Trying so many times... You seem persistent!\nEnable toggleable of leafs?", "Make leafs toggleable?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                         if (allow == JOptionPane.YES_OPTION) {
                             Options.INSTANCE.seLeafSelectionAllowed(true);

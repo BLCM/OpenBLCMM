@@ -41,7 +41,7 @@ import javax.swing.tree.TreePath;
 public class SortCategoryAction extends RightMouseButtonAction {
 
     public SortCategoryAction(CheckBoxTree tree) {
-        super(tree, "Sort", new Requirements(true, false, true, false));
+        super(tree, "Sort", new Requirements(true, false));
     }
 
     @Override

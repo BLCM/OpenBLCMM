@@ -41,7 +41,7 @@ import javax.swing.tree.TreePath;
 public class RenameCategoryAction extends RightMouseButtonAction {
 
     public RenameCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Rename category", hotkey, ctrl, new Requirements(true, false, true, false));
+        super(tree, "Rename category", hotkey, ctrl, new Requirements(true, false));
 
     }
 

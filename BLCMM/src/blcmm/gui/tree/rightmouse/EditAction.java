@@ -48,7 +48,7 @@ import javax.swing.tree.TreePath;
 public class EditAction extends RightMouseButtonAction {
 
     public EditAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Edit", hotkey, ctrl, new Requirements(false, true, false, true));
+        super(tree, "Edit", hotkey, ctrl, new Requirements(false, true));
     }
 
     @Override

@@ -239,25 +239,6 @@ public class ToolSettingsPanel extends JPanel {
         needsTreeResize = true;
     }
 
-    private void toggleDeveloperMode(Option option, JComponent comp) {
-        JCheckBox box = (JCheckBox) comp;
-        if (box.isSelected()) {
-            int selection = JOptionPane.showConfirmDialog(this,
-                    "Enabling this will allow you to insert and edit the actual lines of code.\n"
-                    + "It will also give more insight and details in the mods you're using.\n"
-                    + "Do not enable this feature if you do not know what you're doing.\n"
-                    + "By enabling  this you confirm that you know at least the basics of modding.\n"
-                    + "\n"
-                    + "Proceed?", "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (selection != JOptionPane.YES_OPTION) {
-                box.setSelected(false);
-                Options.INSTANCE.setContentEdits(false);
-            }
-        }
-        MainGUI.INSTANCE.setChangePatchTypeEnabled(box.isSelected());
-        MainGUI.INSTANCE.updateComponentTreeUI();
-    }
-
     private void toggleHighlightBVCErrors(Option option, JComponent component) {
         MainGUI.INSTANCE.updateComponentTreeUI();
     }

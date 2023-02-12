@@ -86,15 +86,8 @@ public class ColorGiver {
                 continue;
             }
             ThemeManager.ColorType type = COLORMAP.get(property.getClass());
-            if (!Options.INSTANCE.isInDeveloperMode()
-                    && (type == ThemeManager.ColorType.TreeSyntaxError
-                    || type == ThemeManager.ColorType.TreeStyleWarning
-                    || type == ThemeManager.ColorType.TreeContentError)) {
-                continue;
-            }
             c = ThemeManager.getColor(type);
             if (dupType != null
-                    && (Options.INSTANCE.isInDeveloperMode() || property.getPropertyDescriptionType() == PropertyChecker.DescType.Informational)
                     && GlobalListOfProperties.PROPERTY_COMPARATOR2.compare(property.getClass(), GlobalListOfProperties.MUTChecker.class) > 0) {
                 return ThemeManager.getColor(dupType);
             }

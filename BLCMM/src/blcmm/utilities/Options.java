@@ -71,8 +71,6 @@ public class Options {
         truncateCommands2,
         truncateCommandLength,
         highlightBVCErrors,
-        structuralEdits,
-        developerMode,
         leafSelectionAllowed,
         hasSeenExportWarning,
         showConfirmPartialCategory,
@@ -180,18 +178,6 @@ public class Options {
                 "Toggles highlighting of Incomplete BVC/ID/BVA/BVSC "
                 + "tuples.  This is technically valid syntax, but discouraged "
                 + "for style reasons."));
-
-        this.registerOption(new BooleanOption(
-                OptionNames.structuralEdits.toString(), false,
-                "Enable structural edits", null,
-                "Enables/Disables moving categories around inside the tree, "
-                + "and deleting categories."));
-
-        this.registerOption(new BooleanOption(
-                OptionNames.developerMode.toString(), false,
-                "Enable developer mode", "toggleDeveloperMode",
-                "Enables/Disables changing actual mod code, and authoring "
-                + "mods inside BLCMM."));
 
         this.registerOption(new BooleanOption(OptionNames.dragAndDroppableCode.toString(), true,
                 "Enable Dragging & Dropping in Text", null,
@@ -759,22 +745,6 @@ public class Options {
 
     public void setTruncateCommandLength(int truncateCommandLength) {
         this.setIntOptionData(OptionNames.truncateCommandLength, truncateCommandLength);
-    }
-
-    public boolean getStructuralEdits() {
-        return this.getBooleanOptionData(OptionNames.structuralEdits);
-    }
-
-    public void setStructuralEdits(boolean selected) {
-        this.setBooleanOptionData(OptionNames.structuralEdits, selected);
-    }
-
-    public boolean isInDeveloperMode() {
-        return this.getBooleanOptionData(OptionNames.developerMode);
-    }
-
-    public void setContentEdits(boolean selected) {
-        this.setBooleanOptionData(OptionNames.developerMode, selected);
     }
 
     public boolean getLeafSelectionAllowed() {

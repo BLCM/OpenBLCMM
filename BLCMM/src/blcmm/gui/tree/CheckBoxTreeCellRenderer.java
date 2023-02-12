@@ -196,16 +196,14 @@ class CheckBoxTreeCellRenderer extends DefaultTreeCellRenderer {
                     case ContentError:
                     case Warning:
                     case SyntaxError:
-                        if (Options.INSTANCE.isInDeveloperMode()) {
-                            // Special case for empty-category check
-                            if (property instanceof GlobalListOfProperties.EmptyCategoryChecker) {
-                                if (property.checkProperty(el)) {
-                                    infoMessages.add(property.getPropertyDescription());
-                                    break;
-                                }
+                        // Special case for empty-category check
+                        if (property instanceof GlobalListOfProperties.EmptyCategoryChecker) {
+                            if (property.checkProperty(el)) {
+                                infoMessages.add(property.getPropertyDescription());
+                                break;
                             }
-                            hasErrors = true;
                         }
+                        hasErrors = true;
                         break;
                     case Informational:
                         infoMessages.add(property.getPropertyDescription());
@@ -244,8 +242,7 @@ class CheckBoxTreeCellRenderer extends DefaultTreeCellRenderer {
 
         } else {
             for (PropertyChecker property : transientData.getProperties()) {
-                if (Options.INSTANCE.isInDeveloperMode()
-                        || property.getPropertyDescriptionType() == PropertyChecker.DescType.Informational) {
+                if (property.getPropertyDescriptionType() == PropertyChecker.DescType.Informational) {
                     String s = property.getPropertyDescription();
                     if (s != null && !s.isEmpty()) {
                         sb.append(sb.length() > 0 ? ", " : "").append(s);
