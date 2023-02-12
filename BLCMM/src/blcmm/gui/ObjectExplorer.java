@@ -59,6 +59,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 /**
@@ -348,7 +349,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }
 
     private void sortNode(DefaultMutableTreeNode node) {
-        List<DefaultMutableTreeNode> list = Collections.list(node.children());
+        List<TreeNode> list = Collections.list(node.children());
         Collections.sort(list, (node1, node2) -> {
             if (!node1.isLeaf() && node2.isLeaf()) {
                 return -1;
@@ -356,18 +357,18 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             if (node1.isLeaf() && !node2.isLeaf()) {
                 return 1;
             }
-            String s1 = node1.getUserObject().toString();
-            String s2 = node2.getUserObject().toString();
+            String s1 = ((DefaultMutableTreeNode)node1).getUserObject().toString();
+            String s2 = ((DefaultMutableTreeNode)node2).getUserObject().toString();
             s1 = s1.contains(">") ? s1.substring(s1.lastIndexOf(">") + 1) : s1;
             s2 = s2.contains(">") ? s2.substring(s2.lastIndexOf(">") + 1) : s2;
             return s1.compareTo(s2);
         });
         node.removeAllChildren();
-        for (DefaultMutableTreeNode child : list) {
-            node.insert(child, node.getChildCount());
+        for (TreeNode child : list) {
+            node.insert((DefaultMutableTreeNode)child, node.getChildCount());
         }
-        for (DefaultMutableTreeNode child : list) {
-            sortNode(child);
+        for (TreeNode child : list) {
+            sortNode((DefaultMutableTreeNode)child);
         }
     }
 
