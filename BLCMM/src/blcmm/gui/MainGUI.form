@@ -175,14 +175,6 @@
             <Property name="text" type="java.lang.String" value="Profiles"/>
           </Properties>
         </Menu>
-        <Menu class="javax.swing.JMenu" name="pluginMenu">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Plugins"/>
-          </Properties>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new PluginMenu()"/>
-          </AuxValues>
-        </Menu>
         <Menu class="javax.swing.JMenu" name="HelpMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Help"/>

@@ -29,8 +29,6 @@ package blcmm;
 import blcmm.gui.MainGUI;
 import blcmm.gui.panels.FirstTimeActionsPanel;
 import blcmm.gui.theme.ThemeManager;
-import blcmm.plugins.BLCMMUtilityPlugin;
-import blcmm.plugins.PluginLoader;
 import blcmm.utilities.AutoBackupper;
 import blcmm.utilities.BLCMMUtilities;
 import blcmm.utilities.IconManager;
@@ -539,16 +537,7 @@ public class Startup {
         @Override
         public void uncaughtException(Thread thread, Throwable thrwbl) {
             logError(thrwbl);
-            Class<? extends BLCMMUtilityPlugin> cl = originatesFromUtilityPlugin(thrwbl);
-            if (cl != null) {
-                JOptionPane.showMessageDialog(MainGUI.INSTANCE, "An utility plugin has crashed crashed. Closing all utility plugins.\n"
-                        + "The error has been logged.\n"
-                        + "Please contact the developer of the plugin and provide the log.",
-                        "Crash in utility plugin", JOptionPane.ERROR_MESSAGE);
-                MainGUI.INSTANCE.getPluginMenu().closeAllUtilities();
-            } else {
-                showErrorMessage(thrwbl);
-            }
+            showErrorMessage(thrwbl);
         }
 
         private void logError(Throwable thrwbl) {
@@ -678,25 +667,6 @@ public class Startup {
             System.exit(-1);
             //We don't know where the crash came from, so we close everything.
             //All threads, all windows. We don't want to  risk corrupting files.
-        }
-
-        private Class<? extends BLCMMUtilityPlugin> originatesFromUtilityPlugin(Throwable thrwbl) {
-            //This is surely not the way to go, since it's using try-catch and Class.forName for control flow.
-            //But, since this only happens at a fatal crash anyway, we don't mind spending an extra millisecond or two
-            if (PluginLoader.MY_CLASS_LOADER == null) {
-                return null;
-            }
-            for (StackTraceElement el : thrwbl.getStackTrace()) {
-                try {
-                    Class<?> forName = Class.forName(el.getClassName(), false, PluginLoader.MY_CLASS_LOADER);
-                    if (forName.getClassLoader() == PluginLoader.MY_CLASS_LOADER) {
-                        return BLCMMUtilityPlugin.class;
-                    }
-                } catch (ClassNotFoundException ex) {
-
-                }
-            }
-            return null;
         }
 
     }

@@ -193,6 +193,8 @@ public class BLCMM_FileChooser extends JFileChooser {
                     new ImageIcon(IconManager.getBLCMMIcon(16))), cs);
             cs.gridy++;
         }
+        // 2023-02-11 -- I've taken out Plugin functionality, but leaving this in place anyway,
+        // in case there's someone out there with plugin output they still want to get to.
         tempDir = System.getProperty("user.dir") + "/plugin_output";
         if (new File(tempDir).exists()) {
             panel.add(directoryShortcutButton(fc,

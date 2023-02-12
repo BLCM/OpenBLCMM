@@ -35,7 +35,6 @@ import blcmm.gui.components.DefaultTextTextField;
 import blcmm.gui.components.ForceClosingJFrame;
 import blcmm.gui.components.GameSelectionPanel;
 import blcmm.gui.components.InfoLabel;
-import blcmm.gui.components.PluginMenu;
 import blcmm.gui.components.TimedLabel;
 import blcmm.gui.panels.AboutPanel;
 import blcmm.gui.panels.IntegerConverter;
@@ -209,7 +208,6 @@ public final class MainGUI extends ForceClosingJFrame {
             initializeTree(toOpen);
             setChangePatchTypeEnabled(Options.INSTANCE.isInDeveloperMode() && patch != null);
             backupThread = startupBackupThread();
-            getPluginMenu().updatePluginMenuEnabledness();
             updateLaunchGameButton();
             performTooltipCheck();
         };
@@ -540,7 +538,6 @@ public final class MainGUI extends ForceClosingJFrame {
         jMenu1 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         profileMenu = new javax.swing.JMenu();
-        pluginMenu = new PluginMenu();
         HelpMenu = new javax.swing.JMenu();
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -651,7 +648,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
         FileMenu.setText("File");
 
-        newFileMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        newFileMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         newFileMenuButton.setText("New file");
         newFileMenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -660,7 +657,7 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         FileMenu.add(newFileMenuButton);
 
-        openMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         openMenuButton.setText("Open");
         openMenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -669,7 +666,7 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         FileMenu.add(openMenuButton);
 
-        saveMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         saveMenuButton.setText("Save");
         saveMenuButton.setEnabled(false);
         saveMenuButton.addActionListener(new java.awt.event.ActionListener() {
@@ -679,7 +676,7 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         FileMenu.add(saveMenuButton);
 
-        saveToFileMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        saveToFileMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         saveToFileMenuButton.setText("Save as");
         saveToFileMenuButton.setEnabled(false);
         saveToFileMenuButton.addActionListener(new java.awt.event.ActionListener() {
@@ -690,7 +687,7 @@ public final class MainGUI extends ForceClosingJFrame {
         FileMenu.add(saveToFileMenuButton);
         FileMenu.add(jSeparator1);
 
-        importModMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
+        importModMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         importModMenuButton.setText("Import mod file(s)");
         importModMenuButton.setEnabled(false);
         importModMenuButton.addActionListener(new java.awt.event.ActionListener() {
@@ -729,7 +726,7 @@ public final class MainGUI extends ForceClosingJFrame {
         FileMenu.add(getMoreModsMenuButton);
         FileMenu.add(jSeparator3);
 
-        quitMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
+        quitMenuButton.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         quitMenuButton.setText("Quit");
         quitMenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -791,9 +788,6 @@ public final class MainGUI extends ForceClosingJFrame {
 
         profileMenu.setText("Profiles");
         jMenuBar1.add(profileMenu);
-
-        pluginMenu.setText("Plugins");
-        jMenuBar1.add(pluginMenu);
 
         HelpMenu.setText("Help");
 
@@ -1184,8 +1178,6 @@ public final class MainGUI extends ForceClosingJFrame {
             }
         }
         updateLaunchGameButton();
-        //Changing game type might change plugin availability
-        getPluginMenu().updatePluginMenuEnabledness();
     }
 
     @Override
@@ -1422,7 +1414,6 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         jTree1.getInputMap().put(KeyStroke.getKeyStroke("control F"), "Search");
         updateProfileMenu();
-        getPluginMenu().updatePluginMenuEnabledness();
         updateLaunchGameButton();
     }
 
@@ -1684,7 +1675,6 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenuItem objectExplorerButton;
     private javax.swing.JCheckBox offlineCheckBox;
     private javax.swing.JMenuItem openMenuButton;
-    private javax.swing.JMenu pluginMenu;
     private javax.swing.JMenu profileMenu;
     private javax.swing.JMenuItem quitMenuButton;
     private javax.swing.JMenuItem saveMenuButton;
@@ -2089,10 +2079,6 @@ public final class MainGUI extends ForceClosingJFrame {
 
     public CheckBoxTree getTree() {
         return (CheckBoxTree) jTree1;
-    }
-
-    public PluginMenu getPluginMenu() {
-        return (PluginMenu) pluginMenu;
     }
 
     /**
