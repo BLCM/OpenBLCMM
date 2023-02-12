@@ -43,7 +43,6 @@ import blcmm.gui.panels.ObjectExplorerPanel;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.gui.tree.CheckBoxTree;
-import blcmm.gui.tree.EasterEggs;
 import blcmm.gui.tree.rightmouse.RightMouseButtonAction;
 import blcmm.model.Category;
 import blcmm.model.CompletePatch;
@@ -209,7 +208,6 @@ public final class MainGUI extends ForceClosingJFrame {
             setChangePatchTypeEnabled(Options.INSTANCE.isInDeveloperMode() && patch != null);
             backupThread = startupBackupThread();
             updateLaunchGameButton();
-            performTooltipCheck();
         };
         boolean showGUIPriorToLoading = true;
         if (showGUIPriorToLoading) {
@@ -2163,45 +2161,6 @@ public final class MainGUI extends ForceClosingJFrame {
         }
         setTitle(NAME + (Utilities.isCreatorMode() ? " (creator mode)" : "")
                 + " | " + VERSION + titleFilename + titlePostfix);
-    }
-
-    private void performTooltipCheck() {
-        Timer timer = new Timer(4000, e -> {
-            if (PopupType.TOOLTIP_CONFIRMER.isAvailable()) {
-                JDialog dialog = new JDialog(this);
-                dialog.setModal(true);
-                dialog.setUndecorated(true);
-                dialog.getContentPane().setLayout(new FlowLayout(FlowLayout.CENTER, 25, 25));
-                dialog.add(new JLabel("<html>"
-                        + "Hey there! I see you're using BLCMM. Great! :D<br/>"
-                        + "<br/>"
-                        + "Did you know BLCMM relies heavily on tooltips to help users along?<br/>"
-                        + "Every time you wonder what a button does, or how something works, try reading the nearby tooltips!<br/>"
-                        + "You get the tooltip by hovering your mouse over things.<br/>"
-                        + "For example, if you come across the image on the right, there is a lot of information to be found there.<br/>"
-                        + "Be on the lookout!<br/>"
-                        + "<br/>"
-                        + "Let's try it out now! Follow the instructions given by the tooltip on the right to close this dialog.<br/>"
-                        + "(So, put your mouse on the questionmark, follow the instructions that show up. No mouseclicks needed.)"));
-                dialog.add(new InfoLabel("Press the key sequence T I N S<br/>Thanks for reading instead of asking!"), false);
-                EasterEggs.CheatCode code = new EasterEggs.CheatCode(KeyEvent.VK_T, KeyEvent.VK_I, KeyEvent.VK_N, KeyEvent.VK_S);
-                dialog.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyPressed(KeyEvent e) {
-                        if (code.keyPressCompletedCode(e.getKeyCode())) {
-                            PopupType.TOOLTIP_CONFIRMER.increaseSeenCount();
-                            dialog.dispose();
-                        }
-                    }
-
-                });
-                dialog.pack();
-                dialog.setLocationRelativeTo(this);
-                dialog.setVisible(true);
-            }
-        });
-        timer.setRepeats(false);
-        timer.start();
     }
 
 }

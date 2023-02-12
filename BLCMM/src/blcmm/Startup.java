@@ -224,32 +224,8 @@ public class Startup {
 
     private static void firstTime() {
         if (isFirstTimeRunning()) {
+            GlobalLogger.log("First-time startup detected");
             MainGUI.setTheme(ThemeManager.getDefaultTheme());
-            showFirstTimeMessage();
-            showFirstTimeActions(false);
-            /*BLCMMUtilities.populateFileHistory(true);
-            showFirstTimeOSSpecificMessages();
-            String bl2Path = GameDetection.getBinariesDir(true);
-            String tpsPath = GameDetection.getBinariesDir(false);
-            if ((bl2Path != null && GameDetection.getBL2Exe() != null)
-                    && (tpsPath != null && GameDetection.getTPSExe() != null)
-                    && (new File(bl2Path + "\\Patch.txt").exists())
-                    && (new File(tpsPath + "\\Patch.txt").exists() || new File(tpsPath + "\\Patch").exists())) {
-                int gameChoice = JOptionPane.showOptionDialog(null, "We noticed you have two patch files.\nWhat file do you want to load?",
-                        "Multiple Patches Detected", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                        new Object[]{"Borderlands 2", "Borderlands: The Pre-Sequel"}, "Borderlands 2");
-
-                // BL2 was chosen
-                if (gameChoice == 0) {
-                    file = new File(bl2Path + "\\Patch.txt");
-                } // TPS was chosen.
-                else {
-                    file = new File(tpsPath + "\\Patch");
-                    if (!file.exists()) {
-                        file = new File(tpsPath + "\\Patch.txt");
-                    }
-                }
-            }*/
             Options.INSTANCE.setShowHotfixNames(false);
         } else {
             BLCMMUtilities.populateFileHistory(true);
@@ -299,22 +275,6 @@ public class Startup {
                     "Option Load Errors", JOptionPane.WARNING_MESSAGE);
         }
         return true;
-    }
-
-    private static void showFirstTimeMessage() {
-        int size = 25;
-        String p = ClassLoader.getSystemClassLoader().getResource("resources/Qmark.png").toString();
-        String p2 = "<img src=\"" + p + "\" height=\"" + size + "\" width=\"" + size + "\">";
-        String s = "<html><center>Welcome to LightChaosman's BLCMM or Borderlands Community Mod Manager!</center><br/>"
-                + "BLCMM can be used for: <br/>"
-                + "<ul style=\"margin-left: 15px;\">"
-                + "<li>Toggling mods</li>"
-                + "<li>Exploring objects</li>"
-                + "<li>Making mods</li>"
-                + "<li>Merging mods for hotfixes</li></ul>"
-                + "<table><tr><td>Note: You will need to open a TPS mod file to be in the TPS mode and vice versa.</td><tr></table>"
-                + "<table><tr><td>Hover over the</td><td>" + p2 + "</td><td>icons troughout the tool for tips & tricks.</td></tr></table>";
-        JOptionPane.showMessageDialog(null, s, "Welcome", JOptionPane.PLAIN_MESSAGE, new ImageIcon(IconManager.getBLCMMIcon(64)));
     }
 
     private static void showFirstTimeOSSpecificMessages() {
