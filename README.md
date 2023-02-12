@@ -5,11 +5,6 @@ TODO
 
 - Rename to BLCMM-Basic or something?
 - Remove "invert mod" functionality?
-- Remove launch-game functionality (`updateLaunchGameButton`)
-- Doublecheck stuff that used to be in `toggleDeveloperMode`:
-  - `MainGUI.INSTANCE.setChangePatchTypeEnabled(box.isSelected());`
-  - `MainGUI.INSTANCE.updateComponentTreeUI();`
-- Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
 - AoDK in OE
 - Maybe completely separate BLCMM from OE?
 - Rewrite launcher w/ GPL version
@@ -25,4 +20,8 @@ TODO
 - Convert BL2/TPS boolean to an Enum
   - Maybe add AoDK support?
 - Default to offline; don't even bother with the checkbox
+- Needed testing:
+  - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
+  - Doublecheck file saving -- there was a lot of autoexec stuff in there
+    which got ripped out.
 
