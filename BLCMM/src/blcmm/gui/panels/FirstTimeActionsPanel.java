@@ -32,11 +32,6 @@ import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import blcmm.utilities.GameDetection;
 import blcmm.utilities.Utilities;
-import blcmm.utilities.hex.HexDictionary;
-import blcmm.utilities.hex.HexDictionary.HexQuery;
-import blcmm.utilities.hex.HexEdit;
-import blcmm.utilities.hex.HexEditor;
-import blcmm.utilities.hex.HexInspectResult;
 import general.utilities.GlobalLogger;
 import general.utilities.OSInfo;
 import java.awt.Color;
@@ -52,7 +47,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -268,7 +262,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
     private void initUI(boolean BL2) {
         JPanel panel = BL2 ? BL2Panel : TPSPanel;
         if (!fileIsNoneNullAndExists(getConfigFile("WillowInput.ini", BL2))) {
-            initPanel(panel, getBinariesActions(BL2));
+            initPanel(panel, null);
             String gameLabel = BL2 ? "BL2" : "TPS";
             JLabel label = new JLabel("<html><body style='width: 5in;'>"
                     + "<center><b>Note:<b><br/>BLCMM found an executable for " + gameLabel + ", but no configuration files.<br/>"
@@ -291,17 +285,19 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
         cs.weighty = 1;
         cs.gridy = 0;
         cs.insets = new Insets(0, 10, 0, 10);
-        for (ComponentProvider action : actions) {
-            Component[] cps = action.updateComponents();
-            cs.gridx = 0;
-            cs.gridwidth = 3 / cps.length;
-            for (Component comp : cps) {
-                cs.fill = cs.gridx == 2 || cs.gridwidth == 4 ? GridBagConstraints.HORIZONTAL : GridBagConstraints.NONE;
-                cs.weightx = cs.gridx == 2 ? 0.5 : 5;
-                panel.add(comp, cs);
-                cs.gridx++;
+        if (actions != null) {
+            for (ComponentProvider action : actions) {
+                Component[] cps = action.updateComponents();
+                cs.gridx = 0;
+                cs.gridwidth = 3 / cps.length;
+                for (Component comp : cps) {
+                    cs.fill = cs.gridx == 2 || cs.gridwidth == 4 ? GridBagConstraints.HORIZONTAL : GridBagConstraints.NONE;
+                    cs.weightx = cs.gridx == 2 ? 0.5 : 5;
+                    panel.add(comp, cs);
+                    cs.gridx++;
+                }
+                cs.gridy++;
             }
-            cs.gridy++;
         }
         cs.gridx = 2;
         cs.weightx = cs.weighty = 100;
@@ -353,52 +349,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
 
     private List<ComponentProvider> getActions(boolean BL2) {
         List<ComponentProvider> actions = new ArrayList<>();
-        actions.addAll(getBinariesActions(BL2));
         actions.addAll(getConfigActions(BL2));
-        return actions;
-    }
-
-    private List<ComponentProvider> getBinariesActions(boolean BL2) {
-        OSInfo.OS VIRTUAL_OS = GameDetection.getVirtualOS(BL2);
-        PatchType type = BL2 ? PatchType.BL2 : PatchType.TPS;
-        final String gameName = BL2 ? "BL2" : "TPS";
-        List<ComponentProvider> actions = new ArrayList<>();
-        actions.add(new SeperatorComponentProvider("Mod support"));
-        File executable = GameDetection.getExe(BL2);
-        String win32 = executable.getParent() + "/";
-        final SetupAction hexEditSetup;
-        hexEditSetup = new HexEditSetupAction("Hexedit executable", executable, new HexQuery(VIRTUAL_OS, type, HexDictionary.HexType.ENABLE_SET_COMMANDS));
-
-        hexEditSetup.setDescription("Modifies your game files so you can run mods!");
-        actions.add(hexEditSetup);
-        patchActions.add(hexEditSetup);
-
-        if (advanced) {
-            HexEditSetupAction arraySetup = new HexEditSetupAction("Remove array limit", executable, new HexQuery(VIRTUAL_OS, type, HexDictionary.HexType.DISABLE_ARRAY_LIMIT));
-            arraySetup.setDescription("Removes the array-size limit of 100 from object dumps - only useful for mod makers");
-            actions.add(arraySetup);
-
-            // A few extra advanced options which for now are only in dev mode.
-            if (Utilities.isCreatorMode()) {
-
-                // I suppose it's a bit rude to show these on anything other than Linux at the moment,
-                // since we don't have offsets for Mac, or the method in general for Windows (though
-                // I assume it's the same thing but with a different value/offset).
-                if (VIRTUAL_OS == OSInfo.OS.UNIX || VIRTUAL_OS == OSInfo.OS.MAC) {
-                    HexEditSetupAction hexEditSanityCheck = new HexEditSetupAction("Remove Sanity Checks (dev mode)", executable, new HexQuery(VIRTUAL_OS, type, HexDictionary.HexType.DISABLE_SANITYCHECK));
-                    hexEditSanityCheck.setDescription("Removes the sanity check which can delete modded items if the mod isn't loaded");
-                    actions.add(hexEditSanityCheck);
-                }
-                if (VIRTUAL_OS == OSInfo.OS.UNIX) {
-                    HexEditSetupAction hexEditOfflineMode = new HexEditSetupAction("Force Offline Mode (dev mode)", executable, new HexQuery(VIRTUAL_OS, type, HexDictionary.HexType.FORCE_OFFLINE));
-                    hexEditOfflineMode.setDescription("Forces offline patches only");
-                    actions.add(hexEditOfflineMode);
-
-                }
-
-            }
-
-        }
         return actions;
     }
 
@@ -991,135 +942,6 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             updateComponents();
         }
 
-    }
-
-    public static class HexEditSetupAction extends SetupAction {
-
-        private final File file;
-        private final HexQuery query;
-        private HexInspectResult[] inspectResults;
-        private SetupStatus status = null;
-
-        protected static final String[] convertToString(byte[] bytes) {
-            StringBuilder sb = new StringBuilder(bytes.length * 2);
-            for (byte b : bytes) {
-                sb.append(String.format("%02X ", b));
-            }
-            return sb.toString().replaceAll("0x", "").split("[\\s,]+");
-        }
-
-        public HexEditSetupAction(String name, File file, HexQuery query) {
-            super(name);
-            this.file = file;
-            this.query = query;
-        }
-
-        @Override
-        protected SetupStatus getRealCurrentStatus() {
-            if (status == null) {
-                if (isAvailable()) {
-                    inspectResults = HexEditor.inspectFile(file, query);
-                    int done = 0;
-                    int original = 0;
-                    int unknown = 0;
-                    for (HexInspectResult res : inspectResults) {
-                        if (res.matchesOriginal()) {
-                            original++;
-                        } else if (res.matchesEdited()) {
-                            done++;
-                        } else {
-                            unknown++;
-                        }
-                    }
-                    if (unknown > 0) {
-                        status = SetupStatus.UNKNOWN;
-                    } else if (done == inspectResults.length) {
-                        status = SetupStatus.ACTIVE;
-                    } else if (original == inspectResults.length) {
-                        status = SetupStatus.INACTIVE;
-                    } else {
-                        status = SetupStatus.PARTIAL;
-                    }
-                } else {
-                    status = SetupStatus.UNAVAILABLE;
-                }
-            }
-            return status;
-        }
-
-        @Override
-        public boolean isAvailable() {
-            return HexDictionary.getHexEdits(query).length > 0;
-        }
-
-        @Override
-        public void apply() {
-            status = null;
-            try {
-                HexEditor.HexResult res = HexEditor.performHexEdits(file, query);
-                switch (res.result) {
-                    case HEXEDIT_ALREADY_DONE:
-                    case HEXEDIT_SUCCESFUL:
-                        setActive();
-                        break;
-                    default:
-                        GlobalLogger.log(file + " " + res);
-                        setError(res.toString());
-                }
-            } catch (IOException ex) {
-                GlobalLogger.log(ex);
-                setError(ex);
-            }
-        }
-
-        @Override
-        public boolean revert() {
-            status = null;
-            try {
-                HexEdit[] origs = HexDictionary.getHexEdits(query);
-                HexEdit[] inverses = new HexEdit[origs.length];
-                for (int i = 0; i < origs.length; i++) {
-                    inverses[i] = origs[i].getInvertedCopy();
-                }
-                HexEditor.HexResult res = HexEditor.performHexEdits(file, inverses);
-                switch (res.result) {
-                    case HEXEDIT_ALREADY_DONE:
-                    case HEXEDIT_SUCCESFUL:
-                        setInactive();
-                        return true;
-                    default:
-                        setError(res.toString());
-                        GlobalLogger.log(file + " " + res);
-                        return false;
-                }
-            } catch (IOException ex) {
-                GlobalLogger.log(ex);
-                setError(ex);
-            }
-            return false;
-        }
-
-        @Override
-        public void fix() {
-            status = null;
-            HexEditor.HexResult res;
-            try {
-                res = HexEditor.performHexEdits(file, true, query);
-                switch (res.result) {
-                    case HEXEDIT_ALREADY_DONE:
-                    case HEXEDIT_SUCCESFUL:
-                        setActive();
-                        break;
-                    default:
-                        GlobalLogger.log(file + " " + res);
-                        setError(res.toString());
-                }
-            } catch (IOException ex) {
-                GlobalLogger.log(ex);
-                setError(ex);
-            }
-
-        }
     }
 
     public static class SingleFileSetupAction extends SetupAction {
