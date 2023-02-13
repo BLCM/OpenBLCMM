@@ -136,7 +136,7 @@ Search for this pattern:
 
     8B 40 04 83 F8 64 0F ?? 7B 00 00 00 8B 8D 9C EE FF FF 83 C0 9D 50 68
 
-The `??` byte is ordinarily `C0` -- replace it with `D8`.
+The `??` byte is ordinarily `8C` -- replace it with `85`.
 
 ### Remove Message - BL2 (Mac)
 
