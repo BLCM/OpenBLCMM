@@ -11,14 +11,19 @@ here goes:
 General Info
 ============
 
-When you see `??` in the search strings, it means that you should allow
-any value in that byte position.
+Some things to keep in mind:
 
-Note that none of these have been verified on the standalone
-[Assault on Dragon Keep](https://store.steampowered.com/app/1712840/), released
-in 2021, and BL2's `set` hexedit in particular ends up breaking the game.
-It's recommended to stick with PythonSDK regardless, but for AoDK it's
-basically required.
+* When you see `??` in the search strings, it means that you should allow
+  any value in that byte position.
+* Note that none of these have been verified on the standalone
+  [Assault on Dragon Keep](https://store.steampowered.com/app/1712840/), released
+  in 2021, and BL2's `set` hexedit in particular ends up breaking the game.
+  It's recommended to stick with PythonSDK regardless, but for AoDK it's
+  basically required.
+* Linux users are strongly encouraged to use the Windows version via Proton,
+  rather than the native version.  That way your game is up-to-date and you
+  can make use of PythonSDK.  If Mac users have the ability to use the Windows
+  version as well, that too is recommended for them.
 
 Enable `set` Command
 ====================
