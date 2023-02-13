@@ -367,15 +367,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
         File executable = GameDetection.getExe(BL2);
         String win32 = executable.getParent() + "/";
         final SetupAction hexEditSetup;
-        HexEditSetupAction hexSetup = new HexEditSetupAction("Hexedit executable", executable, new HexQuery(VIRTUAL_OS, type, HexDictionary.HexType.ENABLE_SET_COMMANDS));
-        if (VIRTUAL_OS == OSInfo.OS.WINDOWS && 1 == 0) {//TODO maybe add it back in 1.2.1
-            File ddraw = new File(win32 + "ddraw.dll");
-            SingleFileSetupAction pluginloaderSetup = new SingleFileSetupAction("PluginLoader", ddraw, null, new ClassStreamProvider("resources/ddraw.dll"));
-            pluginloaderSetup.setJustCheckExistence();
-            hexEditSetup = new CompoundSetupAction("Hexedit executable", pluginloaderSetup, hexSetup);
-        } else {
-            hexEditSetup = hexSetup;
-        }
+        hexEditSetup = new HexEditSetupAction("Hexedit executable", executable, new HexQuery(VIRTUAL_OS, type, HexDictionary.HexType.ENABLE_SET_COMMANDS));
 
         hexEditSetup.setDescription("Modifies your game files so you can run mods!");
         actions.add(hexEditSetup);
@@ -385,8 +377,6 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             HexEditSetupAction arraySetup = new HexEditSetupAction("Remove array limit", executable, new HexQuery(VIRTUAL_OS, type, HexDictionary.HexType.DISABLE_ARRAY_LIMIT));
             arraySetup.setDescription("Removes the array-size limit of 100 from object dumps - only useful for mod makers");
             actions.add(arraySetup);
-
-            String plugins = win32 + "Plugins/";
 
             // A few extra advanced options which for now are only in dev mode.
             if (Utilities.isCreatorMode()) {
