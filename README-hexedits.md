@@ -14,6 +14,12 @@ General Info
 When you see `??` in the search strings, it means that you should allow
 any value in that byte position.
 
+Note that none of these have been verified on the standalone
+[Assault on Dragon Keep](https://store.steampowered.com/app/1712840/), released
+in 2021, and BL2's `set` hexedit in particular ends up breaking the game.
+It's recommended to stick with PythonSDK regardless, but for AoDK it's
+basically required.
+
 Enable `set` Command
 ====================
 
@@ -482,8 +488,11 @@ Replace with:
 Offline-Only Mode
 =================
 
-This hexedit currently only exists for BL2 on Linux.  At the
-address `0x00B3B988`, you should find this pattern:
+This hexedit currently only exists for BL2 on Linux.
+
+### BL2 (Linux)
+
+At the address `0x00B3B988`, you should find this pattern:
 
     E8 E9 0C 5A FF
 
