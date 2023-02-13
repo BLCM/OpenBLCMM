@@ -10,6 +10,7 @@ BLCMM Changelog
   - Structural Edits setting (this is now always enabled)
   - Developer Mode setting (this is now always enabled)
   - Game launch button
+- Improved Steam Library Folder detection using StidOfficial's SteamVDF
 - When creating and saving a new file, it now opens on the next boot
 - BL2 gets detected properly again on mac
 - Mac (and native Linux) "online" patch saving was fixed

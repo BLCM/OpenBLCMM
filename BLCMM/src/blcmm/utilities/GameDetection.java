@@ -37,6 +37,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.filechooser.FileSystemView;
+import SteamVDF.VDF.VDF;
+import SteamVDF.VDF.VDFElement;
 
 public class GameDetection {
 
@@ -310,21 +312,50 @@ public class GameDetection {
                 return libraryFolders;
             }
         }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(vdfFile));) {
-            String line;
-            int i = 1;
-            while ((line = br.readLine()) != null) {
-                String[] splittedLine = line.split("\"");
-                for (int j = 0; j < splittedLine.length; j++) {
-                    if (splittedLine[j].equals(Integer.toString(i))) {
-                        libraryFolders.add(splittedLine[j + 2]);
-                        j += 2;
+        
+        try {
+            VDF parsedVdf = new VDF(vdfFile);
+            boolean foundTop = false;
+            for (VDFElement top : parsedVdf.getParents()) {
+                if (top.getName().equalsIgnoreCase("libraryfolders")) {
+                    if (top.numKeys() > 0) {
+                        // Older-style libraryfolders.vdf
+                        for (String key : top.getKeys()) {
+                            try {
+                                // Don't actually care what the integer value is, just want to make sure
+                                // it *is* an integer value.
+                                int foo = Integer.parseInt(key);
+                                String newPath = top.getKey(key).toString().replace("\\\\", "\\");
+                                libraryFolders.add(newPath);
+                            } catch (NumberFormatException e) {
+                                GlobalLogger.log("Invalid library key found in libraryfolders.vdf: " + key);
+                            }
+                        }
+                        foundTop = true;
+                    } else if (top.numParents() > 0) {
+                        // Newer-style libraryfolders.vdf
+                        for (VDFElement parent : top.getParents()) {
+                            try {
+                                // Don't actually care what the integer value is, just want to make sure
+                                // it *is* an integer value.
+                                int foo = Integer.parseInt(parent.getName());
+                                String newPath = parent.getKey("path").toString().replace("\\\\", "\\");
+                                libraryFolders.add(newPath);
+                            } catch (NumberFormatException e) {
+                                GlobalLogger.log("Invalid library key found in libraryfolders.vdf: " + parent.getName());
+                            }
+                        }
+                        foundTop = true;
                     }
+                    break;
                 }
+            }
+            if (!foundTop) {
+                GlobalLogger.log("Unable to parse Steam libraryfolders.vdf");
             }
         } catch (IOException e) {
             e.printStackTrace();
+            GlobalLogger.log("Unable to parse Steam libraryfolders.vdf: " + e.toString());
         }
 
         return libraryFolders;

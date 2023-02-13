@@ -54,7 +54,9 @@ public final class AboutPanel extends JPanel {
 
         JLabel mainLabel = new JLabel("<html>The Borderlands Community Mod Manager was developed by LightChaosman.<br/>"
                 + "Special thanks to apocalyptech, Bugworm, c0dycode, and FromDarkHell for aiding in the development process<br/>"
-                + "and thanks to the entire borderlands modding community for feedback.");
+                + "and thanks to the entire borderlands modding community for feedback.<br/>"
+                + "<br/>"
+                + "BLCMM makes use of StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.");
         int wLog = 64, wPay = 100;
         mainLabel.setIcon(new ImageIcon(IconManager.getBLCMMIcon(wLog)));
         mainLabel.setIconTextGap((wPay - wLog) / 2 + 10);
