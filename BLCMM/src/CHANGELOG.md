@@ -8,7 +8,7 @@ BLCMM Changelog
   - Hex Edits and Console Key(PythonSDK should be used for these, instead)
   - Plugin functionality
   - First-startup dialogs (welcome, game setup, question-mark/TINS prompt)
-  - Structural Edits setting (this is n2ow always enabled)
+  - Structural Edits setting (this is now always enabled)
   - Developer Mode setting (this is now always enabled)
   - Game launch button
   - Hex Multitool launch
