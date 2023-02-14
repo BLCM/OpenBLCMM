@@ -27,7 +27,7 @@
 package blcmm;
 
 import blcmm.gui.MainGUI;
-import blcmm.gui.panels.FirstTimeActionsPanel;
+import blcmm.gui.panels.IniTweaksPanel;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.AutoBackupper;
 import blcmm.utilities.BLCMMUtilities;
@@ -305,8 +305,8 @@ public class Startup {
         }
     }
 
-    public static void showFirstTimeActions(boolean advanced) {
-        FirstTimeActionsPanel panel = new FirstTimeActionsPanel(advanced);
+    public static void showIniTweaks(boolean advanced) {
+        IniTweaksPanel panel = new IniTweaksPanel(advanced);
         JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
     }
 

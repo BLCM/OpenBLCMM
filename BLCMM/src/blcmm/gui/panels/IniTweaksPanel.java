@@ -92,20 +92,13 @@ import javax.swing.text.html.StyleSheet;
  * @author LightChaosman
  */
 @SuppressWarnings("serial")
-public class FirstTimeActionsPanel extends javax.swing.JPanel {
+public class IniTweaksPanel extends javax.swing.JPanel {
 
-    public static FirstTimeActionsPanel INSTANCE;
+    public static IniTweaksPanel INSTANCE;
 
     private JPanel BL2Panel, TPSPanel;
 
     private boolean hasTPS, hasBL2, advanced;
-
-    private static final String SHA256_BL2_PATCHED = "2b781b3abfa3caf91adf7d30bac4b5de27c8323e84099d8dfd86f48a56a8f110";
-    private static final String SHA256_TPS_PATCHED = "4153dd1f15ffc41ff1a1f86cbe5d21c491cc4a9738109acc3894753a5b54fafa";
-    private static final String SHA256_BL2_STEAM_API_DLL_ORIGINAL = "b55054a9d9287c704b8e0ad3acfef1ea5c3fa6982b20b7e36466dc76a6ad8925";
-    private static final String SHA256_TPS_STEAM_API_DLL_ORIGINAL = "b55054a9d9287c704b8e0ad3acfef1ea5c3fa6982b20b7e36466dc76a6ad8925";
-    private static final String SHA256_WINDOWS_BL2_PHYSX_DLL_ORIGINAL = "b04c6adac65712eb9a7be470ccbfb5ed96e7f6a1369e5dfcbe79e9825e627ee5";
-    private static final String SHA256_WINDOWS_TPS_PHYSX_DLL_ORIGINAL = "1a0340ce2fec52612107a2943525bfaf53efa19269492641484432b964a552ed";
 
     /**
      * Creates new form FirstTimeActions
@@ -113,7 +106,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
      * @param showAdvanced To show, or not to show more stuff to confuse people
      * with
      */
-    public FirstTimeActionsPanel(boolean showAdvanced) {
+    public IniTweaksPanel(boolean showAdvanced) {
         INSTANCE = this;
         GlobalLogger.log("Creating FirstTimeActionsPanel - advanced=" + showAdvanced);
         hasBL2 = GameDetection.getBL2Path() != null && GameDetection.getBL2Exe() != null;
@@ -469,7 +462,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
                     + "<br/>"
                     + "<i>(Apologies for nagging you, if you've got a legitimate version which we just couldn't figure<br/>"
                     + "out how to autodetect!)</i>";
-            JOptionPane.showMessageDialog(FirstTimeActionsPanel.this, pirateWarningMessage, "Don't expect support for pirated versions!", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(IniTweaksPanel.this, pirateWarningMessage, "Don't expect support for pirated versions!", JOptionPane.WARNING_MESSAGE);
 
             JFileChooser fc = new BLCMM_FileChooser(defaultFile);
             fc.setFileFilter(new FileFilter() {
@@ -495,7 +488,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
                     return name + " executable";
                 }
             });
-            int returnVal = fc.showOpenDialog(FirstTimeActionsPanel.this);
+            int returnVal = fc.showOpenDialog(IniTweaksPanel.this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File f = fc.getSelectedFile();
                 while (f != null
@@ -504,7 +497,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
                     f = f.getParentFile();
                 }
                 if (f == null) {
-                    JOptionPane.showMessageDialog(FirstTimeActionsPanel.this, "Invalid file selected, please try again");
+                    JOptionPane.showMessageDialog(IniTweaksPanel.this, "Invalid file selected, please try again");
                     actionPerformed(evt);
                     return;
                 }
@@ -703,7 +696,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
                             try {
                                 Desktop.getDesktop().browse(e1.getURL().toURI()); // roll your own link launcher or use Desktop if J6+
                             } catch (URISyntaxException | IOException ex) {
-                                Logger.getLogger(FirstTimeActionsPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(IniTweaksPanel.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     });
@@ -729,9 +722,9 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             button.setText("Fix");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 fix();
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
         }
 
@@ -749,9 +742,9 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             button.setText("Complete");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 apply();
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
         }
 
@@ -761,9 +754,9 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             button.setText("Apply");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 apply();
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
             if (revertOnly) {
                 components[2].setEnabled(false);
@@ -777,7 +770,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             button.setText("Revert");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 if (!revert()) {
                     button.setText("Can't Revert");
                     button.setEnabled(false);
@@ -787,7 +780,7 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
                         button.setToolTipText("There was a problem reverting to the stock Borderlands value");
                     }
                 }
-                FirstTimeActionsPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
         }
 

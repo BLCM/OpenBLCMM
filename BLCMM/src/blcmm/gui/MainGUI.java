@@ -659,7 +659,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
         ToolsMenu.setText("Tools");
 
-        jMenuItem14.setText("Setup game files for mods");
+        jMenuItem14.setText("INI Tweaks");
         jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem14ActionPerformed(evt);
@@ -781,7 +781,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        Startup.showFirstTimeActions(true);
+        Startup.showIniTweaks(true);
         this.requestFocus();
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
