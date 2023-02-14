@@ -9,8 +9,6 @@ TODO
 - Maybe completely separate BLCMM from OE?
 - Rewrite launcher w/ GPL version
 - Rewrite other linked libraries w/ GPL versions
-- Remove game setup hexedits-n-such
-  - Make a markdown file with info on all available hexedits, though
 - Three game-detection functions exposed in previous hexedit window
   (this will be pretty much 100% for just file-dialog button shortcuts)
   - Steam autodetect
