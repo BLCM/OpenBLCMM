@@ -813,7 +813,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_importModZipMenuButtonActionPerformed
 
     private void importModFolderMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importModFolderMenuButtonActionPerformed
-        String binaries = GameDetection.getBinariesDir(patch.getType() == PatchType.BL2);
+        String binaries = GameDetection.getBinariesDir(patch.getType());
         File initial;
         if (binaries == null) {
             initial = currentFile.getAbsoluteFile().getParentFile();
@@ -1117,7 +1117,7 @@ public final class MainGUI extends ForceClosingJFrame {
      */
     public File getOpenDialogPath() {
         if (currentFile == null || currentFile.getPath().equals("")) {
-            String binariesDir = GameDetection.getBinariesDir(getGameSelectionPanel().getNonNullGameType() == PatchType.BL2);
+            String binariesDir = GameDetection.getBinariesDir(getGameSelectionPanel().getNonNullGameType());
             if (binariesDir != null) {
                 return new File(binariesDir);
             }
@@ -1151,7 +1151,7 @@ public final class MainGUI extends ForceClosingJFrame {
     public File getImportDialogPath() {
         String lastImport = Options.INSTANCE.getLastImport();
         if (lastImport == null || lastImport.equals("")) {
-            String binariesDir = GameDetection.getBinariesDir(this.getSelectedGame() == PatchType.BL2);
+            String binariesDir = GameDetection.getBinariesDir(this.getSelectedGame());
             if (binariesDir != null) {
                 return new File(binariesDir);
             }

@@ -228,14 +228,14 @@ public class IniTweaksPanel extends javax.swing.JPanel {
     private javax.swing.JLabel titleLabel;
     // End of variables declaration//GEN-END:variables
 
-    private static File getConfigFile(String filename, boolean BL2) {
+    private static File getConfigFile(String filename, PatchType type) {
         String toQuery;
-        if (GameDetection.getVirtualOS(BL2) == OSInfo.OS.UNIX) {
+        if (GameDetection.getVirtualOS(type) == OSInfo.OS.UNIX) {
             toQuery = filename.toLowerCase();
         } else {
             toQuery = filename;
         }
-        return new File(GameDetection.getPathToINIFiles(BL2) + toQuery);
+        return new File(GameDetection.getPathToINIFiles(type) + toQuery);
     }
 
     private static boolean fileIsNoneNullAndExists(File f) {
@@ -243,24 +243,32 @@ public class IniTweaksPanel extends javax.swing.JPanel {
     }
 
     private void initUIBL2() {
-        initUI(true);
+        initUI(PatchType.BL2);
     }
 
     private void initUITPS() {
-        initUI(false);
+        initUI(PatchType.TPS);
     }
 
-    private void initUI(boolean BL2) {
-        JPanel panel = BL2 ? BL2Panel : TPSPanel;
-        if (!fileIsNoneNullAndExists(getConfigFile("WillowInput.ini", BL2))) {
+    private void initUI(PatchType type) {
+        JPanel panel = null;
+        switch (type) {
+            case BL2:
+                panel = BL2Panel;
+                break;
+            case TPS:
+                panel = TPSPanel;
+                break;
+        }
+        if (!fileIsNoneNullAndExists(getConfigFile("WillowInput.ini", type))) {
             initPanel(panel, null);
-            String gameLabel = BL2 ? "BL2" : "TPS";
+            String gameLabel = type.toString();
             JLabel label = new JLabel("<html><body style='width: 5in;'>"
                     + "<center><b>Note:<b><br/>BLCMM found an executable for " + gameLabel + ", but no configuration files.<br/>"
                     + "Please run " + gameLabel + " once, then restart BLCMM.");
             panel.add(label, new GridBagConstraints(0, 1000, 3, 1, 1d, 50000d, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         } else {
-            initPanel(panel, getActions(BL2));
+            initPanel(panel, getActions(type));
         }
         Window window = SwingUtilities.getWindowAncestor(this);
         if (window != null) {
@@ -338,20 +346,20 @@ public class IniTweaksPanel extends javax.swing.JPanel {
 
     }
 
-    private List<ComponentProvider> getActions(boolean BL2) {
+    private List<ComponentProvider> getActions(PatchType type) {
         List<ComponentProvider> actions = new ArrayList<>();
-        actions.addAll(getConfigActions(BL2));
+        actions.addAll(getConfigActions(type));
         return actions;
     }
 
-    private List<ComponentProvider> getConfigActions(boolean BL2) {
-        OSInfo.OS VIRTUAL_OS = GameDetection.getVirtualOS(BL2);
+    private List<ComponentProvider> getConfigActions(PatchType type) {
+        OSInfo.OS VIRTUAL_OS = GameDetection.getVirtualOS(type);
         List<ComponentProvider> actions = new ArrayList<>();
 
         if (advanced) {
             actions.add(new SeperatorComponentProvider("Performance boosting .ini tweaks"));
-            File engineINIFile = getConfigFile("WillowEngine.ini", BL2);
-            File gameINIFile = getConfigFile("WillowGame.ini", BL2);
+            File engineINIFile = getConfigFile("WillowEngine.ini", type);
+            File gameINIFile = getConfigFile("WillowGame.ini", type);
 
             // Our Renderer/PostProcessor option is a bit different because the var may live in two or more
             // locations.  Most files probably only have it in [Engine.Engine], but at least some files may
@@ -399,7 +407,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
             if (VIRTUAL_OS != OSInfo.OS.WINDOWS) {
                 movies1.add("Aspyr");
                 movies2.add(";Aspyr");
-                if (!BL2) {
+                if (type == PatchType.TPS) {
                     // TODO: I'm not sure if these still show up on Mac; they *will* be there on native Linux though.
                     movies1.add("2K_Australia_Logo");
                     movies2.add(";2K_Australia_Logo");
@@ -427,7 +435,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
             INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction("Fewer cutscenes", engineINIFile, "bForceNoMovies", "FullScreenMovie", new String[]{"FALSE"}, new String[]{"TRUE"});
             fewerCutscenes.setDescription("<html>Removes some cutscenes from the game. As a side effect, your loading screens turn black.<br/>There's also a mod that disables more cutscenes, without this side effect, by FromDarkHell");
             actions.add(fewerCutscenes);
-            if (!BL2) {
+            if (type == PatchType.TPS) {
                 fewerCutscenes.disable("This feature soft-locks TPS while enabled, so it's not available through BLCMM.", false);
             }
         }

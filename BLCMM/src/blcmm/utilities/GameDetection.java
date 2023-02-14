@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.HashMap;
 import javax.swing.filechooser.FileSystemView;
 import SteamVDF.VDF.VDF;
 import SteamVDF.VDF.VDFElement;
@@ -46,16 +48,16 @@ public class GameDetection {
     private static boolean run = false;
 
     // A couple of booleans to reduce clutter of logging.
-    private static final boolean[] LOGGED_BIN = {false, false};
-    private static final boolean[] LOGGED_EXE = {false, false};
-    private static final boolean[] LOGGED_INI = {false, false};
+    private static final HashSet<PatchType> LOGGED_BIN = new HashSet<>();
+    private static final HashSet<PatchType> LOGGED_EXE = new HashSet<>();
+    private static final HashSet<PatchType> LOGGED_INI = new HashSet<>();
 
     //For windows, this path
     private static String bl2Path, blTPSPath;
 
     //For Linux, some cached attributes to let us know if we're using Proton
-    private static final boolean[] UNIX_SCANNED_PROTON = {false, false};
-    private static final boolean[] UNIX_USING_PROTON = {false, false};
+    private static final HashSet<PatchType> UNIX_SCANNED_PROTON = new HashSet<>();
+    private static final HashMap<PatchType, Boolean> UNIX_USING_PROTON = new HashMap<>();
 
     /**
      * A way to set the path manually for BL2, in case game detection failed
@@ -64,7 +66,7 @@ public class GameDetection {
      */
     public static void setBL2PathManually(String path) {
         assert run;
-        LOGGED_BIN[0] = true;
+        LOGGED_BIN.add(PatchType.BL2);
         bl2Path = path;
         GlobalLogger.log("Set BL2 path manually to: " + path);
     }
@@ -76,17 +78,20 @@ public class GameDetection {
      */
     public static void setTPSPathManually(String path) {
         assert run;
-        LOGGED_BIN[1] = false;
+        LOGGED_BIN.add(PatchType.TPS);
         blTPSPath = path;
         GlobalLogger.log("Set TPS path manually to: " + path);
     }
 
     public static String getPath(PatchType type) {
-        return type == PatchType.BL2 ? getBL2Path() : getTPSPath();
-    }
-
-    public static String getPath(boolean BL2) {
-        return BL2 ? getBL2Path() : getTPSPath();
+        switch (type) {
+            case BL2:
+                return getBL2Path();
+            case TPS:
+                return getTPSPath();
+            default:
+                return null;
+        }
     }
 
     public static String getBL2Path() {
@@ -118,28 +123,46 @@ public class GameDetection {
         //BL2 detection
         String regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 49520\" /v InstallLocation";
         String regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 49520\" /v InstallLocation";
-        bl2Path = detectWindows(true, regKey1, regKey2);
+        bl2Path = detectWindows(PatchType.BL2, regKey1, regKey2);
         //BLTPS detection
         regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation";
         regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation";
-        blTPSPath = detectWindows(false, regKey1, regKey2);
+        blTPSPath = detectWindows(PatchType.TPS, regKey1, regKey2);
+    }
+    
+    /**
+     * Convert a PatchType into an English label for the game.
+     * TODO: This should really be handled by the PatchType enum itself!!  At the
+     * moment we don't have source access to that, though.
+     * @param type The game type
+     * @return an English label to use for the game
+     */
+    private static String typeToGameName(PatchType type) {
+        switch (type) {
+            case BL2:
+                return "Borderlands 2";
+            case TPS:
+                return "Borderlands The Pre-Sequel";
+            default:
+                return null;
+        }    
     }
 
-    private static String detectWindows(boolean BL2, String... regKeys) {
-        String game = BL2 ? "Borderlands 2" : "Borderlands The Pre-Sequel";
+    private static String detectWindows(PatchType type, String... regKeys) {
+        String game = typeToGameName(type);
         String path = null;
         for (int i = 0; i < regKeys.length && path == null; i++) {
             path = GetRegField(regKeys[i]);
         }
         if (path == null) {
             GlobalLogger.log("Can't find " + game + " Steam installation on registry.");
-            path = FindGamePathInLog(BL2);
+            path = FindGamePathInLog(type);
         } else if (!new File(path).exists()) {
             GlobalLogger.log("The found registry installation of " + game + " doesn't exist. (" + path + ")");
-            path = FindGamePathInLog(BL2);
-        } else if (getExe(BL2, path) == null) {
+            path = FindGamePathInLog(type);
+        } else if (getExe(type, path) == null) {
             GlobalLogger.log("The found registry installation of " + game + " doesn't have an executable. (" + path + ")");
-            path = FindGamePathInLog(BL2);
+            path = FindGamePathInLog(type);
         } else {
             GlobalLogger.log("Found " + game + " Steam installation on registry.");
         }
@@ -166,12 +189,12 @@ public class GameDetection {
         }
     }
 
-    private static String FindGamePathInLog(boolean BL2) {
-        String game = BL2 ? "Borderlands 2" : "Borderlands The Pre-Sequel";
+    private static String FindGamePathInLog(PatchType type) {
+        String game = typeToGameName(type);
         final String start = "Log: Base directory: ";
         String path = null;
         fileLoop:
-        for (File log : getLogFiles(BL2)) {
+        for (File log : getLogFiles(type)) {
             if (log != null && log.exists()) {
                 try {
                     BufferedReader br = new BufferedReader(new FileReader(log));
@@ -197,7 +220,7 @@ public class GameDetection {
                             } else if (!new File(path2).exists()) {
                                 GlobalLogger.log("Disregarding path due to not existing: " + path2);
                                 break;
-                            } else if (getExe(BL2, path2) == null) {
+                            } else if (getExe(type, path2) == null) {
                                 GlobalLogger.log("Disregarding path due to not having an executable: " + path2);
                                 break;
                             }
@@ -284,12 +307,12 @@ public class GameDetection {
             }
         }
         if (bl2Path == null) {
-            bl2Path = FindGamePathInLog(true);
+            bl2Path = FindGamePathInLog(PatchType.BL2);
         } else {
             GlobalLogger.log("Succesfully found installation of Borderlands 2");
         }
         if (blTPSPath == null) {
-            blTPSPath = FindGamePathInLog(false);
+            blTPSPath = FindGamePathInLog(PatchType.TPS);
         } else {
             GlobalLogger.log("Succesfully found installation of Borderlands: The Pre-Sequel");
         }
@@ -380,7 +403,7 @@ public class GameDetection {
     //########################################################################################################
     //Below are several methods that return pre-set paths offset based on the paths detected by the code above
     //########################################################################################################
-    //
+
     /**
      * Returns the path to the "binaries" directory for the specified game.
      * Relies on our data having been initialized via FindGames prior to
@@ -390,19 +413,7 @@ public class GameDetection {
      * @return A pathname to the "binaries" folder, or null.
      */
     public static String getBinariesDir(PatchType type) {
-        return getBinariesDir(type == PatchType.BL2);
-    }
-
-    /**
-     * Returns the path to the "binaries" directory for the specified game.
-     * Relies on our data having been initialized via FindGames prior to
-     * running.
-     *
-     * @param BL2 True for BL2, False for TPS
-     * @return A pathname to the "binaries" folder, or null.
-     */
-    public static String getBinariesDir(boolean BL2) {
-        String path = getPath(BL2);
+        String path = getPath(type);
         if (path == null) {
             return null;
         }
@@ -415,7 +426,7 @@ public class GameDetection {
                 binariesPath = path + "/GameData/Binaries";
                 break;
             default:
-                if (isUnixUsingProton(BL2)) {
+                if (isUnixUsingProton(type)) {
                     binariesPath = path + "/Binaries";
                 } else {
                     binariesPath = path + "/steamassets/binaries";
@@ -423,38 +434,46 @@ public class GameDetection {
         }
         File f = new File(binariesPath);
         if (f.exists()) {
-            if (!LOGGED_BIN[BL2 ? 0 : 1]) {
+            if (!LOGGED_BIN.contains(type)) {
                 GlobalLogger.log("Binaries dir: " + binariesPath);
-                LOGGED_BIN[BL2 ? 0 : 1] = true;
+                LOGGED_BIN.add(type);
             }
             return binariesPath;
         } else {
-            if (LOGGED_BIN[BL2 ? 0 : 1]) {
-                GlobalLogger.log("No binaries path found for " + (BL2 ? "BL2" : "TPS") + " (" + binariesPath + ")");
-                LOGGED_BIN[BL2 ? 0 : 1] = true;
+            if (LOGGED_BIN.contains(type)) {
+                GlobalLogger.log("No binaries path found for " + type.toString() + " (" + binariesPath + ")");
+                LOGGED_BIN.add(type);
             }
             return null;
         }
     }
 
     public static File getTPSExe() {
-        return getExe(false);
+        return getExe(PatchType.TPS);
     }
 
     public static File getBL2Exe() {
-        return getExe(true);
-    }
-
-    public static File getExe(boolean BL2) {
-        return getExe(BL2, getPath(BL2));
+        return getExe(PatchType.BL2);
     }
 
     public static File getExe(PatchType type) {
-        return getExe(type == PatchType.BL2, getPath(type));
+        return getExe(type, getPath(type));
     }
 
-    private static File getExe(boolean BL2, final String testPath) {
-        final String filename = BL2 ? "Borderlands2" : "BorderlandsPreSequel";
+    private static File getExe(PatchType type, final String testPath) {
+        // Default to false for this -- want to make sure that *some* value exists
+        UNIX_USING_PROTON.put(type, false);
+        
+        // TODO: arguably this should be done in the PatchType class
+        String filename = null;
+        switch (type) {
+            case BL2:
+                filename = "Borderlands2";
+                break;
+            case TPS:
+                filename = "BorderlandsPreSequel";
+                break;
+        }
         if (testPath == null) {
             return null;
         }
@@ -462,13 +481,13 @@ public class GameDetection {
         switch (OSInfo.CURRENT_OS) {
             case UNIX:
                 // There are two possibilities here: one for native Linux, one for Proton/Wine
-                UNIX_SCANNED_PROTON[BL2 ? 0 : 1] = true;
+                UNIX_SCANNED_PROTON.add(type);
                 postfixes.add("/" + filename);
                 postfixes.add("/Binaries/Win32/" + filename + ".exe");
                 break;
             case MAC:
                 postfixes.add("/MacOS/" + filename + "sub");
-                postfixes.add("/MacOS/" + (BL2 ? "BL2" : "TPS"));//x64 changed the name to just BL2. This hasn't happened for TPS yet, but we might as well put this in
+                postfixes.add("/MacOS/" + type.toString());//x64 changed the name to just BL2. This hasn't happened for TPS yet, but we might as well put this in
                 break;
             default:
                 postfixes.add("\\Binaries\\Win32\\" + filename + ".exe");
@@ -478,21 +497,21 @@ public class GameDetection {
             exe = new File(testPath + postfix);
             if (exe.exists()) {
                 if (OSInfo.CURRENT_OS == OSInfo.OS.UNIX) {
-                    UNIX_USING_PROTON[BL2 ? 0 : 1] = postfix.contains(".exe");
+                    UNIX_USING_PROTON.put(type, postfix.contains(".exe"));
                 }
                 break;
             }
         }
         if (exe == null || !exe.exists()) {
-            if (!LOGGED_EXE[BL2 ? 0 : 1]) {
-                GlobalLogger.log("No executable found for " + (BL2 ? "BL2" : "TPS") + " (" + exe + ")");
-                LOGGED_EXE[BL2 ? 0 : 1] = true;
+            if (!LOGGED_EXE.contains(type)) {
+                GlobalLogger.log("No executable found for " + type.toString() + " (" + exe + ")");
+                LOGGED_EXE.add(type);
             }
             return null;
         } else {
-            if (!LOGGED_EXE[BL2 ? 0 : 1]) {
+            if (!LOGGED_EXE.contains(type)) {
                 GlobalLogger.log("Found executable: " + exe.getAbsolutePath());
-                LOGGED_EXE[BL2 ? 0 : 1] = true;
+                LOGGED_EXE.add(type);
             }
         }
         return exe;
@@ -504,12 +523,12 @@ public class GameDetection {
      * WINDOWS if we happen to be using the Wine/Proton version instead of
      * native.
      *
-     * @param BL2 True for if we are querying BL2, or False for TPS
+     * @param type The game to query
      * @return The OS to operate as
      */
-    public static OSInfo.OS getVirtualOS(boolean BL2) {
+    public static OSInfo.OS getVirtualOS(PatchType type) {
         if (OSInfo.CURRENT_OS == OSInfo.OS.UNIX) {
-            if (isUnixUsingProton(BL2)) {
+            if (isUnixUsingProton(type)) {
                 return OSInfo.OS.WINDOWS;
             }
         }
@@ -523,25 +542,25 @@ public class GameDetection {
      * native version is so far out of date. Will always return false on
      * non-UNIX OSes.
      *
-     * @param BL2 True for if we are querying BL2, or False for TPS.
+     * @param type The game type to process
      * @return True if the Proton version is being used
      */
-    private static boolean isUnixUsingProton(boolean BL2) {
+    private static boolean isUnixUsingProton(PatchType type) {
         if (OSInfo.CURRENT_OS == OSInfo.OS.UNIX) {
-            if (!UNIX_SCANNED_PROTON[BL2 ? 0 : 1]) {
-                getExe(BL2);
+            if (!UNIX_SCANNED_PROTON.contains(type)) {
+                getExe(type);
             }
-            return UNIX_USING_PROTON[BL2 ? 0 : 1];
+            return UNIX_USING_PROTON.get(type);
         } else {
             return false;
         }
     }
 
-    public static File getEngineUPK(boolean BL2) {
+    public static File getEngineUPK(PatchType type) {
         String enginePathW = "/WillowGame/CookedPCConsole/Engine.upk";
         String enginePathM = "/GameData" + enginePathW;
         String enginePathL;
-        if (isUnixUsingProton(BL2)) {
+        if (isUnixUsingProton(type)) {
             // Case is important here!  Make sure Windows path remains capitalized.
             enginePathL = enginePathW;
         } else {
@@ -550,9 +569,9 @@ public class GameDetection {
         }
 
         String enginePath = OSInfo.CURRENT_OS == OSInfo.OS.MAC ? enginePathM : (OSInfo.CURRENT_OS == OSInfo.OS.WINDOWS ? enginePathW : enginePathL);
-        File engine = new File(getPath(BL2) + enginePath);
+        File engine = new File(getPath(type) + enginePath);
         if (!engine.exists()) {
-            GlobalLogger.log("No engine.upk found for " + (BL2 ? "BL2" : "TPS") + " (" + engine + ")");
+            GlobalLogger.log("No engine.upk found for " + type.toString() + " (" + engine + ")");
             return null;
         }
         GlobalLogger.log("Found engine.upk: " + engine.getAbsolutePath());
@@ -568,8 +587,8 @@ public class GameDetection {
      *
      * @return
      */
-    private static String getPathToGameConfigFiles(boolean BL2) {
-        String gamename = BL2 ? "Borderlands 2" : "Borderlands The Pre-Sequel";
+    private static String getPathToGameConfigFiles(PatchType type) {
+        String gamename = typeToGameName(type);
         switch (OSInfo.CURRENT_OS) {
             case WINDOWS: {
                 String[] myDocuments = getWindowsMyDocumentsFolder();
@@ -588,19 +607,32 @@ public class GameDetection {
                 return String.format("%s/Library/Application Support/%s/", home, gamename);
             }
             case UNIX: {
-                if (isUnixUsingProton(BL2)) {
+                if (isUnixUsingProton(type)) {
+                    // TODO: arguably this should be handled by the PatchType class itself
+                    String gameId;
+                    switch (type) {
+                        case BL2:
+                            gameId = "49520";
+                            break;
+                        case TPS:
+                            gameId = "261640";
+                            break;
+                        default:
+                            gameId = "0";
+                            break;
+                    }
                     try {
                         // We could use our steam library folder detection again, but just doing
                         // a relative path here will keep us in the correct dir.  The
                         // `getCanonicalPath()` call will get rid of those for us.
-                        String configDir = new File(getExe(BL2).getParent()
+                        String configDir = new File(getExe(type).getParent()
                                 + "../../../../../compatdata/"
-                                + (BL2 ? "49520" : "261640")
+                                + gameId
                                 + "/pfx/drive_c/users/steamuser/My Documents/My Games/"
                                 + gamename).getCanonicalPath() + "/";
                         return configDir;
                     } catch (IOException e) {
-                        GlobalLogger.log("Attempting to find config folder failed for " + (BL2 ? "BL2" : "TPS"));
+                        GlobalLogger.log("Attempting to find config folder failed for " + type.toString());
                         return null;
                     }
                 } else {
@@ -639,23 +671,23 @@ public class GameDetection {
         return res;
     }
 
-    public static String getPathToINIFiles(boolean BL2) {
-        String res = getGameConfigPathWithPostfix(BL2, "WillowGame\\Config\\");
-        if (!LOGGED_INI[BL2 ? 0 : 1]) {
-            GlobalLogger.log("Path to INI files of " + (BL2 ? "BL2" : "TPS") + ": " + res);
-            LOGGED_INI[BL2 ? 0 : 1] = true;
+    public static String getPathToINIFiles(PatchType type) {
+        String res = getGameConfigPathWithPostfix(type, "WillowGame\\Config\\");
+        if (!LOGGED_INI.contains(type)) {
+            GlobalLogger.log("Path to INI files of " + type.toString() + ": " + res);
+            LOGGED_INI.add(type);
         }
         return res;
     }
 
-    private static String getPathToLogFiles(boolean BL2) {
-        String res = getGameConfigPathWithPostfix(BL2, "WillowGame\\Logs\\");
+    private static String getPathToLogFiles(PatchType type) {
+        String res = getGameConfigPathWithPostfix(type, "WillowGame\\Logs\\");
         GlobalLogger.log("Path to log files: " + res);
         return res;
     }
 
-    private static String getGameConfigPathWithPostfix(boolean BL2, String postfix) {
-        String gamedir = getPathToGameConfigFiles(BL2);
+    private static String getGameConfigPathWithPostfix(PatchType type, String postfix) {
+        String gamedir = getPathToGameConfigFiles(type);
         if (OSInfo.CURRENT_OS != OSInfo.OS.WINDOWS) {
             postfix = postfix.replace("\\", "/");
         }
@@ -665,8 +697,8 @@ public class GameDetection {
         return gamedir + postfix;
     }
 
-    private static File[] getLogFiles(boolean BL2) {
-        File f = new File(getPathToLogFiles(BL2));
+    private static File[] getLogFiles(PatchType type) {
+        File f = new File(getPathToLogFiles(type));
         if (f.exists()) {
             File[] logs = f.listFiles();
             Arrays.sort(logs, (File f1, File f2) -> Long.valueOf(f1.lastModified()).compareTo(f2.lastModified()));

@@ -277,7 +277,7 @@ public class PatchIO {
             HotfixConverter.HotfixConverterResult res;
             try {
                 res = HotfixConverter.convert(br, name);//This can throw an exception when the syntax is invalid. If this call goes trough, the subsequent lines should run fine.
-                String fixes = PatchType.BL2.buildString(res.keys, res.values, false, GameDetection.getVirtualOS(true));//type will be inferred by FT parser below
+                String fixes = PatchType.BL2.buildString(res.keys, res.values, false, GameDetection.getVirtualOS(PatchType.BL2));//type will be inferred by FT parser below
                 BufferedReader br2 = new BufferedReader(new StringReader(fixes));
                 CompletePatch res2 = new FTParser().parse(br2, filename);
                 br2.close();
@@ -1181,7 +1181,7 @@ public class PatchIO {
     private static void writeFunctionalHotfix(Category gbx, Category root, PatchType type, Writer writer, boolean offline) throws IOException {
         File f = File.createTempFile("temp_hotfixes", "temp");
         BufferedWriter valuewriter = new BufferedWriter(new FileWriter(f));
-        OSInfo.OS OS = GameDetection.getVirtualOS(type.isBL2());
+        OSInfo.OS OS = GameDetection.getVirtualOS(type);
 
         List<HotfixWrapper> hotfixes = gbx.listHotfixMeta();
         hotfixes.addAll(root.listHotfixMeta());

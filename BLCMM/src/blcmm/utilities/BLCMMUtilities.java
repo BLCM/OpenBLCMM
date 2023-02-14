@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import blcmm.model.PatchType;
+
 /**
  * A small class to provide some miscellaneous BLCMM-specific utilities which
  * don't really belong in the main Utilities class. Could probably bear to have
@@ -116,8 +118,8 @@ public class BLCMMUtilities {
             String[] tpsPatches = new String[]{"patch.txt", "patchtps.txt"};
             final int maxDistance = 4;//arbitrary
             List<String> res = new ArrayList<>();
-            populate(bl2Patches, true, maxDistance, res);
-            populate(tpsPatches, false, maxDistance, res);
+            populate(bl2Patches, PatchType.BL2, maxDistance, res);
+            populate(tpsPatches, PatchType.TPS, maxDistance, res);
             if (!bl2First) {
                 Collections.reverse(res);
             }
@@ -125,11 +127,11 @@ public class BLCMMUtilities {
         }
     }
 
-    private static void populate(String[] patches, boolean BL2, final int maxDistance, List<String> res) {
-        if (GameDetection.getBinariesDir(BL2) != null) {
+    private static void populate(String[] patches, PatchType type, final int maxDistance, List<String> res) {
+        if (GameDetection.getBinariesDir(type) != null) {
             Map<File, Integer> map = new HashMap<>();
 
-            String binaries = GameDetection.getBinariesDir(BL2).replace("\\", "/");
+            String binaries = GameDetection.getBinariesDir(type).replace("\\", "/");
             for (File f : new File(binaries).listFiles()) {
                 for (String patch : patches) {
                     int dist = GeneralUtilities.Strings.levenshteinDistance(f.getName().toLowerCase(), patch);

@@ -149,7 +149,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         String tempDir;
 
         // BL2 Binaries dir
-        tempDir = GameDetection.getBinariesDir(true);
+        tempDir = GameDetection.getBinariesDir(PatchType.BL2);
         if (tempDir != null) {
             panel.add(directoryShortcutButton(fc,
                     "Open BL2 Binaries Dir",
@@ -159,7 +159,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         }
 
         // TPS Binaries dir
-        tempDir = GameDetection.getBinariesDir(false);
+        tempDir = GameDetection.getBinariesDir(PatchType.TPS);
         if (tempDir != null) {
             panel.add(directoryShortcutButton(fc,
                     "Open TPS Binaries Dir",
