@@ -4,7 +4,6 @@ TODO
 ====
 
 - Rename to BLCMM-Basic or something?
-- Remove "invert mod" functionality?
 - AoDK in OE
 - Maybe completely separate BLCMM from OE?
 - Rewrite launcher w/ GPL version
