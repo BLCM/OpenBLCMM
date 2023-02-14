@@ -104,36 +104,31 @@ public class IniTweaksPanel extends javax.swing.JPanel {
     public IniTweaksPanel() {
         INSTANCE = this;
         GlobalLogger.log("Creating IniTweaksPanel");
-        hasBL2 = GameDetection.getBL2Path() != null && GameDetection.getBL2Exe() != null;
-        hasTPS = GameDetection.getTPSPath() != null && GameDetection.getTPSExe() != null;
+        hasBL2 = GameDetection.iniFilePathExists(PatchType.BL2);
+        hasTPS = GameDetection.iniFilePathExists(PatchType.TPS);
         initComponents();
         initPanels();
 
         if (hasBL2) {
-            initUIBL2();
+            initUI(PatchType.BL2);
         } else {
-            this.initNotFoundUI(BL2Panel, "BL2",
-                    new ManualSelectionListener(GameDetection.getBL2Exe(), "Borderlands2", "Borderlands 2", "Borderlands 2") {
-                @Override
-                public void callback(File f) {
-                    GameDetection.setBL2PathManually(f.getAbsolutePath());
-                    hasBL2 = true;
-                    initUIBL2();
-                }
-            });
+            this.initININotFoundUI(BL2Panel, "BL2");
         }
         if (hasTPS) {
-            initUITPS();
+            initUI(PatchType.TPS);
         } else {
-            this.initNotFoundUI(TPSPanel, "TPS",
+            this.initININotFoundUI(TPSPanel, "TPS");
+            /** Example of our previous version here, for future reference in case I want to do something like this in the Settings menu
+            this.initGameInstallNotFoundUI(TPSPanel, "TPS",
                     new ManualSelectionListener(GameDetection.getTPSExe(), "BorderlandsPreSequel", "Borderlands TPS", "BorderlandsPreSequel") {
                 @Override
                 public void callback(File f) {
                     GameDetection.setTPSPathManually(f.getAbsolutePath());
                     hasTPS = true;
-                    initUITPS();
+                    initUI(PatchType.TPS);
                 }
             });
+            */
         }
     }
 
@@ -165,7 +160,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         infoLabel = new InfoLabel("Mouse over the various options to get more details on what each option does.");
 
         titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        titleLabel.setText("Select your desired game file tweaks");
+        titleLabel.setText("Select your desired INI file tweaks");
 
         javax.swing.GroupLayout masterPanelLayout = new javax.swing.GroupLayout(masterPanel);
         masterPanel.setLayout(masterPanelLayout);
@@ -225,14 +220,6 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         return f != null && f.exists();
     }
 
-    private void initUIBL2() {
-        initUI(PatchType.BL2);
-    }
-
-    private void initUITPS() {
-        initUI(PatchType.TPS);
-    }
-
     private void initUI(PatchType type) {
         JPanel panel = null;
         switch (type) {
@@ -289,13 +276,51 @@ public class IniTweaksPanel extends javax.swing.JPanel {
 
     /**
      * Initializes a game's UI panel in the event that we couldn't find the
-     * game.
+     * INI files for a game.
+     *
+     * @param panel The panel to put ourselves into.
+     * @param gameLabel The game text which will be put on the button.
+     */
+    private void initININotFoundUI(JPanel panel, String gameLabel) {
+
+        // Set up the panel layout
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints cs = new GridBagConstraints();
+        cs.anchor = GridBagConstraints.NORTH;
+        cs.insets = new Insets(5, 0, 5, 0);
+        cs.weightx = 1;
+        cs.weighty = 1;
+        cs.gridx = 0;
+        cs.gridy = 0;
+
+        // Would like to use "em" for the width here, but Java doesn't seem
+        // to support that.  "in" should be better than "px", at least.
+        cs.gridy = 1;
+        panel.add(new JLabel("<html><body style='width: 4.5in;'>"
+                + "<b>Note:</b> BLCMM cannot autodetect " + gameLabel + " INI files"
+                + " unless it has been run at least once.  If this is a fresh"
+                + " desktop or account, make sure to run " + gameLabel + " at least once."),
+                cs);
+
+        // Finally, a spacer so that the label stays up near the button
+        cs.gridx = 2;
+        cs.weightx = cs.weighty = 100;
+        panel.add(new JPanel(), cs);
+
+    }
+
+    /**
+     * Initializes a game's UI panel in the event that we couldn't find the
+     * game.  This can be used to provide a button for manually-selecting
+     * an install dir -- at the moment we basically just Don't Care, so this
+     * is unused, but if we want to provide some extra buttons on the file
+     * dialogs, we may want to have something like this in the Settings screen.
      *
      * @param panel The panel to put ourselves into.
      * @param gameLabel The game text which will be put on the button.
      * @param buttonListener The listener which will be attached to the button
      */
-    private void initNotFoundUI(JPanel panel, String gameLabel,
+    private void initGameInstallNotFoundUI(JPanel panel, String gameLabel,
             ManualSelectionListener buttonListener) {
 
         // Set up the panel layout
@@ -339,7 +364,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         OSInfo.OS VIRTUAL_OS = GameDetection.getVirtualOS(type);
         List<ComponentProvider> actions = new ArrayList<>();
 
-        actions.add(new SeperatorComponentProvider("Performance boosting .ini tweaks"));
+        //actions.add(new SeperatorComponentProvider("Performance boosting .ini tweaks"));
         File engineINIFile = getConfigFile("WillowEngine.ini", type);
         File gameINIFile = getConfigFile("WillowGame.ini", type);
 

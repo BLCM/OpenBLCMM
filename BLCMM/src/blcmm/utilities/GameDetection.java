@@ -679,6 +679,19 @@ public class GameDetection {
         }
         return res;
     }
+    
+    /**
+     * Determines if the computed path to the game's INI files actually exists.
+     * This may not be the case until the game's been run once, and of course
+     * assumes that we're even looking in the right spot (which could be
+     * trickier on Linux, etc).
+     * @param type The game type to look up
+     * @return True if the INI file path exists, False otherwise.
+     */
+    public static boolean iniFilePathExists(PatchType type) {
+        File iniPath = new File(getPathToINIFiles(type));
+        return iniPath.exists();
+    }
 
     private static String getPathToLogFiles(PatchType type) {
         String res = getGameConfigPathWithPostfix(type, "WillowGame\\Logs\\");

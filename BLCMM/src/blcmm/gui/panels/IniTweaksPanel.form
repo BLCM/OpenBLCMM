@@ -49,7 +49,7 @@
     <Component class="javax.swing.JLabel" name="titleLabel">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="text" type="java.lang.String" value="Select your desired game file tweaks"/>
+        <Property name="text" type="java.lang.String" value="Select your desired INI file tweaks"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="masterPanel">
