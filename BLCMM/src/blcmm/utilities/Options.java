@@ -29,6 +29,7 @@ package blcmm.utilities;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.options.*;
+import general.utilities.GlobalLogger;
 import general.utilities.StringTable;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.nio.file.NoSuchFileException;
 
 /**
  * Class to control dealing with the main application options/settings.
@@ -204,6 +206,9 @@ public class Options {
             StringTable table = StringTable.generateTable(res);
             this.registerOption(SelectionOption.createStringSelectionOption("splashImage", "Default", "Splash screen image", null, "The image shown on the launcher", table));
             launcher.close();
+        } catch (NoSuchFileException e) {
+            // This mostly just happens when developing via NetBeans, but whatever.  Don't bother stack-tracing
+            GlobalLogger.log("BLCMM Launcher not found -- not providing splash screen setting");
         } catch (Exception e) {
             //If we fail, we fail. One reason this can happen is if the launcher doesn't have the specified file in it yet
             e.printStackTrace();
