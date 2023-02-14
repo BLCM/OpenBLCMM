@@ -305,8 +305,8 @@ public class Startup {
         }
     }
 
-    public static void showIniTweaks(boolean advanced) {
-        IniTweaksPanel panel = new IniTweaksPanel(advanced);
+    public static void showIniTweaks() {
+        IniTweaksPanel panel = new IniTweaksPanel();
         JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
     }
 

@@ -96,20 +96,16 @@ public class IniTweaksPanel extends javax.swing.JPanel {
 
     private JPanel BL2Panel, TPSPanel;
 
-    private boolean hasTPS, hasBL2, advanced;
+    private boolean hasTPS, hasBL2;
 
     /**
      * Creates new form FirstTimeActions
-     *
-     * @param showAdvanced To show, or not to show more stuff to confuse people
-     * with
      */
-    public IniTweaksPanel(boolean showAdvanced) {
+    public IniTweaksPanel() {
         INSTANCE = this;
-        GlobalLogger.log("Creating FirstTimeActionsPanel - advanced=" + showAdvanced);
+        GlobalLogger.log("Creating IniTweaksPanel");
         hasBL2 = GameDetection.getBL2Path() != null && GameDetection.getBL2Exe() != null;
         hasTPS = GameDetection.getTPSPath() != null && GameDetection.getTPSExe() != null;
-        advanced = showAdvanced;
         initComponents();
         initPanels();
 
@@ -343,88 +339,86 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         OSInfo.OS VIRTUAL_OS = GameDetection.getVirtualOS(type);
         List<ComponentProvider> actions = new ArrayList<>();
 
-        if (advanced) {
-            actions.add(new SeperatorComponentProvider("Performance boosting .ini tweaks"));
-            File engineINIFile = getConfigFile("WillowEngine.ini", type);
-            File gameINIFile = getConfigFile("WillowGame.ini", type);
+        actions.add(new SeperatorComponentProvider("Performance boosting .ini tweaks"));
+        File engineINIFile = getConfigFile("WillowEngine.ini", type);
+        File gameINIFile = getConfigFile("WillowGame.ini", type);
 
-            // Our Renderer/PostProcessor option is a bit different because the var may live in two or more
-            // locations.  Most files probably only have it in [Engine.Engine], but at least some files may
-            // have it in [WillowGame.WillowGameEngine] as well (or instead?) and that location takes
-            // precedence.  So check that first, and if we get a known value use that.  Otherwise, fall back
-            // to using the more common [Engine.Engine] location regardles of its status.
-            File rendererFile = engineINIFile;
-            String rendererVarName = "DefaultPostProcessName";
-            String rendererDefault = "WillowEngineMaterials.WillowScenePostProcess";
-            String[] rendererChoices = {"Default"/*                                */, "No black lines"/*                         */, "No black lines, more colors"};
-            String[] rendererValues = {"WillowEngineMaterials.WillowScenePostProcess", "WillowEngineMaterials.RyanScenePostProcess", "WillowEngineMaterials.CinematicScenePostProcess"};
-            FileEditChoiceSetupAction rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
-                    rendererFile, rendererVarName, "WillowGame.WillowGameEngine", rendererDefault,
+        // Our Renderer/PostProcessor option is a bit different because the var may live in two or more
+        // locations.  Most files probably only have it in [Engine.Engine], but at least some files may
+        // have it in [WillowGame.WillowGameEngine] as well (or instead?) and that location takes
+        // precedence.  So check that first, and if we get a known value use that.  Otherwise, fall back
+        // to using the more common [Engine.Engine] location regardles of its status.
+        File rendererFile = engineINIFile;
+        String rendererVarName = "DefaultPostProcessName";
+        String rendererDefault = "WillowEngineMaterials.WillowScenePostProcess";
+        String[] rendererChoices = {"Default"/*                                */, "No black lines"/*                         */, "No black lines, more colors"};
+        String[] rendererValues = {"WillowEngineMaterials.WillowScenePostProcess", "WillowEngineMaterials.RyanScenePostProcess", "WillowEngineMaterials.CinematicScenePostProcess"};
+        FileEditChoiceSetupAction rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
+                rendererFile, rendererVarName, "WillowGame.WillowGameEngine", rendererDefault,
+                rendererChoices, rendererValues);
+        if (!EnumSet.of(SetupStatus.ACTIVE, SetupStatus.INACTIVE).contains(rendererSetupAction.getCurrentStatus())) {
+            rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
+                    rendererFile, rendererVarName, "Engine.Engine", rendererDefault,
                     rendererChoices, rendererValues);
-            if (!EnumSet.of(SetupStatus.ACTIVE, SetupStatus.INACTIVE).contains(rendererSetupAction.getCurrentStatus())) {
-                rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
-                        rendererFile, rendererVarName, "Engine.Engine", rendererDefault,
-                        rendererChoices, rendererValues);
-            }
-            rendererSetupAction.setDescription("Options to remove black outlines from the game, giving a massive performance boost overall");
-            actions.add(rendererSetupAction);
+        }
+        rendererSetupAction.setDescription("Options to remove black outlines from the game, giving a massive performance boost overall");
+        actions.add(rendererSetupAction);
 
-            INIFileEditSetupAction noDistortions = new INIFileEditSetupAction("Disable distortion", engineINIFile, "Distortion", "SystemSettings", "True", "False");
-            noDistortions.setDescription("Disables the distortion effect around explosions in combat, decreasing visual polution whilst increasing performance");
-            actions.add(noDistortions);
+        INIFileEditSetupAction noDistortions = new INIFileEditSetupAction("Disable distortion", engineINIFile, "Distortion", "SystemSettings", "True", "False");
+        noDistortions.setDescription("Disables the distortion effect around explosions in combat, decreasing visual polution whilst increasing performance");
+        actions.add(noDistortions);
 
-            INIFileEditSetupAction noGodRays = new INIFileEditSetupAction("No godrays", engineINIFile, "bAllowLightShafts", "SystemSettings", "True", "False");
-            noGodRays.setDescription("No more god rays. Very noticable in Washburne refinery");
-            actions.add(noGodRays);
+        INIFileEditSetupAction noGodRays = new INIFileEditSetupAction("No godrays", engineINIFile, "bAllowLightShafts", "SystemSettings", "True", "False");
+        noGodRays.setDescription("No more god rays. Very noticable in Washburne refinery");
+        actions.add(noGodRays);
 
-            INIFileEditSetupAction simpleShadows = new INIFileEditSetupAction("Simple shadows", engineINIFile, "DynamicShadows", "SystemSettings", "True", "False");
-            simpleShadows.setDescription("Circular shadows instead of full shadows");
-            actions.add(simpleShadows);
+        INIFileEditSetupAction simpleShadows = new INIFileEditSetupAction("Simple shadows", engineINIFile, "DynamicShadows", "SystemSettings", "True", "False");
+        simpleShadows.setDescription("Circular shadows instead of full shadows");
+        actions.add(simpleShadows);
 
-            INIFileEditSetupAction ragdollSetup1 = new INIFileEditSetupAction("", gameINIFile, "SecondsBeforeConsideringRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
-            INIFileEditSetupAction ragdollSetup2 = new INIFileEditSetupAction("", gameINIFile, "SecondsBeforeVisibleRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
-            ragdollSetup1.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
-            ragdollSetup2.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
-            CompoundSetupAction fewerCorpses = new CompoundSetupAction("Fewer corpses", ragdollSetup1, ragdollSetup2);
-            fewerCorpses.setDescription("Reduces the time it takes for corpses to decay to 30 seconds");
-            actions.add(fewerCorpses);
+        INIFileEditSetupAction ragdollSetup1 = new INIFileEditSetupAction("", gameINIFile, "SecondsBeforeConsideringRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
+        INIFileEditSetupAction ragdollSetup2 = new INIFileEditSetupAction("", gameINIFile, "SecondsBeforeVisibleRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
+        ragdollSetup1.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
+        ragdollSetup2.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
+        CompoundSetupAction fewerCorpses = new CompoundSetupAction("Fewer corpses", ragdollSetup1, ragdollSetup2);
+        fewerCorpses.setDescription("Reduces the time it takes for corpses to decay to 30 seconds");
+        actions.add(fewerCorpses);
 
-            List<String> movies1 = new ArrayList<>(Arrays.asList(new String[]{"2K_logo", "Gearbox_logo", "Loading"}));
-            List<String> movies2 = new ArrayList<>(Arrays.asList(new String[]{";2K_logo", ";Gearbox_logo", ";Loading"}));
-            if (VIRTUAL_OS != OSInfo.OS.WINDOWS) {
-                movies1.add("Aspyr");
-                movies2.add(";Aspyr");
-                if (type == PatchType.TPS) {
-                    // TODO: I'm not sure if these still show up on Mac; they *will* be there on native Linux though.
-                    movies1.add("2K_Australia_Logo");
-                    movies2.add(";2K_Australia_Logo");
-                }
-            }
-            INIFileEditSetupAction quickerStartup = new INIFileEditSetupAction("Quicker startup", engineINIFile, "StartupMovies", "FullScreenMovie", movies1.toArray(new String[0]), movies2.toArray(new String[0]));
-            quickerStartup.setDescription("Removes some of the startup screens, getting you to the main menu faster");
-            quickerStartup.setAlternateChecker((String value) -> {
-                if (value.isEmpty()) {
-                    return SetupStatus.ACTIVE;
-                }
-                boolean b1 = movies1.contains(value);
-                boolean b2 = movies2.contains(value);
-                if (b1 && b2) {
-                    return SetupStatus.IGNORE;
-                } else if (b1) {
-                    return SetupStatus.INACTIVE;
-                } else if (b2) {
-                    return SetupStatus.ACTIVE;
-                }
-                return SetupStatus.UNKNOWN;
-            });
-            actions.add(quickerStartup);
-
-            INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction("Fewer cutscenes", engineINIFile, "bForceNoMovies", "FullScreenMovie", new String[]{"FALSE"}, new String[]{"TRUE"});
-            fewerCutscenes.setDescription("<html>Removes some cutscenes from the game. As a side effect, your loading screens turn black.<br/>There's also a mod that disables more cutscenes, without this side effect, by FromDarkHell");
-            actions.add(fewerCutscenes);
+        List<String> movies1 = new ArrayList<>(Arrays.asList(new String[]{"2K_logo", "Gearbox_logo", "Loading"}));
+        List<String> movies2 = new ArrayList<>(Arrays.asList(new String[]{";2K_logo", ";Gearbox_logo", ";Loading"}));
+        if (VIRTUAL_OS != OSInfo.OS.WINDOWS) {
+            movies1.add("Aspyr");
+            movies2.add(";Aspyr");
             if (type == PatchType.TPS) {
-                fewerCutscenes.disable("This feature soft-locks TPS while enabled, so it's not available through BLCMM.", false);
+                // TODO: I'm not sure if these still show up on Mac; they *will* be there on native Linux though.
+                movies1.add("2K_Australia_Logo");
+                movies2.add(";2K_Australia_Logo");
             }
+        }
+        INIFileEditSetupAction quickerStartup = new INIFileEditSetupAction("Quicker startup", engineINIFile, "StartupMovies", "FullScreenMovie", movies1.toArray(new String[0]), movies2.toArray(new String[0]));
+        quickerStartup.setDescription("Removes some of the startup screens, getting you to the main menu faster");
+        quickerStartup.setAlternateChecker((String value) -> {
+            if (value.isEmpty()) {
+                return SetupStatus.ACTIVE;
+            }
+            boolean b1 = movies1.contains(value);
+            boolean b2 = movies2.contains(value);
+            if (b1 && b2) {
+                return SetupStatus.IGNORE;
+            } else if (b1) {
+                return SetupStatus.INACTIVE;
+            } else if (b2) {
+                return SetupStatus.ACTIVE;
+            }
+            return SetupStatus.UNKNOWN;
+        });
+        actions.add(quickerStartup);
+
+        INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction("Fewer cutscenes", engineINIFile, "bForceNoMovies", "FullScreenMovie", new String[]{"FALSE"}, new String[]{"TRUE"});
+        fewerCutscenes.setDescription("<html>Removes some cutscenes from the game. As a side effect, your loading screens turn black.<br/>There's also a mod that disables more cutscenes, without this side effect, by FromDarkHell");
+        actions.add(fewerCutscenes);
+        if (type == PatchType.TPS) {
+            fewerCutscenes.disable("This feature soft-locks TPS while enabled, so it's not available through BLCMM.", false);
         }
         return actions;
     }

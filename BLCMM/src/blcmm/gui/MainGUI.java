@@ -747,7 +747,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        Startup.showIniTweaks(true);
+        Startup.showIniTweaks();
         this.requestFocus();
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
