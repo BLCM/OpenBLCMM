@@ -180,17 +180,6 @@ public final class MainGUI extends ForceClosingJFrame {
             ((TimedLabel) timedLabel).putString("launcher", "Please use the Launcher to launch BLCMM", 1, ThemeManager.ColorType.UINimbusSelectedText);
         }
 
-        FAQMenuButton.setToolTipText("<html><font color=\"red\">If your patch is not working, click here!</font>");
-        if (1 == 0) {
-            long until = 1518397083032L + 7 * 24 * 60 * 60 * 1000;
-            long diff = until - System.currentTimeMillis();
-            long days = diff / (1000 * 60 * 60 * 24);
-            long hours = (diff - days * 1000 * 60 * 60 * 24) / (1000 * 60 * 60);
-            long minutes = (diff - days * 1000 * 60 * 60 * 24 - hours * 1000 * 60 * 60) / (1000 * 60);
-            FAQMenuButton.setToolTipText("<html>According to <font color=\"#AA00AA\">Shadow</font> this button will do something in at most " + days + " days, " + hours + " hours, and " + minutes + " minutes.<br/> nvm, <font color=\"orange\">Koby</font> did it ( ͡° ͜ʖ ͡°)");
-        }
-        FAQMenuButton.getParent().remove(FAQMenuButton);//Not removing it alltogether just yet, JIC we want to use it in the future for other things
-
         // Re-apply our theme, to hopefully get our tree icons sorted
         setTheme(ThemeManager.getTheme());
         initializeWindowSize();
@@ -457,7 +446,6 @@ public final class MainGUI extends ForceClosingJFrame {
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-        FAQMenuButton = new javax.swing.JMenu();
 
         setTitle("dummy");
 
@@ -724,15 +712,6 @@ public final class MainGUI extends ForceClosingJFrame {
 
         jMenuBar1.add(HelpMenu);
 
-        FAQMenuButton.setText("Click here if you can't get your patch to work!");
-        FAQMenuButton.setFont(new java.awt.Font("Dialog", 3, 12)); // NOI18N
-        FAQMenuButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                FAQMenuButtonMouseClicked(evt);
-            }
-        });
-        jMenuBar1.add(FAQMenuButton);
-
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -799,19 +778,6 @@ public final class MainGUI extends ForceClosingJFrame {
         }
         this.requestFocus();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
-
-    private void FAQMenuButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FAQMenuButtonMouseClicked
-        try {
-            URL faq = new URL("https://docs.google.com/document/d/17bwfQXWavBDiQuthxueXbRzB7LIx37Ki1a4-P-0qBW8/edit"); // Still not porn
-            Desktop.getDesktop().browse(faq.toURI());
-            FAQMenuButton.setSelected(false);
-        } catch (IOException | URISyntaxException ex) {
-            GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(this,
-                    "Unable to launch FAQ in browser: " + ex.getMessage(),
-                    "Error launching FAQ", JOptionPane.WARNING_MESSAGE);
-        }
-    }//GEN-LAST:event_FAQMenuButtonMouseClicked
 
     private void quitMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitMenuButtonActionPerformed
         MainGUI.INSTANCE.dispose();
@@ -1449,7 +1415,6 @@ public final class MainGUI extends ForceClosingJFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu FAQMenuButton;
     private javax.swing.JMenu FileMenu;
     private javax.swing.JMenu HelpMenu;
     private javax.swing.JMenu ToolsMenu;

@@ -12,6 +12,7 @@ BLCMM Changelog
   - Developer Mode setting (this is now always enabled)
   - Game launch button
   - Hex Multitool launch
+- "Setup game files for mods" menu renamed to "INI Tweaks," and only handles INI tweaks now.
 - Improved Steam Library Folder detection using StidOfficial's SteamVDF
 - When creating and saving a new file, it now opens on the next boot
 - BL2 gets detected properly again on mac
