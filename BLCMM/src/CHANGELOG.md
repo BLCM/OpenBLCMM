@@ -5,7 +5,7 @@ BLCMM Changelog
 - Released under GPLv3
 - Compatibility through Java 19
 - Removed features:
-  - Hex Edits (PythonSDK should be used for these, instead)
+  - Hex Edits and Console Key(PythonSDK should be used for these, instead)
   - Plugin functionality
   - First-startup dialogs (welcome, game setup, question-mark/TINS prompt)
   - Structural Edits setting (this is now always enabled)

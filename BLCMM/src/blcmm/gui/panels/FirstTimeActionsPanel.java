@@ -107,8 +107,6 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
     private static final String SHA256_WINDOWS_BL2_PHYSX_DLL_ORIGINAL = "b04c6adac65712eb9a7be470ccbfb5ed96e7f6a1369e5dfcbe79e9825e627ee5";
     private static final String SHA256_WINDOWS_TPS_PHYSX_DLL_ORIGINAL = "1a0340ce2fec52612107a2943525bfaf53efa19269492641484432b964a552ed";
 
-    private final List<SetupAction> patchActions = new ArrayList<>(), consoleActions = new ArrayList<>();
-
     /**
      * Creates new form FirstTimeActions
      *
@@ -356,13 +354,6 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
     private List<ComponentProvider> getConfigActions(boolean BL2) {
         OSInfo.OS VIRTUAL_OS = GameDetection.getVirtualOS(BL2);
         List<ComponentProvider> actions = new ArrayList<>();
-        File inputINIFile = getConfigFile("WillowInput.ini", BL2);
-        FileEditChoiceSetupAction consoleKey = new FileEditChoiceSetupAction("Console key", inputINIFile, "ConsoleKey", "Engine.Console", "Undefine",
-                new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "~"/**/, "None"},
-                new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Tilde", "Undefine"});
-        consoleKey.setDescription("Select the key you wish to use to open the console");
-        actions.add(consoleKey);
-        consoleActions.add(consoleKey);
 
         if (advanced) {
             actions.add(new SeperatorComponentProvider("Performance boosting .ini tweaks"));
@@ -448,71 +439,6 @@ public class FirstTimeActionsPanel extends javax.swing.JPanel {
             }
         }
         return actions;
-    }
-
-    /**
-     * Shows the resulting dialog, if applicable. Let {@code} option be true, if
-     * the resulting dialog should display an option to re-open the
-     * FirstTimeActionPanel window, false otherwise. Technically, {@code options ==
-     * advanced} in all cases, but let's keep it seperate for now.
-     *
-     * @param option
-     * @return
-     */
-    public final boolean showResultString(boolean option) {
-        if (advanced) {
-            return false;
-        }
-
-        int patchCount = patchActions.size();
-        int patchDone = 0;
-        StringBuilder sb = new StringBuilder();
-        for (SetupAction action : patchActions) {
-            sb.append("Hex Action: " + action.getCurrentStatus() + ", ");
-            patchDone += action.getCurrentStatus() == SetupStatus.ACTIVE ? 1 : 0;
-        }
-        int consoleCount = consoleActions.size();
-        int consoleDone = 0;
-        for (SetupAction action : consoleActions) {
-            sb.append("Console Action: " + action.getCurrentStatus() + ", ");
-            consoleDone += (action.getCurrentStatus() == SetupStatus.ACTIVE || action.getCurrentStatus() == SetupStatus.UNKNOWN) ? 1 : 0;
-        }
-        if (sb.length() > 0) {
-            GlobalLogger.log(sb.substring(0, sb.length() - 2));
-        }
-        String forgot = null;
-
-        if (patchDone == 0 && patchCount > 0) {
-            if (consoleDone == 0 && consoleCount > 0) {
-                forgot = "hexedit your games <b><u>and</u></b> activate your console";
-            } else {
-                forgot = "hexedit your games";
-            }
-        } else if (consoleDone == 0 && consoleCount > 0) {
-            forgot = "activate your console";
-        }
-
-        if (forgot != null) {
-            String base = "<html>It seems like you were in such a hurry to get into modding, that you forgot to %s.<br/>"
-                    + "You won't be contacting the developers to help you if your patch isn't working because of that, right?";
-            if (option) {
-                base += "<font size = \"2\"><br/><br/>"
-                        + "(Press yes to see the dialog again!)";
-                GlobalLogger.log(String.format("Showing dialog to re-show first time actions.(%s,%s,%s,%s)", patchCount, patchDone, consoleCount, consoleDone));
-                int res = JOptionPane.showConfirmDialog(this, String.format(base, forgot), "You forgot something...", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                return res == JOptionPane.YES_OPTION;
-            }
-            JOptionPane.showMessageDialog(this, String.format(base, forgot), "You forgot something...", JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-
-        if (consoleCount < patchCount) {
-            JOptionPane.showMessageDialog(this, "<html>For one or both games no configuration files could be found.<br/>"
-                    + "Run the games once, and revisit the setup screen to enable console.<br/>"
-                    + "This screen can be found in 'Tools'->'Setup game files for mods'", "Game detection incomplete", JOptionPane.WARNING_MESSAGE);
-            return false;
-        }
-        return false;
     }
 
     private abstract class ManualSelectionListener implements ActionListener {

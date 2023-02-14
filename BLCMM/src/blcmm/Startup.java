@@ -307,9 +307,7 @@ public class Startup {
 
     public static void showFirstTimeActions(boolean advanced) {
         FirstTimeActionsPanel panel = new FirstTimeActionsPanel(advanced);
-        do {
-            JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
-        } while (panel.showResultString(true));
+        JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
     }
 
     private static void generateHintsFile() {
