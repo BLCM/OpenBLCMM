@@ -12,6 +12,7 @@ BLCMM Changelog
   - Developer Mode setting (this is now always enabled)
   - Game launch button
   - Hex Multitool launch
+  - "Invert Mod" functionality
 - "Setup game files for mods" menu renamed to "INI Tweaks," and only handles
   INI tweaks now.
 - Added "allow toggling invdividual statements" option to settings, and improved

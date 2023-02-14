@@ -617,7 +617,6 @@ public final class CheckBoxTree extends JTree {
         private RightMouseButtonAction lockAction;
         private RightMouseButtonAction exportCategeroryAction;
         private RightMouseButtonAction copyModListAction;
-        private RightMouseButtonAction invertModAction;
         private RightMouseButtonAction goToOverwriterAction;
         private RightMouseButtonAction goToPartialOverwrittenAction;
         private RightMouseButtonAction goToCompleteOverwrittenAction;
@@ -653,7 +652,6 @@ public final class CheckBoxTree extends JTree {
             lockAction = new LockAction(tree);
             exportCategeroryAction = new ExportCategoryAsModAction(tree);
             copyModListAction = new CopyModListAction(tree);
-            invertModAction = new InvertModAction(tree);
             goToOverwriterAction = new GoToOverwriterAction(tree);
             goToPartialOverwrittenAction = new GoToPartialOverwrittenAction(tree);
             goToCompleteOverwrittenAction = new GoToCompleteOverwrittenAction(tree);
@@ -675,7 +673,6 @@ public final class CheckBoxTree extends JTree {
             actions2.add(lockAction);
             actions2.add(exportCategeroryAction);
             actions2.add(copyModListAction);
-            actions2.add(invertModAction);
             actions2.add(importModAction);
             actions2.add(goToOverwriterAction);
             actions2.add(goToPartialOverwrittenAction);
