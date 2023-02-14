@@ -51,7 +51,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -67,7 +66,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -155,17 +153,6 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         TitledBorder tpsBorder = new TitledBorder(new EtchedBorder(), PatchType.TPS.toString(), TitledBorder.LEFT, TitledBorder.CENTER);
         TPSPanel.setBorder(tpsBorder);
         masterPanel.add(TPSPanel);
-
-        try {
-            //This will not work in Java 10, appearantly, but since we're using 8, we good
-            Field f = TitledBorder.class.getDeclaredField("label");
-            f.setAccessible(true);
-            ((JLabel) f.get(bl2Border)).setIcon(new ImageIcon(PatchType.BL2.getIcon()));
-            ((JLabel) f.get(tpsBorder)).setIcon(new ImageIcon(PatchType.TPS.getIcon()));
-            f.setAccessible(false);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
