@@ -167,10 +167,6 @@ public final class MainGUI extends ForceClosingJFrame {
         themeComboBox.setSelectedItem(Options.INSTANCE.getTheme());
         jSpinner1.setValue(Options.INSTANCE.getFontsize());
 
-        if (!isMultiToolInstalled()) {
-            multiToolButton.getParent().remove(multiToolButton);
-        }
-
         setIconImages(Arrays.asList(
                 new Image[]{
                     IconManager.getBLCMMIcon(16),
@@ -451,7 +447,6 @@ public final class MainGUI extends ForceClosingJFrame {
         quitMenuButton = new javax.swing.JMenuItem();
         ToolsMenu = new javax.swing.JMenu();
         jMenuItem14 = new javax.swing.JMenuItem();
-        multiToolButton = new javax.swing.JMenuItem();
         objectExplorerButton = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -667,14 +662,6 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         ToolsMenu.add(jMenuItem14);
 
-        multiToolButton.setText("Open MultiTool");
-        multiToolButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                multiToolButtonActionPerformed(evt);
-            }
-        });
-        ToolsMenu.add(multiToolButton);
-
         objectExplorerButton.setText("Object explorer");
         objectExplorerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -812,30 +799,6 @@ public final class MainGUI extends ForceClosingJFrame {
         }
         this.requestFocus();
     }//GEN-LAST:event_jMenuItem5ActionPerformed
-
-    private void multiToolButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_multiToolButtonActionPerformed
-        String path = "multitool/BorderlandsHexMultitool.exe";
-        try {
-            //Search for game directories. Don't sure if it's needed, since we check it every launch
-            File BL2 = GameDetection.getBL2Exe();
-            File TPS = GameDetection.getTPSExe();
-            List<String> CLArgurments = new ArrayList<>();
-            CLArgurments.add(path);
-            if (BL2 != null) {
-                CLArgurments.add("-bl2=" + BL2.getAbsolutePath() + "");
-            }
-            if (TPS != null) {
-                CLArgurments.add("-tps=" + TPS.getAbsolutePath() + "");
-            }
-            ProcessBuilder proc = new ProcessBuilder(CLArgurments);
-            proc.start();
-        } catch (IOException ex) {
-            Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this,
-                    "Unable to launch Hex Multitool: " + ex.getMessage(),
-                    "Error launching Hex Multitool", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_multiToolButtonActionPerformed
 
     private void FAQMenuButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FAQMenuButtonMouseClicked
         try {
@@ -1513,7 +1476,6 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTree jTree1;
-    private javax.swing.JMenuItem multiToolButton;
     private javax.swing.JMenuItem newFileMenuButton;
     private javax.swing.JMenuItem objectExplorerButton;
     private javax.swing.JCheckBox offlineCheckBox;
@@ -1711,11 +1673,6 @@ public final class MainGUI extends ForceClosingJFrame {
             }
         };
         sw.execute();
-    }
-
-    private static boolean isMultiToolInstalled() {
-        File multiloc = new File(System.getProperty("user.dir") + "/multitool/BorderlandsHexMultitool.exe");
-        return multiloc.exists();
     }
 
     public void setChangePatchTypeEnabled(boolean selected) {

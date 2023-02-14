@@ -127,14 +127,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem14ActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="multiToolButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Open MultiTool"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="multiToolButtonActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="objectExplorerButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Object explorer"/>
