@@ -15,17 +15,8 @@ BLCMM Changelog
 - When creating and saving a new file, it now opens on the next boot
 - BL2 gets detected properly again on mac
 - Mac (and native Linux) "online" patch saving was fixed
-   TODO: *Hex editing on mac has been enhanced - you no longer need to go back to the title to execute mods, and big mods work properly now
-   TODO: *Thanks to c0dycode and Apple1417 for finding this enhancement!
 - Backwards compatibility for engine.upk replacement has been removed
-- Create your own plugin button is now publicly available TODO make sure the zip file is up to date
 - Opening a .blcm file trough Windows' context menu now actually opens the file in BLCMM
-
-The following are currently in the code but commented out
-1.2.1? - c0dycode's Pluginloader is now installed when hexediting your game
-1.2.1? - Added install options for c0dycode's AutoExec and CommandInjector / pySDK?
-  - Several auto-save features when launching game trough BLCMM / when autoexec is installed
-  - Added a management menu for when c0dycode's autoexec is installed
 
 **v1.2.0** May 22, 2020
 - Added the ability to drag-and-drop text around plenty of BLCMM's text boxes.
