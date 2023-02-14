@@ -184,6 +184,10 @@ public class Options {
                 "Enables/Disables being able to Drag & Drop"
                 + " text into text fields"));
 
+        this.registerOption(new BooleanOption(OptionNames.leafSelectionAllowed.toString(), false,
+                "Enable Toggling Individual Statements", null,
+                "Enables/Disables being able to toggle individual statements"));
+        
         //Next, the launcher splash screen selector. This requires some extra magic;
         try {
             JarFile launcher = new JarFile(BLCMMUtilities.getLauncher());

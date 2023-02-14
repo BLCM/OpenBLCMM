@@ -627,7 +627,6 @@ public final class CheckBoxTree extends JTree {
 
         private final MouseListener orig;
         private final TreeTransferHandler treeTransferHandler;
-        private int invalidLeafSelectionAttemptCounter;
 
         public CheckboxTreeMouseAdapter(MouseListener orig, TreeTransferHandler treeTransferHandler, CheckBoxTree tree) {
             this.orig = orig;
@@ -718,16 +717,17 @@ public final class CheckBoxTree extends JTree {
                 return;
             }
 
-            //Don't allow checking of leafs.
+            //Don't allow checking of leafs by default
             if ((tp == tpfield)) {
                 boolean cancelbecauseLeaf = false;
                 if (((DefaultMutableTreeNode) tp.getLastPathComponent()).isLeaf() && !Options.INSTANCE.getLeafSelectionAllowed()) {
-                    invalidLeafSelectionAttemptCounter++;
-                    if (invalidLeafSelectionAttemptCounter > 5) {
-                        int allow = JOptionPane.showConfirmDialog(tree, "Trying so many times... You seem persistent!\nEnable toggleable of leafs?", "Make leafs toggleable?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (allow == JOptionPane.YES_OPTION) {
-                            Options.INSTANCE.seLeafSelectionAllowed(true);
-                        }
+                    int allow = JOptionPane.showConfirmDialog(tree,
+                            "BLCMM usually disallows toggling individual statements.\nEnable that functionality anyway?",
+                            "Allow toggling individual statements?",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+                    if (allow == JOptionPane.YES_OPTION) {
+                        Options.INSTANCE.seLeafSelectionAllowed(true);
                     }
                     cancelbecauseLeaf = !Options.INSTANCE.getLeafSelectionAllowed();
                 }
