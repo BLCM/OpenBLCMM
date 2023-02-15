@@ -26,9 +26,6 @@ BLCMM Changelog
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
 - When creating and saving a new file, it now opens on the next boot
-- BL2 gets detected properly again on mac
-- Mac (and native Linux) "online" patch saving was fixed
-- Backwards compatibility for engine.upk replacement has been removed
 - Opening a .blcm file trough Windows' context menu now actually opens the file in BLCMM
 
 **v1.2.0** May 22, 2020
