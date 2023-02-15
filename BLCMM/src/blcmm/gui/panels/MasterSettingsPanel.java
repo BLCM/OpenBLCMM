@@ -48,7 +48,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         GlobalLogger.log("Opened Master settings Panel");
         initComponents();
 
-        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS);
+        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, jTabbedPane1);
         toolSettingsPanel.setSize(jPanel1.getSize());
         jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.PAGE_AXIS));
         jPanel1.add(toolSettingsPanel);
@@ -58,7 +58,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.PAGE_AXIS));
         jPanel2.add(updateSettingsPanel);
         
-        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS,
+        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, jTabbedPane1,
             "The settings on this screen should be left alone unless you know<br/>"
             + "exactly what they do, and have a strong need to do so."
         );

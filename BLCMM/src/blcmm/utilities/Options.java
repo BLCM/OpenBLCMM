@@ -498,10 +498,14 @@ public class Options {
     /**
      * Restores all our options to their default values, and saves out the
      * options file.
+     * 
+     * @param shownPanel The panel whose values we should be resetting
      */
-    public void restoreDefaults() {
+    public void restoreDefaults(Option.Shown shownPanel) {
         for (Option o : OPTION_MAP.values()) {
-            o.restoreDefault();
+            if (o.isDisplayOnPanel(shownPanel)) {
+                o.restoreDefault();
+            }
         }
         this.save();
     }

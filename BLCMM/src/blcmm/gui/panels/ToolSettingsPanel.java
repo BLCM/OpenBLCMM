@@ -53,15 +53,17 @@ public class ToolSettingsPanel extends JPanel {
 
     private final Option.Shown shownPanel;
     private final Options settings;
+    private final Component focusAfterResetComponent;
     private boolean needsToolReset = false;
     private boolean needsTreeResize = false;
 
-    public ToolSettingsPanel(Option.Shown shownPanel) {
-        this(shownPanel, null);
+    public ToolSettingsPanel(Option.Shown shownPanel, Component focusAfterResetComponent) {
+        this(shownPanel, focusAfterResetComponent, null);
     }
     
-    public ToolSettingsPanel(Option.Shown shownPanel, String headerText) {
+    public ToolSettingsPanel(Option.Shown shownPanel, Component focusAfterResetComponent, String headerText) {
         this.shownPanel = shownPanel;
+        this.focusAfterResetComponent = focusAfterResetComponent;
         this.settings = Options.INSTANCE;
         generateGUI(headerText);        
     }
@@ -152,11 +154,24 @@ public class ToolSettingsPanel extends JPanel {
         constr.insets.left = SPACING;
         JButton but = new JButton("Restore defaults");
         but.addActionListener(ae -> {
-            Options.INSTANCE.restoreDefaults();
+            Options.INSTANCE.restoreDefaults(this.shownPanel);
             for (Component c : inst.getComponents()) {
                 inst.remove(c);
             }
             generateGUI(headerText);
+            
+            // So for *some* reason, on our "Dangerous settings" tab, if we don't
+            // trigger a focus change like this, the GUI appears frozen up after
+            // we hit the button.  The button sesms to remain clicked, mousing
+            // over option checkboxes doesn't give any visual indication of mouseover,
+            // and it generally just feels frozen.  If we mouseover the *tab*,
+            // though,things recover.  So, we're now passing in the main JTabbedPane
+            // when constructing these, and explicitly requesting focus after
+            // hitting the Restore Defaults button.  This is *not* needed for the
+            // first pane, but doing it doesn't hurt, so whatever.
+            if (this.focusAfterResetComponent != null) {
+                this.focusAfterResetComponent.requestFocus();
+            }
         });
         this.add(but, constr);
 
