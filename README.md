@@ -7,7 +7,6 @@ TODO (immediate)
 - AoDK support (both in BLCMM itself and OE)
 - Rewrite launcher w/ GPL version
 - Rewrite other linked libraries w/ GPL versions
-- Make sure the former hexedit window tells folks to hit up PythonSDK
 - Default to offline; don't even bother with the checkbox
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
