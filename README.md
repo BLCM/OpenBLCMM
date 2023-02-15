@@ -7,7 +7,8 @@ TODO (immediate)
 - AoDK support (both in BLCMM itself and OE)
 - Rewrite launcher w/ GPL version
 - Rewrite other linked libraries w/ GPL versions
-- Default to offline; don't even bother with the checkbox
+  - `blcmm.model.PatchType` in particular could really use a rewrite.
+    Various functionality in there that needs to be tweaked.
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
@@ -24,4 +25,6 @@ TODO (long-term)
   return the first thing they find, though.
 - Maybe completely separate BLCMM from OE?
 - Maybe completely separate INI tweaks into their own little app?
+- Pass around references to stuff like our Options instance, rather than
+  referring to global "instance" vars?
 
