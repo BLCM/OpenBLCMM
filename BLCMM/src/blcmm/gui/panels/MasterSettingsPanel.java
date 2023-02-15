@@ -48,17 +48,17 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         GlobalLogger.log("Opened Master settings Panel");
         initComponents();
 
-        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, jTabbedPane1);
-        toolSettingsPanel.setSize(jPanel1.getSize());
-        jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.PAGE_AXIS));
-        jPanel1.add(toolSettingsPanel);
+        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, masterSettingsTabbedPane);
+        toolSettingsPanel.setSize(generalSettingsGuiPanel.getSize());
+        generalSettingsGuiPanel.setLayout(new BoxLayout(generalSettingsGuiPanel, BoxLayout.PAGE_AXIS));
+        generalSettingsGuiPanel.add(toolSettingsPanel);
 
         updateSettingsPanel = new UpdateSettingsPanel();
-        updateSettingsPanel.setSize(jPanel2.getSize());
-        jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.PAGE_AXIS));
-        jPanel2.add(updateSettingsPanel);
+        updateSettingsPanel.setSize(autoupdateSettingsGuiPanel.getSize());
+        autoupdateSettingsGuiPanel.setLayout(new BoxLayout(autoupdateSettingsGuiPanel, BoxLayout.PAGE_AXIS));
+        autoupdateSettingsGuiPanel.add(updateSettingsPanel);
         
-        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, jTabbedPane1,
+        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, masterSettingsTabbedPane,
             "The settings on this screen should be left alone unless you know<br/>"
             + "exactly what they do, and have a strong need to do so."
         );
@@ -66,8 +66,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         dangerousSettingsGuiPanel.setLayout(new BoxLayout(dangerousSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         dangerousSettingsGuiPanel.add(dangerousSettingsPanel);
 
-        jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
-        jScrollPane2.getVerticalScrollBar().setUnitIncrement(16);
+        generalSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        autoupdateSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         dangerousSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         Utilities.makeWindowOfComponentResizable(this);
@@ -82,45 +82,45 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jPanel2 = new javax.swing.JPanel();
+        masterSettingsTabbedPane = new javax.swing.JTabbedPane();
+        generalSettingsGuiScrollPane = new javax.swing.JScrollPane();
+        generalSettingsGuiPanel = new javax.swing.JPanel();
+        autoupdateSettingsGuiScrollPane = new javax.swing.JScrollPane();
+        autoupdateSettingsGuiPanel = new javax.swing.JPanel();
         dangerousSettingsGuiScrollPane = new javax.swing.JScrollPane();
         dangerousSettingsGuiPanel = new javax.swing.JPanel();
 
-        jTabbedPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        masterSettingsTabbedPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout generalSettingsGuiPanelLayout = new javax.swing.GroupLayout(generalSettingsGuiPanel);
+        generalSettingsGuiPanel.setLayout(generalSettingsGuiPanelLayout);
+        generalSettingsGuiPanelLayout.setHorizontalGroup(
+            generalSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 507, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        generalSettingsGuiPanelLayout.setVerticalGroup(
+            generalSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 314, Short.MAX_VALUE)
         );
 
-        jScrollPane1.setViewportView(jPanel1);
+        generalSettingsGuiScrollPane.setViewportView(generalSettingsGuiPanel);
 
-        jTabbedPane1.addTab("General settings", jScrollPane1);
+        masterSettingsTabbedPane.addTab("General settings", generalSettingsGuiScrollPane);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout autoupdateSettingsGuiPanelLayout = new javax.swing.GroupLayout(autoupdateSettingsGuiPanel);
+        autoupdateSettingsGuiPanel.setLayout(autoupdateSettingsGuiPanelLayout);
+        autoupdateSettingsGuiPanelLayout.setHorizontalGroup(
+            autoupdateSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 507, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        autoupdateSettingsGuiPanelLayout.setVerticalGroup(
+            autoupdateSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 314, Short.MAX_VALUE)
         );
 
-        jScrollPane2.setViewportView(jPanel2);
+        autoupdateSettingsGuiScrollPane.setViewportView(autoupdateSettingsGuiPanel);
 
-        jTabbedPane1.addTab("Autoupdate settings", jScrollPane2);
+        masterSettingsTabbedPane.addTab("Autoupdate settings", autoupdateSettingsGuiScrollPane);
 
         javax.swing.GroupLayout dangerousSettingsGuiPanelLayout = new javax.swing.GroupLayout(dangerousSettingsGuiPanel);
         dangerousSettingsGuiPanel.setLayout(dangerousSettingsGuiPanelLayout);
@@ -135,28 +135,28 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
         dangerousSettingsGuiScrollPane.setViewportView(dangerousSettingsGuiPanel);
 
-        jTabbedPane1.addTab("Dangerous settings", dangerousSettingsGuiScrollPane);
+        masterSettingsTabbedPane.addTab("Dangerous settings", dangerousSettingsGuiScrollPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(masterSettingsTabbedPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+            .addComponent(masterSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel autoupdateSettingsGuiPanel;
+    private javax.swing.JScrollPane autoupdateSettingsGuiScrollPane;
     private javax.swing.JPanel dangerousSettingsGuiPanel;
     private javax.swing.JScrollPane dangerousSettingsGuiScrollPane;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel generalSettingsGuiPanel;
+    private javax.swing.JScrollPane generalSettingsGuiScrollPane;
+    private javax.swing.JTabbedPane masterSettingsTabbedPane;
     // End of variables declaration//GEN-END:variables
 
     public boolean needsLauncherReset() {
@@ -176,6 +176,6 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     }
 
     public void focusToUpdatePanel() {
-        jTabbedPane1.setSelectedIndex(1);
+        masterSettingsTabbedPane.setSelectedIndex(1);
     }
 }
