@@ -5,7 +5,7 @@ BLCMM Changelog
 - Released under GPLv3
 - Compatibility through Java 19
 - Removed features:
-  - Hex Edits and Console Key(PythonSDK should be used for these, instead)
+  - Hex Edits and Console Key (PythonSDK should be used for these, instead)
   - Plugin functionality
   - First-startup dialogs (welcome, game setup, question-mark/TINS prompt)
   - Structural Edits setting (this is now always enabled)
@@ -13,8 +13,8 @@ BLCMM Changelog
   - Game launch button
   - Hex Multitool launch
   - "Invert Mod" functionality
-- "Setup game files for mods" menu renamed to "INI Tweaks," and only handles
-  INI tweaks now.
+- "Setup game files for mods" dialog redirects to PythonSDK
+- INI file tweaks moved to new "INI Tweaks" dialog
 - Added "allow toggling invdividual statements" option to settings, and improved
   dynamically setting the option from the main BLCMM window.
 - Improved Steam Library Folder detection using StidOfficial's SteamVDF

@@ -85,6 +85,7 @@ public class ThemeManager {
         UIText,
         UITreeIcons,
         UICancelButtonBackground,
+        UITextLink,
         //
         // This next batch are for the tree highlighting.
         TreeMUTChecker,
@@ -154,6 +155,7 @@ public class ThemeManager {
         theme.put(ColorType.UIText, new Color(230, 230, 230));
         theme.put(ColorType.UITreeIcons, new Color(190, 190, 190));
         theme.put(ColorType.UICancelButtonBackground, new Color(10, 0, 0));
+        theme.put(ColorType.UITextLink, new Color(170, 170, 255));
         theme.put(ColorType.TreeMUTChecker, new Color(192, 139, 200));
         theme.put(ColorType.TreeCommentChecker, theme.get(ColorType.UINimbusAlertYellow));
         theme.put(ColorType.TreeSpecialCommentChecker, theme.get(ColorType.UINimbusAlertYellow).brighter().brighter().brighter());
@@ -196,6 +198,7 @@ public class ThemeManager {
         theme.put(ColorType.UIText, new Color(0, 0, 0));
         theme.put(ColorType.UITreeIcons, new Color(100, 100, 100));
         theme.put(ColorType.UICancelButtonBackground, new Color(220, 110, 110));
+        theme.put(ColorType.UITextLink, new Color(20, 20, 105));
         theme.put(ColorType.TreeMUTChecker, new Color(147, 9, 167));
         theme.put(ColorType.TreeCommentChecker, theme.get(ColorType.UINimbusAlertYellow));
         theme.put(ColorType.TreeSpecialCommentChecker, new Color(187, 198, 4));

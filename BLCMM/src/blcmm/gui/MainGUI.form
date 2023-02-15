@@ -119,6 +119,14 @@
             <Property name="text" type="java.lang.String" value="Tools"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="setupGameFilesButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Setup game files for mods"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setupGameFilesButtonActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem14">
               <Properties>
                 <Property name="text" type="java.lang.String" value="INI Tweaks"/>

@@ -39,6 +39,7 @@ import blcmm.gui.panels.AboutPanel;
 import blcmm.gui.panels.IntegerConverter;
 import blcmm.gui.panels.MasterSettingsPanel;
 import blcmm.gui.panels.ObjectExplorerPanel;
+import blcmm.gui.panels.SetupGameFilesPanel;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.gui.tree.CheckBoxTree;
@@ -435,6 +436,7 @@ public final class MainGUI extends ForceClosingJFrame {
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         quitMenuButton = new javax.swing.JMenuItem();
         ToolsMenu = new javax.swing.JMenu();
+        setupGameFilesButton = new javax.swing.JMenuItem();
         jMenuItem14 = new javax.swing.JMenuItem();
         objectExplorerButton = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
@@ -641,6 +643,14 @@ public final class MainGUI extends ForceClosingJFrame {
         jMenuBar1.add(FileMenu);
 
         ToolsMenu.setText("Tools");
+
+        setupGameFilesButton.setText("Setup game files for mods");
+        setupGameFilesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setupGameFilesButtonActionPerformed(evt);
+            }
+        });
+        ToolsMenu.add(setupGameFilesButton);
 
         jMenuItem14.setText("INI Tweaks");
         jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
@@ -1009,6 +1019,16 @@ public final class MainGUI extends ForceClosingJFrame {
             }
         }
     }//GEN-LAST:event_offlineCheckBoxChanged
+
+    private void setupGameFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setupGameFilesButtonActionPerformed
+        JDialog dialog = new JDialog(this, "Setup Game Files for Mods");
+        dialog.add(new SetupGameFilesPanel());
+        dialog.setModal(true);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+        this.requestFocus();
+    }//GEN-LAST:event_setupGameFilesButtonActionPerformed
 
     private void gameSelectionAction(ItemEvent e) {
         PatchType type = getGameSelectionPanel().getNonNullGameType();
@@ -1449,6 +1469,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenuItem quitMenuButton;
     private javax.swing.JMenuItem saveMenuButton;
     private javax.swing.JMenuItem saveToFileMenuButton;
+    private javax.swing.JMenuItem setupGameFilesButton;
     private javax.swing.JComboBox<Theme> themeComboBox;
     private javax.swing.JLabel timedLabel;
     // End of variables declaration//GEN-END:variables
