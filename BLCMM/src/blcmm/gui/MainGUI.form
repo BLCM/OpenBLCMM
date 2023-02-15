@@ -312,10 +312,8 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <Component id="gameTypePanel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="offlineCheckBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="timedLabel" max="32767" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <Component id="timedLabel" pref="553" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="themeComboBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -339,7 +337,6 @@
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
               <Component id="timedLabel" alignment="0" max="32767" attributes="0"/>
-              <Component id="offlineCheckBox" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -362,15 +359,6 @@
             </DimensionLayout>
           </Layout>
         </Container>
-        <Component class="javax.swing.JCheckBox" name="offlineCheckBox">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Offline"/>
-            <Property name="toolTipText" type="java.lang.String" value="Check this if you are not connected to SHiFT when starting the game"/>
-          </Properties>
-          <Events>
-            <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="offlineCheckBoxChanged"/>
-          </Events>
-        </Component>
         <Component class="javax.swing.JSpinner" name="jSpinner1">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">

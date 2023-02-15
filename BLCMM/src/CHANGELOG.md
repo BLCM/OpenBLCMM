@@ -18,6 +18,8 @@ BLCMM Changelog
 - Added "allow toggling invdividual statements" option to settings, and improved
   dynamically setting the option from the main BLCMM window.
 - Improved Steam Library Folder detection using StidOfficial's SteamVDF
+- Moved "offline" checkbox to new "Dangerous settings" dialog.  Mods will be
+  saved in offline mode by default, and it's recommended to keep it that way.
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
 - When creating and saving a new file, it now opens on the next boot

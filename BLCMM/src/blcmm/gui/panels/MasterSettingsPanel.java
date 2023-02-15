@@ -27,6 +27,7 @@
 package blcmm.gui.panels;
 
 import blcmm.utilities.Utilities;
+import blcmm.utilities.options.Option;
 import general.utilities.GlobalLogger;
 import javax.swing.BoxLayout;
 
@@ -38,6 +39,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
     private final ToolSettingsPanel toolSettingsPanel;
     private final UpdateSettingsPanel updateSettingsPanel;
+    private final ToolSettingsPanel dangerousSettingsPanel;
 
     /**
      * Creates new form MasterSettingsPanel
@@ -46,7 +48,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         GlobalLogger.log("Opened Master settings Panel");
         initComponents();
 
-        toolSettingsPanel = new ToolSettingsPanel();
+        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS);
         toolSettingsPanel.setSize(jPanel1.getSize());
         jPanel1.setLayout(new BoxLayout(jPanel1, BoxLayout.PAGE_AXIS));
         jPanel1.add(toolSettingsPanel);
@@ -55,9 +57,18 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         updateSettingsPanel.setSize(jPanel2.getSize());
         jPanel2.setLayout(new BoxLayout(jPanel2, BoxLayout.PAGE_AXIS));
         jPanel2.add(updateSettingsPanel);
+        
+        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS,
+            "The settings on this screen should be left alone unless you know<br/>"
+            + "exactly what they do, and have a strong need to do so."
+        );
+        dangerousSettingsPanel.setSize(dangerousSettingsGuiPanel.getSize());
+        dangerousSettingsGuiPanel.setLayout(new BoxLayout(dangerousSettingsGuiPanel, BoxLayout.PAGE_AXIS));
+        dangerousSettingsGuiPanel.add(dangerousSettingsPanel);
 
         jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
         jScrollPane2.getVerticalScrollBar().setUnitIncrement(16);
+        dangerousSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         Utilities.makeWindowOfComponentResizable(this);
     }
@@ -76,6 +87,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
+        dangerousSettingsGuiScrollPane = new javax.swing.JScrollPane();
+        dangerousSettingsGuiPanel = new javax.swing.JPanel();
 
         jTabbedPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -109,11 +122,26 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Autoupdate settings", jScrollPane2);
 
+        javax.swing.GroupLayout dangerousSettingsGuiPanelLayout = new javax.swing.GroupLayout(dangerousSettingsGuiPanel);
+        dangerousSettingsGuiPanel.setLayout(dangerousSettingsGuiPanelLayout);
+        dangerousSettingsGuiPanelLayout.setHorizontalGroup(
+            dangerousSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 523, Short.MAX_VALUE)
+        );
+        dangerousSettingsGuiPanelLayout.setVerticalGroup(
+            dangerousSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 307, Short.MAX_VALUE)
+        );
+
+        dangerousSettingsGuiScrollPane.setViewportView(dangerousSettingsGuiPanel);
+
+        jTabbedPane1.addTab("Dangerous settings", dangerousSettingsGuiScrollPane);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -122,6 +150,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel dangerousSettingsGuiPanel;
+    private javax.swing.JScrollPane dangerousSettingsGuiScrollPane;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -134,11 +164,11 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     }
 
     public boolean needsToolReset() {
-        return toolSettingsPanel.needsToolReset();
+        return toolSettingsPanel.needsToolReset() || dangerousSettingsPanel.needsToolReset();
     }
 
     public boolean needsTreeResize() {
-        return toolSettingsPanel.needsTreeResize();
+        return toolSettingsPanel.needsTreeResize() || dangerousSettingsPanel.needsTreeResize();
     }
 
     public UpdateSettingsPanel getUpdatePanel() {

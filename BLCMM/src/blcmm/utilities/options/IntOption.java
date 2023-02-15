@@ -62,6 +62,7 @@ public class IntOption extends Option<Integer> {
      *
      * @param name Key for the option
      * @param defaultData Default value for the option
+     * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
      * @param minValue Minimum value for the spin button
      * @param maxValue Maximum value for the spin button
@@ -70,12 +71,13 @@ public class IntOption extends Option<Integer> {
      */
     public IntOption(String name,
             int defaultData,
+            Option.Shown shownPanel,
             String displayDesc,
             int minValue,
             int maxValue,
             String callback,
             String tooltip) {
-        super(name, defaultData, displayDesc, callback, tooltip);
+        super(name, defaultData, shownPanel, displayDesc, callback, tooltip);
         this.minValue = minValue;
         this.maxValue = maxValue;
     }
@@ -102,7 +104,7 @@ public class IntOption extends Option<Integer> {
      */
     @Override
     public void setData(Integer newData) {
-        if (this.isDisplayOnSettingsPanel()) {
+        if (this.isDisplayOnPanel(this.shownPanel)) {
             if (newData < this.minValue) {
                 newData = this.minValue;
             } else if (newData > this.maxValue) {

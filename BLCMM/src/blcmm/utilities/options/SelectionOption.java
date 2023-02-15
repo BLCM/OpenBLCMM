@@ -56,6 +56,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      *
      * @param name Key for the option
      * @param defaultData Default value for the option
+     * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
@@ -64,12 +65,13 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      */
     public SelectionOption(String name,
             O defaultData,
+            Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip,
             O[] options,
             OptionDataConverter<O> converter) {
-        this(name, defaultData, displayDesc, callback, tooltip, null, options, converter);
+        this(name, defaultData, shownPanel, displayDesc, callback, tooltip, null, options, converter);
     }
 
     /**
@@ -78,6 +80,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      *
      * @param name Key for the option
      * @param defaultData Default value for the option
+     * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
@@ -88,13 +91,14 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      */
     public SelectionOption(String name,
             O defaultData,
+            Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip,
             String setupCallback,
             O[] options,
             OptionDataConverter<O> converter) {
-        super(name, defaultData, displayDesc, callback, tooltip, setupCallback);
+        super(name, defaultData, shownPanel, displayDesc, callback, tooltip, setupCallback);
         this.options = options;
         this.converter = converter;
     }
@@ -143,12 +147,13 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
 
     public static SelectionOption createStringSelectionOption(String name,
             String defaultData,
+            Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip,
             StringTable table) {
         StringSelectionOptionDataConverter conv = new StringSelectionOptionDataConverter(defaultData, Arrays.asList(table.keySet().toArray(new String[0])));
-        SelectionOption res = new SelectionOption(name, conv.def, displayDesc, callback, tooltip, conv.options.toArray(new StringSelectionOptionData[0]), conv) {
+        SelectionOption res = new SelectionOption(name, conv.def, shownPanel, displayDesc, callback, tooltip, conv.options.toArray(new StringSelectionOptionData[0]), conv) {
             @Override
             public JComponent getGUIComponent(ToolSettingsPanel panel) {
                 JComboBox guiComponent = (JComboBox) super.getGUIComponent(panel);

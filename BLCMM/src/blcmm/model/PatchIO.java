@@ -33,6 +33,7 @@ import blcmm.utilities.GameDetection;
 import blcmm.utilities.HotfixConverter;
 import blcmm.utilities.ImportAnomalyLog;
 import blcmm.utilities.Utilities;
+import blcmm.utilities.Options;
 import general.utilities.GlobalLogger;
 import general.utilities.OSInfo;
 import java.io.BufferedReader;
@@ -1107,6 +1108,8 @@ public class PatchIO {
     }
 
     public static List<String> writeToFile(CompletePatch patch, SaveFormat format, Writer writer, boolean exporting) throws IOException {
+        // Enforce offline status from settings
+        patch.setOffline(Options.INSTANCE.getSaveAsOffline());
         Category root = patch.getRoot();
         PatchType type = patch.getType();
         if (format == SaveFormat.FT) {

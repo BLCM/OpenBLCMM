@@ -56,16 +56,18 @@ public class BooleanOption extends Option<Boolean> {
      *
      * @param name Key for the option
      * @param defaultData Default value for the option
+     * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
      */
     public BooleanOption(String name,
             boolean defaultData,
+            Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip) {
-        super(name, defaultData, displayDesc, callback, tooltip);
+        super(name, defaultData, shownPanel, displayDesc, callback, tooltip);
     }
 
     /**

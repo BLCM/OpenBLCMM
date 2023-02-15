@@ -37,14 +37,21 @@ import javax.swing.JComponent;
  * @author apocalyptech
  */
 public abstract class Option<T> {
+    
+    // Arguably this should be in blcmm.utilities.Options instead
+    public enum Shown {
+        NONE,
+        SETTINGS,
+        DANGEROUS
+    }
 
     private final String name;
 
     private T data;
 
     private T defaultData;
-
-    private final boolean displayOnSettingsPanel;
+    
+    protected Shown shownPanel;
 
     private final String displayDesc;
 
@@ -61,7 +68,7 @@ public abstract class Option<T> {
      * @param defaultData Default data for the option
      */
     public Option(String name, T defaultData) {
-        this(name, defaultData, null, null, null, null);
+        this(name, defaultData, Shown.NONE, null, null, null, null);
     }
 
     /**
@@ -70,14 +77,16 @@ public abstract class Option<T> {
      *
      * @param name Key of the option
      * @param defaultData Default data for the option
+     * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel.
      * @param callback A callback function to call when the option changes. Pass
      * null to not have a callback.
      * @param tooltip Tooltip to show on the control
      */
     public Option(String name, T defaultData,
-            String displayDesc, String callback, String tooltip) {
-        this(name, defaultData, displayDesc, callback, tooltip, null);
+            Shown shownPanel, String displayDesc,
+            String callback, String tooltip) {
+        this(name, defaultData, shownPanel, displayDesc, callback, tooltip, null);
     }
 
     /**
@@ -86,6 +95,7 @@ public abstract class Option<T> {
      *
      * @param name Key of the option
      * @param defaultData Default data for the option
+     * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel.
      * @param callback A callback function to call when the option changes. Pass
      * null to not have a callback.
@@ -94,12 +104,13 @@ public abstract class Option<T> {
      * option. Pass null to let it be set up as usual.
      */
     public Option(String name, T defaultData,
-            String displayDesc, String callback, String tooltip,
+            Shown shownPanel, String displayDesc,
+            String callback, String tooltip,
             String setupCallback) {
         this.name = name;
-        this.displayDesc = displayDesc;
-        this.displayOnSettingsPanel = (displayDesc != null);
         this.defaultData = defaultData;
+        this.shownPanel = shownPanel;
+        this.displayDesc = displayDesc;
         this.data = defaultData;
         this.callback = callback;
         this.tooltip = tooltip;
@@ -114,10 +125,11 @@ public abstract class Option<T> {
     }
 
     /**
-     * @return the displayOnSettingsPanel
+     * @param shownPanel The panel we're rendering
+     * @return Whether to show the option on this Panel
      */
-    public boolean isDisplayOnSettingsPanel() {
-        return displayOnSettingsPanel;
+    public boolean isDisplayOnPanel(Shown shownPanel) {
+        return (this.shownPanel == shownPanel && this.displayDesc != null);
     }
 
     /**

@@ -417,7 +417,6 @@ public final class MainGUI extends ForceClosingJFrame {
         jTree1 = new CheckBoxTree();
         jPanel2 = new javax.swing.JPanel();
         gameTypePanel = new GameSelectionPanel();
-        offlineCheckBox = new javax.swing.JCheckBox();
         jSpinner1 = new javax.swing.JSpinner();
         fontSizeLabel = new javax.swing.JLabel();
         themeComboBox = new javax.swing.JComboBox<>(ThemeManager.getAllInstalledThemes().toArray(new Theme[0]));
@@ -492,14 +491,6 @@ public final class MainGUI extends ForceClosingJFrame {
             .addGap(0, 24, Short.MAX_VALUE)
         );
 
-        offlineCheckBox.setText("Offline");
-        offlineCheckBox.setToolTipText("Check this if you are not connected to SHiFT when starting the game");
-        offlineCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                offlineCheckBoxChanged(evt);
-            }
-        });
-
         jSpinner1.setModel(new javax.swing.SpinnerNumberModel(12, 8, 36, 1));
         jSpinner1.setMinimumSize(new java.awt.Dimension(40, 20));
         jSpinner1.setPreferredSize(new java.awt.Dimension(60, 25));
@@ -526,10 +517,8 @@ public final class MainGUI extends ForceClosingJFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(gameTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(offlineCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(timedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(timedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 553, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(themeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -548,7 +537,6 @@ public final class MainGUI extends ForceClosingJFrame {
                     .addComponent(gameTypePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(timedLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(offlineCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         FileMenu.setText("File");
@@ -1011,15 +999,6 @@ public final class MainGUI extends ForceClosingJFrame {
         }
     }//GEN-LAST:event_jSpinner1StateChanged
 
-    private void offlineCheckBoxChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_offlineCheckBoxChanged
-        if (patch != null) {
-            patch.setOffline(offlineCheckBox.isSelected());
-            if (!this.currentlyLoadingPatch) {
-                ((CheckBoxTree) jTree1).setChanged(true);
-            }
-        }
-    }//GEN-LAST:event_offlineCheckBoxChanged
-
     private void setupGameFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setupGameFilesButtonActionPerformed
         JDialog dialog = new JDialog(this, "Setup Game Files for Mods");
         dialog.add(new SetupGameFilesPanel());
@@ -1263,7 +1242,6 @@ public final class MainGUI extends ForceClosingJFrame {
         importModZipMenuButton.setEnabled(true);
         saveMenuButton.setEnabled(true);
         saveToFileMenuButton.setEnabled(true);
-        offlineCheckBox.setEnabled(true);
         getGameSelectionPanel().setEnabled(true);
     }
 
@@ -1271,7 +1249,6 @@ public final class MainGUI extends ForceClosingJFrame {
         ((CheckBoxTree) jTree1).setPatch(patch);
         this.currentlyLoadingPatch = true;
         getGameSelectionPanel().setType(patch.getType());
-        offlineCheckBox.setSelected(patch.isOffline());
         this.currentlyLoadingPatch = false;
         jTree1.setEnabled(true);
         jTree1.getActionMap().put("Search", new AbstractAction() {
@@ -1463,7 +1440,6 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuItem newFileMenuButton;
     private javax.swing.JMenuItem objectExplorerButton;
-    private javax.swing.JCheckBox offlineCheckBox;
     private javax.swing.JMenuItem openMenuButton;
     private javax.swing.JMenu profileMenu;
     private javax.swing.JMenuItem quitMenuButton;

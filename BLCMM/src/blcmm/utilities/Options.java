@@ -97,7 +97,9 @@ public class Options {
         popupStatus,
         showHotfixNames,
         dragAndDroppableCode,
-        showDeleteConfirmation
+        showDeleteConfirmation,
+        saveAsOffline,
+        onlineServiceNumber,
     }
 
     /**
@@ -110,7 +112,9 @@ public class Options {
      */
     private final HashSet<String> IGNORE_OPTIONS = new HashSet(Arrays.asList(
             "contentEdits",
-            "truncateCommands"
+            "truncateCommands",
+            "structuralEdits",
+            "developerMode"
     ));
 
     /**
@@ -148,7 +152,8 @@ public class Options {
         // order in which they'll show up in the panel.
         this.registerOption(new SelectionOption<>(
                 OptionNames.theme.toString(), ThemeManager.getTheme("dark"),
-                "Theme", "setTheme", "Change BLCMM's color theme",
+                Option.Shown.SETTINGS, "Theme",
+                "setTheme", "Change BLCMM's color theme",
                 "checkThemeSwitchAllowed",
                 ThemeManager.getAllInstalledThemes().toArray(new Theme[0]), s -> {
             Theme t = ThemeManager.getTheme(s);
@@ -158,38 +163,58 @@ public class Options {
 
         this.registerOption(new IntOption(
                 OptionNames.fontsize.toString(), 12,
-                "Application font size", 8, 36, "updateFontSizes",
+                Option.Shown.SETTINGS, "Application font size",
+                8, 36, "updateFontSizes",
                 "Application font size"));
 
         this.registerOption(new BooleanOption(
                 OptionNames.truncateCommands2.toString(), true,
-                "Truncate commands in tree", "toggleTruncateCommands",
+                Option.Shown.SETTINGS, "Truncate commands in tree",
+                "toggleTruncateCommands",
                 "Truncate the value field on set commands, to "
                 + "reduce horizontal window size."));
 
         this.registerOption(new IntOption(
                 OptionNames.truncateCommandLength.toString(), 100,
-                "Truncate length", 20, 900, "toggleTruncateCommands",
+                Option.Shown.SETTINGS, "Truncate length",
+                20, 900, "toggleTruncateCommands",
                 "Truncate the value field on set commands, to "
                 + "reduce horizontal window size."));
 
         this.registerOption(new BooleanOption(
                 OptionNames.highlightBVCErrors.toString(), true,
-                "Highlight Incomplete BVC Statements",
+                Option.Shown.SETTINGS, "Highlight Incomplete BVC Statements",
                 "toggleHighlightBVCErrors",
                 "Toggles highlighting of Incomplete BVC/ID/BVA/BVSC "
                 + "tuples.  This is technically valid syntax, but discouraged "
                 + "for style reasons."));
 
         this.registerOption(new BooleanOption(OptionNames.dragAndDroppableCode.toString(), true,
-                "Enable Dragging & Dropping in Text", null,
+                Option.Shown.SETTINGS, "Enable Dragging & Dropping in Text",
+                null,
                 "Enables/Disables being able to Drag & Drop"
                 + " text into text fields"));
 
         this.registerOption(new BooleanOption(OptionNames.leafSelectionAllowed.toString(), false,
-                "Enable Toggling Individual Statements", null,
+                Option.Shown.SETTINGS, "Enable Toggling Individual Statements",
+                null,
                 "Enables/Disables being able to toggle individual statements"));
         
+        this.registerOption(new BooleanOption(OptionNames.saveAsOffline.toString(), true,
+                Option.Shown.DANGEROUS, "Save patch files in 'Offline' Mode",
+                null,
+                "Save patch files in 'Offline' Mode.  This should basically always be selected!"));
+        
+        /**
+         * Bah, we actually can't do this yet.  The number suffix is determined in blcmm.model.PatchType,
+         * which is not yet open-source.
+        this.registerOption(new IntOption(OptionNames.onlineServiceNumber.toString(), 5,
+                Option.Shown.DANGEROUS, "SparkService for 'Online'-saved Hotfixes",
+                1, 99,
+                null,
+                "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));    
+         */
+
         //Next, the launcher splash screen selector. This requires some extra magic;
         try {
             JarFile launcher = new JarFile(BLCMMUtilities.getLauncher());
@@ -204,7 +229,9 @@ public class Options {
             }
             String res = new String(result.toByteArray());
             StringTable table = StringTable.generateTable(res);
-            this.registerOption(SelectionOption.createStringSelectionOption("splashImage", "Default", "Splash screen image", null, "The image shown on the launcher", table));
+            this.registerOption(SelectionOption.createStringSelectionOption("splashImage", "Default",
+                    Option.Shown.SETTINGS, "Splash screen image",
+                    null, "The image shown on the launcher", table));
             launcher.close();
         } catch (NoSuchFileException e) {
             // This mostly just happens when developing via NetBeans, but whatever.  Don't bother stack-tracing
@@ -310,14 +337,15 @@ public class Options {
      * displayed on the settings screen. Will omit any Option objects which are
      * not for display.
      *
+     * @param shownPanel The panel to be rendered
      * @return The ArrayList of Options.
      */
-    public ArrayList<Option> getDisplayedOptionList() {
+    public ArrayList<Option> getDisplayedOptionList(Option.Shown shownPanel) {
         ArrayList<Option> retList = new ArrayList<>();
         Option o;
         for (String key : this.optionOrder) {
             o = this.getOption(key);
-            if (o != null && o.isDisplayOnSettingsPanel()) {
+            if (o != null && o.isDisplayOnPanel(shownPanel)) {
                 retList.add(o);
             }
         }
@@ -950,5 +978,21 @@ public class Options {
 
     public void setShowDeleteConfirmation(boolean status) {
         this.setBooleanOptionData(OptionNames.showDeleteConfirmation, status);
+    }
+      
+    public boolean getSaveAsOffline() {
+        return this.getBooleanOptionData(OptionNames.saveAsOffline);
+    }
+
+    public void setSaveAsOffline(boolean saveAsOffline) {
+        this.setBooleanOptionData(OptionNames.saveAsOffline, saveAsOffline);
+    }
+
+    public int getOnlineServiceNumber() {
+        return this.getIntOptionData(OptionNames.onlineServiceNumber);
+    }
+
+    public void setOnlineServiceNumber(int serviceNumber) {
+        this.setIntOptionData(Options.OptionNames.onlineServiceNumber, serviceNumber);
     }
 }

@@ -39,11 +39,9 @@ import java.awt.Insets;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -53,16 +51,22 @@ import javax.swing.SwingUtilities;
  */
 public class ToolSettingsPanel extends JPanel {
 
+    private final Option.Shown shownPanel;
     private final Options settings;
     private boolean needsToolReset = false;
     private boolean needsTreeResize = false;
 
-    public ToolSettingsPanel() {
-        settings = Options.INSTANCE;
-        generateGUI();
+    public ToolSettingsPanel(Option.Shown shownPanel) {
+        this(shownPanel, null);
+    }
+    
+    public ToolSettingsPanel(Option.Shown shownPanel, String headerText) {
+        this.shownPanel = shownPanel;
+        this.settings = Options.INSTANCE;
+        generateGUI(headerText);        
     }
 
-    private void generateGUI() throws NumberFormatException {
+    private void generateGUI(String headerText) throws NumberFormatException {
 
         final ToolSettingsPanel inst = this;
 
@@ -76,12 +80,30 @@ public class ToolSettingsPanel extends JPanel {
         constr.gridheight = 1;
         constr.weightx = 1;
         constr.weighty = 1;
-        constr.fill = GridBagConstraints.HORIZONTAL;
         constr.insets = new Insets(0, 0, 0, 0);
         constr.anchor = GridBagConstraints.WEST;
-
+        
         int y = 0;
-        for (Option o : settings.getDisplayedOptionList()) {
+        if (headerText != null) {
+            JLabel headerLabel = new JLabel("<html><b>" + headerText + "</b></html>");
+            constr.gridx = 0;
+            constr.gridy = y;
+            constr.gridwidth = 2;
+            constr.fill = GridBagConstraints.NONE;
+            constr.insets.right = BORDER;
+            constr.insets.left = BORDER;
+            constr.insets.top = y == 0 ? BORDER : 0;
+            constr.insets.bottom = 5;
+            constr.anchor = GridBagConstraints.CENTER;
+            this.add(headerLabel, constr);
+            y++;
+        }
+
+        constr.gridwidth = 1;
+        constr.fill = GridBagConstraints.HORIZONTAL;
+        constr.insets.bottom = 0;
+
+        for (Option o : settings.getDisplayedOptionList(this.shownPanel)) {
             constr.gridy = y;
             JLabel label1 = new JLabel(o.getDisplayDesc());
 
@@ -134,7 +156,7 @@ public class ToolSettingsPanel extends JPanel {
             for (Component c : inst.getComponents()) {
                 inst.remove(c);
             }
-            generateGUI();
+            generateGUI(headerText);
         });
         this.add(but, constr);
 
