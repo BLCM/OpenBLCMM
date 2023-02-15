@@ -15,7 +15,7 @@ BLCMM Changelog
   - "Invert Mod" functionality
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
-- Added "allow toggling invdividual statements" option to settings, and improved
+- Added "allow toggling individual statements" option to settings, and improved
   dynamically setting the option from the main BLCMM window.
 - Improved Steam Library Folder detection using StidOfficial's SteamVDF
 - Moved "offline" checkbox to new "Dangerous settings" dialog.  Mods will be
