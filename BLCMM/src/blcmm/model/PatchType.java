@@ -46,8 +46,32 @@ import javax.imageio.ImageIO;
 public enum PatchType {
     
     // Members
-    BL2("BL2", "/resources/BL2/Icon.png"),
-    TPS("TPS", "/resources/TPS/Icon.png");
+    BL2("/resources/BL2/Icon.png", new String[] {
+        "GD_Soldier_Streaming",
+        "GD_Siren_Streaming",
+        "GD_Mercenary_Streaming",
+        "GD_Assassin_Streaming",
+        "GD_Tulip_Mechro_Streaming",
+        "GD_Lilac_Psycho_Streaming",
+        "GD_Runner_Streaming",
+        "GD_BTech_Streaming",
+        "GD_Orchid_HarpoonHovercraft",
+        "GD_Orchid_RocketHovercraft",
+        "GD_Orchid_SawHovercraft",
+        "GD_Sage_ShockFanBoat",
+        "GD_Sage_CorrosiveFanBoat",
+        "GD_Sage_IncendiaryFanBoat",
+    }),
+    TPS("/resources/TPS/Icon.png", new String[] {
+        "GD_Gladiator_Streaming",
+        "GD_Enforce_Streaming",
+        "GD_Lawbringer_Streaming",
+        "GD_Prototype_Streaming",
+        "Quince_Doppel_Streaming",
+        "Crocus_Baroness_Streaming",
+        "GD_MoonBuggy_Streaming",
+        "GD_Co_Stingray_Streaming",
+    });
     
     // Offline strings
     public static String OFFLINE1 = "set Transient.SparkServiceConfiguration_0 ServiceName Micropatch";
@@ -56,55 +80,25 @@ public enum PatchType {
     
     // This is a bit stupid but it's sometimes useful to have it as a set,
     // and others as a list
-    private HashSet<String> ONDEMAND_SET_LOWER = new HashSet<>();
-    private ArrayList<String> ONDEMAND_LIST = new ArrayList<>();
+    private final HashSet<String> ONDEMAND_SET_LOWER = new HashSet<>();
+    private final ArrayList<String> ONDEMAND_LIST = new ArrayList<>();
     
     // Icon resource location
-    private String iconPath;
+    private final String iconPath;
     
     /**
-     * Initialize a new PatchType.  The whole "initializer" thing here is totally
-     * stupid, but I'm not quite sure how else to do it.  The original Utilities
-     * read stuff from Light's DataLibrary stuff, I think.
+     * Initialize a new PatchType.
      * 
-     * @param initializer Game type to load; used to populate some game-specific info
      * @param iconPath The resource path to the game's icon
+     * @param onDemands An array describing the valid OnDemand types for the game
      */
-    private PatchType(String initializer, String iconPath) {
+    private PatchType(String iconPath, String[] onDemands) {
         // Set the icon path
         this.iconPath = iconPath;
         
-        // This initializer nonsense is, um, nonsense.  But coming from Python,
-        // I didn't see a way to initialize hashes/sets in a "better" way
-        switch (initializer) {
-            case "BL2":
-                this.addOnDemand("GD_Soldier_Streaming");
-                this.addOnDemand("GD_Siren_Streaming");
-                this.addOnDemand("GD_Mercenary_Streaming");
-                this.addOnDemand("GD_Assassin_Streaming");
-                this.addOnDemand("GD_Tulip_Mechro_Streaming");
-                this.addOnDemand("GD_Lilac_Psycho_Streaming");
-                this.addOnDemand("GD_Runner_Streaming");
-                this.addOnDemand("GD_BTech_Streaming");
-                this.addOnDemand("GD_Orchid_HarpoonHovercraft");
-                this.addOnDemand("GD_Orchid_RocketHovercraft");
-                this.addOnDemand("GD_Orchid_SawHovercraft");
-                this.addOnDemand("GD_Sage_ShockFanBoat");
-                this.addOnDemand("GD_Sage_CorrosiveFanBoat");
-                this.addOnDemand("GD_Sage_IncendiaryFanBoat");
-                break;
-            case "TPS":
-                this.addOnDemand("GD_Gladiator_Streaming");
-                this.addOnDemand("GD_Enforce_Streaming");
-                this.addOnDemand("GD_Lawbringer_Streaming");
-                this.addOnDemand("GD_Prototype_Streaming");
-                this.addOnDemand("Quince_Doppel_Streaming");
-                this.addOnDemand("Crocus_Baroness_Streaming");
-                this.addOnDemand("GD_MoonBuggy_Streaming");
-                this.addOnDemand("GD_Co_Stingray_Streaming");
-                break;
-            default:
-                throw new RuntimeException("Unknown game initializaion string detected -- this shouldn't ever happen!");
+        // Set OnDemand types
+        for (String onDemand : onDemands) {
+            this.addOnDemand(onDemand);
         }
     }
     
