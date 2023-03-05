@@ -145,16 +145,14 @@ public enum PatchType {
     public String getFunctionalHotfixPrefix(boolean offline, String linebreak) {
         ArrayList<String> lines = new ArrayList<>();
         int serviceNumber;
-        lines.add("");
-        lines.add("#Hotfixes:");
         if (offline) {
-            serviceNumber = Options.INSTANCE.getIntOptionData(Options.OptionNames.onlineServiceNumber);
+            serviceNumber = 0;
             lines.add(OFFLINE1);
             lines.add("");
             lines.add(OFFLINE2);
             lines.add("");
         } else {
-            serviceNumber = 0;
+            serviceNumber = Options.INSTANCE.getIntOptionData(Options.OptionNames.onlineServiceNumber);
         }
         lines.add("set Transient.SparkServiceConfiguration_" + serviceNumber + " Keys (");
         
@@ -174,9 +172,9 @@ public enum PatchType {
         ArrayList<String> lines = new ArrayList<>();
         int serviceNumber;
         if (offline) {
-            serviceNumber = Options.INSTANCE.getIntOptionData(Options.OptionNames.onlineServiceNumber);
-        } else {
             serviceNumber = 0;
+        } else {
+            serviceNumber = Options.INSTANCE.getIntOptionData(Options.OptionNames.onlineServiceNumber);
         }
         lines.add(")");
         lines.add("set Transient.SparkServiceConfiguration_" + serviceNumber + " Values (");
@@ -199,6 +197,7 @@ public enum PatchType {
             lines.add(OFFLINE3);
             lines.add("");
         }
+        lines.add("");
         return String.join(linebreak, lines);
     }
     
