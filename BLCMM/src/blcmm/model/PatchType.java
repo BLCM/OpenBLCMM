@@ -46,7 +46,7 @@ import javax.imageio.ImageIO;
 public enum PatchType {
     
     // Members
-    BL2("/resources/BL2/Icon.png", new String[] {
+    BL2(new String[] {
         "GD_Soldier_Streaming",
         "GD_Siren_Streaming",
         "GD_Mercenary_Streaming",
@@ -62,7 +62,7 @@ public enum PatchType {
         "GD_Sage_CorrosiveFanBoat",
         "GD_Sage_IncendiaryFanBoat",
     }),
-    TPS("/resources/TPS/Icon.png", new String[] {
+    TPS(new String[] {
         "GD_Gladiator_Streaming",
         "GD_Enforce_Streaming",
         "GD_Lawbringer_Streaming",
@@ -89,12 +89,11 @@ public enum PatchType {
     /**
      * Initialize a new PatchType.
      * 
-     * @param iconPath The resource path to the game's icon
      * @param onDemands An array describing the valid OnDemand types for the game
      */
-    private PatchType(String iconPath, String[] onDemands) {
+    private PatchType(String[] onDemands) {
         // Set the icon path
-        this.iconPath = iconPath;
+        this.iconPath = "/resources/" + this.toString() + "/Icon.png";
         
         // Set OnDemand types
         for (String onDemand : onDemands) {
