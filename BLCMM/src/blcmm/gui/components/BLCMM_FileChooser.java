@@ -154,7 +154,7 @@ public class BLCMM_FileChooser extends JFileChooser {
             panel.add(directoryShortcutButton(fc,
                     "Open BL2 Binaries Dir",
                     tempDir,
-                    new ImageIcon(PatchType.BL2.getIcon())), cs);
+                    new ImageIcon(PatchType.BL2.getIcon(16))), cs);
             cs.gridy++;
         }
 
@@ -164,7 +164,7 @@ public class BLCMM_FileChooser extends JFileChooser {
             panel.add(directoryShortcutButton(fc,
                     "Open TPS Binaries Dir",
                     tempDir,
-                    new ImageIcon(PatchType.TPS.getIcon())), cs);
+                    new ImageIcon(PatchType.TPS.getIcon(16))), cs);
             cs.gridy++;
         }
 

@@ -3,6 +3,7 @@ BLCMM Changelog
 
 **v1.3.0** Unreleased
 - Released under GPLv3
+  - Various components rewritten from scratch as part of the FOSS process
 - Compatibility through Java 19
 - Removed features:
   - Hex Edits and Console Key (PythonSDK should be used for these, instead)
@@ -20,6 +21,8 @@ BLCMM Changelog
 - Improved Steam Library Folder detection using StidOfficial's SteamVDF
 - Moved "offline" checkbox to new "Dangerous settings" dialog.  Mods will be
   saved in offline mode by default, and it's recommended to keep it that way.
+- Added ability to change SparkService index in Dangerous Settings dialog, for
+  anyone who insists on *not* saving in Offline mode.
 - "Restore defaults" button on settings screen will only restore the settings
   shown on the active screen (this prevents clearing the recently-viewed file
   list, for instance)

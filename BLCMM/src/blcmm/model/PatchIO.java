@@ -278,7 +278,7 @@ public class PatchIO {
             HotfixConverter.HotfixConverterResult res;
             try {
                 res = HotfixConverter.convert(br, name);//This can throw an exception when the syntax is invalid. If this call goes trough, the subsequent lines should run fine.
-                String fixes = PatchType.BL2.buildString(res.keys, res.values, false, GameDetection.getVirtualOS(PatchType.BL2));//type will be inferred by FT parser below
+                String fixes = buildFTModStringFromHotfixes(res.keys, res.values);//type will be inferred by FT parser below
                 BufferedReader br2 = new BufferedReader(new StringReader(fixes));
                 CompletePatch res2 = new FTParser().parse(br2, filename);
                 br2.close();
@@ -289,6 +289,32 @@ public class PatchIO {
                 return null;
             }
         }
+    }
+    
+    /**
+     * Given a set of hotfix keys and values, output a valid oldschool FilterTool
+     * mod file.  This is basically only ever used 
+     * @param keys
+     * @param values
+     * @param something
+     * @param whichOS
+     * @return 
+     */
+    private static String buildFTModStringFromHotfixes(
+            List<String> keys,
+            List<String> values
+            ) throws RuntimeException {
+        ArrayList<String> lines = new ArrayList<>();
+        if (keys.size() != values.size()) {
+            throw new RuntimeException("Hotfix key count does not match hotfix value count");
+        }
+        lines.add("#<patch>");
+        for (int i=0; i<keys.size(); i++) {
+            lines.add("#<hotfix><key>" + keys.get(i) + "</key><value>" + values.get(i) + "</value><on>");
+        }
+        lines.add("#</patch>");
+        lines.add("");
+        return String.join(LINEBREAK, lines);
     }
 
     private final static class FTParser extends Parser {
@@ -674,7 +700,7 @@ public class PatchIO {
                 if (wrap.getType() == HotfixType.ONDEMAND) {
                     String arg = wrap.getParameter();
                     for (PatchType t : PatchType.values()) {
-                        if (t.getOnDemandPackages().stream().anyMatch(pack -> pack.getStreamingPackage().contains(arg))) {
+                        if (t.isOnDemandInPatchType(arg)) {
                             res.setType(t);
                             return;
                         }
@@ -1188,7 +1214,7 @@ public class PatchIO {
 
         List<HotfixWrapper> hotfixes = gbx.listHotfixMeta();
         hotfixes.addAll(root.listHotfixMeta());
-        writer.append(type.getFunctionalHotfixPrefix(offline, OS));
+        writer.append(type.getFunctionalHotfixPrefix(offline, LINEBREAK));
         HotfixConverter conv = new HotfixConverter("");
         int i = 0;
         HashSet<String> illegalValues = new HashSet<>();
@@ -1216,7 +1242,7 @@ public class PatchIO {
             }
         }
         valuewriter.close();
-        writer.append(type.getFunctionalHotfixCenter(offline, OS).replace("\n\n", LINEBREAK));
+        writer.append(type.getFunctionalHotfixCenter(offline, LINEBREAK).replace("\n\n", LINEBREAK));
         FileReader fis = new FileReader(f);
         char[] buffer = new char[8 * 1024];
         int bytesRead;
@@ -1225,7 +1251,7 @@ public class PatchIO {
         }
         fis.close();
         f.delete();
-        writer.append(type.getFunctionalHotfixPostfix(offline, OS));
+        writer.append(type.getFunctionalHotfixPostfix(offline, LINEBREAK));
         //Now we're doing 3x as much IO as needed compared to storing the values in memory
         //We could do the main loop twice, so we have 1x IO but 2x CPU usage
         //Or actually store it in memory and risk RAM issues

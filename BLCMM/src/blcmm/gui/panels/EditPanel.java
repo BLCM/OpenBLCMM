@@ -172,7 +172,8 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     public EditPanel(CompletePatch patch, Category parent, List<ModelElement> elements, boolean allowEdit, String disallowEditReason) {
         this.commentsOnly = parent.isMutuallyExclusive();
         this.allowEdit = allowEdit;
-        packages = patch.getType().getOnDemandPackages().stream().map(s -> s.getStreamingPackage()).collect(Collectors.toList());
+        packages = patch.getType().getOnDemandPackages();
+        //packages = patch.getType().getOnDemandPackages().stream().map(s -> s.getStreamingPackage()).collect(Collectors.toList());
         switch (patch.getType()) {
             case BL2:
                 levels = LEVELS_BL2;

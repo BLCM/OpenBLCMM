@@ -205,15 +205,11 @@ public class Options {
                 null,
                 "Save patch files in 'Offline' Mode.  This should basically always be selected!"));
         
-        /**
-         * Bah, we actually can't do this yet.  The number suffix is determined in blcmm.model.PatchType,
-         * which is not yet open-source.
         this.registerOption(new IntOption(OptionNames.onlineServiceNumber.toString(), 5,
                 Option.Shown.DANGEROUS, "SparkService for 'Online'-saved Hotfixes",
                 1, 99,
                 null,
                 "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));    
-         */
 
         //Next, the launcher splash screen selector. This requires some extra magic;
         try {
