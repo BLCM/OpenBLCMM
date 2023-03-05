@@ -293,11 +293,11 @@ public class PatchIO {
     
     /**
      * Given a set of hotfix keys and values, output a valid oldschool FilterTool
-     * mod file.  This is basically only ever used 
-     * @param keys
-     * @param values
-     * @param something
-     * @param whichOS
+     * mod file.  This is basically only ever used by the old-style Hotfix parser,
+     * so it can then be handed off to the FilterTool parser.
+     * 
+     * @param keys A list of already-quoted hotfix keys
+     * @param values A list of already-quoted hotfix values
      * @return 
      */
     private static String buildFTModStringFromHotfixes(
