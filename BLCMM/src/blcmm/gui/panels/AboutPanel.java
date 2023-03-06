@@ -56,7 +56,9 @@ public final class AboutPanel extends JPanel {
                 + "Special thanks to apocalyptech, Bugworm, c0dycode, and FromDarkHell for aiding in the development process<br/>"
                 + "and thanks to the entire borderlands modding community for feedback.<br/>"
                 + "<br/>"
-                + "BLCMM makes use of StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.");
+                + "BLCMM makes use of the following third-party libraries:<br/>"
+                + "  - StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.<br/>"
+                + "  - Apache Commons Text, available under the Apache License v2.0<br/>");
         int wLog = 64, wPay = 100;
         mainLabel.setIcon(new ImageIcon(IconManager.getBLCMMIcon(wLog)));
         mainLabel.setIconTextGap((wPay - wLog) / 2 + 10);

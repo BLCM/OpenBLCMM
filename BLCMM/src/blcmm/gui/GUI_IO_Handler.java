@@ -33,7 +33,6 @@ import blcmm.model.CompletePatch;
 import blcmm.model.ModelElement;
 import blcmm.model.PatchIO;
 import blcmm.model.properties.GlobalListOfProperties;
-import blcmm.utilities.GeneralUtilities;
 import blcmm.utilities.ImportAnomalyLog;
 import general.utilities.GlobalLogger;
 import java.io.File;
@@ -46,6 +45,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 /**
  *
@@ -91,7 +91,8 @@ public class GUI_IO_Handler {
         String strippedModname = modname.replaceAll("[^0-9a-zA-Z]", "");
         String strippedFilename = filenameBasedName.replaceAll("[^0-9a-zA-Z]", "");
         if (!strippedModname.equalsIgnoreCase(strippedFilename)) {
-            int dist = GeneralUtilities.Strings.levenshteinDistance(strippedModname.toLowerCase(), strippedFilename.toLowerCase(), 0, 1, 1);
+            LevenshteinDistance ld = new LevenshteinDistance();
+            int dist = ld.apply(strippedModname.toLowerCase(), strippedFilename.toLowerCase());
             if (dist < 4) {
                 if (strippedModname.length() < strippedFilename.length()) {//mod name is more or less contained in file name
                     // Use our filenameBasedName

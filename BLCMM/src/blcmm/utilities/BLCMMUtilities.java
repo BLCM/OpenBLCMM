@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import blcmm.model.PatchType;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 /**
  * A small class to provide some miscellaneous BLCMM-specific utilities which
@@ -132,9 +133,10 @@ public class BLCMMUtilities {
             Map<File, Integer> map = new HashMap<>();
 
             String binaries = GameDetection.getBinariesDir(type).replace("\\", "/");
+            LevenshteinDistance ld = new LevenshteinDistance();
             for (File f : new File(binaries).listFiles()) {
                 for (String patch : patches) {
-                    int dist = GeneralUtilities.Strings.levenshteinDistance(f.getName().toLowerCase(), patch);
+                    int dist = ld.apply(f.getName().toLowerCase(), patch);
                     if (dist <= maxDistance && f.isFile()) {
                         map.put(f, java.lang.Math.min(map.getOrDefault(f, dist), dist));
                     }
