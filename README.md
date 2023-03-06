@@ -6,13 +6,22 @@ TODO (immediate)
 - Rename to BLCMM-Basic or something?
 - AoDK support (both in BLCMM itself and OE)
 - Rewrite launcher w/ GPL version
+  - New-version notification in-app
 - Rewrite other linked libraries w/ GPL versions
-  - `blcmm.model.PatchType` in particular could really use a rewrite.
-    Various functionality in there that needs to be tweaked.
+- Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
+- Add link/button to github in the about dialog
+- Add Java version in about dialog
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
     which got ripped out.
+
+TODO (maybe?)
+=============
+
+- Get a Netbeansless build system working (just ant from CLI).  I'm (apoc)
+  still feeling pretty rusty in Java, so having the IDE is pretty nice,
+  but it'd undeniably be kind of nice to be rid of it.
 
 TODO (long-term)
 ================
