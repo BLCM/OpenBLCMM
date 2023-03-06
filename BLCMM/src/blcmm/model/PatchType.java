@@ -27,14 +27,12 @@
 
 package blcmm.model;
 
+import blcmm.utilities.IconManager;
 import blcmm.utilities.Options;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import javax.imageio.ImageIO;
 
 /**
  * Enum to describe the patch types available for BLCMM.  This class was
@@ -201,11 +199,7 @@ public enum PatchType {
      * @return The icon for the game
      */
     public Image getIcon() {
-        try {
-            return ImageIO.read(getClass().getResourceAsStream(this.iconPath));
-        } catch (IOException e) {
-            return new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        }
+        return IconManager.getIcon(this.iconPath);
     }
     
     /**
@@ -215,8 +209,7 @@ public enum PatchType {
      * @return The icon for the game
      */
     public Image getIcon(int size) {
-        Image im = this.getIcon();
-        return im.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+        return IconManager.getIcon(this.iconPath, size);
     }
 
 }
