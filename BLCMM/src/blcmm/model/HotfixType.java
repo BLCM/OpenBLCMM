@@ -27,6 +27,8 @@
 
 package blcmm.model;
 
+import java.util.HashMap;
+
 /**
  * Enum to describe the hotfix types available for BLCMM.  This class was
  * reimplemented based on the calls BLCMM makes into BLCMM_Utilities.jar,
@@ -37,8 +39,45 @@ package blcmm.model;
 public enum HotfixType {
     
     // Enum members
-    PATCH,
-    LEVEL,
-    ONDEMAND;
+    PATCH("SparkPatchEntry"),
+    LEVEL("SparkLevelPatchEntry"),
+    ONDEMAND("SparkOnDemandPatchEntry");
+    
+    /**
+     * Convenience var to provide a mapping of hotfix prefixes to type
+     */
+    private static final HashMap<String, HotfixType> PREFIX_MAP;
+    
+    static {
+        PREFIX_MAP = new HashMap<>();
+        for (HotfixType type : HotfixType.values()) {
+            PREFIX_MAP.put(type.getPrefix().toLowerCase(), type);
+        }
+    }
+
+    private final String hotfixPrefix;
+
+    private HotfixType(String hotfixPrefix) {
+        this.hotfixPrefix = hotfixPrefix;
+    }
+
+    public String getPrefix() {
+        return this.hotfixPrefix;
+    }
+
+    /**
+     * Given a hotfix key prefix, return the correct HotfixType if possible.
+     * 
+     * @param prefix The key prefix
+     * @return The HotfixType matching that prefix
+     */
+    public static HotfixType getByPrefix(String prefix) {
+        String prefix_lower = prefix.toLowerCase();
+        if (PREFIX_MAP.containsKey(prefix_lower)) {
+            return PREFIX_MAP.get(prefix_lower);
+        } else {
+            return null;
+        }
+    }
     
 }

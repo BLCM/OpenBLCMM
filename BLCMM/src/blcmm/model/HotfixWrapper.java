@@ -30,6 +30,15 @@ import java.util.Collection;
 import java.util.TreeMap;
 
 /**
+ * A wrapper to provide the necessary hotfix metadata for one or more HotfixCommand
+ * objects.  The theory is that a lot of times you end up with multiple hotfixes
+ * in a row which have the same parameters (level/ondemand, naming, etc), so there'll
+ * be a single HotfixWrapper object per string of hotfixes.  In many cases, of
+ * course, a wrapper will end up with only a single command.
+ *
+ * Honestly, I (apoc) would sort of like to get rid of this and just store this
+ * information directly on the HotfixCommand objects, but it's almost certainly not
+ * worth the effort of refactoring things.
  *
  * @author LightChaosman
  */
@@ -127,6 +136,20 @@ public class HotfixWrapper extends ModelElementContainer<HotfixCommand> {
 
     public String getParameter() {
         return parameter;
+    }
+    
+    /**
+     * Returns the parameter as usable in "raw" hotfixes.  Basically, for
+     * values of "None," this will return an empty string instead.
+     * 
+     * @return The parameter as usable in a raw hotfix
+     */
+    public String getRawParameter() {
+        if (parameter == null || parameter.equalsIgnoreCase("None")) {
+            return "";
+        } else {
+            return parameter;
+        }
     }
 
     public String getName() {

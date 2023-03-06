@@ -30,10 +30,9 @@ import blcmm.data.lib.BorderlandsArray;
 import blcmm.data.lib.BorderlandsStruct;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.utilities.GameDetection;
-import blcmm.utilities.HotfixConverter;
 import blcmm.utilities.ImportAnomalyLog;
-import blcmm.utilities.Utilities;
 import blcmm.utilities.Options;
+import blcmm.utilities.Utilities;
 import general.utilities.GlobalLogger;
 import general.utilities.OSInfo;
 import java.io.BufferedReader;
@@ -258,63 +257,145 @@ public class PatchIO {
     }
 
     /**
-     * This is just a passtrough class that turns the .hotfix file into
-     * functional hotfixes, and subsequently passes it to the FT parser. It
-     * coould be made more efficient, by parsing it directly, which wouldn't be
-     * that tricky with the way the current model operates. But since these
-     * files tend to be short anyway, and are hardly ever used nowadays, short
-     * and not super efficient code will do. If it turns out to ever cause
-     * trouble we can revisit this, and parse directly, since the `start` lines
-     * are just HotfixWrappers, and the commands can be directly interpreted as
-     * commands. Taking the detour trough the actual transient.sparkservice
-     * syntax is silly if this method ever needs to handle any sort of real
-     * data.
+     * Parses an old-style ".hotfix" file.  It's a *bit* silly to keep this
+     * maintained given that this format basically doesn't exist anymore, but
+     * whatever.
+     *
+     * For some details on this ancient format, see: https://github.com/mystise/BL2_Converter
      */
     private final static class HotfixParser extends Parser {
 
         @Override
         protected CompletePatch parse(BufferedReader br, String filename) throws IOException {
             String name = filename.contains(".") ? filename.substring(0, filename.indexOf(".")) : filename;
-            HotfixConverter.HotfixConverterResult res;
             try {
-                res = HotfixConverter.convert(br, name);//This can throw an exception when the syntax is invalid. If this call goes trough, the subsequent lines should run fine.
-                String fixes = buildFTModStringFromHotfixes(res.keys, res.values);//type will be inferred by FT parser below
-                BufferedReader br2 = new BufferedReader(new StringReader(fixes));
-                CompletePatch res2 = new FTParser().parse(br2, filename);
-                br2.close();
-                res2.setPatchSource(CompletePatch.PatchSource.HOTFIX);
-                return res2;
+                CompletePatch patch = new CompletePatch();
+                patch.createNewProfile("default");
+                Profile profile = patch.getCurrentProfile();
+                patch.setPatchSource(CompletePatch.PatchSource.HOTFIX);
+                Category root = new Category(name);
+                patch.setRoot(root);
+                ArrayList<HotfixWrapper> wrappers = parseOldStyleHotfixFile(br);
+                for (HotfixWrapper wrapper : wrappers) {
+                    wrapper.setParent(root);
+                    root.addElement(wrapper);
+                    for (HotfixCommand command : wrapper.getElements()) {
+                        command.turnOnInProfile(profile);
+                        command.profileChanged(profile);
+                    }
+                }
+                return patch;
+
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
         }
-    }
-    
-    /**
-     * Given a set of hotfix keys and values, output a valid oldschool FilterTool
-     * mod file.  This is basically only ever used by the old-style Hotfix parser,
-     * so it can then be handed off to the FilterTool parser.
-     * 
-     * @param keys A list of already-quoted hotfix keys
-     * @param values A list of already-quoted hotfix values
-     * @return 
-     */
-    private static String buildFTModStringFromHotfixes(
-            List<String> keys,
-            List<String> values
-            ) throws RuntimeException {
-        ArrayList<String> lines = new ArrayList<>();
-        if (keys.size() != values.size()) {
-            throw new RuntimeException("Hotfix key count does not match hotfix value count");
+
+
+        /**
+         * Converts an old-style `.hotfix`-formatted file to a series of HotfixWrapper objects.
+         * 
+         * For some details on this ancient format, see: https://github.com/mystise/BL2_Converter
+         *
+         * @param br A BufferedReader from which to read the file data
+         * @return The list of new HotfixCommand objects
+         * @throws IOException
+         */
+        private static ArrayList<HotfixWrapper> parseOldStyleHotfixFile(BufferedReader br)
+                throws IllegalArgumentException, IOException {
+            ArrayList<HotfixWrapper> wrappers = new ArrayList<>();
+            HotfixWrapper wrapper = null;
+            HotfixCommand newCommand;
+            String line;
+            String[] tokens;
+            while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.equals("")) {
+                    continue;
+                }
+                // I'm actually not sure if any commenting mechanisms were allowed, but whatever.
+                if (line.charAt(0) == '#') {
+                    continue;
+                }
+
+                // Split the string and see what we have.  We're being pretty precise about
+                // how many tokens we expect, which the original code may not have done, and
+                // also matching the control parameters case-insensitively, which probably
+                // wasn't the original behavior.  Also possibly we're more fussy about lines
+                // we don't understand?  Whatever.  It's not like this format functionally
+                // exists anymore.
+                tokens = line.split("\\s+", 2);
+                switch (tokens[0].toLowerCase()) {
+
+                    case "start":
+                        tokens = line.split("\\s+", 3);
+                        if (tokens.length < 2) {
+                            throw new IllegalArgumentException("Invalid hotfix start line: " + line);
+                        }
+                        switch (tokens[1].toLowerCase()) {
+                            case "patch":
+                                if (tokens.length > 2) {
+                                    throw new IllegalArgumentException("Invalid Patch hotfix start line: " + line);
+                                }
+                                wrapper = new HotfixWrapper("Hotfix", HotfixType.PATCH, "");
+                                wrappers.add(wrapper);
+                                break;
+
+                            case "level":
+                                if (tokens.length != 3) {
+                                    throw new IllegalArgumentException("Invalid Level hotfix start line: " + line);
+                                }
+                                wrapper = new HotfixWrapper("Hotfix", HotfixType.LEVEL, tokens[2]);
+                                wrappers.add(wrapper);
+                                break;
+
+                            case "ondemand":
+                                if (tokens.length != 3) {
+                                    throw new IllegalArgumentException("Invalid Level hotfix start line: " + line);
+                                }
+                                wrapper = new HotfixWrapper("Hotfix", HotfixType.ONDEMAND, tokens[2]);
+                                wrappers.add(wrapper);
+                                break;
+
+                            default:
+                                throw new IllegalArgumentException("Unknown hotfix start parameter: " + tokens[1]);
+                        }
+                        break;
+
+                    case "set":
+                        if (wrapper == null) {
+                            throw new IllegalArgumentException("Got hotfix without hotfix start parameters: " + line);
+                        }
+                        tokens = line.split("\\s+", 4);
+                        if (tokens.length < 4) {
+                            throw new IllegalArgumentException("Invalid hotfix set: " + line);
+                        }
+                        newCommand = new HotfixCommand(tokens[1], tokens[2], tokens[3]);
+                        newCommand.setParent(wrapper);
+                        wrapper.addElement(newCommand);
+                        break;
+
+                    case "set_cmp":
+                        if (wrapper == null) {
+                            throw new IllegalArgumentException("Got hotfix without hotfix start parameters: " + line);
+                        }
+                        tokens = line.split("\\s+", 5);
+                        if (tokens.length < 5) {
+                            throw new IllegalArgumentException("Invalid hotfix set_cmp: " + line);
+                        }
+                        newCommand = new SetCMPCommand(tokens[1], tokens[2], tokens[3], tokens[4]);
+                        newCommand.setParent(wrapper);
+                        wrapper.addElement(newCommand);
+                        break;
+
+                    default:
+                        throw new IllegalArgumentException("Unknown line in hotfix file: " + line);
+                }
+            }
+
+            return wrappers;
         }
-        lines.add("#<patch>");
-        for (int i=0; i<keys.size(); i++) {
-            lines.add("#<hotfix><key>" + keys.get(i) + "</key><value>" + values.get(i) + "</value><on>");
-        }
-        lines.add("#</patch>");
-        lines.add("");
-        return String.join(LINEBREAK, lines);
     }
 
     private final static class FTParser extends Parser {
@@ -581,9 +662,9 @@ public class PatchIO {
             String[] split1 = splitFixes(fixes[0]);
             String[] split2 = splitFixes(fixes[1]);
             for (int i = 0; i < split1.length; i++) {
-                String key = "\"" + split1[i] + "\"";
-                String value = "\"" + split2[i].replace("\\\"", "\"") + "\"";
-                HotfixWrapper wrap = keyAndValuetoNewWrapper(key, value);
+                String key = split1[i];
+                String value = split2[i].replace("\\\"", "\"");
+                HotfixWrapper wrap = HotfixConverter.keyAndValuetoNewWrapper(key, value);
                 if (wrap == null) {
                     handleInvalidHotfix(patch, "key: " + key + " ||| value: " + value);
                 } else {
@@ -595,25 +676,6 @@ public class PatchIO {
             group.combineAdjecantHotfixWrappers();
             group.setParent(parent);
             parent.addElement(group);
-        }
-
-        private static HotfixWrapper keyAndValuetoNewWrapper(String key, String value) {
-            HotfixConverter.HotfixedCommand parsed;
-            try {
-                parsed = new HotfixConverter.HotfixedCommand(key, value);
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-            HotfixWrapper wrap = new HotfixWrapper(parsed.name, parsed.type, parsed.parameter);
-            try {
-                SetCommand.validateCommand(parsed.command, true);
-            } catch (Exception e) {
-                return null;
-            }
-            HotfixCommand com = parsed.command.startsWith("set_cmp") ? new SetCMPCommand(parsed.command) : new HotfixCommand(parsed.command);
-            com.setParent(wrap);
-            wrap.addElement(com);
-            return wrap;
         }
 
         private static String[] splitFixes(String hotfix) {
@@ -675,10 +737,10 @@ public class PatchIO {
 
         public static HotfixWrapper parseHotfixCode(String input, Category parent, CompletePatch patch) {
             boolean selected = input.trim().contains("<on>");
-            String key = input.substring(input.indexOf("<key>") + "<key>".length(), input.indexOf("</key>"));
-            String value = input.substring(input.indexOf("<value>") + "<value>".length(), input.indexOf("</value>"));
+            String key = input.substring(input.indexOf("<key>\"") + 6, input.indexOf("\"</key>"));
+            String value = input.substring(input.indexOf("<value>\"") + 8, input.indexOf("\"</value>"));
             value = unescape(value);//Legacy, to handle manual edits to allow " in hotfixes
-            HotfixWrapper wrap = keyAndValuetoNewWrapper(key, value);
+            HotfixWrapper wrap = HotfixConverter.keyAndValuetoNewWrapper(key, value);
             if (wrap == null) {
                 return null;
             }
@@ -1133,26 +1195,56 @@ public class PatchIO {
         return null;
     }
 
+    /**
+     * Writes out a complete patch/mod to a Writer.  The mod will be saved slightly
+     * differently if the `exporting` boolean is set -- namely, some messages about
+     * importing mods to BLCMM will be added in for exported mods.
+     * 
+     * @param patch The patchset to save
+     * @param writer The writer to write to
+     * @param exporting Whether or not we're exporting
+     * @return A list of Strings to be shown to the user, if possible
+     * @throws IOException 
+     */
+    public static List<String> writeToFile(CompletePatch patch, Writer writer, boolean exporting) throws IOException {
+        return writeToFile(patch, SaveFormat.BLCMM, writer, exporting);
+    }
+    /**
+     * Writes out a complete patch/mod to a Writer.  The mod will be saved slightly
+     * differently if the `exporting` boolean is set -- namely, some messages about
+     * importing mods to BLCMM will be added in for exported mods.  This version
+     * supports supplying a SaveFormat, but currently only BLCMM output is supported.
+     * 
+     * @param patch The patchset to save
+     * @param format The save format to use
+     * @param writer The writer to write to
+     * @param exporting Whether or not we're exporting
+     * @return A list of Strings to be shown to the user, if possible
+     * @throws IOException 
+     */
+
     public static List<String> writeToFile(CompletePatch patch, SaveFormat format, Writer writer, boolean exporting) throws IOException {
+        
+        // Enforce what kinds of formats we support (ie: at the moment, only BLCMM)
+        if (format != SaveFormat.BLCMM) {
+            throw new IllegalArgumentException("Only BLCMM saving is supported currently");
+        }
+        
         // Enforce offline status from settings
         patch.setOffline(Options.INSTANCE.getSaveAsOffline());
         Category root = patch.getRoot();
         PatchType type = patch.getType();
-        if (format == SaveFormat.FT) {
-            legacyWriteToFile(patch, writer);
-            return Collections.EMPTY_LIST;
-        }
 
-        if (format == SaveFormat.BLCMM) {//If we have profiles and are saving structure
-            writer.append(String.format("<BLCMM v=\"%s\">\n" + FT_UPDATE_STRING + "\n\t<head>\n\t\t<type name=\"%s\" offline=\"%s\"/>\n".replace("\n", LINEBREAK),
-                    SAVE_VERSION + "", type.name(), patch.isOffline()));
-            if (patch.profiles.size() > 0) {
-                writer.append(patch.getprofileXML());//save the profiles
-            }
-            writer.append("\t</head>\n\t<body>\n".replace("\n", LINEBREAK));
-            writeStructure(root, writer);
-            writer.append("\t</body>\n</BLCMM>\n\n".replace("\n", LINEBREAK));
+        // BLCMM format (the only one we now support)
+        writer.append(String.format("<BLCMM v=\"%s\">\n" + FT_UPDATE_STRING + "\n\t<head>\n\t\t<type name=\"%s\" offline=\"%s\"/>\n".replace("\n", LINEBREAK),
+                SAVE_VERSION + "", type.name(), patch.isOffline()));
+        if (patch.profiles.size() > 0) {
+            writer.append(patch.getprofileXML());//save the profiles
         }
+        writer.append("\t</head>\n\t<body>\n".replace("\n", LINEBREAK));
+        writeStructure(root, writer);
+        writer.append("\t</body>\n</BLCMM>\n\n".replace("\n", LINEBREAK));
+
         Category newCommands = new Category("");
         HashSet<ModelElement> excludes = new HashSet<>();
         List<String> res = new ArrayList<>(analyzeLevelMerges(type, root, excludes, newCommands));
@@ -1215,28 +1307,25 @@ public class PatchIO {
         List<HotfixWrapper> hotfixes = gbx.listHotfixMeta();
         hotfixes.addAll(root.listHotfixMeta());
         writer.append(type.getFunctionalHotfixPrefix(offline, LINEBREAK));
-        HotfixConverter conv = new HotfixConverter("");
+        HotfixConverter conv = new HotfixConverter();
         int i = 0;
         HashSet<String> illegalValues = new HashSet<>();
         final int numberOfGBXHotfixes = gbx.getNumberOfHotfixDescendants();
-        for (HotfixWrapper c : hotfixes) {
-            setConverterToContainer(c, conv);
-            for (SetCommand command : c.getElements()) {
+        for (HotfixWrapper wrapper : hotfixes) {
+            for (SetCommand command : wrapper.getElements()) {
                 boolean gbxFix = i++ < numberOfGBXHotfixes;//notice the increment here
                 if (command.isSelected()) {
-                    conv.addSetCommand(command.getCode());
-                    String key = conv.getResult().keys.remove(0);
-                    String value = conv.getResult().values.remove(0);
-                    if (!illegalValues.contains(value)) {
+                    HotfixConverter.HotfixKeyValuePair kvp = conv.getKeyValuePair((HotfixCommand)command);
+                    if (!illegalValues.contains(kvp.value)) {
                         if (i > 1) {
                             writer.append(",");
                             valuewriter.append(",");
                         }
-                        writer.append(key);
-                        valuewriter.append("\"" + escape(value.substring(1, value.length() - 1)) + "\"");
+                        writer.append("\"" + kvp.key + "\"");
+                        valuewriter.append("\"" + escape(kvp.value) + "\"");
                     }
                     if (gbxFix) {
-                        illegalValues.add(value);
+                        illegalValues.add(kvp.value);
                     }
                 }
             }
@@ -1262,23 +1351,6 @@ public class PatchIO {
         //HotfixContainer and other elements, which it could then provide custom-tailored calls for,
         //which would simplify this code, but that means moving the model out of the main project.
         //And I (LightChaosman) prefer to keep "volatile" code in the main project, until it's stabilized to a final form
-    }
-
-    private static void setConverterToContainer(HotfixWrapper c, HotfixConverter conv) throws IllegalArgumentException {
-        switch (c.getType()) {
-            case PATCH:
-                conv.setCurrentParserPatch();
-                break;
-            case LEVEL:
-                conv.setCurrentParserLevel(c.getParameter());
-                break;
-            case ONDEMAND:
-                conv.setCurrentParserOnDemand(c.getParameter());
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        conv.setName(c.getName());
     }
 
     private static void writeFunctionalCodes(Category root, Writer writer, HashSet<ModelElement> excludes) throws IOException {
@@ -1418,97 +1490,5 @@ public class PatchIO {
                 //skip - irrelevant (e.g. HotfixContainer)
             }
         }
-    }
-
-    //
-    //Below are the legace writers
-    //
-    private static void legacyWriteToFile(CompletePatch patch, Writer writer) throws IOException {
-        if (patch.getProfiles().size() > 1) {//If we have profiles and are saving structure
-            StringBuilder sb = new StringBuilder();
-            for (Profile prof : patch.getProfiles()) {
-                sb.append("<profile = ").append(prof.getName()).append(">");
-            }
-            sb.append("<CurrentProfile = ").append(patch.getCurrentProfile().getName()).append(">");
-            writer.append(sb.toString() + LINEBREAK);//save the profiles
-        }
-
-        writeLegacyStructure(patch, writer);
-
-        if (patch.getRoot().getNumberOfHotfixDescendants() > 0) {
-            writeFunctionalHotfix(getGBXFixes(patch.getType()), patch.getRoot(), patch.getType(), writer, patch.isOffline());//Only write hotfix data when hotfixes are present
-        }
-        if (patch.getProfiles().size() > 1) {//If we have profiles enabled, we only write the enabled set commands
-            writeFunctionalCodes(patch.getRoot(), writer, new HashSet<>());
-        }
-    }
-
-    private static void writeLegacyStructure(CompletePatch patch, Writer writer) throws IOException {
-        HotfixConverter converter = new HotfixConverter("");
-        writeLegacyStructure(patch.getRoot(), patch, writer, "", LINEBREAK + LINEBREAK, converter);
-    }
-
-    private static void writeLegacyStructure(Category root, CompletePatch patch, Writer writer, final String prefix, final String postfix, HotfixConverter converter) throws IOException {
-        writer.append(prefix + "#<" + root.getName() + ">" + (root.isMutuallyExclusive() ? "<MUT>" : "") + postfix);
-        for (ModelElement c : root.getElements()) {
-            if (c instanceof Category) {
-                writeLegacyStructure((Category) c, patch, writer, prefix + "    ", postfix, converter);
-            } else if (c instanceof HotfixWrapper) {
-                for (SetCommand s : ((HotfixWrapper) c).getElements()) {
-                    writer.append(prefix + "    " + toLegacyString(s, patch, converter) + postfix);
-                }
-            } else {
-                writer.append(prefix + "    " + toLegacyString((ModelElement) c, patch, converter) + postfix);
-            }
-        }
-        writer.append(prefix + "#</" + root.getName() + ">" + postfix);
-    }
-
-    private static String toLegacyString(ModelElement el, CompletePatch patch, HotfixConverter conv) {
-        assert !(el instanceof Category);
-        ModelElementContainer parent = el.getParent();
-        if (parent instanceof HotfixWrapper) {
-            SetCommand code = (SetCommand) el;
-            setConverterToContainer((HotfixWrapper) parent, conv);
-            conv.addSetCommand(escape(code.getCode()));//escape, since we didn't do that in legacy
-            String key = conv.getResult().keys.remove(0);
-            String value = conv.getResult().values.remove(0);
-            String fix = "#<hotfix><key>" + key + "</key><value>" + value + "</value>" + legacyProfileString(code, patch) + (code.isSelected() ? "<on>" : "<off>");
-            return fix;
-        }
-        String code;
-        boolean selected = true;
-        if (el instanceof Comment) {
-            code = ((Comment) el).getComment();
-            Category ancestor = (Category) el.getParent();
-            while (ancestor != null && ancestor.getTransientData().getNumberOfOccurences(GlobalListOfProperties.LeafTypeCommandChecker.class) == 0) {
-                ancestor = ancestor.getParent();
-            }
-            if (ancestor != null) {
-                selected = ancestor.getTransientData().getNumberOfOccurences(GlobalListOfProperties.LeafTypeCommandChecker.class)
-                        == ancestor.getTransientData().getNumberOfOccurences(GlobalListOfProperties.LeafSelectedChecker.class);
-            }
-        } else {
-            assert el instanceof SetCommand;
-            SetCommand code2 = (SetCommand) el;
-            code = code2.getCode();
-            selected = code2.isSelected();
-        }
-        if (patch.getProfiles().size() <= 1) {
-            return (selected ? "" : "#") + code + (selected ? "" : "<off>");
-        } else {
-            return "#<code>" + code + "</code>" + (el instanceof SetCommand ? legacyProfileString((SetCommand) el, patch) : "") + (selected ? "<on>" : "<off>");
-        }
-    }
-
-    private static String legacyProfileString(SetCommand com, CompletePatch patch) {
-        if (patch.getProfiles().size() <= 1) {
-            return "";
-        }
-        StringBuilder sb = new StringBuilder();
-        for (Profile prof : com.getProfiles()) {
-            sb.append(String.format("<inProfile = %s>", prof.getName()));
-        }
-        return sb.toString();
     }
 }

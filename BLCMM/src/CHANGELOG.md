@@ -26,6 +26,7 @@ BLCMM Changelog
 - "Restore defaults" button on settings screen will only restore the settings
   shown on the active screen (this prevents clearing the recently-viewed file
   list, for instance)
+- Removed hidden ability to save in legacy FilterTool mod format
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
 - When creating and saving a new file, it now opens on the next boot

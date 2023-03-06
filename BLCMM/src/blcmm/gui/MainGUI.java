@@ -60,7 +60,6 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -84,15 +83,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -107,10 +103,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
@@ -329,7 +323,7 @@ public final class MainGUI extends ForceClosingJFrame {
                     AutoBackupper.backup(f, new AutoBackupper.Backupable() {
                         @Override
                         public void write(BufferedWriter writer) throws IOException {
-                            PatchIO.writeToFile(patch, PatchIO.SaveFormat.BLCMM, writer, false);
+                            PatchIO.writeToFile(patch, writer, false);
                         }
 
                         @Override
@@ -1268,7 +1262,7 @@ public final class MainGUI extends ForceClosingJFrame {
      */
     private boolean saveAction() {
         if (currentFile != null && currentFile.exists()) {
-            return savePatch2(patch, currentFile, PatchIO.SaveFormat.BLCMM, false);
+            return savePatch(patch, currentFile, false);
         } else {
             return saveToFileAction();
         }
@@ -1292,8 +1286,7 @@ public final class MainGUI extends ForceClosingJFrame {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             currentFile = file;
-            boolean export = fc.getFormat() != PatchIO.SaveFormat.BLCMM;
-            boolean result = savePatch2(patch, file, fc.getFormat(), export);
+            boolean result = savePatch(patch, file, false);
             if (result) {
                 addCurrentFileToFrontOfPreviousFiles();
             }
@@ -1303,7 +1296,18 @@ public final class MainGUI extends ForceClosingJFrame {
         return false;
     }
 
-    public boolean savePatch2(CompletePatch patch, File file, PatchIO.SaveFormat format, boolean exporting) {
+    /**
+     * Saves a patch file out to the specified file.  Runs various sanity checks
+     * given the current state of the patch in the GUI, and handles the work
+     * of opening the file for writing.  The actual file contents are all handled
+     * in PatchIO via the writeToFile method.
+     * 
+     * @param patch The patchset to save
+     * @param file The file to save to
+     * @param exporting Whether or not we're exporting a mod
+     * @return Whether or not the file was actually saved
+     */
+    public boolean savePatch(CompletePatch patch, File file, boolean exporting) {
         if (patch != null && openedType != null) {
             if (patch.getType().equals(PatchType.BL2) && openedType.equals(PatchType.TPS)) {
                 int choice = JOptionPane.showConfirmDialog(this, "It seems you are saving a Borderlands TPS patch as a Borderlands 2 patch.\nContinue?", "Unusual patch type selected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -1349,7 +1353,7 @@ public final class MainGUI extends ForceClosingJFrame {
             }
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-            List<String> res = PatchIO.writeToFile(patch, format, bw, exporting);
+            List<String> res = PatchIO.writeToFile(patch, bw, exporting);
             bw.close();
             ((CheckBoxTree) jTree1).setChanged(false);
             for (String report : res) {

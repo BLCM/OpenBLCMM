@@ -76,4 +76,37 @@ public class HotfixCommand extends SetCommand {
         return (HotfixWrapper) super.getParent();
     }
 
+    /**
+     * Returns the "raw" hotfix format actually used by Gearbox hotfixes.
+     * @return The raw hotfix format
+     */
+    public String toRawHotfixFormat() {
+        return this.toRawHotfixFormat("");
+    }
+
+    /**
+     * Returns the "raw" hotfix format actually used by Gearbox hotfixes,
+     * with support for a previous value (used by our `set_cmp` syntax).
+     *
+     * @param previous The previous value, for set_cmp hotfixes
+     * @return The raw hotfix format
+     */
+    public String toRawHotfixFormat(String previous) {
+        HotfixWrapper wrapper = (HotfixWrapper)this.getParent();
+        switch (wrapper.getType()) {
+            case PATCH:
+                return this.object
+                    + "," + this.field
+                    + "," + previous
+                    + "," + this.value;
+                
+            default:
+                return wrapper.getRawParameter()
+                    + "," + this.object
+                    + "," + this.field
+                    + "," + previous
+                    + "," + this.value;
+        }
+    }
+
 }

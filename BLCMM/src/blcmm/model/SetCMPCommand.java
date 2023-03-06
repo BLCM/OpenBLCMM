@@ -102,4 +102,13 @@ public class SetCMPCommand extends HotfixCommand {
 
     }
 
+    /**
+     * Returns the "raw" hotfix format actually used by Gearbox hotfixes.
+     * @return The raw hotfix format
+     */
+    @Override
+    public String toRawHotfixFormat() {
+        return this.toRawHotfixFormat(this.cmpValue);
+    }
+
 }

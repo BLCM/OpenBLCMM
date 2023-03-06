@@ -68,7 +68,7 @@ public class ExportCategoryAsModAction extends RightMouseButtonAction {
             CompletePatch completePatch = new CompletePatch();
             completePatch.setRoot(c);
             completePatch.setType(tree.getPatch().getType());
-            MainGUI.INSTANCE.savePatch2(completePatch, file, fc.getFormat(), true);
+            MainGUI.INSTANCE.savePatch(completePatch, file, true);
             MainGUI.INSTANCE.getTimedLabel().showTemporary(
                     "<html>Exported category to <tt>" + file.getName() + "</tt>");
         }
