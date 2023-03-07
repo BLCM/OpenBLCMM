@@ -19,6 +19,7 @@ TODO (immediate)
 TODO (maybe?)
 =============
 
+- Add some caching to IconManager -- probably had it originally.
 - Get a Netbeansless build system working (just ant from CLI).  I'm (apoc)
   still feeling pretty rusty in Java, so having the IDE is pretty nice,
   but it'd undeniably be kind of nice to be rid of it.
