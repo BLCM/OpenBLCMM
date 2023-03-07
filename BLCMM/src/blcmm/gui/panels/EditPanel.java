@@ -50,7 +50,7 @@ import blcmm.utilities.CancelConfirmer;
 import blcmm.utilities.InputValidator;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;

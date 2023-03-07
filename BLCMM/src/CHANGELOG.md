@@ -18,6 +18,8 @@ BLCMM Changelog
 - INI file tweaks moved to new "INI Tweaks" dialog
 - Added "allow toggling individual statements" option to settings, and improved
   dynamically setting the option from the main BLCMM window.
+- Added a "log-latest.log" logfile which never gets removed, and updated the
+  filenames for the date-stamped logfiles to use human-readable dates.
 - Improved Steam Library Folder detection using StidOfficial's SteamVDF
 - Moved "offline" checkbox to new "Dangerous settings" dialog.  Mods will be
   saved in offline mode by default, and it's recommended to keep it that way.

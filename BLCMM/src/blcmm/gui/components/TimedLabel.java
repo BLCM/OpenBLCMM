@@ -28,7 +28,7 @@ package blcmm.gui.components;
 
 import blcmm.gui.theme.ThemeManager;
 import blcmm.gui.theme.ThemeManager.ColorType;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;

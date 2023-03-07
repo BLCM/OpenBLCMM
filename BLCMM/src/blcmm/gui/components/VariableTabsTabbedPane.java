@@ -28,7 +28,7 @@ package blcmm.gui.components;
 
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.panels.ObjectExplorerPanel;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;

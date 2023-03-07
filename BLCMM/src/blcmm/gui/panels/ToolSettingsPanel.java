@@ -30,7 +30,7 @@ import blcmm.gui.MainGUI;
 import blcmm.gui.theme.Theme;
 import blcmm.utilities.Options;
 import blcmm.utilities.options.Option;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;

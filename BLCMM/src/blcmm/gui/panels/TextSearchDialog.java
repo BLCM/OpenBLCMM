@@ -28,7 +28,7 @@ package blcmm.gui.panels;
 
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.EnhancedFormattedTextField;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.EventQueue;

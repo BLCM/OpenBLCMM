@@ -51,7 +51,7 @@ import blcmm.model.PatchIO;
 import blcmm.model.PatchType;
 import blcmm.model.Profile;
 import blcmm.utilities.*;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import general.utilities.OSInfo;
 import java.awt.Color;
 import java.awt.Component;

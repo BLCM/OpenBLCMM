@@ -27,7 +27,7 @@
 package blcmm.model;
 
 import blcmm.model.properties.GlobalListOfProperties;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;

@@ -31,7 +31,7 @@ import blcmm.gui.tree.OverwriteChecker;
 import blcmm.model.ModelElement;
 import blcmm.model.SetCommand;
 import blcmm.model.TransientModelData;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;

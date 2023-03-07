@@ -28,7 +28,7 @@ package blcmm.gui.panels;
 
 import blcmm.utilities.Utilities;
 import blcmm.utilities.options.Option;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import javax.swing.BoxLayout;
 
 /**

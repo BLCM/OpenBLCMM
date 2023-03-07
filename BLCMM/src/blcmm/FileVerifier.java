@@ -42,7 +42,7 @@ class FileVerifier {
     private static final String[][] FILES_TO_VERIFY = {
         {"BLCMM_Data_Interaction_Library", "e9f94ef10b1ef66f17e626648289a38d760d5dd745cc8d8f80e454cb5c812c45"},
         {"BLCMM_Resources",/*           */ "f40fc4f1c46236f7d914618ca46c8e78858b39601fb444e7f92d7406430b845a"},
-        {"BLCMM_Utilities",/*           */ "f3a4dc96f13090ed480ba1775a43b2409cac848a434b7e5ec990b3c0dc4ac974"},};
+        {"BLCMM_Utilities",/*           */ "007bc4a1b4fd771bf76b5bbc779dc41ae50e28ac4c6320637fdfdc5c698d6b95"},};
 
     static boolean verifyFiles() {
         boolean missing = false, corrupt = false, changed = false, ex2 = false;

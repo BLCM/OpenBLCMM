@@ -38,7 +38,7 @@ import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;

@@ -31,7 +31,7 @@ import blcmm.data.lib.GlobalDictionary;
 import blcmm.gui.MainGUI;
 import blcmm.gui.ObjectExplorer;
 import blcmm.utilities.Options;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;

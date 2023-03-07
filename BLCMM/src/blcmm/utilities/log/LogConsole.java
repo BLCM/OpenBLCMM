@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  LightChaosman
+ * Copyright (C) 2023 CJ Kucera
  *
  * BLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,46 +24,64 @@
  * additional permission to convey the resulting work.
  *
  */
-package blcmm.gui.components;
 
-import blcmm.utilities.GlobalLogger;
-import java.util.HashSet;
-import javax.swing.JFrame;
+package blcmm.utilities.log;
 
 /**
- *
- * @author LightChaosman
+ * Console logging for GlobalLogger.  Just a straightforward wrapper around
+ * some basic System.out.println(), basically.
+ * 
+ * @author apocalyptech
  */
-public class ForceClosingJFrame extends JFrame {
 
-    private final static HashSet<ForceClosingJFrame> INSTANCES = new HashSet<>();
+public class LogConsole implements LogTarget {
 
-    public ForceClosingJFrame() {
-        super();
-        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        INSTANCES.add(this);
-    }
-
-    public ForceClosingJFrame(String name) {
-        super(name);
-        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        GlobalLogger.log("Opening frame: " + name);
-        INSTANCES.add(this);
-    }
-
+    /**
+     * Has no effect.
+     * 
+     * @param newLogFolder The folder to use.
+     */
     @Override
-    public void dispose() {
-        GlobalLogger.log("Closing frame: " + getTitle());
-        super.dispose();
-        INSTANCES.remove(this);
-        if (INSTANCES.isEmpty()) {
-            GlobalLogger.deleteLog();
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException ex) {
-            }
-            System.exit(0);
-        }
+    public void setLogFolder(String newLogFolder) {
+    }
+
+    /**
+     * Logs a single line.
+     * 
+     * @param line The message to log
+     */
+    @Override
+    public void singleLine(String line) {
+        System.out.println(line);
+    }
+
+    /**
+     * Flush the console.
+     */
+    @Override
+    public void flush() {
+        System.out.flush();
+    }
+
+    /**
+     * Has no effect.
+     */
+    @Override
+    public void close() {
+    }
+    
+    /**
+     * Has no effect.
+     */
+    @Override
+    public void delete() {
+    }
+    
+    /**
+     * Has no effect.
+     */
+    @Override
+    public void markAsPermanentLog() {
     }
 
 }

@@ -34,7 +34,7 @@ import blcmm.utilities.BLCMMUtilities;
 import blcmm.utilities.IconManager;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import general.utilities.OSInfo;
 import general.utilities.OSInfo.OS;
 import general.utilities.StringTable;

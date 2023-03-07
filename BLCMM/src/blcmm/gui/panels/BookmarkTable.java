@@ -30,7 +30,7 @@ import blcmm.data.lib.DataManager;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.Options;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;

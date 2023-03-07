@@ -27,7 +27,7 @@
 
 package blcmm.model;
 
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

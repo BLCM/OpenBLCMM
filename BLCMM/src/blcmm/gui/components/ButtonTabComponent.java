@@ -31,7 +31,7 @@ package blcmm.gui.components;
  * @author FromDarkHell
  * @author LightChaosman
  */
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

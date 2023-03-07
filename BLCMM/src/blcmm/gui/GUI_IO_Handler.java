@@ -34,7 +34,7 @@ import blcmm.model.ModelElement;
 import blcmm.model.PatchIO;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.utilities.ImportAnomalyLog;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;

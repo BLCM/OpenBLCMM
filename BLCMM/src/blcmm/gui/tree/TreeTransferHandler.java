@@ -34,7 +34,7 @@ import blcmm.model.SetCommand;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.utilities.ImportAnomalyLog;
 import blcmm.utilities.Options;
-import general.utilities.GlobalLogger;
+import blcmm.utilities.GlobalLogger;
 import java.awt.EventQueue;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

@@ -29,7 +29,6 @@ package blcmm.utilities;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.options.*;
-import general.utilities.GlobalLogger;
 import general.utilities.StringTable;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
