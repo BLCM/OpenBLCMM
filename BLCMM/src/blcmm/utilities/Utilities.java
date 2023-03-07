@@ -26,7 +26,6 @@
  */
 package blcmm.utilities;
 
-import general.utilities.StringUtilities;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;

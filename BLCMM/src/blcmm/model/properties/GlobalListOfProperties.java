@@ -35,7 +35,7 @@ import blcmm.model.PatchIO;
 import blcmm.model.SetCMPCommand;
 import blcmm.model.SetCommand;
 import blcmm.utilities.Options;
-import general.utilities.StringUtilities;
+import blcmm.utilities.StringUtilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

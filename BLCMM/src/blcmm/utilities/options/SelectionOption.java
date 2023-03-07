@@ -28,7 +28,7 @@ package blcmm.utilities.options;
 
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.Options;
-import general.utilities.StringTable;
+import blcmm.utilities.StringTable;
 import java.awt.Component;
 import java.util.Arrays;
 import java.util.Collection;
