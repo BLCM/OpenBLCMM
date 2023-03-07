@@ -32,7 +32,7 @@ import blcmm.model.*;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import blcmm.utilities.GlobalLogger;
-import general.utilities.OSInfo;
+import blcmm.utilities.OSInfo;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

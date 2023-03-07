@@ -58,7 +58,7 @@ public final class AboutPanel extends JPanel {
                 + "<br/>"
                 + "BLCMM makes use of the following third-party libraries:<br/>"
                 + "  - StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.<br/>"
-                + "  - Apache Commons Text, available under the Apache License v2.0<br/>");
+                + "  - Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0<br/>");
         int wLog = 64, wPay = 100;
         mainLabel.setIcon(new ImageIcon(IconManager.getBLCMMIcon(wLog)));
         mainLabel.setIconTextGap((wPay - wLog) / 2 + 10);

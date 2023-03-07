@@ -26,7 +26,7 @@
  */
 package blcmm.gui.components;
 
-import general.utilities.OSInfo;
+import blcmm.utilities.OSInfo;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;

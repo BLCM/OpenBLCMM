@@ -52,7 +52,7 @@ import blcmm.model.PatchType;
 import blcmm.model.Profile;
 import blcmm.utilities.*;
 import blcmm.utilities.GlobalLogger;
-import general.utilities.OSInfo;
+import blcmm.utilities.OSInfo;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;

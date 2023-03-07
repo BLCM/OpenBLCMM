@@ -33,7 +33,7 @@ import blcmm.model.PatchType;
 import blcmm.utilities.GameDetection;
 import blcmm.utilities.Utilities;
 import blcmm.utilities.GlobalLogger;
-import general.utilities.OSInfo;
+import blcmm.utilities.OSInfo;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;

@@ -34,7 +34,7 @@ import blcmm.utilities.ImportAnomalyLog;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import blcmm.utilities.GlobalLogger;
-import general.utilities.OSInfo;
+import blcmm.utilities.OSInfo;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;

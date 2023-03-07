@@ -28,7 +28,7 @@ package blcmm.gui.panels;
 
 import blcmm.utilities.Utilities;
 import blcmm.utilities.GlobalLogger;
-import general.utilities.OSInfo;
+import blcmm.utilities.OSInfo;
 import general.utilities.StringTable;
 import java.awt.Color;
 import java.awt.Component;

@@ -27,7 +27,6 @@
 package blcmm.utilities;
 
 import blcmm.model.PatchType;
-import general.utilities.OSInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
