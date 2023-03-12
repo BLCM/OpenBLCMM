@@ -15,6 +15,8 @@ TODO (immediate)
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
     which got ripped out.
+  - BPD index/length.  Check Fragile Minecraft Blocks for an easy test.
+  - BPD number converter applet thing
 
 TODO (maybe?)
 =============

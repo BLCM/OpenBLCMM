@@ -11,40 +11,39 @@ build/
 dist/
 
 #   BLCMM files
-logs/
-blcmm_logs/
-backups/
-general.options
-versions.options
-hints.txt
-data/
-multitool/
-BLCMM/plugins/
-plugin output/
-plugin_output/
+/BLCMM/logs/
+/BLCMM/blcmm_logs/
+/BLCMM/backups/
+/BLCMM/general.options
+/BLCMM/versions.options
+/BLCMM/hints.txt
+/BLCMM/data/
+/BLCMM/multitool/
+/BLCMM/plugins/
+/BLCMM/plugin output/
 
 # BLCMM Data package generator data files
-BLCMM Data/input/
-BLCMM Data/output/
-BLCMM Data/cj_data/BL2/raw/
-BLCMM Data/cj_data/BL2/raw-sorted/
-BLCMM Data/cj_data/BL2/organized/
-BLCMM Data/cj_data/TPS/raw/
-BLCMM Data/cj_data/TPS/raw-sorted/
-BLCMM Data/cj_data/TPS/organized/
+/BLCMM Data/input/
+/BLCMM Data/output/
+/BLCMM Data/cj_data/BL2/raw/
+/BLCMM Data/cj_data/BL2/raw-sorted/
+/BLCMM Data/cj_data/BL2/organized/
+/BLCMM Data/cj_data/TPS/raw/
+/BLCMM Data/cj_data/TPS/raw-sorted/
+/BLCMM Data/cj_data/TPS/organized/
 
 #BLCMM Lib distributor files
-BLCMM Lib Distributor/other_locations.txt
+/BLCMM Lib Distributor/other_locations.txt
 
 #Launcher files
-BLCMM Launcher/store/
-BLCMM Launcher/stock/
+/BLCMM Launcher/store/
+/BLCMM Launcher/stock/
 
 #   Random other files
-Borderlands 2/
-FT/
-src/testing/
-testfiles/
-flag files/
-crash.boom
-BLCMM Data/cj_data/BL2/BL2-all-classes.zip
+/Borderlands 2/
+/FT/
+/src/testing/
+/testfiles/
+/flag files/
+/crash.boom
+/BLCMM Data/cj_data/BL2/BL2-all-classes.zip
