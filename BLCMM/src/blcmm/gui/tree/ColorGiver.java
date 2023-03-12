@@ -49,7 +49,7 @@ public class ColorGiver {
         COLORMAP.put(GlobalListOfProperties.CommentChecker.Say.class, ThemeManager.ColorType.TreeSpecialCommentChecker);
         COLORMAP.put(GlobalListOfProperties.CommentChecker.Exec.class, ThemeManager.ColorType.TreeSpecialCommentChecker);
         COLORMAP.put(GlobalListOfProperties.HotfixChecker.class, ThemeManager.ColorType.TreeHotfixChecker);
-        COLORMAP.put(GlobalListOfProperties.CompleteClassChecker.class, ThemeManager.ColorType.TreeCompleteClassCommandChecker);
+        //COLORMAP.put(GlobalListOfProperties.CompleteClassChecker.class, ThemeManager.ColorType.TreeCompleteClassCommandChecker);
 
         // Now, outright syntax errors
         COLORMAP.put(GlobalListOfProperties.OpenedAndSavedInFilterToolChecker.class, ThemeManager.ColorType.TreeSyntaxError);
@@ -67,7 +67,7 @@ public class ColorGiver {
         COLORMAP.put(GlobalListOfProperties.BooleanFieldChecker.class, ThemeManager.ColorType.TreeContentError);
         COLORMAP.put(GlobalListOfProperties.RestrictedFieldChecker.class, ThemeManager.ColorType.TreeContentError);
         COLORMAP.put(GlobalListOfProperties.EmptyCategoryChecker.class, ThemeManager.ColorType.TreeContentError);
-        COLORMAP.put(GlobalListOfProperties.ClassHotfixChecker.class, ThemeManager.ColorType.TreeContentError);
+        //COLORMAP.put(GlobalListOfProperties.ClassHotfixChecker.class, ThemeManager.ColorType.TreeContentError);
 
         // Style warnings.  Not errors, or necessarily even wrong, but should
         // know what you're doing.

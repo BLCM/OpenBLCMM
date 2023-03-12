@@ -26,7 +26,6 @@
  */
 package blcmm.gui.panels;
 
-import blcmm.data.lib.DataManager;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.EnhancedFormattedTextField;
 import blcmm.gui.components.InfoLabel;
@@ -41,16 +40,18 @@ import blcmm.model.HotfixWrapper;
 import blcmm.model.ModelElement;
 import blcmm.model.ModelElementContainer;
 import blcmm.model.PatchIO;
+import blcmm.model.PatchType;
+import blcmm.model.PatchType.BLMap;
 import blcmm.model.SetCMPCommand;
 import blcmm.model.SetCommand;
 import blcmm.model.TransientModelData;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.model.properties.PropertyChecker;
 import blcmm.utilities.CancelConfirmer;
+import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.InputValidator;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
-import blcmm.utilities.GlobalLogger;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -63,22 +64,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -95,59 +86,6 @@ import javax.swing.text.BadLocationException;
 @SuppressWarnings("serial")
 public class EditPanel extends javax.swing.JPanel implements InputValidator, CancelConfirmer {
 
-    private static final List<BLMap> LEVELS_BL2 = new ArrayList<>();
-    private static final List<BLMap> LEVELS_TPS = new ArrayList<>();
-
-    static {
-        HashMap<String, BLMap> temp = new HashMap<>();
-        Comparator<BLMap> comp = (BLMap t, BLMap t1) -> t.name.compareTo(t1.name);
-        boolean old = DataManager.isBL2();
-        DataManager.setBL2(true);
-        readLevelFile(temp);
-        LEVELS_BL2.addAll(temp.values());
-        Collections.sort(LEVELS_BL2, comp);
-        temp.clear();
-
-        DataManager.setBL2(false);
-        readLevelFile(temp);
-        LEVELS_TPS.addAll(temp.values());
-        Collections.sort(LEVELS_TPS, comp);
-        DataManager.setBL2(old);
-    }
-
-    private static class BLMap {
-
-        String code, name;
-    }
-
-    private static void readLevelFile(Map<String, BLMap> levels) {
-        final String className = "LevelDependencyList";
-        if (!DataManager.isDataForClassPresent(className)) {
-            return;
-        }
-        try {
-            InputStream stream = DataManager.getRawStreamOfClass(className);
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-            String line = br.readLine();
-            while (line != null) {
-                line = line.trim();
-                if (line.startsWith("LevelList")) {
-                    BLMap level = new BLMap();
-                    int index1 = line.indexOf("PersistentMap=\"") + "PersistentMap=\"".length();
-                    int index2 = line.indexOf("\"", index1);
-                    level.code = line.substring(index1, index2);
-                    int index3 = line.indexOf("LevelName=\"", index2) + "LevelName=\"".length();
-                    int index4 = line.indexOf("\"", index3);
-                    level.name = line.substring(index3, index4);
-                    levels.put(level.code, level);
-                }
-                line = br.readLine();
-            }
-            br.close();
-        } catch (IOException ex) {
-            Logger.getLogger(EditPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     private final HighlightedTextArea textElement;
     private final JSpinner deformatSpinner;
 
@@ -155,7 +93,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     private final boolean commentsOnly;
     private boolean hotfix;
     private final boolean allowEdit;
-    private final List<BLMap> levels;
+    private final PatchType patchType;
     private final Collection<String> levelnames;
     private final Collection<String> packages;
     private TextSearchDialog searchDialog = null;
@@ -172,20 +110,11 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     public EditPanel(CompletePatch patch, Category parent, List<ModelElement> elements, boolean allowEdit, String disallowEditReason) {
         this.commentsOnly = parent.isMutuallyExclusive();
         this.allowEdit = allowEdit;
+        this.patchType = patch.getType();
         packages = patch.getType().getOnDemandPackages();
         //packages = patch.getType().getOnDemandPackages().stream().map(s -> s.getStreamingPackage()).collect(Collectors.toList());
-        switch (patch.getType()) {
-            case BL2:
-                levels = LEVELS_BL2;
-                break;
-            case TPS:
-                levels = LEVELS_TPS;
-                break;
-            default:
-                throw new RuntimeException();
-        }
         levelnames = new HashSet<>();
-        levels.forEach(map -> levelnames.add(map.code));
+        this.patchType.getLevels().forEach(map -> levelnames.add(map.code));
 
         initComponents();
         textElement = new HighlightedTextArea(true, allowEdit);
@@ -302,10 +231,10 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
                     List<String> list = new ArrayList<>();
                     list.add("None");
                     int minl = 0;
-                    for (BLMap key : levels) {
+                    for (BLMap key : patchType.getLevels()) {
                         minl = Math.max(minl, key.name.length());
                     }
-                    for (BLMap map : levels) {
+                    for (BLMap map : patchType.getLevels()) {
                         String k1 = map.name;
                         while (k1.length() < minl) {
                             k1 += " ";
@@ -342,9 +271,15 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
                     }
                 }
             };
+            /**
+             * Disabled as part of the opensourcing project -- relies on stuff that's
+             * no longer there.
+             */
+            /*
             textElement.removeKeyListener(textElement.getAutoCompleteAttacher().getKeyAdapter());
             textElement.addKeyListener(keyAdap);
             textElement.addKeyListener(textElement.getAutoCompleteAttacher().getKeyAdapter());
+            */
         }
     }
 

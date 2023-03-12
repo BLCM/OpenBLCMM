@@ -26,24 +26,19 @@
  */
 package blcmm.gui.panels;
 
-import blcmm.data.lib.BorderlandsObject;
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManager.Dump;
-import blcmm.data.lib.GlobalDictionary;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.components.InfoLabel;
-import blcmm.gui.text.AutoCompleteAttacher;
 import blcmm.gui.text.HighlightedTextArea;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
-import blcmm.utilities.Options;
-import blcmm.utilities.Utilities;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Utilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -53,28 +48,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -84,7 +72,6 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 
 /**
  *
@@ -123,7 +110,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private final JSpinner deformatSpinner;
     Worker worker;
     private static int totalLines = -1;
-    GlobalDictionary dict = DataManager.getDictionary();
+    //GlobalDictionary dict = DataManager.getDictionary();
     boolean controlState = false;
 
     /**
@@ -152,7 +139,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         forwardButton.setFont(forwardButton.getFont().deriveFont(forwardButton.getFont().getSize2D() + 2f));
 
         if (totalLines == -1) {
-            totalLines = DataManager.getDictionary().getAvailableClasses().stream().mapToInt(ObjectExplorerPanel::countLines).sum();
+            //totalLines = DataManager.getDictionary().getAvailableClasses().stream().mapToInt(ObjectExplorerPanel::countLines).sum();
+            totalLines = 0;
         }
         if (totalLines == 0) {
             queryTextField.setText("Download data first");
@@ -189,7 +177,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         d = new Dimension(Math.max(temp.getPreferredSize().width, refsButton.getPreferredSize().width), Math.max(temp.getPreferredSize().height, refsButton.getPreferredSize().height));
 
         setFixedSize(refsButton, d);
-        PatchType type = DataManager.isBL2() ? PatchType.BL2 : PatchType.TPS;
+        //PatchType type = DataManager.isBL2() ? PatchType.BL2 : PatchType.TPS;
+        PatchType type = PatchType.BL2;
         gameIconLabel.setIcon(new ImageIcon(type.getIcon(25)));
         gameIconLabel.setToolTipText("Object explorer is currently in " + type + " mode.");
         gameIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -231,6 +220,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             }
 
             private void singleClickAction() {
+                /* Temporarily commented so I can focus on other things
                 // This happens when its a simple click
                 String objectToBookmark = queryTextField.getText();
                 if (objectToBookmark.isEmpty()) {
@@ -269,6 +259,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         -> IntStream.range(0, tabbedPane.getTabCount() - 1)
                                 .mapToObj(i -> (ObjectExplorerPanel) tabbedPane.getComponentAt(i))
                                 .forEach(ObjectExplorerPanel::updateBookmarkButton));
+                */
             }
 
             private void doubleClickAction() {
@@ -319,6 +310,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }
 
     private static int countLines(String classname) {
+        /* temporarily commented so I can focus on other things
         BufferedReader br = new BufferedReader(new InputStreamReader(DataManager.getRawStreamOfClass(classname)));
         int c = 0;
         try {
@@ -332,6 +324,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             Logger.getLogger(ObjectExplorerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         return c;
+        */
+        return 0;
     }
 
     /**
@@ -662,9 +656,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }
 
     private void updateBookmarkButton(String query) {
+        /* Temporarily commented so I can focus on other things
         boolean check = Arrays.asList(Options.INSTANCE.getOEBookmarks(DataManager.isBL2())).contains(query);
         bookmarkLabel.setText(check ? STAR_FILLED : STAR_OPEN);
         bookmarkLabel.setForeground(ThemeManager.getColor(check ? ThemeManager.ColorType.UINimbusAlertYellow : ThemeManager.ColorType.UIText));
+        */
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -686,6 +682,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void attachAutoComplete() {
+        /* Temporarily commented so I can focus on other things
         new AutoCompleteAttacher(queryTextField) {
             @Override
             protected AutoCompleteAttacher.AutoCompleteRequirements getAutoCompleteRequirements(boolean advanced) throws BadLocationException {
@@ -733,9 +730,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 }
             }
         };
+        */
     }
 
     private void enterKeyPressed() {
+        /* Temporarily commented so I can focus on other things
         String query = queryTextField.getText().trim();
         if (query.isEmpty() || query.equals(previousQuery)) {
             return;
@@ -753,6 +752,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         } else {
             performSearch();
         }
+        */
     }
 
     private void replaceTextByHistory() {
@@ -769,7 +769,26 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         textElement.requestFocus();
     }
 
-    public void dump(ObjectExplorer.DumpOptions options) {
+    public void dump(DataManager dm, ObjectExplorer.DumpOptions options) {
+        if (worker != null) {
+            worker.stop();
+        }
+        if (options.createLogEntry) {
+            GlobalLogger.log("dumping " + options.objectToDump);
+        }
+        Dump dump = dm.getDump(options.objectToDump);
+        String text = dump.text;
+        if (dump.ueObject == null) {
+            textElement.setText(text);
+        } else {
+            if (collapseArraysToggleButton.isSelected()) {
+                text = collapseArrays(text);
+            }
+            updateBookmarkButton(options.objectToDump);
+            setQueryAndText(text, dump.ueObject.getName());
+        }
+
+        /* Temporarily commented so I can focus on other things
         if (worker != null) {
             worker.stop();
         }
@@ -805,6 +824,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 performSearch();
             }
         }
+        */
 
     }
 
@@ -901,6 +921,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }
 
     private void search(String query) {
+        /* Temporarily commented so I can focus on other things
         updateBookmarkButton("");
         boolean RegexBox = query.matches(".*(\\^|\\\\|\\||\\*|\\+|\\?).*") || query.matches(".*(\\(.*[^0-9].*\\)).*");
         // Log
@@ -971,6 +992,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (worker != null) {
             worker.execute();
         }
+        */
     }
 
     private int refsLoop(BufferedReader br, int counter, TreeMap<String, Boolean> matches, String query) throws IOException {
@@ -1094,6 +1116,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }
 
     public void getAll(String query) {
+        /* Temporarily commented so I can focus on other things
         updateBookmarkButton("");
         if (worker != null) {
             // Stop worker if something else is already working
@@ -1131,10 +1154,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, ("Unfortunately, the classs you entered can not be dumped using BLCMM."), "Unknown class", JOptionPane.PLAIN_MESSAGE);
             }
         }
+        */
     }
 
     //We seperate those methods, since we can solve this request with less disk I/O
     public void getAllNoField(String query) {
+        /* Temporarily commented so I can focus on other things
         // Log
         GlobalLogger.log("Trying to getall with a class of: \"" + query + "\"");
         // Search for every class
@@ -1152,9 +1177,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, ("Unfortunately, the classs you entered can not be dumped using BLCMM."), "Unknown class", JOptionPane.PLAIN_MESSAGE);
             GlobalLogger.log("Unable to getall with a class of: \"" + query + "\"");
         }
+        */
     }
 
     public void getAllWithField(String classname, String property) {
+        /* Temporarily commented so I can focus on other things
         // Log
         GlobalLogger.log("Trying to getall with a class of: \"" + classname + "\" and property of: \"" + property + "\"");
         StringBuilder sb = new StringBuilder();
@@ -1175,10 +1202,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         sb.insert(0, "Found " + count[0] + " of class " + classname + " with property " + property + "\n");
         setQueryAndText(sb.toString(), "getall " + classname + " " + property);
         GlobalLogger.log("Obtained all objects of Class: \"" + classname + "\" and property of: " + property);
+        */
     }
 
     public void updateGame() {
-        PatchType type = DataManager.isBL2() ? PatchType.BL2 : PatchType.TPS;
+        //PatchType type = DataManager.isBL2() ? PatchType.BL2 : PatchType.TPS;
+        PatchType type = PatchType.BL2;
         gameIconLabel.setIcon(new ImageIcon(type.getIcon(25)));
         gameIconLabel.setToolTipText("Object explorer is currently in " + type + " mode.");
         if (this.worker != null) {
@@ -1198,7 +1227,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         }
 
         protected Collection<String> getAvailableClasses() {
-            return DataManager.getDictionary().getAvailableClasses();
+            //return DataManager.getDictionary().getAvailableClasses();
+            return new ArrayList<String>();
         }
 
         public abstract int loop(BufferedReader br, int counter, TreeMap<String, Boolean> matches) throws IOException;
@@ -1206,6 +1236,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         @Override
         protected Object doInBackground() throws Exception {
 
+            /* Temporarily commented so I can focus on other things
             TreeMap<String, Boolean> matches = new TreeMap<>();
             textElement.setEditable(false);
             textElement.discardAllUndoData();
@@ -1269,6 +1300,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 e = e2;
                 return null;
             }
+            */
+            return null;
         }
 
         @Override

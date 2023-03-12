@@ -26,15 +26,13 @@
  */
 package blcmm.model;
 
-import blcmm.data.lib.BorderlandsArray;
-import blcmm.data.lib.BorderlandsStruct;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.utilities.GameDetection;
+import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.ImportAnomalyLog;
+import blcmm.utilities.OSInfo;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
-import blcmm.utilities.GlobalLogger;
-import blcmm.utilities.OSInfo;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -54,7 +52,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -1247,7 +1244,12 @@ public class PatchIO {
 
         Category newCommands = new Category("");
         HashSet<ModelElement> excludes = new HashSet<>();
-        List<String> res = new ArrayList<>(analyzeLevelMerges(type, root, excludes, newCommands));
+        /**
+        * Disabled as part of the opensourcing project -- relies on stuff that's
+        * no longer there.
+        */
+        //List<String> res = new ArrayList<>(analyzeLevelMerges(type, root, excludes, newCommands));
+        List<String> res = new ArrayList<>();
         if (newCommands.size() > 0) {
             writer.append("#Level merges:" + LINEBREAK);
             writeFunctionalCodes(newCommands, writer, new HashSet<>());
@@ -1395,6 +1397,11 @@ public class PatchIO {
         return res;
     }
 
+    /**
+     * Disabled as part of the opensourcing project -- relies on stuff that's
+     * no longer there.
+     */
+    /*
     static List<String> analyzeLevelMerges(PatchType type, Category toBeChecked, HashSet<ModelElement> excludes, Category newCommands) {
         List<String> res = new ArrayList<>();
         HashSet<SetCommand> newExcludes = new HashSet<>();
@@ -1475,6 +1482,7 @@ public class PatchIO {
         excludes.addAll(newExcludes);
         return res;
     }
+    */
 
     private static void analyzeCategoryForLevelMerges(Category toBeChecked, Map<String, Collection<SetCommand>> levelMerges) {
         for (ModelElement el : toBeChecked.getElements()) {

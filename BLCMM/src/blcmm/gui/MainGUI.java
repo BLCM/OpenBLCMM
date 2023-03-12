@@ -28,7 +28,7 @@ package blcmm.gui;
 
 import blcmm.Startup;
 import blcmm.data.lib.DataManager;
-import blcmm.data.lib.GlobalDictionary;
+import blcmm.data.lib.DataManager.NoDataException;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.DefaultTextTextField;
 import blcmm.gui.components.ForceClosingJFrame;
@@ -51,8 +51,6 @@ import blcmm.model.PatchIO;
 import blcmm.model.PatchType;
 import blcmm.model.Profile;
 import blcmm.utilities.*;
-import blcmm.utilities.GlobalLogger;
-import blcmm.utilities.OSInfo;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -84,6 +82,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -143,6 +142,8 @@ public final class MainGUI extends ForceClosingJFrame {
     private boolean themeSwitchAllowed = true;
 
     private boolean currentlyLoadingPatch = false;
+    
+    private HashMap <PatchType, DataManager> dataManagers;
 
     /**
      * Creates new form MainGUI
@@ -157,6 +158,17 @@ public final class MainGUI extends ForceClosingJFrame {
         initComponents();
         addSearchLayer();
         getGameSelectionPanel().addItemListenerToComboBox(this::gameSelectionAction);
+        this.dataManagers = new HashMap<>();
+        for (PatchType type : PatchType.values()) {
+            try {
+                GlobalLogger.log("Starting initialization of " + type.toString() + " Data Manager");
+                this.dataManagers.put(type, new DataManager(type));
+                GlobalLogger.log("Initialized " + type.toString() + " Data Manager");
+            } catch (NoDataException e) {
+                this.dataManagers.put(type, null);
+                GlobalLogger.log("Error initializing " + type.toString() + " Data Manager: " + e.toString());
+            }
+        }
 
         this.titlePostfix = titlePostfix;
         themeComboBox.setSelectedItem(Options.INSTANCE.getTheme());
@@ -744,14 +756,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     private void objectExplorerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectExplorerButtonActionPerformed
-        if (ObjectExplorer.INSTANCE == null) {
-            loadDict();
-            EventQueue.invokeLater(() -> {
-                new ObjectExplorer().setVisible(true);
-            });
-        } else {
-            ObjectExplorer.INSTANCE.toFront();
-        }
+        this.launchObjectExplorerWindow();
     }//GEN-LAST:event_objectExplorerButtonActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
@@ -1005,7 +1010,8 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void gameSelectionAction(ItemEvent e) {
         PatchType type = getGameSelectionPanel().getNonNullGameType();
-        DataManager.setBL2(type != PatchType.TPS);
+        // DataManager's type gets set while it launches now, I think.
+        //DataManager.setBL2(type != PatchType.TPS);
         patch.setType(type);
         if (!this.currentlyLoadingPatch) {
             ((CheckBoxTree) jTree1).setChanged(true);
@@ -1612,35 +1618,6 @@ public final class MainGUI extends ForceClosingJFrame {
         }
     }
 
-    private void loadDict() {
-        MainGUI.INSTANCE.cursorWait();
-        GlobalDictionary dict = DataManager.getDictionary();
-        SwingWorker sw = new SwingWorker<Object, Object>() {
-            Exception e;
-
-            @Override
-            protected Object doInBackground() throws Exception {
-                try {
-                    dict.getDeepElementsContaining("jsdffjskld");//just force it to load.
-                    dict.getArrayKeysWithPrefix("afsdfaf");//force it to load autocomplete
-                } catch (Exception ex) {
-                    this.e = ex;
-                }
-                return null;
-            }
-
-            @Override
-            protected void done() {
-                if (e != null) {
-                    JOptionPane.showMessageDialog(null, e);
-                    GlobalLogger.log(e);
-                    System.exit(-1);
-                }
-            }
-        };
-        sw.execute();
-    }
-
     public void setChangePatchTypeEnabled(boolean selected) {
         getGameSelectionPanel().setEnabled(selected);
     }
@@ -1929,6 +1906,26 @@ public final class MainGUI extends ForceClosingJFrame {
         }
         setTitle(NAME + (Utilities.isCreatorMode() ? " (creator mode)" : "")
                 + " | " + VERSION + titleFilename + titlePostfix);
+    }
+    
+    public DataManager getCurrentDataManager() {
+        return this.dataManagers.get(this.patch.getType());
+    }
+    
+    public void launchObjectExplorerWindow() {
+        if (ObjectExplorer.INSTANCE == null) {
+            DataManager dm = this.getCurrentDataManager();
+            if (dm == null) {
+                // TODO: Some error stuff.
+            } else {
+                EventQueue.invokeLater(() -> {
+                    new ObjectExplorer(dm).setVisible(true);
+                });
+            }
+        } else {
+            ObjectExplorer.INSTANCE.toFront();
+        }
+
     }
 
 }

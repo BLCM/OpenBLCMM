@@ -26,7 +26,7 @@
  */
 package blcmm.gui.panels;
 
-import blcmm.data.lib.sdk.generated.GearboxFramework.BehaviorProviderDefinition;
+import blcmm.data.BehaviorProviderDefinition;
 import blcmm.gui.components.EnhancedFormattedTextField;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -60,22 +60,22 @@ public class IntegerConverter extends javax.swing.JPanel {
         Function<String, Object[]> forw1 = (String s) -> {
             int val = Integer.parseInt(s);
             return new Integer[]{
-                BehaviorProviderDefinition.SubarrayData.getIndex(val),
-                BehaviorProviderDefinition.SubarrayData.getLength(val)
+                BehaviorProviderDefinition.getIndexFromArrayIndexAndLength(val),
+                BehaviorProviderDefinition.getLengthFromArrayIndexAndLength(val)
             };
         };
         BiFunction<String, String, Object> backw1 = (String s1, String s2)
-                -> BehaviorProviderDefinition.SubarrayData.generateCompoundInteger(Integer.parseInt(s1.trim()), Integer.parseInt(s2.trim()));
+                -> BehaviorProviderDefinition.getArrayIndexAndLength(Integer.parseInt(s1.trim()), Integer.parseInt(s2.trim()));
 
         Function<String, Object[]> forw2 = (String s) -> {
             int val = Integer.parseInt(s);
             return new Integer[]{
-                BehaviorProviderDefinition.BehaviorOutputLinkData2.getLinkId(val),
-                BehaviorProviderDefinition.BehaviorOutputLinkData2.getLinkedBehavior(val)
+                BehaviorProviderDefinition.getLinkIdFromLinkIdAndLinkedBehavior(val),
+                BehaviorProviderDefinition.getBehaviorFromLinkIdAndLinkedBehavior(val)
             };
         };
         BiFunction<String, String, Object> backw2 = (String s1, String s2)
-                -> BehaviorProviderDefinition.BehaviorOutputLinkData2.generateCompoundInteger(Integer.parseInt(s1.trim()), Integer.parseInt(s2.trim()));
+                -> BehaviorProviderDefinition.getLinkIdAndLinkedBehavior(Integer.parseInt(s1.trim()), Integer.parseInt(s2.trim()));
         jPanel3.setLayout(new GridBagLayout());
         JPanel pan1 = new JPanel();
         JPanel pan2 = new JPanel();

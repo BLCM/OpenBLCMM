@@ -42,7 +42,7 @@ import java.util.List;
  * @author apocalyptech
  */
 public enum PatchType {
-    
+
     // Members
     BL2(new String[] {
         "GD_Soldier_Streaming",
@@ -59,6 +59,90 @@ public enum PatchType {
         "GD_Sage_ShockFanBoat",
         "GD_Sage_CorrosiveFanBoat",
         "GD_Sage_IncendiaryFanBoat",
+    }, new BLMap[] {
+        new BLMap("Ash_P", "Eridium Blight"),
+        new BLMap("BackBurner_P", "The Backburner"),
+        new BLMap("BanditSlaughter_P", "Fink's Slaughterhouse"),
+        new BLMap("Boss_Cliffs_P", "The Bunker"),
+        new BLMap("Boss_Volcano_P", "Vault of the Warrior"),
+        new BLMap("CastleExterior_P", "Hatred's Shadow"),
+        new BLMap("CastleKeep_P", "Dragon Keep"),
+        new BLMap("caverns_p", "Caustic Caverns"),
+        new BLMap("Colosseum_P", "Colosseum"),
+        new BLMap("Cove_P", "Southern Shelf - Bay"),
+        new BLMap("CraterLake_P", "Sawtooth Cauldron"),
+        new BLMap("CreatureSlaughter_P", "Natural Selection Annex"),
+        new BLMap("dam_p", "Bloodshot Stronghold"),
+        new BLMap("damtop_p", "Bloodshot Ramparts"),
+        new BLMap("Dark_Forest_P", "The Forest"),
+        new BLMap("Dead_Forest_P", "Immortal Woods"),
+        new BLMap("Distillery_P", "Rotgut Distillery"),
+        new BLMap("Docks_P", "Unassuming Docks"),
+        new BLMap("Dungeon_P", "Lair of Infinite Agony"),
+        new BLMap("DungeonRaid_P", "The Winged Storm"),
+        new BLMap("Easter_P", "Wam Bam Island"),
+        new BLMap("FinalBossAscent_P", "Hero's Pass"),
+        new BLMap("Fridge_P", "The Fridge"),
+        new BLMap("Frost_P", "Three Horns - Valley"),
+        new BLMap("Fyrestone_P", "Arid Nexus - Boneyard"),
+        new BLMap("GaiusSanctuary_P", "Paradise Sanctum"),
+        new BLMap("Glacial_P", "Windshear Waste"),
+        new BLMap("Grass_Cliffs_P", "Thousand Cuts"),
+        new BLMap("Grass_Lynchwood_P", "Lynchwood"),
+        new BLMap("Grass_P", "The Highlands"),
+        new BLMap("Helios_P", "Helios Fallen"),
+        new BLMap("Hunger_P", "Gluttony Gulch"),
+        new BLMap("HyperionCity_P", "Opportunity"),
+        new BLMap("HypInterlude_P", "Friendship Gulag"),
+        new BLMap("icecanyon_p", "Frostburn Canyon"),
+        new BLMap("Ice_P", "Three Horns - Divide"),
+        new BLMap("Interlude_P", "The Dust"),
+        new BLMap("Iris_DL1_P", "Arena"),
+        new BLMap("Iris_DL1_TAS_P", "Arena"),
+        new BLMap("Iris_DL2_Interior_P", "Pyro Pete's Bar"),
+        new BLMap("Iris_DL2_P", "The Beatdown"),
+        new BLMap("Iris_DL3_P", "Forge"),
+        new BLMap("Iris_Hub2_P", "Southern Raceway"),
+        new BLMap("Iris_Hub_P", "Badass Crater of Badassitude"),
+        new BLMap("Iris_Moxxi_P", "Badass Crater Bar"),
+        new BLMap("Luckys_P", "The Holy Spirits"),
+        new BLMap("Mines_P", "Mines of Avarice"),
+        new BLMap("MissionTest_P", "Mission Test"),
+        new BLMap("OldDust_P", "Dahl Abandon"),
+        new BLMap("Orchid_Caves_P", "Hayter's Folly"),
+        new BLMap("Orchid_OasisTown_P", "Oasis"),
+        new BLMap("Orchid_Refinery_P", "Washburne Refinery"),
+        new BLMap("Orchid_SaltFlats_P", "Wurmwater"),
+        new BLMap("Orchid_ShipGraveyard_P", "The Rustyards"),
+        new BLMap("Orchid_Spire_P", "Magnys Lighthouse"),
+        new BLMap("Orchid_WormBelly_P", "The Leviathan's Lair"),
+        new BLMap("Outwash_P", "The Highlands - Outwash"),
+        new BLMap("PandoraPark_P", "Wildlife Exploitation Preserve"),
+        new BLMap("Pumpkin_Patch_P", "Hallowed Hollow"),
+        new BLMap("ResearchCenter_P", "Mt. Scarab Research Center"),
+        new BLMap("RobotSlaughter_P", "Ore Chasm"),
+        new BLMap("Sage_Cliffs_P", "Candlerakk's Crag"),
+        new BLMap("Sage_HyperionShip_P", "H.S.S. Terminus"),
+        new BLMap("Sage_PowerStation_P", "Ardorton Station"),
+        new BLMap("Sage_RockForest_P", "Scylla's Grove"),
+        new BLMap("Sage_Underground_P", "Hunter's Grotto"),
+        new BLMap("SanctIntro_P", "Fight for Sanctuary"),
+        new BLMap("SanctuaryAir_P", "Sanctuary"),
+        new BLMap("Sanctuary_Hole_P", "Sanctuary Hole"),
+        new BLMap("Sanctuary_P", "Sanctuary"),
+        new BLMap("SandwormLair_P", "Writhing Deep"),
+        new BLMap("Sandworm_P", "The Burrows"),
+        new BLMap("SouthernShelf_P", "Southern Shelf"),
+        new BLMap("SouthpawFactory_P", "Southpaw Steam & Power"),
+        new BLMap("Stockade_P", "Arid Nexus - Badlands"),
+        new BLMap("TempleSlaughter_P", "Murderlin's Temple"),
+        new BLMap("TestingZone_P", "The Raid on Digistruct Peak"),
+        new BLMap("ThresherRaid_P", "Terramorphous Peak"),
+        new BLMap("tundraexpress_p", "Tundra Express"),
+        new BLMap("TundraTrain_P", "End of the Line"),
+        new BLMap("Village_P", "Flamerock Refuge"),
+        new BLMap("VOGChamber_P", "Control Core Angel"),
+        new BLMap("Xmas_P", "Frost Bottom"),
     }),
     TPS(new String[] {
         "GD_Gladiator_Streaming",
@@ -69,8 +153,58 @@ public enum PatchType {
         "Crocus_Baroness_Streaming",
         "GD_MoonBuggy_Streaming",
         "GD_Co_Stingray_Streaming",
+    }, new BLMap[] {
+        new BLMap("Access_P", "Tycho's Ribs"),
+        new BLMap("centralterminal_p", "Hyperion Hub of Heroism"),
+        new BLMap("ComFacility_P", "Crisis Scar"),
+        new BLMap("DahlFactory_Boss", "Titan Robot Production Plant"),
+        new BLMap("DahlFactory_P", "Titan Industrial Facility"),
+        new BLMap("Deadsurface_P", "Regolith Range"),
+        new BLMap("Digsite_P", "Vorago Solitude"),
+        new BLMap("Digsite_Rk5arena_P", "Outfall Pumping Station"),
+        new BLMap("Eridian_slaughter_P", "The Holodome"),
+        new BLMap("InnerCore_p", "Eleseer"),
+        new BLMap("InnerHull_P", "Veins of Helios"),
+        new BLMap("JacksOffice_P", "Jack's Office"),
+        new BLMap("LaserBoss_P", "Eye of Helios"),
+        new BLMap("Laser_P", "Lunar Launching Station"),
+        new BLMap("Ma_Deck13_P", "Deck 13 1/2"),
+        new BLMap("Ma_FinalBoss_P", "Deck 13.5"),
+        new BLMap("Ma_LeftCluster_P", "Cluster 00773 P4ND0R4"),
+        new BLMap("Ma_Motherboard_P", "Motherlessboard"),
+        new BLMap("Ma_Nexus_P", "The Nexus"),
+        new BLMap("Ma_RightCluster_P", "Cluster 99002 0V3RL00K"),
+        new BLMap("Ma_SubBoss_P", "The Cortex"),
+        new BLMap("Ma_Subconscious_P", "Subconscious"),
+        new BLMap("Meriff_P", "The Meriff's Office"),
+        new BLMap("Moon_P", "Triton Flats"),
+        new BLMap("MoonShotIntro_P", "Helios Station"),
+        new BLMap("MoonSlaughter_P", "Abandoned Training Facility"),
+        new BLMap("Moonsurface_P", "Serenity's Waste"),
+        new BLMap("Outlands_P2", "Outlands Canyon"),
+        new BLMap("Outlands_P", "Outlands Spur"),
+        new BLMap("RandDFacility_P", "Research and Development"),
+        new BLMap("Spaceport_P", "Concordia"),
+        new BLMap("StantonsLiver_P", "Stanton's Liver"),
+        new BLMap("Sublevel13_P", "Sub-Level 13"),
+        new BLMap("Wreck_P", "Pity's Fall"),
     });
     
+    /**
+     * Information about a Bordlerlands map.  This used to come from the
+     * data library, but IMO this is the kind of thing that should work even
+     * if the user *doesn't* have data installed.  I'd really rather just
+     * hardcode it in here.
+     */
+    public static class BLMap {
+        public String code, name;
+        
+        public BLMap(String code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+    }
+
     // Offline strings
     public static String OFFLINE1 = "set Transient.SparkServiceConfiguration_0 ServiceName Micropatch";
     public static String OFFLINE2 = "set Transient.SparkServiceConfiguration_0 ConfigurationGroup Default";
@@ -80,6 +214,8 @@ public enum PatchType {
     // and others as a list
     private final HashSet<String> ONDEMAND_SET_LOWER = new HashSet<>();
     private final ArrayList<String> ONDEMAND_LIST = new ArrayList<>();
+    private final HashSet<String> LEVEL_SET_LOWER = new HashSet<>();
+    private final ArrayList<BLMap> LEVEL_LIST = new ArrayList<>();
     
     // Icon resource location
     private final String iconPath;
@@ -89,13 +225,18 @@ public enum PatchType {
      * 
      * @param onDemands An array describing the valid OnDemand types for the game
      */
-    private PatchType(String[] onDemands) {
+    private PatchType(String[] onDemands, BLMap[] levels) {
         // Set the icon path
         this.iconPath = "/resources/" + this.toString() + "/Icon.png";
         
         // Set OnDemand types
         for (String onDemand : onDemands) {
             this.addOnDemand(onDemand);
+        }
+
+        // Set Levels
+        for (BLMap level : levels) {
+            this.addLevel(level);
         }
     }
     
@@ -109,11 +250,28 @@ public enum PatchType {
     }
     
     /**
+     * Adds a new key for Level hotfixes
+     * @param onDemand The string to match
+     */
+    private void addLevel(BLMap level) {
+        this.LEVEL_LIST.add(level);
+        this.LEVEL_SET_LOWER.add(level.code.toLowerCase());
+    }
+    
+    /**
      * Get the full list of OnDemand hotfix keys.
      * @return 
      */
     public List<String> getOnDemandPackages() {
         return this.ONDEMAND_LIST;
+    }
+    
+    /**
+     * Get the full list of lvel hotfix keys.
+     * @return 
+     */
+    public List<BLMap> getLevels() {
+        return this.LEVEL_LIST;
     }
     
     /**
@@ -123,6 +281,15 @@ public enum PatchType {
      */
     public boolean isOnDemandInPatchType(String onDemand) {
         return this.ONDEMAND_SET_LOWER.contains(onDemand.toLowerCase());
+    }
+
+    /**
+     * Check to see if the specified level hotfix key is valid for our PatchType
+     * @param level The hotfix key to check
+     * @return True if the Level type matches this game
+     */
+    public boolean isLevelInPatchType(String level) {
+        return this.LEVEL_SET_LOWER.contains(level.toLowerCase());
     }
     
     /**

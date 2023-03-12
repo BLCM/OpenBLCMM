@@ -26,7 +26,6 @@
  */
 package blcmm.model.properties;
 
-import blcmm.data.lib.DataManager;
 import blcmm.model.Category;
 import blcmm.model.Comment;
 import blcmm.model.HotfixCommand;
@@ -133,7 +132,7 @@ public class GlobalListOfProperties {
             checkers.add(new RestrictedFieldChecker(field, setValues.get(field)));
         }
         checkers.add(new EmptyCategoryChecker());
-        checkers.add(new ClassHotfixChecker());
+        //checkers.add(new ClassHotfixChecker());
         checkers.add(new GameWillOverwriteValueChecker());
 
         //Next, the warning checkers
@@ -142,7 +141,7 @@ public class GlobalListOfProperties {
 
         // Next the informational ones which are just visual cues for users.
         checkers.add(new MUTChecker());
-        checkers.add(new CompleteClassChecker());
+        //checkers.add(new CompleteClassChecker());
         checkers.add(new HotfixChecker());
         checkers.add(new CommentChecker.Say());
         checkers.add(new CommentChecker.Exec());
@@ -607,6 +606,11 @@ public class GlobalListOfProperties {
         }
     }
 
+    /**
+     * Disabled as part of the opensourcing project -- relies on stuff that's
+     * no longer there.
+     */
+    /*
     public static class ClassHotfixChecker extends ContentPropertyChecker {
 
         public ClassHotfixChecker() {
@@ -629,6 +633,7 @@ public class GlobalListOfProperties {
             return "Hotfixes can not be applied to an entire class, only to specific objects.";
         }
     }
+    */
 
     public static class EmptyCategoryChecker extends ContentPropertyChecker {
 
@@ -827,6 +832,11 @@ public class GlobalListOfProperties {
         }
     }
 
+    /**
+     * Disabled as part of the opensourcing project -- relies on stuff that's
+     * no longer there.
+     */
+    /*
     public static class CompleteClassChecker extends InformationalPropertyChecker {
 
         public CompleteClassChecker() {
@@ -849,6 +859,7 @@ public class GlobalListOfProperties {
             return "This command affects ALL objects of a certain class";
         }
     }
+    */
 
     public static class CommentChecker extends InformationalPropertyChecker {
 

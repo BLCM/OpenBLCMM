@@ -26,12 +26,10 @@
  */
 package blcmm.gui.text;
 
-import blcmm.data.lib.DataManager;
-import blcmm.data.lib.GlobalDictionary;
 import blcmm.gui.MainGUI;
 import blcmm.gui.ObjectExplorer;
-import blcmm.utilities.Options;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Options;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -40,7 +38,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,7 +65,7 @@ public final class HighlightedTextArea extends JTextPane {
 
     private final List<Object> highlights = new ArrayList<>();
     private final UndoManager undoManager;
-    private final AutoCompleteAttacher autoCompleteAttacher;
+    //private final AutoCompleteAttacher autoCompleteAttacher;
 
     public HighlightedTextArea(boolean link) {
         this(link, true);
@@ -91,6 +88,11 @@ public final class HighlightedTextArea extends JTextPane {
                 }
             });
 
+            /**
+             * Disabled as part of the opensourcing project -- relies on stuff that's
+             * no longer there.
+             */
+            /*
             this.autoCompleteAttacher = new AutoCompleteAttacher(this) {
                 @Override
                 protected AutoCompleteAttacher.AutoCompleteRequirements getAutoCompleteRequirements(boolean advanced) throws BadLocationException {
@@ -106,11 +108,18 @@ public final class HighlightedTextArea extends JTextPane {
                     return reqs;
                 }
             };
+            */
             this.setDragEnabled(Options.INSTANCE.getDragAndDropEnabled());
         } else {
             this.setEditable(false);
             this.undoManager = null;
-            this.autoCompleteAttacher = null;
+            
+            /**
+             * Disabled as part of the opensourcing project -- relies on stuff that's
+             * no longer there.
+             */
+            //this.autoCompleteAttacher = null;
+            
             // Let the caret be visible even when in readonly mode, so the user
             // can still use keyboard easily to select/copy text, if wanted.
             this.getCaret().setVisible(true);
@@ -130,9 +139,15 @@ public final class HighlightedTextArea extends JTextPane {
         return null;
     }
 
+    /**
+     * Disabled as part of the opensourcing project -- relies on stuff that's
+     * no longer there.
+     */
+    /*
     public AutoCompleteAttacher getAutoCompleteAttacher() {
         return autoCompleteAttacher;
     }
+    */
 
     private void caretMoved(CaretEvent e) throws BadLocationException {
         Highlighter hl = getHighlighter();
@@ -191,6 +206,11 @@ public final class HighlightedTextArea extends JTextPane {
                 || operands.contains(character);
     }
 
+    /**
+     * Disabled as part of the opensourcing project -- relies on stuff that's
+     * no longer there.
+     */
+    /*
     private AutoCompleteAttacher.AutoCompleteRequirements getAutoCompleteRequirements2(boolean advanced) throws BadLocationException {
 
         final GlobalDictionary dict = DataManager.getDictionary();
@@ -278,6 +298,7 @@ public final class HighlightedTextArea extends JTextPane {
         }
         return new AutoCompleteAttacher.AutoCompleteRequirements(from, to, words);
     }
+    */
 
     private static UndoManager addUndoRedo(JTextComponent textcomp) {
         final UndoManager undo = new UndoManager();
@@ -364,9 +385,7 @@ public final class HighlightedTextArea extends JTextPane {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (search != null && e.getClickCount() == 2) {
-                    if (ObjectExplorer.INSTANCE == null) {
-                        new ObjectExplorer().setVisible(true);
-                    }
+                    MainGUI.INSTANCE.launchObjectExplorerWindow();
                     boolean newTab = SwingUtilities.isMiddleMouseButton(e) || e.isControlDown() || e.isMetaDown();
                     GlobalLogger.log("Dumping " + search + "after clicking link. newTab = " + newTab);
                     ObjectExplorer.DumpOptions options = new ObjectExplorer.DumpOptions(search, true, newTab, false);

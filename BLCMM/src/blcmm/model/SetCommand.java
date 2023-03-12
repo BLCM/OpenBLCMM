@@ -26,7 +26,7 @@
  */
 package blcmm.model;
 
-import blcmm.data.lib.sdk.generated.GearboxFramework.BehaviorProviderDefinition;
+import blcmm.data.BehaviorProviderDefinition;
 import blcmm.utilities.Options;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -287,7 +287,9 @@ public class SetCommand extends EnableableModelElement {
             for (int i = 3; i < split.length; i++) {//looping and other logic in case of set_cmp
                 try {
                     int int32Value = Integer.parseInt(split[i]);
-                    String toInsert = String.format(" {index = %s | length = %s}", BehaviorProviderDefinition.SubarrayData.getIndex(int32Value), BehaviorProviderDefinition.SubarrayData.getLength(int32Value));
+                    String toInsert = String.format(" {index = %s | length = %s}",
+                            BehaviorProviderDefinition.getIndexFromArrayIndexAndLength(int32Value),
+                            BehaviorProviderDefinition.getLengthFromArrayIndexAndLength(int32Value));
                     if (i < split.length - 1) {
                         toInsert += " ";
                     }

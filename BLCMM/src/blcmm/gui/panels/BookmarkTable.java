@@ -26,11 +26,8 @@
  */
 package blcmm.gui.panels;
 
-import blcmm.data.lib.DataManager;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.theme.ThemeManager;
-import blcmm.utilities.Options;
-import blcmm.utilities.GlobalLogger;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -39,22 +36,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
-import javax.swing.RowSorter;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 /**
@@ -120,6 +110,7 @@ public class BookmarkTable extends JTable {
     }
 
     private void deleteEntry(String entry) {
+        /* Temporarily commented so I can focus on other stuff
         List<String> bookmarkList = new ArrayList<>(Arrays.asList(Options.INSTANCE.getOEBookmarks(DataManager.isBL2())));
 
         // Our object is currently bookmarked. Time to remove it.
@@ -133,6 +124,7 @@ public class BookmarkTable extends JTable {
                 .mapToObj(i -> (ObjectExplorerPanel) tabbedPane.getComponentAt(i))
                 .forEach(ObjectExplorerPanel::updateBookmarkButton);
         GlobalLogger.log("Object Explorer - Unbookmarked " + entry + (!wasInList ? " (Element was not in list)" : ""));
+        */
     }
 
     private void initModel() {
@@ -181,6 +173,7 @@ public class BookmarkTable extends JTable {
     }
 
     void updateBookmarkBrowser() {
+        /* Temporarily commented so I can focus on other stuff
         String[] bookmarks = Options.INSTANCE.getOEBookmarks(DataManager.isBL2());
         // This mouse listener handles all of our object dumping / bookmark removing.
         clearSelection();
@@ -209,6 +202,7 @@ public class BookmarkTable extends JTable {
         initRenderers();//setDataVector resets these too
 
         repaint();
+        */
     }
 
     private void updateColumnWidths() {
