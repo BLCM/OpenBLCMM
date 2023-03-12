@@ -181,6 +181,17 @@ public class DataManager {
     }
     
     public Dump getDump(String objectName) {
+        
+        // When clicking on in-app links, the objectName will be: ClassType'GD_Class.Path'
+        if (objectName.contains("'")) {
+            String[] parts = objectName.split("'");
+            if (parts.length != 2) {
+                return new Dump(null, "Unknown object name format: " + objectName);
+            }
+            objectName = parts[1];
+        }
+        
+        // Now load
         try {
             PreparedStatement stmt = this.dbConn.prepareStatement(
                     "select o.*, c.name class_name from object o, class c where o.class=c.id and o.name=?");
