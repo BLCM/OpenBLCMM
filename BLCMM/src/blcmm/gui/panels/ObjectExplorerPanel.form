@@ -46,7 +46,7 @@
                                       <Component id="collapseArraysToggleButton" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
-                                      <Component id="jProgressBar1" max="32767" attributes="0"/>
+                                      <Component id="mainProgressBar" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="deformatButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -82,7 +82,7 @@
                   <Component id="gameIconLabel" alignment="0" max="32767" attributes="0"/>
                   <Component id="autoFormatButton" alignment="0" max="32767" attributes="0"/>
                   <Component id="deformatButton" alignment="0" max="32767" attributes="0"/>
-                  <Component id="jProgressBar1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="mainProgressBar" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
@@ -159,7 +159,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refsButtonActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JProgressBar" name="jProgressBar1">
+    <Component class="javax.swing.JProgressBar" name="mainProgressBar">
     </Component>
     <Component class="javax.swing.JButton" name="deformatButton">
       <Properties>

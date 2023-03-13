@@ -43,8 +43,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -62,8 +62,10 @@ public class DataManager {
     private String dumpFilePath;
     private Connection dbConn;
     private UEClass rootClass;
-    private HashSet<UEClass> allClasses = new HashSet<> ();
+    private ArrayList<UEClass> allClasses = new ArrayList<> ();
     private ArrayList<String> allClassNames = new ArrayList<> ();
+    private HashMap<String, UEClass> classNameToClass = new HashMap<> ();
+    private int totalDatafiles;
     
     public class NoDataException extends Exception {
         public NoDataException(String message) {
@@ -88,6 +90,7 @@ public class DataManager {
         this.dataBaseDir = Paths.get("data", patchType.toString()).toString();
         this.dbFilePath = Paths.get(this.dataBaseDir, "data.db").toString();
         this.dumpFilePath = Paths.get(this.dataBaseDir, "dumps").toString();
+        this.totalDatafiles = 0;
         
         // Database stuff!
         try {
@@ -120,7 +123,11 @@ public class DataManager {
                 }
                 this.allClasses.add(ueClass);
                 this.allClassNames.add(ueClass.getName());
+                this.classNameToClass.put(ueClass.getName().toLowerCase(), ueClass);
+                this.totalDatafiles += ueClass.getNumDatafiles();
             }
+            Collections.sort(this.allClasses);
+            Collections.sort(this.allClassNames);
             rs.close();
             stmt.close();
         } catch (SQLException e) {
@@ -141,8 +148,40 @@ public class DataManager {
         return this.allClassNames;
     }
     
+    public UEClass getClassByName(String name) {
+        String nameLower = name.toLowerCase();
+        if (this.classNameToClass.containsKey(nameLower)) {
+            return this.classNameToClass.get(nameLower);
+        } else {
+            return null;
+        }
+    }
+    
     public UEClass getRootClass() {
         return this.rootClass;
+    }
+
+    public int getTotalDatafiles() {
+        return this.totalDatafiles;
+    }
+    
+    public List<UEObject> getAllObjectsInClass(UEClass ueClass) {
+        ArrayList<UEObject> list = new ArrayList<>();
+        try {
+            PreparedStatement stmt = this.dbConn.prepareStatement(
+                    "select o.* from object o, class c where o.class=c.id and c.id=?"
+            );
+            stmt.setInt(1, ueClass.getId());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                list.add(UEObject.getFromDbRow(rs));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+        }
+        return list;
     }
     
     public List<UEObject> getObjectsFromClass(UEClass ueClass) {
@@ -218,7 +257,26 @@ public class DataManager {
         } catch (IOException|IndexOutOfBoundsException e) {
             GlobalLogger.log(e);
             return new Dump(null, "Error reading object data from datafile: " + e.getMessage());
+        } catch (Exception e) {
+            GlobalLogger.log(e);
+            return new Dump(null, "Unknown error reading object data: " + e.getMessage());
         }
+    }
+    
+    /**
+     * TODO: This really shouldn't expose something like a File, since that may
+     * change (and probably will) in the future.
+     * 
+     * @param ueClass
+     * @return 
+     */
+    public List<File> getAllDatafilesForClass(UEClass ueClass) {
+        ArrayList<File> list = new ArrayList<> ();
+        for (int i=1; i<=ueClass.getNumDatafiles(); i++) {
+            String dataFileName = ueClass.getName() + ".dump." + i;
+            list.add(Paths.get(this.dumpFilePath, dataFileName).toFile());
+        }
+        return list;
     }
     
 }

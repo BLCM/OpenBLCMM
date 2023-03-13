@@ -28,8 +28,10 @@ package blcmm.gui.panels;
 
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManager.Dump;
+import blcmm.data.lib.UEClass;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.components.InfoLabel;
+import blcmm.gui.text.AutoCompleteAttacher;
 import blcmm.gui.text.HighlightedTextArea;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
@@ -47,19 +49,26 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -72,6 +81,7 @@ import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 /**
  *
@@ -112,11 +122,13 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private static int totalLines = -1;
     //GlobalDictionary dict = DataManager.getDictionary();
     boolean controlState = false;
+    private DataManager dm;
 
     /**
      * Creates new form ObjectExplorerPanel
      */
-    public ObjectExplorerPanel() {
+    public ObjectExplorerPanel(DataManager dm) {
+        this.dm = dm;
         initComponents();
         textElement = new HighlightedTextArea(true);
         textElement.setEditable(true);
@@ -139,8 +151,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         forwardButton.setFont(forwardButton.getFont().deriveFont(forwardButton.getFont().getSize2D() + 2f));
 
         if (totalLines == -1) {
-            //totalLines = DataManager.getDictionary().getAvailableClasses().stream().mapToInt(ObjectExplorerPanel::countLines).sum();
-            totalLines = 0;
+            // TODO: This should really be filtered by our classes-to-fulltext-search props (which don't exist yet)
+            totalLines = this.dm.getTotalDatafiles();
         }
         if (totalLines == 0) {
             queryTextField.setText("Download data first");
@@ -148,7 +160,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             queryTextField.setEditable(false);
             textElement.setEditable(false);
         }
-        jProgressBar1.setMaximum(totalLines);
+        mainProgressBar.setMaximum(totalLines);
         queryTextField.getActionMap().put("Search", new AbstractAction("Search") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -345,7 +357,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         backButton = new javax.swing.JButton();
         forwardButton = new javax.swing.JButton();
         refsButton = new javax.swing.JButton();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        mainProgressBar = new javax.swing.JProgressBar();
         deformatButton = new javax.swing.JButton();
         autoFormatButton = new javax.swing.JButton();
         infoLabel = new InfoLabel(InfoLabel.OE_SPECIFIC + "<br/><br/>" + InfoLabel.BASIC_1+ InfoLabel.BASIC_3);
@@ -456,7 +468,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(collapseArraysToggleButton))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(mainProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(deformatButton)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -482,7 +494,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     .addComponent(gameIconLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(autoFormatButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(deformatButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(mainProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -674,16 +686,16 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JProgressBar mainProgressBar;
     private javax.swing.JTextField queryTextField;
     private javax.swing.JButton refsButton;
     // End of variables declaration//GEN-END:variables
 
     private void attachAutoComplete() {
-        /* Temporarily commented so I can focus on other things
         new AutoCompleteAttacher(queryTextField) {
+
             @Override
             protected AutoCompleteAttacher.AutoCompleteRequirements getAutoCompleteRequirements(boolean advanced) throws BadLocationException {
                 Collection<String> res;
@@ -692,6 +704,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 int from = 0, to;
                 String clazz = null;
 
+                /* Temporarily commented so I can focus on other things
                 to = queryTextField.getText().length();
                 if (word.contains("'")) {
                     clazz = word.substring(0, word.indexOf("'"));
@@ -718,9 +731,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         from = word.contains(".") ? word.lastIndexOf(".") + 1 : 0;
                     }
                 }
+                */
+                to = 0;
+                res = new ArrayList<>();
                 return new AutoCompleteAttacher.AutoCompleteRequirements(from, to, res);
             }
-
+    
             @Override
             protected void enter(KeyEvent e) {
                 boolean oldstate = controlState;
@@ -730,29 +746,29 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 }
             }
         };
-        */
     }
 
     private void enterKeyPressed() {
-        /* Temporarily commented so I can focus on other things
         String query = queryTextField.getText().trim();
         if (query.isEmpty() || query.equals(previousQuery)) {
             return;
         }
-        System.out.println(query + " : " + controlState);
+        //System.out.println(query + " : " + controlState);
         reloadTabHistory();
         if (query.toLowerCase().startsWith("getall ")) {
             getAll(query.substring("getall".length()).trim());
-        } else if (!query.contains(" ") && dict.getAllClasses().contains(query)) {
+        } else if (!query.contains(" ") && this.dm.getClassByName(query) != null) {
             getAll(query);
 
         } else if ((!query.contains(" ") || query.contains(".") && !query.toLowerCase().contains("inclass:") && !query.matches(".*(\\^|\\\\|\\||\\*|\\+|\\(|\\)|\\?).*")) && controlState == false) {
 
-            dump(new ObjectExplorer.DumpOptions(query));
+            boolean success = dump(this.dm, new ObjectExplorer.DumpOptions(query));
+            if (!success) {
+                performSearch();
+            }
         } else {
             performSearch();
         }
-        */
     }
 
     private void replaceTextByHistory() {
@@ -769,7 +785,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         textElement.requestFocus();
     }
 
-    public void dump(DataManager dm, ObjectExplorer.DumpOptions options) {
+    public boolean dump(DataManager dm, ObjectExplorer.DumpOptions options) {
         if (worker != null) {
             worker.stop();
         }
@@ -780,12 +796,14 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         String text = dump.text;
         if (dump.ueObject == null) {
             textElement.setText(text);
+            return false;
         } else {
             if (collapseArraysToggleButton.isSelected()) {
                 text = collapseArrays(text);
             }
             updateBookmarkButton(options.objectToDump);
             setQueryAndText(text, dump.ueObject.getName());
+            return true;
         }
 
         /* Temporarily commented so I can focus on other things
@@ -911,16 +929,95 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (worker != null) {
             worker.stop();
         }
-        worker = new Worker(query) {
+        worker = new Worker(this.dm, query) {
             @Override
-            public int loop(BufferedReader br, int counter, TreeMap<String, Boolean> matches) throws IOException {
-                return refsLoop(br, counter, matches, query);
+            public void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException {
+                refsLoop(br, matches, query);
             }
         };
         worker.execute();
     }
 
     private void search(String query) {
+        updateBookmarkButton("");
+        
+        // I'm not entirely sure I agree with how this is done...  I think I'd
+        // prefer that regex searches have to be prefixed with `/` or something.
+        // However, for now I'm just keeping it as-is.
+        boolean RegexBox = query.matches(".*(\\^|\\\\|\\||\\*|\\+|\\?).*") || query.matches(".*(\\(.*[^0-9].*\\)).*");
+        if (RegexBox) {
+            GlobalLogger.log("Trying to search with pattern: \"" + query + "\"");
+        } else {
+            GlobalLogger.log("Trying to search with query: \"" + query + "\"");
+        }
+
+        // Stop worker if something else is already working
+        if (worker != null) {
+            worker.stop();
+        }
+        
+        if (RegexBox) {
+            try {
+                Pattern compile = Pattern.compile(query);
+                worker = new Worker(this.dm, query) {// Create new worker
+                    @Override
+                    public void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException {
+                        regexSearchLoop(br, matches, compile);
+                    }
+                };
+            } catch (PatternSyntaxException e) {
+                JOptionPane.showMessageDialog(this,
+                        "The regular expression you entered is invalid. Please fix the expression:\" " + e.getDescription() + "\"",
+                        "Error in regular expression",
+                        JOptionPane.ERROR_MESSAGE);
+                worker = null;
+            }
+        } else {
+            String[] query2 = query.split(" ");
+            List<String> positives = new ArrayList<>();
+            List<String> negatives = new ArrayList<>();
+            String className = null;
+            for (String s : query2) {
+                if (s.startsWith("inclass:")) {
+                    className = s.substring(8);
+                } else if (s.startsWith("-")) {
+                    negatives.add(s.substring(1).toLowerCase());
+                } else {
+                    positives.add(s.toLowerCase());
+                }
+            }
+            
+            // This is needed to avoid errors when passing it to getClassByName, below
+            final String finalClassName = className;
+            
+            worker = new Worker(this.dm, query) {
+                @Override
+                protected Collection<UEClass> getAvailableClasses() {
+                    if (finalClassName == null) {
+                        return super.getAvailableClasses();
+                    } else {
+                        UEClass ueClass = this.dm.getClassByName(finalClassName);
+                        if (ueClass == null) {
+                            JOptionPane.showMessageDialog(ObjectExplorerPanel.this, "The class you tried to search for using \"inclass:\" was unable to be obtained.", "Error in Search", JOptionPane.ERROR_MESSAGE);
+                            worker.cancel(true);
+                            return Collections.<UEClass>emptyList();
+                        } else {
+                            return ueClass.getClassAndAllDescendents();
+                        }
+                    }
+                }
+
+                @Override
+                public void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException {
+                    basicSearchLoop(br, matches, positives.toArray(new String[0]), negatives.toArray(new String[0]));
+                }
+            };
+        }
+        // Run worker
+        if (worker != null) {
+            worker.execute();
+        }
+        
         /* Temporarily commented so I can focus on other things
         updateBookmarkButton("");
         boolean RegexBox = query.matches(".*(\\^|\\\\|\\||\\*|\\+|\\?).*") || query.matches(".*(\\(.*[^0-9].*\\)).*");
@@ -995,16 +1092,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         */
     }
 
-    private int refsLoop(BufferedReader br, int counter, TreeMap<String, Boolean> matches, String query) throws IOException {
+    private void refsLoop(BufferedReader br, TreeMap<String, Boolean> matches, String query) throws IOException {
         String query2 = query.toLowerCase() + "'";
         String line = br.readLine();
         String current = null;
         boolean match = false;
         while (line != null) {
-            counter++;
-            if (counter % (jProgressBar1.getMaximum() / 1000) == 0) {
-                jProgressBar1.setValue(counter);
-            }
             if (line.startsWith("***")) {
                 if (match) {
                     reportCurrentObject(current, matches);
@@ -1021,18 +1114,13 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (match) {
             reportCurrentObject(current, matches);
         }
-        return counter;
     }
 
-    private int RegexSearchLoop(BufferedReader br, int counter, TreeMap<String, Boolean> matches, Pattern pat) throws IOException {
+    private void regexSearchLoop(BufferedReader br, TreeMap<String, Boolean> matches, Pattern pat) throws IOException {
         String line = br.readLine();
         String current = null;
         boolean match = false;
         while (line != null) {
-            counter++;
-            if (counter % (jProgressBar1.getMaximum() / 1000) == 0) {
-                jProgressBar1.setValue(counter);
-            }
             if (line.startsWith("***")) {
                 if (match) {
                     reportCurrentObject(current, matches);
@@ -1048,19 +1136,14 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (match) {
             reportCurrentObject(current, matches);
         }
-        return counter;
     }
 
-    private int BasicSearchLoop(BufferedReader br, int counter, TreeMap<String, Boolean> matches, String[] positives, String[] negatives) throws IOException {
+    private void basicSearchLoop(BufferedReader br, TreeMap<String, Boolean> matches, String[] positives, String[] negatives) throws IOException {
         boolean[] positivematches = new boolean[positives.length];
         boolean[] negativematches = new boolean[negatives.length];
         String line = br.readLine();
         String current = null;
         while (line != null) {
-            counter++;
-            if (counter % (jProgressBar1.getMaximum() / 1000) == 0) {
-                jProgressBar1.setValue(counter);
-            }
             if (line.startsWith("***")) {
                 boolean toReport = true;
                 for (boolean positive : positivematches) {
@@ -1102,7 +1185,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (toReport && current != null) {
             reportCurrentObject(current, matches);
         }
-        return counter;
     }
 
     private void reportCurrentObject(String current, TreeMap<String, Boolean> matches) {
@@ -1220,22 +1302,102 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
         Exception e;
         boolean stop = false;
+        protected final DataManager dm;
         final String query;
 
-        public Worker(String query) {
+        public Worker(DataManager dm, String query) {
+            this.dm = dm;
             this.query = query;
         }
 
-        protected Collection<String> getAvailableClasses() {
-            //return DataManager.getDictionary().getAvailableClasses();
-            return new ArrayList<String>();
+        protected Collection<UEClass> getAvailableClasses() {
+            return this.dm.getAllClasses();
         }
 
-        public abstract int loop(BufferedReader br, int counter, TreeMap<String, Boolean> matches) throws IOException;
+        public abstract void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException;
 
         @Override
         protected Object doInBackground() throws Exception {
+            
+            // Update the total length of the progress bar based on how many classes
+            // we're actually processing
+            int totalDatafiles = 0;
+            for (UEClass ueClass: this.getAvailableClasses()) {
+                totalDatafiles += ueClass.getNumDatafiles();
+            }
+            mainProgressBar.setMaximum(totalDatafiles);
 
+            TreeMap<String, Boolean> matches = new TreeMap<>();
+            textElement.setEditable(false);
+            textElement.discardAllUndoData();
+            textElement.setProcessUndo(false);
+            try {
+                int counter = 0;
+                mainProgressBar.setValue(0);
+                textElement.setText("");
+                boolean news = false;
+
+                for (UEClass ueClass : this.getAvailableClasses()) {
+                    
+                    for (File dataFile : this.dm.getAllDatafilesForClass(ueClass)) {
+
+                        if (stop) {
+                            return null;
+                        }
+                        int old = matches.size();
+
+                        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile)))) {
+                            loop(br, matches);
+                            news = old != matches.size();
+
+                        } catch (IOException ex) {
+                            Logger.getLogger(ObjectExplorer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        if (stop) {
+                            return null;
+                        }
+
+                        if (news) {
+                            if (textElement.getText().isEmpty()) {
+                                textElement.setText("Found your query (" + query + ") in the following () objects:\n");
+                            }
+
+                            Document doc = textElement.getStyledDocument();
+                            int idx0 = textElement.getText().indexOf("\n");
+                            int idx1 = textElement.getText().lastIndexOf("(", idx0 + 1);
+                            int idx2 = textElement.getText().indexOf(")", idx1);
+
+                            doc.remove(idx1, idx2 - idx1 + 1);
+                            doc.insertString(idx1, "(" + matches.size() + ")", null);
+
+                            int st = textElement.getText().indexOf("\n") + 1;
+                            for (String key : matches.keySet()) {
+                                boolean ne = matches.get(key);
+                                if (!ne) {
+
+                                    if (stop) {
+                                        return null;
+                                    }
+                                    doc.insertString(st, key + "\n", null);
+                                    matches.put(key, true);
+                                }
+                                st += key.length() + 1;
+                            }
+                            news = false;
+                        }
+                        
+                        counter += 1;
+                        mainProgressBar.setValue(counter);
+                        mainProgressBar.repaint();
+                    }
+                }
+                return null;
+            } catch (Exception e2) {
+                e = e2;
+                return null;
+            }
+            
             /* Temporarily commented so I can focus on other things
             TreeMap<String, Boolean> matches = new TreeMap<>();
             textElement.setEditable(false);
@@ -1301,7 +1463,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 return null;
             }
             */
-            return null;
         }
 
         @Override
@@ -1320,7 +1481,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 throw new RuntimeException(e);
             }
             GlobalLogger.log("Worker done");
-            jProgressBar1.setValue(jProgressBar1.getMaximum());
+            mainProgressBar.setValue(mainProgressBar.getMaximum());
             setQueryAndText(textElement.getText(), query);
             textElement.setEditable(true);
             textElement.discardAllUndoData();

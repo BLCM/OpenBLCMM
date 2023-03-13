@@ -342,7 +342,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);//This will turn the "+" tab into a new tab
         }
         ObjectExplorerPanel panel = (ObjectExplorerPanel) jTabbedPane1.getComponentAt(jTabbedPane1.getSelectedIndex());
-        panel.dump(this.dm, options);
+        boolean success = panel.dump(this.dm, options);
     }
 
     /**
@@ -495,11 +495,11 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
     }
 
-    private static class OETabbedPane extends VariableTabsTabbedPane<ObjectExplorerPanel> {
+    private class OETabbedPane extends VariableTabsTabbedPane<ObjectExplorerPanel> {
 
         @Override
         protected ObjectExplorerPanel getDefaultNewComponent() {
-            return new ObjectExplorerPanel();
+            return new ObjectExplorerPanel(dm);
         }
 
         @Override

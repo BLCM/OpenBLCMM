@@ -30,6 +30,7 @@ package blcmm.data.lib;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,7 +40,7 @@ import java.util.List;
  * 
  * @author apocalyptech
  */
-public class UEClass {
+public class UEClass implements Comparable<UEClass> {
     
     private final int id;
     private final String name;
@@ -47,14 +48,16 @@ public class UEClass {
     private final int parentId;
     private final int numObjects;
     private final ArrayList<UEClass> children;
+    private final int numDatafiles;
     
-    public UEClass(int id, String name, Integer parentId, int numObjects) {
+    public UEClass(int id, String name, Integer parentId, int numObjects, int numDatafiles) {
         this.id = id;
         this.name = name;
         this.parentId = parentId;
         this.parent = null;
         this.numObjects = numObjects;
         this.children = new ArrayList<>();
+        this.numDatafiles = numDatafiles;
     }
     
     public int getId() {
@@ -92,10 +95,31 @@ public class UEClass {
     public int getNumObjects() {
         return this.numObjects;
     }
+
+    public int getNumDatafiles() {
+        return this.numDatafiles;
+    }
+    
+    public List<UEClass> getClassAndAllDescendents() {
+        // TODO: Eh, should just make use of our denormalized data for this
+        // instead of recursing...
+        ArrayList<UEClass> newList = new ArrayList<>();
+        newList.add(this);
+        for (UEClass child : this.children) {
+            newList.addAll(child.getClassAndAllDescendents());
+        }
+        Collections.sort(newList);
+        return newList;
+    }
     
     @Override
     public String toString() {
         return this.name;
+    }
+    
+    @Override
+    public int compareTo(UEClass other) {
+        return this.name.compareTo(other.name);
     }
     
     public static UEClass getFromDbRow(ResultSet rs) throws SQLException {
@@ -103,7 +127,8 @@ public class UEClass {
         String name = rs.getString("name");
         int parentId = rs.getInt("parent");
         int numObjects = rs.getInt("total_children");
-        return new UEClass(id, name, parentId, numObjects);
+        int numDatafiles = rs.getInt("num_datafiles");
+        return new UEClass(id, name, parentId, numObjects, numDatafiles);
     }
     
 }
