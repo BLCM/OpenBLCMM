@@ -19,10 +19,12 @@ BLCMM Changelog
   - Object-aware autocompletion in code edit windows
 - Object Explorer tweaks:
   - Startup speed improved
-  - All classes can be browsed via Package Explorer without number-of-object
+  - "Class Explorer" panel renamed to "Class Browser"
+  - "Package Explorer" panel renamed to "Object Browser"
+  - All classes can be browsed via Class/Object Browser without number-of-object
     warnings
-  - Class Explorer tree is sorted case-insensitively
-  - Class Explorer tree does not sort "leaf" entries separately from folders
+  - Class Browser tree is sorted case-insensitively
+  - Class Browser tree does not sort "leaf" entries separately from folders
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
 - Added "allow toggling individual statements" option to settings, and improved

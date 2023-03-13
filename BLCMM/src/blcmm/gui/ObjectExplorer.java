@@ -186,7 +186,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Package Explorer"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Object Browser"));
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Select a class above to list objects in that class.");
@@ -229,9 +229,8 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         );
 
         jSplitPane2.setRightComponent(jPanel2);
-        jPanel2.getAccessibleContext().setAccessibleName("Package Explorer");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Class Explorer"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Class Browser"));
 
         classExplorerTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
@@ -346,12 +345,12 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }
 
     /**
-     * Populates the main "Class Explorer" panel, which contains a tree of all
+     * Populates the main "Class Browser" panel, which contains a tree of all
      * classes in the specified game.
      */
     private void setClassBrowserData() {
         TitledBorder classborder = (TitledBorder) jPanel1.getBorder();
-        classborder.setTitle("Class Explorer - " + this.dm.getPatchType().toString());
+        classborder.setTitle("Class Browser - " + this.dm.getPatchType().toString());
         DefaultMutableTreeNode node = this.buildClassTree(this.dm.getRootClass());
         sortNode(node);
         classExplorerTree.setModel(new DefaultTreeModel(node));
@@ -360,7 +359,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
     /**
      * Recursively loops through our UEClass data structure to build out the
-     * Class Explorer tree data
+     * Class Browser tree data
      * @param root The root UEClass node to recurse from
      * @return A DefaultMutableTreeNode which can be added to the tree
      */
@@ -390,7 +389,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
     private void setPackageBrowserData(UEClass ueClass) {
         TitledBorder objectborder = (TitledBorder) jPanel2.getBorder();
-        objectborder.setTitle("Package Explorer - " + ueClass.getName());
+        objectborder.setTitle("Object Browser - " + ueClass.getName());
         jPanel2.repaint();
         DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
         this.addPackageData(ueClass, root);
