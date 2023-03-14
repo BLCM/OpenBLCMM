@@ -30,8 +30,8 @@ package blcmm.data.lib;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Model for a single class entry.
@@ -44,15 +44,17 @@ public class UEClass implements Comparable<UEClass> {
     
     private final int id;
     private final String name;
+    private final int categoryId;
     private UEClass parent;
     private final int parentId;
     private final int numObjects;
     private final ArrayList<UEClass> children;
     private final int numDatafiles;
     
-    public UEClass(int id, String name, Integer parentId, int numObjects, int numDatafiles) {
+    public UEClass(int id, String name, int categoryId, Integer parentId, int numObjects, int numDatafiles) {
         this.id = id;
         this.name = name;
+        this.categoryId = categoryId;
         this.parentId = parentId;
         this.parent = null;
         this.numObjects = numObjects;
@@ -66,6 +68,10 @@ public class UEClass implements Comparable<UEClass> {
     
     public String getName() {
         return this.name;
+    }
+    
+    public int getCategoryId() {
+        return this.categoryId;
     }
     
     public int getParentId() {
@@ -100,16 +106,17 @@ public class UEClass implements Comparable<UEClass> {
         return this.numDatafiles;
     }
     
-    public List<UEClass> getClassAndAllDescendents() {
+    public TreeSet<UEClass> getClassAndAllDescendents() {
         // TODO: Eh, should just make use of our denormalized data for this
-        // instead of recursing...
-        ArrayList<UEClass> newList = new ArrayList<>();
-        newList.add(this);
+        // instead of recursing...  (Oh, actually we technically don't have
+        // that, actually.  Our aggregate table goes in the other direction.
+        // Still, we should probably denormalize it and do that.)
+        TreeSet<UEClass> newTree = new TreeSet<>();
+        newTree.add(this);
         for (UEClass child : this.children) {
-            newList.addAll(child.getClassAndAllDescendents());
+            newTree.addAll(child.getClassAndAllDescendents());
         }
-        Collections.sort(newList);
-        return newList;
+        return newTree;
     }
     
     @Override
@@ -119,16 +126,17 @@ public class UEClass implements Comparable<UEClass> {
     
     @Override
     public int compareTo(UEClass other) {
-        return this.name.compareTo(other.name);
+        return this.name.compareToIgnoreCase(other.name);
     }
     
     public static UEClass getFromDbRow(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
+        int categoryId = rs.getInt("category");
         int parentId = rs.getInt("parent");
         int numObjects = rs.getInt("total_children");
         int numDatafiles = rs.getInt("num_datafiles");
-        return new UEClass(id, name, parentId, numObjects, numDatafiles);
+        return new UEClass(id, name, categoryId, parentId, numObjects, numDatafiles);
     }
     
 }

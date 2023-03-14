@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -98,7 +99,48 @@ public class Options {
         showDeleteConfirmation,
         saveAsOffline,
         onlineServiceNumber,
+        oeSearchActions,
+        oeSearchAI,
+        oeSearchAnimations,
+        oeSearchBase,
+        oeSearchBehaviors,
+        oeSearchDialog,
+        oeSearchKismets,
+        oeSearchMeshes,
+        oeSearchMissions,
+        oeSearchOthers,
+        oeSearchParticles,
+        oeSearchPopulations,
+        oeSearchSkins,
+        oeSearchStaticMeshes,
+        oeSearchWillowData,
     }
+    
+    public enum OESearch {
+        Actions(OptionNames.oeSearchActions),
+        AI(OptionNames.oeSearchAI),
+        Animations(OptionNames.oeSearchAnimations),
+        Base(OptionNames.oeSearchBase),
+        Behaviors(OptionNames.oeSearchBehaviors),
+        Dialog(OptionNames.oeSearchDialog),
+        Kismets(OptionNames.oeSearchKismets),
+        Meshes(OptionNames.oeSearchMeshes),
+        Missions(OptionNames.oeSearchMissions),
+        Others(OptionNames.oeSearchOthers),
+        Particles(OptionNames.oeSearchParticles),
+        Populations(OptionNames.oeSearchPopulations),
+        Skins(OptionNames.oeSearchSkins),
+        StaticMeshes(OptionNames.oeSearchStaticMeshes),
+        WillowData(OptionNames.oeSearchWillowData);
+        
+        public OptionNames option;
+        
+        private OESearch(OptionNames option) {
+            this.option = option;
+        }
+    }
+    
+    private HashSet<OESearch> activeSearchCategories = new HashSet<>();
 
     /**
      * A list of old option names which shouldn't be re-saved if we encounter
@@ -198,6 +240,83 @@ public class Options {
                 null,
                 "Enables/Disables being able to toggle individual statements"));
         
+        this.registerOption(new BooleanOption(OptionNames.oeSearchActions.toString(), true,
+                Option.Shown.OE, "Actions Data",
+                "updateOESearchCategories",
+                "Search \"Actions\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchAI.toString(), true,
+                Option.Shown.OE, "AI Data",
+                "updateOESearchCategories",
+                "Search \"AI\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchAnimations.toString(), true,
+                Option.Shown.OE, "Animations Data",
+                "updateOESearchCategories",
+                "Search \"Animations\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchBase.toString(), true,
+                Option.Shown.OE, "Base Data",
+                "updateOESearchCategories",
+                "Search \"Base\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchBehaviors.toString(), true,
+                Option.Shown.OE, "Behaviors Data",
+                "updateOESearchCategories",
+                "Search \"Behaviors\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchDialog.toString(), true,
+                Option.Shown.OE, "Dialog Data",
+                "updateOESearchCategories",
+                "Search \"Dialog\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchKismets.toString(), true,
+                Option.Shown.OE, "Kismets Data",
+                "updateOESearchCategories",
+                "Search \"Kismets\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchMeshes.toString(), true,
+                Option.Shown.OE, "Meshes Data",
+                "updateOESearchCategories",
+                "Search \"Meshes\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchMissions.toString(), true,
+                Option.Shown.OE, "Missions Data",
+                "updateOESearchCategories",
+                "Search \"Missions\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchOthers.toString(), true,
+                Option.Shown.OE, "Others Data",
+                "updateOESearchCategories",
+                "Search \"Others\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchParticles.toString(), true,
+                Option.Shown.OE, "Particles Data",
+                "updateOESearchCategories",
+                "Search \"Particles\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchPopulations.toString(), true,
+                Option.Shown.OE, "Populations Data",
+                "updateOESearchCategories",
+                "Search \"Populations\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchSkins.toString(), true,
+                Option.Shown.OE, "Skins Data",
+                "updateOESearchCategories",
+                "Search \"Skins\" classes during fulltext and refs searches."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchStaticMeshes.toString(), false,
+                Option.Shown.OE, "<html><font color=\"#C86400\">StaticMeshes Data</font>",
+                "updateOESearchCategories",
+                "Search \"StaticMeshes\" classes during fulltext and refs searches.  "
+                + "This package is only useful in specific circumstances, and is pretty big."));
+
+        this.registerOption(new BooleanOption(OptionNames.oeSearchWillowData.toString(), false,
+                Option.Shown.OE, "<html><font color=\"#C86400\">WillowData Data</font>",
+                "updateOESearchCategories",
+                "Search \"WillowData\" classes during fulltext and refs searches.  "
+                + "This package is only useful in specific circumstances."));
+
         this.registerOption(new BooleanOption(OptionNames.saveAsOffline.toString(), true,
                 Option.Shown.DANGEROUS, "Save patch files in 'Offline' Mode",
                 null,
@@ -288,6 +407,9 @@ public class Options {
 
         // A flag for if we disabled delete messages.
         this.registerOption(new BooleanOption(OptionNames.showDeleteConfirmation.toString(), true));
+        
+        // Finally: a bit of aggregation housekeeping
+        this.updateOESearchCategories();
     }
 
     /**
@@ -992,5 +1114,18 @@ public class Options {
 
     public void setOnlineServiceNumber(int serviceNumber) {
         this.setIntOptionData(Options.OptionNames.onlineServiceNumber, serviceNumber);
+    }
+    
+    public final void updateOESearchCategories() {
+        this.activeSearchCategories.clear();
+        for (OESearch oeSearch : OESearch.values()) {
+            if (this.getBooleanOptionData(oeSearch.option)) {
+                this.activeSearchCategories.add(oeSearch);
+            }
+        }
+    }
+    
+    public Set<OESearch> getOESearchCategories() {
+        return this.activeSearchCategories;
     }
 }

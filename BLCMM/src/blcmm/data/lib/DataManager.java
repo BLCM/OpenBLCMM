@@ -29,6 +29,7 @@ package blcmm.data.lib;
 
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Options.OESearch;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -46,6 +47,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * New SQLite-backed Data Library.
@@ -66,6 +69,10 @@ public class DataManager {
     private ArrayList<String> allClassNames = new ArrayList<> ();
     private HashMap<String, UEClass> classNameToClass = new HashMap<> ();
     private int totalDatafiles;
+
+    private HashMap<Integer, OESearch> categoryIdMap = new HashMap<> ();
+    private HashMap<OESearch, TreeSet<UEClass>> categoryToClass = new HashMap<> ();
+    private TreeSet<UEClass> curClassesByEnabledCategory = new TreeSet<> ();
     
     public class NoDataException extends Exception {
         public NoDataException(String message) {
@@ -96,14 +103,32 @@ public class DataManager {
         try {
             this.dbConn = DriverManager.getConnection("jdbc:sqlite:" + this.dbFilePath);
 
+            // Load in our categories
+            Statement stmt = this.dbConn.createStatement();
+            ResultSet rs = stmt.executeQuery("select * from category");
+            String catName;
+            OESearch oeSearch;
+            while (rs.next()) {
+                catName = rs.getString("name");
+                try {
+                    oeSearch = OESearch.valueOf(catName);
+                } catch (IllegalArgumentException e) {
+                    throw new NoDataException("Encountered an unknown class category in data: " + catName);
+                }
+                this.categoryIdMap.put(rs.getInt("id"), oeSearch);
+                this.categoryToClass.put(oeSearch, new TreeSet<> ());
+            }
+            rs.close();
+            stmt.close();
+
             // Load in all classes.  We make some assumptions about the database
             // here.  Namely: there is a single root element (this'll be "Object",
             // but the code here doens't care), `id` values start at 1, and the
             // database was constructed in "tree" order, so by looping through
             // in order of `id`, we don't have to worry about unknown IDs
             // popping up while we set up parent/child relationships.
-            Statement stmt = this.dbConn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from class order by id");
+            stmt = this.dbConn.createStatement();
+            rs = stmt.executeQuery("select * from class order by id");
             HashMap <Integer, UEClass> classMap = new HashMap<>();
             UEClass ueClass;
             UEClass parent;
@@ -125,6 +150,8 @@ public class DataManager {
                 this.allClassNames.add(ueClass.getName());
                 this.classNameToClass.put(ueClass.getName().toLowerCase(), ueClass);
                 this.totalDatafiles += ueClass.getNumDatafiles();
+                oeSearch = this.categoryIdMap.get(ueClass.getCategoryId());
+                this.categoryToClass.get(oeSearch).add(ueClass);
             }
             Collections.sort(this.allClasses);
             Collections.sort(this.allClassNames);
@@ -142,6 +169,17 @@ public class DataManager {
     
     public Collection<UEClass> getAllClasses() {
         return this.allClasses;
+    }
+    
+    public void updateClassesByEnabledCategory(Set<OESearch> enabledCategories) {
+        this.curClassesByEnabledCategory.clear();
+        for (OESearch oeSearch : enabledCategories) {
+            this.curClassesByEnabledCategory.addAll(this.categoryToClass.get(oeSearch));
+        }
+    }
+    
+    public TreeSet<UEClass> getAllClassesByEnabledCategory() {
+        return this.curClassesByEnabledCategory;
     }
     
     public Collection<String> getAllClassNames() {

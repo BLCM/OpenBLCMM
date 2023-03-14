@@ -26,9 +26,9 @@
  */
 package blcmm.gui.panels;
 
+import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Utilities;
 import blcmm.utilities.options.Option;
-import blcmm.utilities.GlobalLogger;
 import javax.swing.BoxLayout;
 
 /**
@@ -38,7 +38,7 @@ import javax.swing.BoxLayout;
 public class MasterSettingsPanel extends javax.swing.JPanel {
 
     private final ToolSettingsPanel toolSettingsPanel;
-    private final UpdateSettingsPanel updateSettingsPanel;
+    private final ToolSettingsPanel oeSettingsPanel;
     private final ToolSettingsPanel dangerousSettingsPanel;
 
     /**
@@ -53,14 +53,18 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         generalSettingsGuiPanel.setLayout(new BoxLayout(generalSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         generalSettingsGuiPanel.add(toolSettingsPanel);
 
-        updateSettingsPanel = new UpdateSettingsPanel();
-        updateSettingsPanel.setSize(autoupdateSettingsGuiPanel.getSize());
-        autoupdateSettingsGuiPanel.setLayout(new BoxLayout(autoupdateSettingsGuiPanel, BoxLayout.PAGE_AXIS));
-        autoupdateSettingsGuiPanel.add(updateSettingsPanel);
+        oeSettingsPanel = new ToolSettingsPanel(Option.Shown.OE, masterSettingsTabbedPane,
+                "Choose which package categories will be included in the<br/>"
+                + "fulltext and 'refs' searches.  More packages will make<br/>"
+                + "the search take longer."
+        );
+        oeSettingsPanel.setSize(oeSettingsGuiPanel.getSize());
+        oeSettingsGuiPanel.setLayout(new BoxLayout(oeSettingsGuiPanel, BoxLayout.PAGE_AXIS));
+        oeSettingsGuiPanel.add(oeSettingsPanel);
         
         dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, masterSettingsTabbedPane,
-            "The settings on this screen should be left alone unless you know<br/>"
-            + "exactly what they do, and have a strong need to do so."
+                "The settings on this screen should be left alone unless you know<br/>"
+                + "exactly what they do, and have a strong need to do so."
         );
         dangerousSettingsPanel.setSize(dangerousSettingsGuiPanel.getSize());
         dangerousSettingsGuiPanel.setLayout(new BoxLayout(dangerousSettingsGuiPanel, BoxLayout.PAGE_AXIS));
@@ -86,7 +90,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         generalSettingsGuiScrollPane = new javax.swing.JScrollPane();
         generalSettingsGuiPanel = new javax.swing.JPanel();
         autoupdateSettingsGuiScrollPane = new javax.swing.JScrollPane();
-        autoupdateSettingsGuiPanel = new javax.swing.JPanel();
+        oeSettingsGuiPanel = new javax.swing.JPanel();
         dangerousSettingsGuiScrollPane = new javax.swing.JScrollPane();
         dangerousSettingsGuiPanel = new javax.swing.JPanel();
 
@@ -107,20 +111,20 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
         masterSettingsTabbedPane.addTab("General settings", generalSettingsGuiScrollPane);
 
-        javax.swing.GroupLayout autoupdateSettingsGuiPanelLayout = new javax.swing.GroupLayout(autoupdateSettingsGuiPanel);
-        autoupdateSettingsGuiPanel.setLayout(autoupdateSettingsGuiPanelLayout);
-        autoupdateSettingsGuiPanelLayout.setHorizontalGroup(
-            autoupdateSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout oeSettingsGuiPanelLayout = new javax.swing.GroupLayout(oeSettingsGuiPanel);
+        oeSettingsGuiPanel.setLayout(oeSettingsGuiPanelLayout);
+        oeSettingsGuiPanelLayout.setHorizontalGroup(
+            oeSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 507, Short.MAX_VALUE)
         );
-        autoupdateSettingsGuiPanelLayout.setVerticalGroup(
-            autoupdateSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        oeSettingsGuiPanelLayout.setVerticalGroup(
+            oeSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 314, Short.MAX_VALUE)
         );
 
-        autoupdateSettingsGuiScrollPane.setViewportView(autoupdateSettingsGuiPanel);
+        autoupdateSettingsGuiScrollPane.setViewportView(oeSettingsGuiPanel);
 
-        masterSettingsTabbedPane.addTab("Autoupdate settings", autoupdateSettingsGuiScrollPane);
+        masterSettingsTabbedPane.addTab("Object Explorer", autoupdateSettingsGuiScrollPane);
 
         javax.swing.GroupLayout dangerousSettingsGuiPanelLayout = new javax.swing.GroupLayout(dangerousSettingsGuiPanel);
         dangerousSettingsGuiPanel.setLayout(dangerousSettingsGuiPanelLayout);
@@ -150,29 +154,25 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel autoupdateSettingsGuiPanel;
     private javax.swing.JScrollPane autoupdateSettingsGuiScrollPane;
     private javax.swing.JPanel dangerousSettingsGuiPanel;
     private javax.swing.JScrollPane dangerousSettingsGuiScrollPane;
     private javax.swing.JPanel generalSettingsGuiPanel;
     private javax.swing.JScrollPane generalSettingsGuiScrollPane;
     private javax.swing.JTabbedPane masterSettingsTabbedPane;
+    private javax.swing.JPanel oeSettingsGuiPanel;
     // End of variables declaration//GEN-END:variables
 
-    public boolean needsLauncherReset() {
-        return updateSettingsPanel.needsLauncherReset();
-    }
-
     public boolean needsToolReset() {
-        return toolSettingsPanel.needsToolReset() || dangerousSettingsPanel.needsToolReset();
+        return toolSettingsPanel.needsToolReset() 
+                || oeSettingsPanel.needsToolReset()
+                || dangerousSettingsPanel.needsToolReset();
     }
 
     public boolean needsTreeResize() {
-        return toolSettingsPanel.needsTreeResize() || dangerousSettingsPanel.needsTreeResize();
-    }
-
-    public UpdateSettingsPanel getUpdatePanel() {
-        return updateSettingsPanel;
+        return toolSettingsPanel.needsTreeResize()
+                || oeSettingsPanel.needsToolReset()
+                || dangerousSettingsPanel.needsTreeResize();
     }
 
     public void focusToUpdatePanel() {

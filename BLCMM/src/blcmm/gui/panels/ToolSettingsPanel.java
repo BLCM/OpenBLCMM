@@ -28,9 +28,9 @@ package blcmm.gui.panels;
 
 import blcmm.gui.MainGUI;
 import blcmm.gui.theme.Theme;
+import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.options.Option;
-import blcmm.utilities.GlobalLogger;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -278,5 +278,10 @@ public class ToolSettingsPanel extends JPanel {
 
     private void toggleHighlightBVCErrors(Option option, JComponent component) {
         MainGUI.INSTANCE.updateComponentTreeUI();
+    }
+    
+    private void updateOESearchCategories(Option option, JComponent component) {
+        this.settings.updateOESearchCategories();
+        MainGUI.INSTANCE.updateDataManagersSelectedClasses();
     }
 }

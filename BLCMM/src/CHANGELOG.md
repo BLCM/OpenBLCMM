@@ -18,6 +18,12 @@ BLCMM Changelog
     objects
   - Object-aware autocompletion in code edit windows
 - Object Explorer tweaks:
+  - Combined all data into a single data package, and included dumps of all
+    classes historically omitted from the OE data set.
+  - Data category selection now only affects fulltext/"refs" searching in OE.
+    An `Others` category has been added for the newly-added classes.
+  - Categories to use for fulltext/refs searching can be toggled at any point
+    via the Settings menu, without the need to restart the app.
   - Startup speed improved
   - "Class Explorer" panel renamed to "Class Browser"
   - "Package Explorer" panel renamed to "Object Browser"

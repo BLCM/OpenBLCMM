@@ -55,11 +55,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -992,7 +992,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             
             worker = new Worker(this.dm, query) {
                 @Override
-                protected Collection<UEClass> getAvailableClasses() {
+                protected TreeSet<UEClass> getAvailableClasses() {
                     if (finalClassName == null) {
                         return super.getAvailableClasses();
                     } else {
@@ -1000,7 +1000,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         if (ueClass == null) {
                             JOptionPane.showMessageDialog(ObjectExplorerPanel.this, "The class you tried to search for using \"inclass:\" was unable to be obtained.", "Error in Search", JOptionPane.ERROR_MESSAGE);
                             worker.cancel(true);
-                            return Collections.<UEClass>emptyList();
+                            return new TreeSet<>();
                         } else {
                             return ueClass.getClassAndAllDescendents();
                         }
@@ -1310,8 +1310,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             this.query = query;
         }
 
-        protected Collection<UEClass> getAvailableClasses() {
-            return this.dm.getAllClasses();
+        protected TreeSet<UEClass> getAvailableClasses() {
+            return this.dm.getAllClassesByEnabledCategory();
         }
 
         public abstract void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException;

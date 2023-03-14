@@ -169,6 +169,7 @@ public final class MainGUI extends ForceClosingJFrame {
                 GlobalLogger.log("Error initializing " + type.toString() + " Data Manager: " + e.toString());
             }
         }
+        this.updateDataManagersSelectedClasses();
 
         this.titlePostfix = titlePostfix;
         themeComboBox.setSelectedItem(Options.INSTANCE.getTheme());
@@ -762,9 +763,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         MasterSettingsPanel panel = new MasterSettingsPanel();
         JOptionPane.showMessageDialog(this, panel, "Settings", JOptionPane.PLAIN_MESSAGE);
-        if (panel.needsLauncherReset()) {
-            Startup.promptRestart(true);
-        } else if (panel.needsToolReset()) {
+        if (panel.needsToolReset()) {
             Startup.promptRestart(false);
         }
 
@@ -1926,6 +1925,14 @@ public final class MainGUI extends ForceClosingJFrame {
             ObjectExplorer.INSTANCE.toFront();
         }
 
+    }
+    
+    public void updateDataManagersSelectedClasses() {
+        for (DataManager dm : this.dataManagers.values()) {
+            if (dm != null) {
+                dm.updateClassesByEnabledCategory(Options.INSTANCE.getOESearchCategories());
+            }
+        }
     }
 
 }
