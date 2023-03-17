@@ -724,7 +724,7 @@ public final class CheckBoxTree extends JTree {
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
                     if (allow == JOptionPane.YES_OPTION) {
-                        Options.INSTANCE.seLeafSelectionAllowed(true);
+                        Options.INSTANCE.setLeafSelectionAllowed(true);
                     }
                     cancelbecauseLeaf = !Options.INSTANCE.getLeafSelectionAllowed();
                 }

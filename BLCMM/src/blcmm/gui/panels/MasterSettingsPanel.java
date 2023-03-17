@@ -61,7 +61,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         oeSettingsPanel.setSize(oeSettingsGuiPanel.getSize());
         oeSettingsGuiPanel.setLayout(new BoxLayout(oeSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         oeSettingsGuiPanel.add(oeSettingsPanel);
-        
+
         dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, masterSettingsTabbedPane,
                 "The settings on this screen should be left alone unless you know<br/>"
                 + "exactly what they do, and have a strong need to do so."
@@ -124,7 +124,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
         autoupdateSettingsGuiScrollPane.setViewportView(oeSettingsGuiPanel);
 
-        masterSettingsTabbedPane.addTab("Object Explorer", autoupdateSettingsGuiScrollPane);
+        masterSettingsTabbedPane.addTab("Object Explorer Data", autoupdateSettingsGuiScrollPane);
 
         javax.swing.GroupLayout dangerousSettingsGuiPanelLayout = new javax.swing.GroupLayout(dangerousSettingsGuiPanel);
         dangerousSettingsGuiPanel.setLayout(dangerousSettingsGuiPanelLayout);
@@ -164,7 +164,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     public boolean needsToolReset() {
-        return toolSettingsPanel.needsToolReset() 
+        return toolSettingsPanel.needsToolReset()
                 || oeSettingsPanel.needsToolReset()
                 || dangerousSettingsPanel.needsToolReset();
     }

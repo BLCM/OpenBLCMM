@@ -36,11 +36,13 @@ import blcmm.gui.text.HighlightedTextArea;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -54,6 +56,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,6 +68,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -72,6 +76,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -94,18 +99,18 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
         private final String query;
         public String text;
+        public Dump dump;
         private int caret;
         private Point viewport;
 
         HistoryEntry(String query, String text) {
-            this.query = query;
-            this.text = text;
+            this(query, text, null);
         }
 
-        HistoryEntry(String query, String text, int caret) {
+        HistoryEntry(String query, String text, Dump dump) {
             this.query = query;
             this.text = text;
-            this.caret = caret;
+            this.dump = dump;
         }
     }
 
@@ -119,13 +124,14 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private final LinkedList<HistoryEntry> history = new LinkedList<>();
     private final JSpinner deformatSpinner;
     Worker worker;
-    private static int totalLines = -1;
-    //GlobalDictionary dict = DataManager.getDictionary();
     boolean controlState = false;
     private DataManager dm;
+    private Dump currentDump;
 
     /**
      * Creates new form ObjectExplorerPanel
+     *
+     * @param dm The DataManager object we'll use for all data interaction
      */
     public ObjectExplorerPanel(DataManager dm) {
         this.dm = dm;
@@ -149,18 +155,16 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         backButton.setFont(backButton.getFont().deriveFont(backButton.getFont().getSize2D() + 2f));
         forwardButton.setBorder(new EmptyBorder(5, 8, 5, 8));
         forwardButton.setFont(forwardButton.getFont().deriveFont(forwardButton.getFont().getSize2D() + 2f));
+        this.currentDump = null;
 
-        if (totalLines == -1) {
-            // TODO: This should really be filtered by our classes-to-fulltext-search props (which don't exist yet)
-            totalLines = this.dm.getTotalDatafiles();
-        }
-        if (totalLines == 0) {
+        // Make sure we've got data
+        int totalDataFiles = this.dm.getTotalDatafiles();
+        if (totalDataFiles == 0) {
             queryTextField.setText("Download data first");
             textElement.setText("You need to download some data packages from the settings menu for the Object Explorer to do something.");
             queryTextField.setEditable(false);
             textElement.setEditable(false);
         }
-        mainProgressBar.setMaximum(totalLines);
         queryTextField.getActionMap().put("Search", new AbstractAction("Search") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -178,7 +182,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
         // Bind the search action to ctrl-F
         queryTextField.getInputMap().put(KeyStroke.getKeyStroke("control F"), "Search");
-// Bind the cancel action to ctrl-F
+        // Bind the cancel action to ctrl-F
         queryTextField.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "Cancel");
 
         // Add a search action on the textfield, too.  Is this gonna interfere
@@ -232,37 +236,37 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             }
 
             private void singleClickAction() {
-                /* Temporarily commented so I can focus on other things
                 // This happens when its a simple click
                 String objectToBookmark = queryTextField.getText();
                 if (objectToBookmark.isEmpty()) {
                     // No empty bookmarks
                     return;
                 }
-                String toSave = objectToBookmark;
-                if (DataManager.getDump(objectToBookmark) == null) {
-                    JOptionPane.showMessageDialog(null, "You can't bookmark things like, '" + objectToBookmark + "' that aren't objects!", "Bookmark Error", JOptionPane.WARNING_MESSAGE);
+                Dump dump = dm.getDump(objectToBookmark);
+                if (dump.ueObject == null) {
+                    JOptionPane.showMessageDialog(null, "Only dumpable objects can be bookmarked",
+                            "Bookmark Error",
+                            JOptionPane.WARNING_MESSAGE);
                     return;
-                } else if (!objectToBookmark.contains("'")) {
-                    toSave = DataManager.getDictionary().getObjectClass(objectToBookmark) + "'" + objectToBookmark + "'";
                 }
-                //This will make it so no duplicate dumps with different capitalizations can be saved
-                toSave = DataManager.getDictionary().restoreProperCapitalization(toSave);
 
-                String[] bookmarks = Options.INSTANCE.getOEBookmarks(DataManager.isBL2());
+                // This normalizes capitalization and adds in the class prefix, if possible.
+                String toSave = dump.ueObject.getNameWithClassIfPossible();
+
+                String[] bookmarks = Options.INSTANCE.getOEBookmarks(dm.getPatchType());
 
                 List<String> bookmarkList = new ArrayList<>(Arrays.asList(bookmarks));
                 assert bookmarkList.contains(toSave) == bookmarkLabel.getText().equals(STAR_FILLED);
                 if (bookmarkList.contains(toSave) || bookmarkLabel.getText().equals(STAR_FILLED)) {
                     // Our object / query is currently bookmarked. Time to remove it.
                     boolean wasInList = bookmarkList.remove(toSave);
-                    Options.INSTANCE.setOEBookmarks(bookmarkList.toArray(new String[0]), DataManager.isBL2());
+                    Options.INSTANCE.setOEBookmarks(bookmarkList.toArray(new String[0]), dm.getPatchType());
                     GlobalLogger.log("Object Explorer - Unbookmarked " + toSave + (!wasInList ? " (Element was not in list)" : ""));
                 } else {
                     // Our object isn't currently bookmarked. Time to make it so.
                     String[] result = Arrays.copyOf(bookmarks, bookmarks.length + 1);
                     result[bookmarks.length] = toSave;
-                    Options.INSTANCE.setOEBookmarks(result, DataManager.isBL2());
+                    Options.INSTANCE.setOEBookmarks(result, dm.getPatchType());
                     // We bookmarked something fill our star
                     GlobalLogger.log("Object Explorer - Bookmarked " + toSave);
                 }
@@ -271,7 +275,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         -> IntStream.range(0, tabbedPane.getTabCount() - 1)
                                 .mapToObj(i -> (ObjectExplorerPanel) tabbedPane.getComponentAt(i))
                                 .forEach(ObjectExplorerPanel::updateBookmarkButton));
-                */
             }
 
             private void doubleClickAction() {
@@ -280,7 +283,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 menu.setOpaque(false);
                 menu.setBorder(null);
                 menu.setFocusable(false);
-                BookmarkTable table = new BookmarkTable(historyIndex > -1 ? history.get(historyIndex).query : null);
+                BookmarkTable table = new BookmarkTable(historyIndex > -1 ? history.get(historyIndex).query : null, dm);
                 JScrollPane pane = new JScrollPane(table);
                 int horPadding = 6;
                 table.updateBookmarkBrowser();//This gives us an initial guess for the size, we can now fine-tune
@@ -302,8 +305,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
     public void reloadTabHistory() {
         if (historyIndex > -1) {
-            history.set(historyIndex, new HistoryEntry(queryTextField.getText().trim(), getDocumentText()));
-
+            history.set(historyIndex, new HistoryEntry(queryTextField.getText().trim(), getDocumentText(), currentDump));
         }
     }
 
@@ -319,25 +321,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         c.setPreferredSize(d);
         c.setMaximumSize(d);
         c.setMinimumSize(d);
-    }
-
-    private static int countLines(String classname) {
-        /* temporarily commented so I can focus on other things
-        BufferedReader br = new BufferedReader(new InputStreamReader(DataManager.getRawStreamOfClass(classname)));
-        int c = 0;
-        try {
-            String line = br.readLine();
-            while (line != null) {
-                c++;
-                line = br.readLine();
-            }
-            br.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ObjectExplorerPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return c;
-        */
-        return 0;
     }
 
     /**
@@ -535,6 +518,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         refsButton.setText("Cancel");
         refsButton.setBackground(ThemeManager.getColor(ThemeManager.ColorType.UICancelButtonBackground));
         reloadTabHistory();
+        currentDump = null;
         refs(query);
     }//GEN-LAST:event_refsButtonActionPerformed
 
@@ -550,6 +534,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         refsButton.setText("Cancel");
         refsButton.setBackground(ThemeManager.getColor(ThemeManager.ColorType.UICancelButtonBackground));
         reloadTabHistory();
+        currentDump = null;
         search(query);
     }
 
@@ -663,16 +648,22 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
     void updateBookmarkButton() {
         if (historyIndex != -1) {
-            updateBookmarkButton(history.get(historyIndex).query);
+            updateBookmarkButton(history.get(historyIndex));
         }
     }
 
-    private void updateBookmarkButton(String query) {
-        /* Temporarily commented so I can focus on other things
-        boolean check = Arrays.asList(Options.INSTANCE.getOEBookmarks(DataManager.isBL2())).contains(query);
+    private void updateBookmarkButton(HistoryEntry entry) {
+        boolean check = false;
+        if (entry != null) {
+            //GlobalLogger.log("Updating bookmark button based on query: " + entry.query);
+            if (entry.dump != null && entry.dump.ueObject != null) {
+                // TODO: I really don't like this construct; should be able to compare against
+                // a HashSet or something rather than looping over a list
+                check = Arrays.asList(Options.INSTANCE.getOEBookmarks(this.dm.getPatchType())).contains(entry.dump.ueObject.getNameWithClassIfPossible());
+            }
+        }
         bookmarkLabel.setText(check ? STAR_FILLED : STAR_OPEN);
         bookmarkLabel.setForeground(ThemeManager.getColor(check ? ThemeManager.ColorType.UINimbusAlertYellow : ThemeManager.ColorType.UIText));
-        */
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -736,7 +727,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 res = new ArrayList<>();
                 return new AutoCompleteAttacher.AutoCompleteRequirements(from, to, res);
             }
-    
+
             @Override
             protected void enter(KeyEvent e) {
                 boolean oldstate = controlState;
@@ -778,10 +769,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         queryTextField.setText(history.get(historyIndex).query);
         textElement.setText(history.get(historyIndex).text);
         textElement.setCaretPosition(history.get(historyIndex).caret);
+        currentDump = history.get(historyIndex).dump;
         textElement.discardAllUndoData();
         textElement.setProcessUndo(true);
         //jScrollPane1.getViewport().setViewPosition(history.get(historyIndex).viewport);
         updateButtons();
+        updateBookmarkButton(history.get(historyIndex));
         textElement.requestFocus();
     }
 
@@ -796,13 +789,21 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         String text = dump.text;
         if (dump.ueObject == null) {
             textElement.setText(text);
+            currentDump = null;
             return false;
         } else {
             if (collapseArraysToggleButton.isSelected()) {
                 text = collapseArrays(text);
             }
-            updateBookmarkButton(options.objectToDump);
-            setQueryAndText(text, dump.ueObject.getName());
+            currentDump = dump;
+            String normalizedQuery;
+            if (Options.INSTANCE.getPreferFullObjInOE()) {
+                normalizedQuery = dump.ueObject.getNameWithClassIfPossible();
+            } else {
+                normalizedQuery = dump.ueObject.getName();
+            }
+            HistoryEntry newHistory = setQueryAndText(normalizedQuery, text);
+            updateBookmarkButton(newHistory);
             return true;
         }
 
@@ -900,7 +901,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         return sb.toString();
     }
 
-    private void setQueryAndText(String text, String query) {
+    private HistoryEntry setQueryAndText(String query, String text) {
         if (historyIndex > -1) {
             history.get(historyIndex).caret = textElement.getCaretPosition();
             history.get(historyIndex).viewport = jScrollPane1.getViewport().getViewPosition();
@@ -914,16 +915,17 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         while (historyIndex < history.size() - 1) {
             history.removeLast();
         }
-        history.add(new HistoryEntry(query, text));
+        history.add(new HistoryEntry(query, text, currentDump));
         while (history.size() > 10) {
             history.removeFirst();
         }
         historyIndex = history.size() - 1;
         updateButtons();
+        return history.get(historyIndex);
     }
 
     private void refs(String query) {
-        updateBookmarkButton("");
+        updateBookmarkButton(null);
         // Log
         GlobalLogger.log("Trying to refs " + query);
         if (worker != null) {
@@ -939,8 +941,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }
 
     private void search(String query) {
-        updateBookmarkButton("");
-        
+        updateBookmarkButton(null);
+
         // I'm not entirely sure I agree with how this is done...  I think I'd
         // prefer that regex searches have to be prefixed with `/` or something.
         // However, for now I'm just keeping it as-is.
@@ -955,7 +957,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (worker != null) {
             worker.stop();
         }
-        
+
         if (RegexBox) {
             try {
                 Pattern compile = Pattern.compile(query);
@@ -986,10 +988,10 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     positives.add(s.toLowerCase());
                 }
             }
-            
+
             // This is needed to avoid errors when passing it to getClassByName, below
             final String finalClassName = className;
-            
+
             worker = new Worker(this.dm, query) {
                 @Override
                 protected TreeSet<UEClass> getAvailableClasses() {
@@ -1017,7 +1019,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (worker != null) {
             worker.execute();
         }
-        
+
         /* Temporarily commented so I can focus on other things
         updateBookmarkButton("");
         boolean RegexBox = query.matches(".*(\\^|\\\\|\\||\\*|\\+|\\?).*") || query.matches(".*(\\(.*[^0-9].*\\)).*");
@@ -1199,7 +1201,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
     public void getAll(String query) {
         /* Temporarily commented so I can focus on other things
-        updateBookmarkButton("");
+        updateBookmarkButton(null);
+        currentDump = null;
         if (worker != null) {
             // Stop worker if something else is already working
             worker.stop();
@@ -1244,6 +1247,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         /* Temporarily commented so I can focus on other things
         // Log
         GlobalLogger.log("Trying to getall with a class of: \"" + query + "\"");
+        currentDump = null;
         // Search for every class
         Collection<String> objects = DataManager.getGetAll(query, true);
         jProgressBar1.setValue(jProgressBar1.getMaximum());
@@ -1266,6 +1270,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         /* Temporarily commented so I can focus on other things
         // Log
         GlobalLogger.log("Trying to getall with a class of: \"" + classname + "\" and property of: \"" + property + "\"");
+        currentDump = null;
         StringBuilder sb = new StringBuilder();
         final int[] count = {0};//Go Java go (a "final" mutable int)
         try {
@@ -1318,7 +1323,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
         @Override
         protected Object doInBackground() throws Exception {
-            
+
             // Update the total length of the progress bar based on how many classes
             // we're actually processing
             int totalDatafiles = 0;
@@ -1338,7 +1343,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 boolean news = false;
 
                 for (UEClass ueClass : this.getAvailableClasses()) {
-                    
+
                     for (File dataFile : this.dm.getAllDatafilesForClass(ueClass)) {
 
                         if (stop) {
@@ -1386,7 +1391,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                             }
                             news = false;
                         }
-                        
+
                         counter += 1;
                         mainProgressBar.setValue(counter);
                         mainProgressBar.repaint();
@@ -1397,7 +1402,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 e = e2;
                 return null;
             }
-            
+
             /* Temporarily commented so I can focus on other things
             TreeMap<String, Boolean> matches = new TreeMap<>();
             textElement.setEditable(false);
@@ -1482,7 +1487,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             }
             GlobalLogger.log("Worker done");
             mainProgressBar.setValue(mainProgressBar.getMaximum());
-            setQueryAndText(textElement.getText(), query);
+            setQueryAndText(query, textElement.getText());
             textElement.setEditable(true);
             textElement.discardAllUndoData();
             textElement.setProcessUndo(true);

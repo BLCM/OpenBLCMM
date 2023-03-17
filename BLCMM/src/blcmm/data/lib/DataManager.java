@@ -68,6 +68,7 @@ public class DataManager {
     private ArrayList<UEClass> allClasses = new ArrayList<> ();
     private ArrayList<String> allClassNames = new ArrayList<> ();
     private HashMap<String, UEClass> classNameToClass = new HashMap<> ();
+    private HashMap<Integer, UEClass> classIdToClass = new HashMap<> ();
     private int totalDatafiles;
 
     private HashMap<Integer, OESearch> categoryIdMap = new HashMap<> ();
@@ -149,6 +150,7 @@ public class DataManager {
                 this.allClasses.add(ueClass);
                 this.allClassNames.add(ueClass.getName());
                 this.classNameToClass.put(ueClass.getName().toLowerCase(), ueClass);
+                this.classIdToClass.put(ueClass.getId(), ueClass);
                 this.totalDatafiles += ueClass.getNumDatafiles();
                 oeSearch = this.categoryIdMap.get(ueClass.getCategoryId());
                 this.categoryToClass.get(oeSearch).add(ueClass);
@@ -277,6 +279,10 @@ public class DataManager {
             UEObject ueObject = UEObject.getFromDbRow(rs);
             if (ueObject.getFileIndex() == 0) {
                 return new Dump(null, "Object not found in database: " + objectName);
+            }
+            int classId = rs.getInt("class");
+            if (this.classIdToClass.containsKey(classId)) {
+                ueObject.setUeClass(this.classIdToClass.get(classId));
             }
             String dataFileName = rs.getString("class_name") + ".dump." + ueObject.getFileIndex();
             File dataFile = Paths.get(this.dumpFilePath, dataFileName).toFile();

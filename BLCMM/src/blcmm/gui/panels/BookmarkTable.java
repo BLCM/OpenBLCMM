@@ -26,8 +26,12 @@
  */
 package blcmm.gui.panels;
 
+import blcmm.data.lib.DataManager;
+import blcmm.data.lib.DataManager.Dump;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.theme.ThemeManager;
+import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Options;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -36,8 +40,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultRowSorter;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -45,7 +55,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -54,9 +63,11 @@ import javax.swing.table.TableRowSorter;
 public class BookmarkTable extends JTable {
 
     private String currentDump;
+    private DataManager dm;
 
-    public BookmarkTable(String currentDump) {
+    public BookmarkTable(String currentDump, DataManager dm) {
         this.currentDump = currentDump;
+        this.dm = dm;
         initModel();
         initRenderers();
         super.addMouseListener(new MouseAdapter() {
@@ -110,12 +121,11 @@ public class BookmarkTable extends JTable {
     }
 
     private void deleteEntry(String entry) {
-        /* Temporarily commented so I can focus on other stuff
-        List<String> bookmarkList = new ArrayList<>(Arrays.asList(Options.INSTANCE.getOEBookmarks(DataManager.isBL2())));
+        List<String> bookmarkList = new ArrayList<>(Arrays.asList(Options.INSTANCE.getOEBookmarks(this.dm.getPatchType())));
 
         // Our object is currently bookmarked. Time to remove it.
         boolean wasInList = bookmarkList.remove(entry);
-        Options.INSTANCE.setOEBookmarks(bookmarkList.toArray(new String[0]), DataManager.isBL2());
+        Options.INSTANCE.setOEBookmarks(bookmarkList.toArray(new String[0]), this.dm.getPatchType());
         updateBookmarkBrowser();
 
         // We unbookmarked something. Possibly unfill our star.
@@ -124,7 +134,6 @@ public class BookmarkTable extends JTable {
                 .mapToObj(i -> (ObjectExplorerPanel) tabbedPane.getComponentAt(i))
                 .forEach(ObjectExplorerPanel::updateBookmarkButton);
         GlobalLogger.log("Object Explorer - Unbookmarked " + entry + (!wasInList ? " (Element was not in list)" : ""));
-        */
     }
 
     private void initModel() {
@@ -137,7 +146,8 @@ public class BookmarkTable extends JTable {
         setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setResizingAllowed(false);
-        setRowSorter(new TableRowSorter<>(getModel()));
+        setAutoCreateRowSorter(true);
+        ((DefaultRowSorter) getRowSorter()).setSortsOnUpdates(true);
     }
 
     private void initRenderers() {
@@ -173,8 +183,7 @@ public class BookmarkTable extends JTable {
     }
 
     void updateBookmarkBrowser() {
-        /* Temporarily commented so I can focus on other stuff
-        String[] bookmarks = Options.INSTANCE.getOEBookmarks(DataManager.isBL2());
+        String[] bookmarks = Options.INSTANCE.getOEBookmarks(this.dm.getPatchType());
         // This mouse listener handles all of our object dumping / bookmark removing.
         clearSelection();
         final String[] header = new String[]{"Class", "Object", ""};
@@ -186,23 +195,22 @@ public class BookmarkTable extends JTable {
                 data[i][1] = bookmarks[i].substring(idx + 1, bookmarks[i].indexOf("'", idx + 1));
             } else if (bookmarks[i].contains(".")) {
                 data[i][1] = bookmarks[i];
-                data[i][0] = DataManager.getDictionary().getObjectClass(bookmarks[i]);
+                Dump dump = this.dm.getDump(bookmarks[i]);
+                if (dump.ueObject != null && dump.ueObject.getUeClass() != null) {
+                    data[i][0] = dump.ueObject.getUeClass().getName();
+                } else {
+                    data[i][0] = "";
+                }
             } else {
                 data[i][0] = bookmarks[i];
             }
         }
-        RowSorter<? extends TableModel> oldRowSorter = getRowSorter();
-        TableRowSorter<TableModel> newRowSorter = new TableRowSorter<>(getModel());
-        newRowSorter.setSortKeys(oldRowSorter.getSortKeys());
-        ((DefaultTableModel) getModel()).setDataVector(data, header);
-        setRowSorter(newRowSorter);
-        newRowSorter.sort();
 
+        ((DefaultTableModel) getModel()).setDataVector(data, header);
         updateColumnWidths();
         initRenderers();//setDataVector resets these too
 
         repaint();
-        */
     }
 
     private void updateColumnWidths() {

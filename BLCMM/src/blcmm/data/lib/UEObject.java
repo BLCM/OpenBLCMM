@@ -32,13 +32,13 @@ import java.sql.SQLException;
 
 /**
  * Model for a single object entry.
- * 
+ *
  * All this needs testing!  I'm sure it's wrong.
- * 
+ *
  * @author apocalyptech
  */
 public class UEObject {
-    
+
     private final int id;
     private final String name;
     private final String shortName;
@@ -48,6 +48,7 @@ public class UEObject {
     private final int bytes;
     private boolean hasChildrenForClass;
     private boolean expanded;
+    private UEClass ueClass;
 
     public UEObject(int id, String name, String shortName, int numChildren,
             int fileIndex, int filePosition,  int bytes) {
@@ -60,6 +61,7 @@ public class UEObject {
         this.bytes = bytes;
         this.expanded = false;
         this.hasChildrenForClass = false;
+        this.ueClass = null;
     }
 
     public int getId() {
@@ -89,7 +91,7 @@ public class UEObject {
     public int getBytes() {
         return this.bytes;
     }
-    
+
     public boolean hasChildren() {
         return this.numChildren > 0;
     }
@@ -101,7 +103,15 @@ public class UEObject {
     public boolean getHasChildrenForClass() {
         return this.hasChildrenForClass;
     }
-    
+
+    public void setUeClass(UEClass ueClass) {
+        this.ueClass = ueClass;
+    }
+
+    public UEClass getUeClass() {
+        return this.ueClass;
+    }
+
     public boolean isExpanded() {
         return this.expanded;
     }
@@ -109,7 +119,15 @@ public class UEObject {
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
     }
-    
+
+    public String getNameWithClassIfPossible() {
+        if (this.ueClass == null) {
+            return this.name;
+        } else {
+            return this.ueClass.getName() + "'" + this.name + "'";
+        }
+    }
+
     @Override
     public String toString() {
         return this.shortName;
@@ -123,9 +141,9 @@ public class UEObject {
         int fileIndex = rs.getInt("file_index");
         int filePosition = rs.getInt("file_position");
         int bytes = rs.getInt("bytes");
-        return new UEObject(id, name, shortName, numChildren, 
+        return new UEObject(id, name, shortName, numChildren,
                 fileIndex, filePosition, bytes);
     }
-    
-    
+
+
 }

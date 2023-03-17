@@ -31,6 +31,11 @@ BLCMM Changelog
     warnings
   - Class Browser tree is sorted case-insensitively
   - Class Browser tree does not sort "leaf" entries separately from folders
+  - Added setting to normalize the search bar with the "full" object name when
+    viewing dumps (ie: including the class type: ClassName'GD_Obj.Foo').  The
+    setting is on by default.
+  - Fixed some inconsistent behavior with the bookmark icon (and hopefully
+    didn't introduce new inconsistent behavior...)
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
 - Added "allow toggling individual statements" option to settings, and improved
@@ -127,7 +132,7 @@ BLCMM Changelog
    - Has a way to install BLCMM with offline files
 
 **v1.1.5** July 24, 2018
-- Allow for hotfixes without value 
+- Allow for hotfixes without value
 - Fix various crashes on some Java installations
 - Various parts of BLCMM are now more quote-aware
 - A warning message when people forget to hexedit their game on first launch

@@ -68,8 +68,8 @@
         <Container class="javax.swing.JScrollPane" name="autoupdateSettingsGuiScrollPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Object Explorer">
-                <Property name="tabTitle" type="java.lang.String" value="Object Explorer"/>
+              <JTabbedPaneConstraints tabName="Object Explorer Data">
+                <Property name="tabTitle" type="java.lang.String" value="Object Explorer Data"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

@@ -28,6 +28,7 @@ package blcmm.utilities;
 
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
+import blcmm.model.PatchType;
 import blcmm.utilities.options.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -73,6 +74,7 @@ public class Options {
         truncateCommandLength,
         highlightBVCErrors,
         leafSelectionAllowed,
+        preferFullObjInOE,
         hasSeenExportWarning,
         showConfirmPartialCategory,
         sessionsToKeep,
@@ -115,7 +117,7 @@ public class Options {
         oeSearchStaticMeshes,
         oeSearchWillowData,
     }
-    
+
     public enum OESearch {
         Actions(OptionNames.oeSearchActions),
         AI(OptionNames.oeSearchAI),
@@ -132,14 +134,14 @@ public class Options {
         Skins(OptionNames.oeSearchSkins),
         StaticMeshes(OptionNames.oeSearchStaticMeshes),
         WillowData(OptionNames.oeSearchWillowData);
-        
+
         public OptionNames option;
-        
+
         private OESearch(OptionNames option) {
             this.option = option;
         }
     }
-    
+
     private HashSet<OESearch> activeSearchCategories = new HashSet<>();
 
     /**
@@ -239,7 +241,13 @@ public class Options {
                 Option.Shown.SETTINGS, "Enable Toggling Individual Statements",
                 null,
                 "Enables/Disables being able to toggle individual statements"));
-        
+
+        this.registerOption(new BooleanOption(OptionNames.preferFullObjInOE.toString(), true,
+                Option.Shown.SETTINGS, "Prefer 'full' Object Names in OE Search Field",
+                null,
+                "When viewing dumps in Object Explorer, this will replace the search field "
+                + "with the 'full' object name, including class type."));
+
         this.registerOption(new BooleanOption(OptionNames.oeSearchActions.toString(), true,
                 Option.Shown.OE, "Actions Data",
                 "updateOESearchCategories",
@@ -321,12 +329,12 @@ public class Options {
                 Option.Shown.DANGEROUS, "Save patch files in 'Offline' Mode",
                 null,
                 "Save patch files in 'Offline' Mode.  This should basically always be selected!"));
-        
+
         this.registerOption(new IntOption(OptionNames.onlineServiceNumber.toString(), 5,
                 Option.Shown.DANGEROUS, "SparkService for 'Online'-saved Hotfixes",
                 1, 99,
                 null,
-                "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));    
+                "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));
 
         //Next, the launcher splash screen selector. This requires some extra magic;
         try {
@@ -407,7 +415,7 @@ public class Options {
 
         // A flag for if we disabled delete messages.
         this.registerOption(new BooleanOption(OptionNames.showDeleteConfirmation.toString(), true));
-        
+
         // Finally: a bit of aggregation housekeeping
         this.updateOESearchCategories();
     }
@@ -614,7 +622,7 @@ public class Options {
     /**
      * Restores all our options to their default values, and saves out the
      * options file.
-     * 
+     *
      * @param shownPanel The panel whose values we should be resetting
      */
     public void restoreDefaults(Option.Shown shownPanel) {
@@ -908,8 +916,16 @@ public class Options {
         return this.getBooleanOptionData(OptionNames.leafSelectionAllowed);
     }
 
-    public void seLeafSelectionAllowed(boolean selected) {
+    public void setLeafSelectionAllowed(boolean selected) {
         this.setBooleanOptionData(OptionNames.leafSelectionAllowed, selected);
+    }
+
+    public boolean getPreferFullObjInOE() {
+        return this.getBooleanOptionData(OptionNames.preferFullObjInOE);
+    }
+
+    public void setPreferFullObjInOE(boolean newPref) {
+        this.setBooleanOptionData(OptionNames.preferFullObjInOE, newPref);
     }
 
     // Next up: non-user-settable options.  Doing gets/sets for these even
@@ -1058,14 +1074,24 @@ public class Options {
         this.setBooleanOptionData(Options.OptionNames.propagateMUTNotification, propagate);
     }
 
-    // Takes boolean 'patch', to note BL2 / TPS bookmarks
-    public String[] getOEBookmarks(boolean patch) {
-        return this.getStringListOptionData(patch == true ? OptionNames.BL2Bookmarks : OptionNames.TPSBookmarks);
+    /**
+     * Returns our Object Explorer bookmarks for the specified PatchType
+     *
+     * @param patch The game for which to get bookmarks
+     * @return The bookmarks
+     */
+    public String[] getOEBookmarks(PatchType patch) {
+        return this.getStringListOptionData(OptionNames.valueOf(patch.toString() + "Bookmarks"));
     }
 
-    // Takes boolean 'patch', to note BL2 / TPS bookmarks
-    public void setOEBookmarks(String[] bookmark, boolean patch) {
-        this.setStringListOptionData(patch == true ? OptionNames.BL2Bookmarks : OptionNames.TPSBookmarks, bookmark);
+    /**
+     * Sets the bookmarks for the given PatchType
+     *
+     * @param bookmarks The bookmarks to set
+     * @param patch The game for which to set bookmarks
+     */
+    public void setOEBookmarks(String[] bookmarks, PatchType patch) {
+        this.setStringListOptionData(OptionNames.valueOf(patch.toString() + "Bookmarks"), bookmarks);
     }
 
     public int getPopupStatus() {
@@ -1099,7 +1125,7 @@ public class Options {
     public void setShowDeleteConfirmation(boolean status) {
         this.setBooleanOptionData(OptionNames.showDeleteConfirmation, status);
     }
-      
+
     public boolean getSaveAsOffline() {
         return this.getBooleanOptionData(OptionNames.saveAsOffline);
     }
@@ -1115,7 +1141,7 @@ public class Options {
     public void setOnlineServiceNumber(int serviceNumber) {
         this.setIntOptionData(Options.OptionNames.onlineServiceNumber, serviceNumber);
     }
-    
+
     public final void updateOESearchCategories() {
         this.activeSearchCategories.clear();
         for (OESearch oeSearch : OESearch.values()) {
@@ -1124,7 +1150,7 @@ public class Options {
             }
         }
     }
-    
+
     public Set<OESearch> getOESearchCategories() {
         return this.activeSearchCategories;
     }
