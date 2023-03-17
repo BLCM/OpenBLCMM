@@ -46,19 +46,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 /**
  * New SQLite-backed Data Library.
- * 
+ *
  * All this needs testing!  I'm sure it's wrong.
- * 
+ *
  * @author apocalyptech
  */
 public class DataManager {
-    
+
     private PatchType patchType;
     private String dataBaseDir;
     private String dbFilePath;
@@ -74,7 +75,7 @@ public class DataManager {
     private HashMap<Integer, OESearch> categoryIdMap = new HashMap<> ();
     private HashMap<OESearch, TreeSet<UEClass>> categoryToClass = new HashMap<> ();
     private TreeSet<UEClass> curClassesByEnabledCategory = new TreeSet<> ();
-    
+
     public class NoDataException extends Exception {
         public NoDataException(String message) {
             super(message);
@@ -83,7 +84,7 @@ public class DataManager {
             super(message, cause);
         }
     }
-    
+
     public class Dump {
         public UEObject ueObject;
         public String text;
@@ -92,14 +93,14 @@ public class DataManager {
             this.text = text;
         }
     }
-    
+
     public DataManager(PatchType patchType) throws NoDataException {
         this.patchType = patchType;
         this.dataBaseDir = Paths.get("data", patchType.toString()).toString();
         this.dbFilePath = Paths.get(this.dataBaseDir, "data.db").toString();
         this.dumpFilePath = Paths.get(this.dataBaseDir, "dumps").toString();
         this.totalDatafiles = 0;
-        
+
         // Database stuff!
         try {
             this.dbConn = DriverManager.getConnection("jdbc:sqlite:" + this.dbFilePath);
@@ -164,30 +165,30 @@ public class DataManager {
         }
 
     }
-    
+
     public PatchType getPatchType() {
         return this.patchType;
     }
-    
+
     public Collection<UEClass> getAllClasses() {
         return this.allClasses;
     }
-    
+
     public void updateClassesByEnabledCategory(Set<OESearch> enabledCategories) {
         this.curClassesByEnabledCategory.clear();
         for (OESearch oeSearch : enabledCategories) {
             this.curClassesByEnabledCategory.addAll(this.categoryToClass.get(oeSearch));
         }
     }
-    
+
     public TreeSet<UEClass> getAllClassesByEnabledCategory() {
         return this.curClassesByEnabledCategory;
     }
-    
+
     public Collection<String> getAllClassNames() {
         return this.allClassNames;
     }
-    
+
     public UEClass getClassByName(String name) {
         String nameLower = name.toLowerCase();
         if (this.classNameToClass.containsKey(nameLower)) {
@@ -196,7 +197,7 @@ public class DataManager {
             return null;
         }
     }
-    
+
     public UEClass getRootClass() {
         return this.rootClass;
     }
@@ -204,17 +205,69 @@ public class DataManager {
     public int getTotalDatafiles() {
         return this.totalDatafiles;
     }
-    
-    public List<UEObject> getAllObjectsInClass(UEClass ueClass) {
-        ArrayList<UEObject> list = new ArrayList<>();
+
+    public Set<Integer> getSubclassIDs(UEClass ueClass) {
+        HashSet<Integer> map = new HashSet<>();
         try {
             PreparedStatement stmt = this.dbConn.prepareStatement(
-                    "select o.* from object o, class c where o.class=c.id and c.id=?"
+                    "select * from class_subclass where class=?"
             );
             stmt.setInt(1, ueClass.getId());
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                list.add(UEObject.getFromDbRow(rs));
+                map.add(rs.getInt("subclass"));
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+        }
+        return map;
+    }
+
+    public List<UEClass> getSubclassesList(UEClass ueClass) {
+        Set<Integer> idMap = this.getSubclassIDs(ueClass);
+        ArrayList<UEClass> list = new ArrayList<>();
+        for (int classId : idMap) {
+            if (this.classIdToClass.containsKey(classId)) {
+                list.add(this.classIdToClass.get(classId));
+            }
+        }
+        return list;
+    }
+
+    public TreeSet<UEClass> getSubclassesSet(UEClass ueClass) {
+        Set<Integer> idMap = this.getSubclassIDs(ueClass);
+        TreeSet<UEClass> classSet = new TreeSet<>();
+        for (int classId : idMap) {
+            if (this.classIdToClass.containsKey(classId)) {
+                classSet.add(this.classIdToClass.get(classId));
+            }
+        }
+        return classSet;
+    }
+
+    public List<UEObject> getAllObjectsInSpecificClass(UEClass ueClass) {
+        return this.getAllObjectsInSpecificClass(ueClass, true);
+    }
+
+    public List<UEObject> getAllObjectsInSpecificClass(UEClass ueClass, boolean ordered) {
+        ArrayList<UEObject> list = new ArrayList<>();
+        try {
+            String suffix = "";
+            if (ordered) {
+                suffix = " order by o.name";
+            }
+            PreparedStatement stmt = this.dbConn.prepareStatement(
+                    "select o.* from object o, class c where o.class=c.id and c.id=?" + suffix
+            );
+            stmt.setInt(1, ueClass.getId());
+            ResultSet rs = stmt.executeQuery();
+            UEObject ueObject;
+            while (rs.next()) {
+                ueObject = UEObject.getFromDbRow(rs);
+                ueObject.setUeClass(ueClass);
+                list.add(ueObject);
             }
             rs.close();
             stmt.close();
@@ -223,7 +276,46 @@ public class DataManager {
         }
         return list;
     }
-    
+
+
+    public List<UEObject> getAllObjectsInClassTree(UEClass ueClass) {
+        return this.getAllObjectsInClassTree(ueClass, true);
+    }
+
+    public List<UEObject> getAllObjectsInClassTree(UEClass ueClass, boolean ordered) {
+        ArrayList<UEObject> list = new ArrayList<>();
+        Set<Integer> validClasses = this.getSubclassIDs(ueClass);
+        try {
+            String suffix = "";
+            if (ordered) {
+                suffix = " order by o.name";
+            }
+            PreparedStatement stmt = this.dbConn.prepareStatement(
+                    "select o.*, c.id class_id from object o, object_show_class_ids i, class c where o.id=i.id and o.class=c.id and i.class=?" + suffix
+            );
+            stmt.setInt(1, ueClass.getId());
+            ResultSet rs = stmt.executeQuery();
+            UEObject ueObject;
+            int classId;
+            while (rs.next()) {
+                classId = rs.getInt("class_id");
+                if (validClasses.contains(classId)) {
+                    ueObject = UEObject.getFromDbRow(rs);
+                    if (this.classIdToClass.containsKey(classId)) {
+                        ueObject.setUeClass(this.classIdToClass.get(classId));
+                    }
+                    list.add(ueObject);
+                }
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            GlobalLogger.log("Error getting objects from class: " + e.toString());
+        }
+        return list;
+    }
+
+
     public List<UEObject> getObjectsFromClass(UEClass ueClass) {
         return this.getObjectsFromClass(ueClass, null);
     }
@@ -258,9 +350,9 @@ public class DataManager {
         }
         return list;
     }
-    
+
     public Dump getDump(String objectName) {
-        
+
         // When clicking on in-app links, the objectName will be: ClassType'GD_Class.Path'
         if (objectName.contains("'")) {
             String[] parts = objectName.split("'");
@@ -269,7 +361,7 @@ public class DataManager {
             }
             objectName = parts[1];
         }
-        
+
         // Now load
         try {
             PreparedStatement stmt = this.dbConn.prepareStatement(
@@ -306,13 +398,13 @@ public class DataManager {
             return new Dump(null, "Unknown error reading object data: " + e.getMessage());
         }
     }
-    
+
     /**
      * TODO: This really shouldn't expose something like a File, since that may
      * change (and probably will) in the future.
-     * 
+     *
      * @param ueClass
-     * @return 
+     * @return
      */
     public List<File> getAllDatafilesForClass(UEClass ueClass) {
         ArrayList<File> list = new ArrayList<> ();
@@ -322,5 +414,5 @@ public class DataManager {
         }
         return list;
     }
-    
+
 }

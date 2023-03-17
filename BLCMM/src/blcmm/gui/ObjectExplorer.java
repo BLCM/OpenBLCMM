@@ -37,6 +37,7 @@ import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -75,7 +76,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
     /**
      * Creates new form DumpFrame
-     * 
+     *
      * @param dm The DataManager to use for this instance of Object Explorer
      */
     public ObjectExplorer(DataManager dm) {
@@ -300,7 +301,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         // We're never going to deny the tree expansion, but I did want this to happen *before* the
         // expansion actually happens, just so there's no flickering or whatever as the "dummy"
         // entry is replaced by the actual content, etc.
-        
+
         // First get our selected class
         // TODO: Maybe that should live inside UEObject, actually.  Whatever, for now this will do.
         TreePath classSelectionPath = classExplorerTree.getSelectionPath();
@@ -397,7 +398,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         packageExplorerTree.setModel(new DefaultTreeModel(root));
         packageExplorerTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
-    
+
     private void addPackageData(UEClass ueClass, DefaultMutableTreeNode root) {
         List<UEObject> packages;
         Object rootObject = root.getUserObject();
@@ -415,7 +416,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             }
             root.insert(newNode, root.getChildCount());
         }
-        
+
     }
 
     /**
@@ -531,4 +532,13 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             Options.INSTANCE.setOELeftPaneVisible(leftVisible);
         }
     }
+
+    public void cursorWait() {
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    }
+
+    public void cursorNormal() {
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }
+
 }

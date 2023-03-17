@@ -36,6 +36,8 @@ BLCMM Changelog
     setting is on by default.
   - Fixed some inconsistent behavior with the bookmark icon (and hopefully
     didn't introduce new inconsistent behavior...)
+  - "getall" queries will correctly report the top-level class of the returned
+    objects
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
 - Added "allow toggling individual statements" option to settings, and improved

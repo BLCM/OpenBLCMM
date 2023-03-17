@@ -29,6 +29,7 @@ package blcmm.gui.panels;
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManager.Dump;
 import blcmm.data.lib.UEClass;
+import blcmm.data.lib.UEObject;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
@@ -348,7 +349,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         bookmarkLabel = new javax.swing.JLabel();
         collapseArraysToggleButton = new javax.swing.JToggleButton();
 
-        jLabel1.setText("Object:");
+        jLabel1.setText("Search:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1189,18 +1190,20 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         }
     }
 
+    private String objectNameFromDumpHeader(String header) {
+        int index = header.indexOf("'") + 1;
+        int index2 = header.indexOf(" ", index);
+        int index3 = header.indexOf("'", index2);
+        String cl = header.substring(index, index2);
+        String ob = header.substring(index2 + 1, index3);
+        return cl + "'" + ob + "'";
+    }
+
     private void reportCurrentObject(String current, TreeMap<String, Boolean> matches) {
-        int index = current.indexOf("'") + 1;
-        int index2 = current.indexOf(" ", index);
-        int index3 = current.indexOf("'", index2);
-        String cl = current.substring(index, index2);
-        String ob = current.substring(index2 + 1, index3);
-        String comp = cl + "'" + ob + "'";
-        matches.put(comp, false);
+        matches.put(this.objectNameFromDumpHeader(current), false);
     }
 
     public void getAll(String query) {
-        /* Temporarily commented so I can focus on other things
         updateBookmarkButton(null);
         currentDump = null;
         if (worker != null) {
@@ -1208,88 +1211,180 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             worker.stop();
         }
         boolean hasFieldName = query.matches("(?i).*[a-z]\\s[a-z].*");
-        String clazz;
-        boolean hasClass;
+        UEClass ueClass;
         if (hasFieldName) {
             String[] splitQuery = query.split(" ", 2);
-            clazz = DataManager.getDictionary().restoreProperCapitalization(splitQuery[0]);
-            hasClass = DataManager.isDataForClassOrAnySubclassPresent(clazz);
-            if (hasClass) {
-                getAllWithField(splitQuery[0], splitQuery[1]);
+            ueClass = this.dm.getClassByName(splitQuery[0]);
+            if (ueClass != null) {
+                getAllWithField(ueClass, splitQuery[1]);
             }
         } else {
-            clazz = DataManager.getDictionary().restoreProperCapitalization(query);
-            hasClass = DataManager.isDataForClassOrAnySubclassPresent(clazz);
-            if (hasClass) {
-                getAllNoField(clazz);
+            ueClass = this.dm.getClassByName(query);
+            if (ueClass != null) {
+                getAllNoField(ueClass);
             }
         }
-        if (!hasClass) {
-            String pack = DataManager.getDataPackageForClass(clazz);
-            if (pack != null) {
-                if (pack.equalsIgnoreCase("Useless")) {
-                    JOptionPane.showMessageDialog(this, ""
-                            + "The requested class has been marked as useless by the creator of the datapacks.\n"
-                            + "This means it contains no valueable or moddable information, and is unavailable",
-                            "There's more useful dumps out there", JOptionPane.PLAIN_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this, "The requested class is in an uninstalled data package: " + pack, "Please construct additional pylons", JOptionPane.PLAIN_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, ("Unfortunately, the classs you entered can not be dumped using BLCMM."), "Unknown class", JOptionPane.PLAIN_MESSAGE);
-            }
+        if (ueClass == null) {
+            JOptionPane.showMessageDialog(this,
+                    ("Unfortunately, the classs you entered can not be dumped using BLCMM."),
+                    "Unknown class",
+                    JOptionPane.PLAIN_MESSAGE);
         }
-        */
     }
 
     //We seperate those methods, since we can solve this request with less disk I/O
-    public void getAllNoField(String query) {
-        /* Temporarily commented so I can focus on other things
-        // Log
-        GlobalLogger.log("Trying to getall with a class of: \"" + query + "\"");
+    public void getAllNoField(UEClass ueClass) {
+        GlobalLogger.log("Trying to getall on class: \"" + ueClass.getName() + "\"");
         currentDump = null;
-        // Search for every class
-        Collection<String> objects = DataManager.getGetAll(query, true);
-        jProgressBar1.setValue(jProgressBar1.getMaximum());
+        Collection<UEObject> objects = this.dm.getAllObjectsInClassTree(ueClass);
+        mainProgressBar.setValue(mainProgressBar.getMaximum());
         if (objects != null && !objects.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("Found %s objects of type %s\n", objects.size(), query));
-            objects.forEach(s -> {
-                sb.append(String.format("%s'%s'\n", query, s));
+            sb.append(String.format("Found %s objects of type %s\n", objects.size(), ueClass.getName()));
+            objects.forEach(o -> {
+                sb.append(o.getNameWithClassIfPossible());
+                sb.append("\n");
             });
-            setQueryAndText(sb.toString(), "getall " + query);
-            GlobalLogger.log("Obtained all objects of Class: \"" + query + "\"");
+            setQueryAndText("getall " + ueClass.getName(), sb.toString());
+            GlobalLogger.log("Obtained all objects of Class: \"" + ueClass.getName() + "\"");
         } else {
-            JOptionPane.showMessageDialog(this, ("Unfortunately, the classs you entered can not be dumped using BLCMM."), "Unknown class", JOptionPane.PLAIN_MESSAGE);
-            GlobalLogger.log("Unable to getall with a class of: \"" + query + "\"");
+            setQueryAndText("getall " + ueClass.getName(), "No objects found in class \"" + ueClass.getName() + "\"");
+            GlobalLogger.log("Unable to getall with a class of: \"" + ueClass.getName() + "\"");
         }
-        */
     }
 
-    public void getAllWithField(String classname, String property) {
-        /* Temporarily commented so I can focus on other things
-        // Log
-        GlobalLogger.log("Trying to getall with a class of: \"" + classname + "\" and property of: \"" + property + "\"");
+    /**
+     * Simulates a console `getall classname attribute`.  I would really like
+     * to do this via the Worker background-processing loop, but it turns out
+     * that the markup-processing code is *way* too slow when dynamically
+     * updated that way.  We can get all the text into the text area pretty
+     * quickly (at least for the tests I was doing), but even altering the
+     * population code to dump it all in one big chunk, it would process for
+     * over a minute compared to 12 seconds in BLCMM classic.  (That was with
+     * `getall itempooldefinition balanceditems`)
+     *
+     * So, we're continuing to handle it this way, alas.  Note that we're
+     * duplicating the looping code from the worker-handlers below.  Ah, well.
+     * Perhaps there's improvements to the markup-processing code which could
+     * allow us to make use of that whole framework instead, but that's for
+     * another day.
+     *
+     * @param ueClass The class to look up
+     * @param property The property to display
+     */
+    public void getAllWithField(UEClass ueClass, String property) {
+        property = property.trim();
+        GlobalLogger.log("Trying to getall on class: \"" + ueClass.getName() + "\" and property of: \"" + property + "\"");
         currentDump = null;
-        StringBuilder sb = new StringBuilder();
-        final int[] count = {0};//Go Java go (a "final" mutable int)
-        try {
-            DataManager.streamAllDumpsOfClassAndSubclasses(classname, true).forEach(d -> {
-                try {
-                    String field = BorderlandsObject.parseObject(d.dump, property).getField(property).toString();
-                    sb.append(String.format("%s'%s' %s: %s\n", classname, d.object, property, field));
-                    count[0]++;
-                } catch (NullPointerException e) {
+
+        // I'd *like* to do this but it seems to only sometimes work?  No idea
+        // why it doesn't work all the time.  However, even when it does work,
+        // it only shows the spinner while we're in this loop, and for the
+        // query I'm primarily testing on (`getall itempooldefinition balanceditems`)
+        // the majority of the time is the textarea updating its markup.  So
+        // the spinner turns off far too early anyway.  Presumably there *is*
+        // an event we could hook into which would trigger once the thing's
+        // done with its work, but I don't care enough to dig more, at the
+        // moment.
+        //ObjectExplorer.INSTANCE.cursorWait();
+
+        String startPatternStandard = "  " + property.toLowerCase() + "=";
+        String startPatternArray = "  " + property.toLowerCase() + "(";
+        int startPatternLen = startPatternStandard.length();
+        String normalizedProperty = null;
+        StringBuilder output = new StringBuilder();
+        int objectCount = 0;
+
+        for (UEClass loopClass : this.dm.getSubclassesSet(ueClass)) {
+
+            for (File dataFile : this.dm.getAllDatafilesForClass(loopClass)) {
+
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile)))) {
+
+                    String toMatch;
+                    String current = null;
+                    StringBuilder curAttr = new StringBuilder();
+                    boolean match = false;
+                    boolean found = false;
+                    boolean isArray = false;
+                    int dataIndex;
+
+                    String line = br.readLine();
+                    while (line != null) {
+                        if (line.startsWith("***")) {
+                            if (match) {
+                                objectCount++;
+                                output.append(current);
+                                if (!curAttr.isEmpty()) {
+                                    output.append(" ");
+                                    output.append(curAttr);
+                                    if (isArray) {
+                                        output.append(")");
+                                    }
+                                }
+                                output.append("\n");
+                            }
+                            // We assume that every object we see during this loop should be
+                            // reported on, whether or not we see the relevant attr.
+                            match = true;
+                            found = false;
+                            isArray = false;
+                            current = this.objectNameFromDumpHeader(line);
+                            curAttr = new StringBuilder();
+                        }
+                        if ((!found || isArray) && line.length() >= startPatternLen) {
+                            dataIndex = 0;
+                            toMatch = line.substring(0, startPatternLen).toLowerCase();
+                            if (toMatch.startsWith(startPatternStandard)) {
+                                found = true;
+                                dataIndex = startPatternLen;
+                            } else if (toMatch.startsWith(startPatternArray)) {
+                                found = true;
+                                isArray = true;
+                                dataIndex = line.indexOf(")") + 2;
+                            }
+                            if (found) {
+                                if (normalizedProperty == null) {
+                                    normalizedProperty = line.substring(2, startPatternLen-1);
+                                }
+                                if (curAttr.isEmpty()) {
+                                    curAttr.append(normalizedProperty);
+                                    curAttr.append(": ");
+                                    if (isArray) {
+                                        curAttr.append("(");
+                                    }
+                                } else if (isArray) {
+                                    curAttr.append(",");
+                                }
+                                curAttr.append(line.substring(dataIndex));
+                            }
+                        }
+                        line = br.readLine();
+                    }
+                    if (match) {
+                        objectCount++;
+                        output.append(current);
+                        if (!curAttr.isEmpty()) {
+                            output.append(" ");
+                            output.append(curAttr);
+                            if (isArray) {
+                                output.append(")");
+                            }
+                        }
+                        output.append("\n");
+                    }
+
+                } catch (IOException ex) {
+                    Logger.getLogger(ObjectExplorer.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            });
-        } catch (NullPointerException e) {
-            JOptionPane.showMessageDialog(this, ("Unfortunately, the class you entered can not be dumped using BLCMM."), "Unknown class", JOptionPane.PLAIN_MESSAGE);
-            GlobalLogger.log("Unable to getall with a class of: \"" + classname + "\" and property of " + property);
+            }
         }
-        sb.insert(0, "Found " + count[0] + " of class " + classname + " with property " + property + "\n");
-        setQueryAndText(sb.toString(), "getall " + classname + " " + property);
-        GlobalLogger.log("Obtained all objects of Class: \"" + classname + "\" and property of: " + property);
-        */
+
+        output.insert(0, "Found " + objectCount + " of class " + ueClass.getName() + " with property " + property + "\n");
+        setQueryAndText("getall " + ueClass.getName() + " " + property, output.toString());
+        GlobalLogger.log("Obtained all objects of Class: \"" + ueClass.getName() + "\" and property of: \"" + property + "\"");
+        //ObjectExplorer.INSTANCE.cursorNormal();
+
     }
 
     public void updateGame() {
@@ -1376,6 +1471,31 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                             doc.remove(idx1, idx2 - idx1 + 1);
                             doc.insertString(idx1, "(" + matches.size() + ")", null);
 
+                            // Converted this next bit when I was trying to get getall-with-property to
+                            // go through this framework.  The vast majority of the time was being spent
+                            // processing markup, and I thought maybe if all the text was injected into
+                            // the document at once, we'd get the performance back.  In the end, that
+                            // didn't really help much.  (Or, well, maybe it helped, but it was still way
+                            // slower than the previous method.  Anyway, I like this method better
+                            // anyway, so I'm keeping it, but the previous method remains commented
+                            // below, in case this turns out to have any weird side-effects I haven't
+                            // noticed yet.
+                            StringBuilder sb = new StringBuilder();
+                            for (String key : matches.keySet()) {
+                                boolean processed = matches.get(key);
+                                if (!processed) {
+                                    if (stop) {
+                                        return null;
+                                    }
+                                    sb.append(key);
+                                    sb.append("\n");
+                                    matches.put(key, true);
+                                }
+                            }
+
+                            doc.insertString(doc.getEndPosition().getOffset()-1, sb.toString(), null);
+
+                            /*
                             int st = textElement.getText().indexOf("\n") + 1;
                             for (String key : matches.keySet()) {
                                 boolean ne = matches.get(key);
@@ -1384,11 +1504,19 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                                     if (stop) {
                                         return null;
                                     }
-                                    doc.insertString(st, key + "\n", null);
+                                    if (extras.containsKey(key)) {
+                                        doc.insertString(st, key + " " + extras.get(key) + "\n", null);
+                                    } else {
+                                        doc.insertString(st, key + "\n", null);
+                                    }
                                     matches.put(key, true);
                                 }
                                 st += key.length() + 1;
+                                if (extras.containsKey(key)) {
+                                    st += extras.get(key).length() + 1;
+                                }
                             }
+                            */
                             news = false;
                         }
 
