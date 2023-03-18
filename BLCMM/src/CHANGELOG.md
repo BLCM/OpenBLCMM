@@ -52,6 +52,8 @@ BLCMM Changelog
 - "Restore defaults" button on settings screen will only restore the settings
   shown on the active screen (this prevents clearing the recently-viewed file
   list, for instance)
+- Object autocomplete will correctly handle `:` separators in addition to
+  periods.
 - Removed hidden ability to save in legacy FilterTool mod format
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)

@@ -76,6 +76,13 @@ public class DataManager {
     private HashMap<OESearch, TreeSet<UEClass>> categoryToClass = new HashMap<> ();
     private TreeSet<UEClass> curClassesByEnabledCategory = new TreeSet<> ();
 
+    private PreparedStatement autocompleteShallowNoParentWithoutClassStmt;
+    private PreparedStatement autocompleteShallowNoParentByClassStmt;
+    private PreparedStatement autocompleteShallowWithParentWithoutClassStmt;
+    private PreparedStatement autocompleteShallowWithParentByClassStmt;
+    private PreparedStatement autocompleteDeepWithoutClassStmt;
+    private PreparedStatement autocompleteDeepByClassStmt;
+
     public class NoDataException extends Exception {
         public NoDataException(String message) {
             super(message);
@@ -160,6 +167,28 @@ public class DataManager {
             Collections.sort(this.allClassNames);
             rs.close();
             stmt.close();
+
+            // Pre-prepare some statements for autocompletion.  To be honest, the
+            // autocompletes seem speedy enough without worrying about this kind
+            // of thing, but I'd still rather just construct these once, since
+            // it'll otherwise get reconstructed at every keystroke, when the
+            // user's typing w/ the autocomplete open.
+            this.autocompleteShallowNoParentWithoutClassStmt = this.getShallowAutocompleteResultsStatement(false, false);
+            this.autocompleteShallowNoParentByClassStmt = this.getShallowAutocompleteResultsStatement(false, true);
+            this.autocompleteShallowWithParentWithoutClassStmt = this.getShallowAutocompleteResultsStatement(true, false);
+            this.autocompleteShallowWithParentByClassStmt = this.getShallowAutocompleteResultsStatement(true, true);
+            this.autocompleteDeepWithoutClassStmt = this.dbConn.prepareStatement(
+                    "select o.* from object o where name like ? order by o.name"
+            );
+            this.autocompleteDeepByClassStmt = this.dbConn.prepareStatement(
+                    "select o.* from"
+                    + " object o, class_subclass sub"
+                    + " where o.name like ?"
+                    + " and sub.subclass=o.class"
+                    + " and sub.class=?"
+                    + " order by o.name"
+            );
+
         } catch (SQLException e) {
             throw new NoDataException("Unable to load database: " + e.toString(), e);
         }
@@ -413,6 +442,142 @@ public class DataManager {
             list.add(Paths.get(this.dumpFilePath, dataFileName).toFile());
         }
         return list;
+    }
+
+    private PreparedStatement getShallowAutocompleteResultsStatement(boolean hasRoot, boolean hasClass) throws SQLException {
+        ArrayList<String> tables = new ArrayList<>();
+        ArrayList<String> where = new ArrayList<>();
+        tables.add("object o");
+
+        // Specifying where we are in the tree
+        if (hasRoot) {
+            tables.add("object p");
+            tables.add("object_children c");
+            where.add("o.id=c.child");
+            where.add("p.id=c.parent");
+            where.add("p.name=?");
+        } else {
+            where.add("parent is null");
+        }
+
+        // Are we restricting results to a specific class?
+        if (hasClass) {
+            tables.add("object_show_class_ids oc");
+            where.add("o.id=oc.id");
+            where.add("oc.class=?");
+        }
+
+        // Now mush the SQL together
+        return this.dbConn.prepareStatement(
+                "select o.* from "
+                + String.join(", ", tables)
+                + " where "
+                + String.join(" and ", where)
+                + " order by o.name"
+        );
+    }
+
+    public List<String> getShallowAutocompleteResults(String prefix, int lastSeparator) {
+        return this.getShallowAutocompleteResults(prefix, lastSeparator, (UEClass)null);
+    }
+
+    public List<String> getShallowAutocompleteResults(String prefix, int lastSeparator, String className) {
+        return this.getShallowAutocompleteResults(prefix, lastSeparator, this.getClassByName(className));
+    }
+
+    public List<String> getShallowAutocompleteResults(String prefix, int lastSeparator, UEClass inClass) {
+        ArrayList<String> options = new ArrayList<>();
+        String root;
+        String substr;
+        // Playing a bit loose with initial-char-separators, but whatever.
+        if (lastSeparator > 0) {
+            root = prefix.substring(0, lastSeparator);
+            substr = prefix.substring(lastSeparator+1, prefix.length()).toLowerCase();
+            //GlobalLogger.log("root: \"" + root + "\", substr: \"" + substr + "\"");
+        } else {
+            root = null;
+            substr = prefix.toLowerCase();
+        }
+        try {
+            // Choose the statement to run and then assign params.  As I mention
+            // above, caching them this way is maybe kind of silly, especially
+            // since if there's ever a third option, this stanza starts getting
+            // ridiculous.  Still, this one especially can get called quite
+            // frequently, and in a context where lag might be noticeable.
+            PreparedStatement stmt;
+            int paramIndex = 1;
+            if (root == null) {
+                if (inClass == null) {
+                    stmt = this.autocompleteShallowNoParentWithoutClassStmt;
+                } else {
+                    stmt = this.autocompleteShallowNoParentByClassStmt;
+                    stmt.setInt(paramIndex++, inClass.getId());
+                }
+            } else {
+                if (inClass == null) {
+                    stmt = this.autocompleteShallowWithParentWithoutClassStmt;
+                    stmt.setString(paramIndex++, root);
+                } else {
+                    stmt = this.autocompleteShallowWithParentByClassStmt;
+                    stmt.setString(paramIndex++, root);
+                    stmt.setInt(paramIndex++, inClass.getId());
+                }
+            }
+
+            //GlobalLogger.log("Executing: " + stmt.toString());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                if (rs.getString("short_name").toLowerCase().startsWith(substr)) {
+                    if (rs.getString("separator") == null) {
+                        options.add(rs.getString("short_name"));
+                    } else {
+                        options.add(rs.getString("separator") + rs.getString("short_name"));
+                    }
+                }
+            }
+            rs.close();
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+        }
+        return options;
+    }
+
+    public List<String> getDeepAutocompleteResults(String query) {
+        return this.getDeepAutocompleteResults(query, (UEClass)null);
+    }
+
+    public List<String> getDeepAutocompleteResults(String query, String inClassName) {
+        return this.getDeepAutocompleteResults(query, this.getClassByName(inClassName));
+    }
+
+    public List<String> getDeepAutocompleteResults(String query, UEClass inClass) {
+        ArrayList<String> options = new ArrayList<>();
+        try {
+            // Choose the statement to run and then assign params.  As I mention
+            // above, caching them this way is maybe kind of silly, especially
+            // since if there's ever a third option, this stanza starts getting
+            // ridiculous.  Still, this one especially can get called quite
+            // frequently, and in a context where lag might be noticeable.
+            PreparedStatement stmt;
+            if (inClass == null) {
+                stmt = this.autocompleteDeepWithoutClassStmt;
+                stmt.setString(1, "%" + query + "%");
+            } else {
+                stmt = this.autocompleteDeepByClassStmt;
+                stmt.setString(1, "%" + query + "%");
+                stmt.setInt(2, inClass.getId());
+            }
+
+            //GlobalLogger.log("Executing: " + stmt.toString());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                options.add(rs.getString("name"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+        }
+        return options;
     }
 
 }

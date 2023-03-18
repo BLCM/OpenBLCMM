@@ -693,39 +693,46 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 Collection<String> res;
                 String word = queryTextField.getText().substring(0, queryTextField.getCaretPosition()).trim();
 
-                int from = 0, to;
-                String clazz = null;
+                int from = 0;
+                int to;
+                String className = null;
 
-                /* Temporarily commented so I can focus on other things
+                // Split out our class identifier, if it exists
                 to = queryTextField.getText().length();
                 if (word.contains("'")) {
-                    clazz = word.substring(0, word.indexOf("'"));
+                    className = word.substring(0, word.indexOf("'"));
                     from = word.indexOf("'") + 1;
                     word = word.substring(from);
                     if (word.startsWith("'")) {
                         word = word.substring(1);
                     }
                 }
-                if (clazz != null) {
+
+                // Find our last tree branch point and adjust our positioning if needed
+                int from_inner = 0;
+                if (!advanced) {
+                    from_inner = Integer.max(0, Integer.max(word.lastIndexOf("."), word.lastIndexOf(":")));
+                    from += from_inner;
+                }
+
+                //GlobalLogger.log("Starting autocomplete with class " + className + " and word " + word + ", advanced: " + advanced);
+                //GlobalLogger.log("From: " + from + ", to:" + to);
+
+                // Now do the query!
+                if (className == null) {
                     if (advanced) {
-                        res = dict.getDeepElementsInClassContaining(clazz, word);
+                        res = dm.getDeepAutocompleteResults(word);
                     } else {
-                        res = dict.getElementsInClassWithPrefix(clazz, word);
-                        from = word.contains(".") ? from + word.lastIndexOf(".") + 1 : from;
+                        res = dm.getShallowAutocompleteResults(word, from_inner);
                     }
                 } else {
                     if (advanced) {
-                        res = dict.getDeepElementsContaining(word);
-                        from = 0;
+                        res = dm.getDeepAutocompleteResults(word, className);
                     } else {
-
-                        res = dict.getElementsWithPrefix(word);
-                        from = word.contains(".") ? word.lastIndexOf(".") + 1 : 0;
+                        res = dm.getShallowAutocompleteResults(word, from_inner, className);
                     }
                 }
-                */
-                to = 0;
-                res = new ArrayList<>();
+
                 return new AutoCompleteAttacher.AutoCompleteRequirements(from, to, res);
             }
 
