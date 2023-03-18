@@ -815,44 +815,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             return true;
         }
 
-        /* Temporarily commented so I can focus on other things
-        if (worker != null) {
-            worker.stop();
-        }
-        if (options.createLogEntry) {
-            GlobalLogger.log("dumping " + options.objectToDump);
-        }
-        String origQ = options.objectToDump;
-        Dump dump = DataManager.getDump(options.objectToDump);
-        previousQuery = queryTextField.getText().trim();
-        if (dump != null) {
-            String text = dump.dump;
-            if (collapseArraysToggleButton.isSelected()) {
-                text = collapseArrays(text);
-            }
-            updateBookmarkButton(options.objectToDump);
-            setQueryAndText(text, DataManager.getDictionary().restoreProperCapitalization(origQ));
-            return;
-        }
-        String pack = DataManager.getDataPackageForObject(options.objectToDump);
-        if (pack != null) {
-            if (pack.equalsIgnoreCase("Useless")) {
-                JOptionPane.showMessageDialog(this, ""
-                        + "The requested object has been marked as useless by the creator of the datapacks.\n"
-                        + "This means it contains no valueable or moddable information, and is unavailable",
-                        "There's more useful dumps out there", JOptionPane.PLAIN_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "The requested object is in an uninstalled data package: " + pack, "Please construct additional pylons", JOptionPane.PLAIN_MESSAGE);
-            }
-        } else if (options.searchWhenCantFindObject) {
-            int confirm = JOptionPane.showConfirmDialog(this, ("Unfortunately, the object you entered can not be dumped using BLCMM, it will now search for \"" + options.objectToDump + "\""), "Unknown object", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (confirm == JOptionPane.OK_OPTION) {
-                updateBookmarkButton(options.objectToDump);
-                performSearch();
-            }
-        }
-        */
-
     }
 
     private void updateButtons() {
@@ -1012,7 +974,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                             worker.cancel(true);
                             return new TreeSet<>();
                         } else {
-                            return ueClass.getClassAndAllDescendents();
+                            return this.dm.getSubclassesSet(ueClass);
                         }
                     }
                 }
@@ -1028,78 +990,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             worker.execute();
         }
 
-        /* Temporarily commented so I can focus on other things
-        updateBookmarkButton("");
-        boolean RegexBox = query.matches(".*(\\^|\\\\|\\||\\*|\\+|\\?).*") || query.matches(".*(\\(.*[^0-9].*\\)).*");
-        // Log
-        if (RegexBox) {
-            GlobalLogger.log("Trying to search with pattern: \"" + query + "\"");
-        } else {
-            GlobalLogger.log("Trying to search with query: \"" + query + "\"");
-        }
-
-        if (worker != null) {
-            // Stop worker if something else is already working
-            worker.stop();
-        }
-
-        if (RegexBox) {
-            try {
-                Pattern compile = Pattern.compile(query);
-                worker = new Worker(query) {// Create new worker
-                    @Override
-                    public int loop(BufferedReader br, int counter, TreeMap<String, Boolean> matches) throws IOException {
-                        return RegexSearchLoop(br, counter, matches, compile);
-                    }
-                };
-            } catch (PatternSyntaxException e) {
-                JOptionPane.showMessageDialog(this, "The regular expression you entered is invalid. Please fix the expression:\" " + e.getDescription() + "\"",
-                        "Error in regular expression", JOptionPane.ERROR_MESSAGE);
-                worker = null;
-            }
-        } else {
-            String[] query2 = query.split(" ");
-            List<String> positives = new ArrayList<>(), negatives = new ArrayList<>();
-            String clazz = null;
-            for (String s : query2) {
-                if (s.startsWith("inclass:")) {
-                    clazz = s.substring("inclass:".length());
-                } else if (s.startsWith("-")) {
-                    negatives.add(s.substring(1).toLowerCase());
-                } else {
-                    positives.add(s.toLowerCase());
-                }
-            }
-            final String clazz2 = clazz;
-            worker = new Worker(query) {
-                @Override
-                protected Collection<String> getAvailableClasses() {
-                    try {
-                        Collection<String> allclasses = DataManager.getDictionary().getAvailableClasses();
-                        if (clazz2 != null) {
-                            List<String> allDecendantsOfClass = DataManager.getDictionary().getAllDecendantsOfClass(clazz2);
-                            allDecendantsOfClass.retainAll(allclasses);
-                            return allDecendantsOfClass;
-                        }
-                        return allclasses;
-                    } catch (NullPointerException ex) {
-                        JOptionPane.showMessageDialog(ObjectExplorerPanel.this, "The class you tried to search for using \"inclass:\" was unable to be obtained.", "Error in Search", JOptionPane.ERROR_MESSAGE);
-                        worker.cancel(true);
-                        return java.util.Collections.<String>emptyList();
-                    }
-                }
-
-                @Override
-                public int loop(BufferedReader br, int counter, TreeMap<String, Boolean> matches) throws IOException {
-                    return BasicSearchLoop(br, counter, matches, positives.toArray(new String[0]), negatives.toArray(new String[0]));
-                }
-            };
-        }
-        // Run worker
-        if (worker != null) {
-            worker.execute();
-        }
-        */
     }
 
     private void refsLoop(BufferedReader br, TreeMap<String, Boolean> matches, String query) throws IOException {
@@ -1538,71 +1428,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 return null;
             }
 
-            /* Temporarily commented so I can focus on other things
-            TreeMap<String, Boolean> matches = new TreeMap<>();
-            textElement.setEditable(false);
-            textElement.discardAllUndoData();
-            textElement.setProcessUndo(false);
-            try {
-                int counter = 0;
-                jProgressBar1.setValue(0);
-                textElement.setText("");
-                boolean news = false;
-                outer:
-                for (String clazz : getAvailableClasses()) {
-
-                    if (stop) {
-                        return null;
-                    }
-                    int old = matches.size();
-
-                    try (BufferedReader br = new BufferedReader(new InputStreamReader(DataManager.getRawStreamOfClass(clazz)))) {
-                        counter = loop(br, counter, matches);
-                        news = old != matches.size();
-
-                    } catch (IOException ex) {
-                        Logger.getLogger(ObjectExplorer.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                    if (stop) {
-                        return null;
-                    }
-
-                    if (news) {
-                        if (textElement.getText().isEmpty()) {
-                            textElement.setText("Found your query (" + query + ") in the following () objects:\n");
-                        }
-
-                        Document doc = textElement.getStyledDocument();
-                        int idx0 = textElement.getText().indexOf("\n");
-                        int idx1 = textElement.getText().lastIndexOf("(", idx0 + 1);
-                        int idx2 = textElement.getText().indexOf(")", idx1);
-
-                        doc.remove(idx1, idx2 - idx1 + 1);
-                        doc.insertString(idx1, "(" + matches.size() + ")", null);
-
-                        int st = textElement.getText().indexOf("\n") + 1;
-                        for (String key : matches.keySet()) {
-                            boolean ne = matches.get(key);
-                            if (!ne) {
-
-                                if (stop) {
-                                    return null;
-                                }
-                                doc.insertString(st, key + "\n", null);
-                                matches.put(key, true);
-                            }
-                            st += key.length() + 1;
-                        }
-                        news = false;
-                    }
-                }
-                return null;
-            } catch (Exception e2) {
-                e = e2;
-                return null;
-            }
-            */
         }
 
         @Override

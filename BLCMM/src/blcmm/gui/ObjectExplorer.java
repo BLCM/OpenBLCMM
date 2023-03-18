@@ -404,9 +404,9 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         Object rootObject = root.getUserObject();
         if (rootObject instanceof UEObject) {
             root.removeAllChildren();
-            packages = this.dm.getObjectsFromClass(ueClass, (UEObject)rootObject);
+            packages = this.dm.getTreeObjectsFromClass(ueClass, (UEObject)rootObject);
         } else {
-            packages = this.dm.getObjectsFromClass(ueClass);
+            packages = this.dm.getTreeObjectsFromClass(ueClass);
         }
         DefaultMutableTreeNode newNode;
         for (UEObject pack : packages) {

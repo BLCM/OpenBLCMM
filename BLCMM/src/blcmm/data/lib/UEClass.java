@@ -31,17 +31,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 /**
  * Model for a single class entry.
- * 
- * All this needs testing!  I'm sure it's wrong.
- * 
+ *
+ * This is part of the new opensource data library, reimplemented without
+ * reference to the original non-opensourced code.
+ *
+ * This is a pretty simple data container without much actual functionality.
+ * The majority of the logic governing the interactions with the data
+ * is handled by the main DataManager class.
+ *
  * @author apocalyptech
  */
 public class UEClass implements Comparable<UEClass> {
-    
+
     private final int id;
     private final String name;
     private final int categoryId;
@@ -50,7 +54,7 @@ public class UEClass implements Comparable<UEClass> {
     private final int numObjects;
     private final ArrayList<UEClass> children;
     private final int numDatafiles;
-    
+
     public UEClass(int id, String name, int categoryId, Integer parentId, int numObjects, int numDatafiles) {
         this.id = id;
         this.name = name;
@@ -61,43 +65,43 @@ public class UEClass implements Comparable<UEClass> {
         this.children = new ArrayList<>();
         this.numDatafiles = numDatafiles;
     }
-    
+
     public int getId() {
         return this.id;
     }
-    
+
     public String getName() {
         return this.name;
     }
-    
+
     public int getCategoryId() {
         return this.categoryId;
     }
-    
+
     public int getParentId() {
         return this.parentId;
     }
-    
+
     public void setParent(UEClass ueClass) {
         this.parent = ueClass;
     }
-    
+
     public UEClass getParent() {
         return this.parent;
     }
-    
+
     public boolean hasChildren() {
         return !this.children.isEmpty();
     }
-    
+
     public List<UEClass> getChildren() {
         return this.children;
     }
-    
+
     public void addChild(UEClass ueClass) {
         this.children.add(ueClass);
     }
-    
+
     public int getNumObjects() {
         return this.numObjects;
     }
@@ -105,30 +109,24 @@ public class UEClass implements Comparable<UEClass> {
     public int getNumDatafiles() {
         return this.numDatafiles;
     }
-    
-    public TreeSet<UEClass> getClassAndAllDescendents() {
-        // TODO: Eh, should just make use of our denormalized data for this
-        // instead of recursing...  (Oh, actually we technically don't have
-        // that, actually.  Our aggregate table goes in the other direction.
-        // Still, we should probably denormalize it and do that.)
-        TreeSet<UEClass> newTree = new TreeSet<>();
-        newTree.add(this);
-        for (UEClass child : this.children) {
-            newTree.addAll(child.getClassAndAllDescendents());
-        }
-        return newTree;
-    }
-    
+
     @Override
     public String toString() {
         return this.name;
     }
-    
+
     @Override
     public int compareTo(UEClass other) {
         return this.name.compareToIgnoreCase(other.name);
     }
-    
+
+    /**
+     * Returns a new UEClass based on a database row ResultSet.
+     *
+     * @param rs The ResultSet with database data.
+     * @return A new UEClass object
+     * @throws SQLException
+     */
     public static UEClass getFromDbRow(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");
@@ -138,5 +136,5 @@ public class UEClass implements Comparable<UEClass> {
         int numDatafiles = rs.getInt("num_datafiles");
         return new UEClass(id, name, categoryId, parentId, numObjects, numDatafiles);
     }
-    
+
 }

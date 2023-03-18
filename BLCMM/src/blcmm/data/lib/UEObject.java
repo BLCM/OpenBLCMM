@@ -33,7 +33,16 @@ import java.sql.SQLException;
 /**
  * Model for a single object entry.
  *
- * All this needs testing!  I'm sure it's wrong.
+ * This is part of the new opensource data library, reimplemented without
+ * reference to the original non-opensourced code.
+ *
+ * This is a pretty simple data container without much actual functionality.
+ * The majority of the logic governing the interactions with the data
+ * is handled by the main DataManager class.
+ *
+ * There's a few attributes in here which don't ordinarily get set when
+ * reading from just the "raw" database tables; these end up getting set
+ * on a method-by-method basis from DataManager.
  *
  * @author apocalyptech
  */
@@ -96,6 +105,14 @@ public class UEObject {
         return this.numChildren > 0;
     }
 
+    /**
+     * A dynamic attribute used while populating the Object Browser panel
+     * when a class is chosen, which determines whether or not this object
+     * shows up as a leaf or a folder.  See DataManager.getTreeObjectsFromClass
+     * for where this is used.
+     *
+     * @param hasChildrenForClass Whether or not this object has children, for the class being searched
+     */
     public void setHasChildrenForClass(boolean hasChildrenForClass) {
         this.hasChildrenForClass = hasChildrenForClass;
     }
@@ -104,6 +121,13 @@ public class UEObject {
         return this.hasChildrenForClass;
     }
 
+    /**
+     * Sets the associated UEClass object.  Only some things need to know
+     * about this, so we don't bother by default.  Various DataManager methods
+     * will set this attribute, though.
+     *
+     * @param ueClass The class associated with the object.
+     */
     public void setUeClass(UEClass ueClass) {
         this.ueClass = ueClass;
     }
@@ -116,10 +140,27 @@ public class UEObject {
         return this.expanded;
     }
 
+    /**
+     * Sets whether or not we've been "expanded" in the Object Browser tree.
+     * This is used because Object Browser only populates the currently-visible
+     * level.  When an element has children, a "dummy" child is put in place so
+     * that the UI correctly shows a folder.  Then when the folder is expanded,
+     * some SQL is run to actually populate the contents.  This boolean is
+     * used so that we know the SQL doesn't need to be re-run.
+     *
+     * @param expanded Whether or not we've been expanded.
+     */
     public void setExpanded(boolean expanded) {
         this.expanded = expanded;
     }
 
+    /**
+     * Returns our full object name, including class type, if possible.  If
+     * we don't have an associated UEClass object, just return our basic
+     * object name instead.
+     *
+     * @return The full name format if possible, or regular name otherwise.
+     */
     public String getNameWithClassIfPossible() {
         if (this.ueClass == null) {
             return this.name;
@@ -128,11 +169,24 @@ public class UEObject {
         }
     }
 
+    /**
+     * Default toString representation.  We override this so that it shows
+     * up as short names in the Object Browser.
+     *
+     * @return The short name for the object.
+     */
     @Override
     public String toString() {
         return this.shortName;
     }
 
+    /**
+     * Returns a new UEObject based on a database row ResultSet.
+     *
+     * @param rs The ResultSet with database data.
+     * @return A new UEObject object
+     * @throws SQLException
+     */
     public static UEObject getFromDbRow(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");
         String name = rs.getString("name");

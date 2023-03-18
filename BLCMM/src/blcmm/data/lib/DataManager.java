@@ -54,7 +54,32 @@ import java.util.TreeSet;
 /**
  * New SQLite-backed Data Library.
  *
- * All this needs testing!  I'm sure it's wrong.
+ * The original BLCMM data library wasn't opensourced along with the core
+ * components, so this is a complete rewrite.  The original version used a
+ * combination of mostly text-based indexes along with the datafiles, direct
+ * dump parsing, and generated SDK-like code to provide some very rich access
+ * methods into Borderlands data.  This version is missing a lot of the
+ * fancier behavior possible in the original, but it is at least capable of
+ * fully running Object Explorer and the other basic data needs of the main
+ * BLCMM application.
+ *
+ * This version primarily relies on the presence of a SQLite database to
+ * know about the dump files -- the only time the dump files themselves are
+ * read is to do fulltext/refs searches, and to pull specific dumps out of
+ * the files.  The generation scripts which collect all the data and generate
+ * the SQLite data are actually part of the "DataDumper" PythonSDK project,
+ * which is also responsible for the raw data extraction right from the
+ * games.  You can find info on that over here:
+ *
+ *      https://github.com/BLCM/DataDumper
+ *
+ * Rather than generalizing too much, the methods in here tend to focus on
+ * the specific needs of the apps calling into it.  As such, there's some
+ * overlap between methods, and I'm sure a lot of this could be generalized
+ * somehow.  Still, the SQLite database is well-indexed, and for some tasks
+ * this version provides a nice performance improvement over the original.
+ *
+ * This was written without reference to the original datalib code.
  *
  * @author apocalyptech
  */
@@ -66,6 +91,9 @@ public class DataManager {
     private String dumpFilePath;
     private Connection dbConn;
     private UEClass rootClass;
+
+    // Lots of various similar lookups; a bit silly to be storing this much
+    // info multiple times like this, but there's not *that* many classes.
     private ArrayList<UEClass> allClasses = new ArrayList<> ();
     private ArrayList<String> allClassNames = new ArrayList<> ();
     private HashMap<String, UEClass> classNameToClass = new HashMap<> ();
@@ -76,6 +104,9 @@ public class DataManager {
     private HashMap<OESearch, TreeSet<UEClass>> categoryToClass = new HashMap<> ();
     private TreeSet<UEClass> curClassesByEnabledCategory = new TreeSet<> ();
 
+    // We may as well hold on to our PreparedStatements so we can reuse them
+    // easily without having to rebuild all the time.  In practice, rebuilding
+    // all the time isn't really noticeable, but whatever.
     private PreparedStatement autocompleteShallowNoParentWithoutClassStmt;
     private PreparedStatement autocompleteShallowNoParentByClassStmt;
     private PreparedStatement autocompleteShallowWithParentWithoutClassStmt;
@@ -83,6 +114,11 @@ public class DataManager {
     private PreparedStatement autocompleteDeepWithoutClassStmt;
     private PreparedStatement autocompleteDeepByClassStmt;
 
+    /**
+     * Custom Exception we can throw when our data isn't found, or is in a
+     * state we don't expect.  Lets the main application know that data for
+     * the specified game isn't available.
+     */
     public class NoDataException extends Exception {
         public NoDataException(String message) {
             super(message);
@@ -92,6 +128,10 @@ public class DataManager {
         }
     }
 
+    /**
+     * Wrapper around dump info, containing both the UEObject and its
+     * text dump.  Basically a glorified tuple.
+     */
     public class Dump {
         public UEObject ueObject;
         public String text;
@@ -101,6 +141,14 @@ public class DataManager {
         }
     }
 
+    /**
+     * Main DataManager class, and window into the data we can query.  Note
+     * that unlike the original BLCMM version, this is instantiated with a
+     * specific game.
+     *
+     * @param patchType The game data to load
+     * @throws blcmm.data.lib.DataManager.NoDataException
+     */
     public DataManager(PatchType patchType) throws NoDataException {
         this.patchType = patchType;
         this.dataBaseDir = Paths.get("data", patchType.toString()).toString();
@@ -195,14 +243,40 @@ public class DataManager {
 
     }
 
+    /**
+     * Get the game type associated with this data.
+     *
+     * @return The PatchType
+     */
     public PatchType getPatchType() {
         return this.patchType;
     }
 
+    /**
+     * Returns a collection of all UEClasses we know about
+     *
+     * @return The class list
+     */
     public Collection<UEClass> getAllClasses() {
         return this.allClasses;
     }
 
+    /**
+     * Returns a collection of all class names we know about.
+     *
+     * @return The list of class names
+     */
+    public Collection<String> getAllClassNames() {
+        return this.allClassNames;
+    }
+
+    /**
+     * The user can toggle various categories on/off for fulltext/refs searches
+     * in OE.  When those toggles are changed, call in to this method to update
+     * the internal cache of classes we should return for those operations.
+     *
+     * @param enabledCategories The set of enabled categories for fulltext/refs searches
+     */
     public void updateClassesByEnabledCategory(Set<OESearch> enabledCategories) {
         this.curClassesByEnabledCategory.clear();
         for (OESearch oeSearch : enabledCategories) {
@@ -210,14 +284,22 @@ public class DataManager {
         }
     }
 
+    /**
+     * Returns our list of enabled classes for use in fulltext/refs searches
+     *
+     * @return An ordered set of classes (sorted by name)
+     */
     public TreeSet<UEClass> getAllClassesByEnabledCategory() {
         return this.curClassesByEnabledCategory;
     }
 
-    public Collection<String> getAllClassNames() {
-        return this.allClassNames;
-    }
-
+    /**
+     * Given a name, returns the UEClass object associated with it, or null.
+     * The matching is done case-insensitively.
+     *
+     * @param name The name of the class to load.
+     * @return The UEClass object
+     */
     public UEClass getClassByName(String name) {
         String nameLower = name.toLowerCase();
         if (this.classNameToClass.containsKey(nameLower)) {
@@ -227,14 +309,38 @@ public class DataManager {
         }
     }
 
+    /**
+     * Returns our "root" UEClass, which for our known data will always end
+     * up being the `Object` class.
+     *
+     * @return The root UEClass
+     */
     public UEClass getRootClass() {
         return this.rootClass;
     }
 
+    /**
+     * Returns the total number of datafiles (storing object dumps) in the
+     * database.  In practice, this value isn't actually used anywhere,
+     * because in all cases where it would be useful, the user's category
+     * preferences are taken into account, so the app needs to do some math
+     * anyway.
+     *
+     * @return The total number of datafiles in the dataset.
+     */
     public int getTotalDatafiles() {
         return this.totalDatafiles;
     }
 
+    /**
+     * Given a UEClass, return a set of class IDs describing the class itself,
+     * plus all its subclasses.  For instance, passing in the ItemPoolDefinition
+     * class would return its ID plus the IDs for KeyedItemPoolDefinition and
+     * CrossDLCItemPoolDefinition.
+     *
+     * @param ueClass The class to search
+     * @return A set of Class IDs
+     */
     public Set<Integer> getSubclassIDs(UEClass ueClass) {
         HashSet<Integer> map = new HashSet<>();
         try {
@@ -254,6 +360,15 @@ public class DataManager {
         return map;
     }
 
+    /**
+     * Given a UEClass, return a list of UEClass describing the class itself,
+     * plus all its subclasses.  For instance, passing in the ItemPoolDefinition
+     * class would return that class plus the KeyedItemPoolDefinition and
+     * CrossDLCItemPoolDefinition classes.
+     *
+     * @param ueClass The class to search
+     * @return A list of UEClass objects.
+     */
     public List<UEClass> getSubclassesList(UEClass ueClass) {
         Set<Integer> idMap = this.getSubclassIDs(ueClass);
         ArrayList<UEClass> list = new ArrayList<>();
@@ -265,6 +380,15 @@ public class DataManager {
         return list;
     }
 
+    /**
+     * Given a UEClass, return a set of UEClass describing the class itself,
+     * plus all its subclasses.  For instance, passing in the ItemPoolDefinition
+     * class would return that class plus the KeyedItemPoolDefinition and
+     * CrossDLCItemPoolDefinition classes.
+     *
+     * @param ueClass The class to search
+     * @return A set of UEClass objects.
+     */
     public TreeSet<UEClass> getSubclassesSet(UEClass ueClass) {
         Set<Integer> idMap = this.getSubclassIDs(ueClass);
         TreeSet<UEClass> classSet = new TreeSet<>();
@@ -276,10 +400,31 @@ public class DataManager {
         return classSet;
     }
 
+    /**
+     * Given a class, return all objects in the database which are of that
+     * specific class.  For instance, querying for ItemPoolDefinition objects
+     * would *not* return any KeyedItemPoolDefinition objects, even though
+     * that's a subclass of ItemPoolDefinition.  The list will be sorted by
+     * object name.
+     *
+     * @param ueClass The class to search for
+     * @return A sorted list of matching UEObject objects.
+     */
     public List<UEObject> getAllObjectsInSpecificClass(UEClass ueClass) {
         return this.getAllObjectsInSpecificClass(ueClass, true);
     }
 
+    /**
+     * Given a class, return all objects in the database which are of that
+     * specific class, specifying whether or not to order them by object
+     * name.  For instance, querying for ItemPoolDefinition objects
+     * would *not* return any KeyedItemPoolDefinition objects, even though
+     * that's a subclass of ItemPoolDefinition.
+     *
+     * @param ueClass The class to search for
+     * @param ordered Whether or not to sort the output
+     * @return A list of matching UEObject objects.
+     */
     public List<UEObject> getAllObjectsInSpecificClass(UEClass ueClass, boolean ordered) {
         ArrayList<UEObject> list = new ArrayList<>();
         try {
@@ -306,11 +451,29 @@ public class DataManager {
         return list;
     }
 
-
+    /**
+     * Given a class, return all objects in the database which are of that
+     * class or any of its subclasses.  For instance, querying for
+     * ItemPoolDefinition objects would also return any KeyedItemPoolDefinition
+     * objects, etc.  The list will be sorted by object name.
+     *
+     * @param ueClass The class to search for
+     * @return A sorted list of matching UEObject objects.
+     */
     public List<UEObject> getAllObjectsInClassTree(UEClass ueClass) {
         return this.getAllObjectsInClassTree(ueClass, true);
     }
 
+    /**
+     * Given a class, return all objects in the database which are of that
+     * class or any of its subclasses, specifying whether to sort them by
+     * object name.  For instance, querying for ItemPoolDefinition objects
+     * would also return any KeyedItemPoolDefinition objects, etc.
+     *
+     * @param ueClass The class to search for
+     * @param ordered Whether or not to sort the output
+     * @return A list of matching UEObject objects.
+     */
     public List<UEObject> getAllObjectsInClassTree(UEClass ueClass, boolean ordered) {
         ArrayList<UEObject> list = new ArrayList<>();
         Set<Integer> validClasses = this.getSubclassIDs(ueClass);
@@ -344,12 +507,30 @@ public class DataManager {
         return list;
     }
 
-
-    public List<UEObject> getObjectsFromClass(UEClass ueClass) {
-        return this.getObjectsFromClass(ueClass, null);
+    /**
+     * Given a UEClass object, return all UEObjects which eventually lead to
+     * objects of that class at the "root" of the object tree.  Used by OE
+     * to generate the Object Browser panel.
+     *
+     * @param ueClass The class to browse
+     * @return A list of UEObjects at the root of the object tree
+     */
+    public List<UEObject> getTreeObjectsFromClass(UEClass ueClass) {
+        return this.getTreeObjectsFromClass(ueClass, null);
     }
 
-    public List<UEObject> getObjectsFromClass(UEClass ueClass, UEObject parentObject) {
+    /**
+     * Given a UEClass object, and a location on the object tree, return all
+     * UEObjects found immediately under that location which eventually lead
+     * to objects of that class (or objects of that class themselves).  Used
+     * by OE to generate the Object Browser panel.  If parentObject is null,
+     * this will start at the "root" of the object tree.
+     *
+     * @param ueClass The class to browse
+     * @param parentObject The location in the object tree to start
+     * @return A list of UEObjects
+     */
+    public List<UEObject> getTreeObjectsFromClass(UEClass ueClass, UEObject parentObject) {
         ArrayList<UEObject> list = new ArrayList<>();
         try {
             PreparedStatement stmt;
@@ -380,6 +561,12 @@ public class DataManager {
         return list;
     }
 
+    /**
+     * Given an object name, returns a Dump of the object, if possible.
+     *
+     * @param objectName The name of the object to dump
+     * @return A Dump object, containing the relevant UEObject and the String dump.
+     */
     public Dump getDump(String objectName) {
 
         // When clicking on in-app links, the objectName will be: ClassType'GD_Class.Path'
@@ -429,11 +616,14 @@ public class DataManager {
     }
 
     /**
+     * Return all list of all datafiles containing dumps for the specified
+     * UEClass.
+     *
      * TODO: This really shouldn't expose something like a File, since that may
      * change (and probably will) in the future.
      *
-     * @param ueClass
-     * @return
+     * @param ueClass The class for which to find datafiles
+     * @return A list of Files pointing at the datafiles
      */
     public List<File> getAllDatafilesForClass(UEClass ueClass) {
         ArrayList<File> list = new ArrayList<> ();
@@ -444,6 +634,19 @@ public class DataManager {
         return list;
     }
 
+    /**
+     * Prepare SQL statements used for "shallow" autocomplete activities.  The
+     * shallow autocompletes will only autocomplete the most recent component
+     * of the pathname being typed in, pausing at each tree branch.  This method
+     * in particular is just used to set up the PreparedStatements so that we
+     * only have to do it once, since these can end up getting called quite
+     * frequently as a user types.
+     *
+     * @param hasRoot If we're generating SQL with a given root node
+     * @param hasClass If we're generating SQL restricted by class type
+     * @return a PreparedStatement for use later on
+     * @throws SQLException
+     */
     private PreparedStatement getShallowAutocompleteResultsStatement(boolean hasRoot, boolean hasClass) throws SQLException {
         ArrayList<String> tables = new ArrayList<>();
         ArrayList<String> where = new ArrayList<>();
@@ -477,14 +680,51 @@ public class DataManager {
         );
     }
 
+    /**
+     * Returns "Shallow" autocomplete reults for the given prefix, with the
+     * last path separator found at the given index.  Shallow autocompletes
+     * only operate on the last path component.  If the prefix is not at
+     * the root of the tree, the autocomplete suggestions will include the
+     * path separator as their first character (either a period or colon).
+     *
+     * @param prefix The currently-typed in object name (minus any class label)
+     * @param lastSeparator The string index of the last path separator in the prefix
+     * @return A list of suggestions for the autocomplete engine
+     */
     public List<String> getShallowAutocompleteResults(String prefix, int lastSeparator) {
         return this.getShallowAutocompleteResults(prefix, lastSeparator, (UEClass)null);
     }
 
+    /**
+     * Returns "Shallow" autocomplete reults for the given prefix, with the
+     * last path separator found at the given index, restricted to paths which
+     * eventually lead to the specified class name.  Shallow autocompletes
+     * only operate on the last path component.  If the prefix is not at
+     * the root of the tree, the autocomplete suggestions will include the
+     * path separator as their first character (either a period or colon).
+     *
+     * @param prefix The currently-typed in object name (minus any class label)
+     * @param lastSeparator The string index of the last path separator in the prefix
+     * @param className The class name to restrict the eventual completions to
+     * @return A list of suggestions for the autocomplete engine
+     */
     public List<String> getShallowAutocompleteResults(String prefix, int lastSeparator, String className) {
         return this.getShallowAutocompleteResults(prefix, lastSeparator, this.getClassByName(className));
     }
 
+    /**
+     * Returns "Shallow" autocomplete reults for the given prefix, with the
+     * last path separator found at the given index, restricted to paths which
+     * eventually lead to the specified class.  Shallow autocompletes
+     * only operate on the last path component.  If the prefix is not at
+     * the root of the tree, the autocomplete suggestions will include the
+     * path separator as their first character (either a period or colon).
+     *
+     * @param prefix The currently-typed in object name (minus any class label)
+     * @param lastSeparator The string index of the last path separator in the prefix
+     * @param inClass The class to restrict the eventual completions to
+     * @return A list of suggestions for the autocomplete engine
+     */
     public List<String> getShallowAutocompleteResults(String prefix, int lastSeparator, UEClass inClass) {
         ArrayList<String> options = new ArrayList<>();
         String root;
@@ -542,14 +782,45 @@ public class DataManager {
         return options;
     }
 
+    /**
+     * Returns "Deep" autocomplete results for the given query.  Deep
+     * autocompletes are basically wildcard searches for full object names, and
+     * don't bother processing path components "smartly."  The given suggestions
+     * will replace the entire given query, if chosen.
+     *
+     * @param query The currently-typed-in string
+     * @return A list of suggestions
+     */
     public List<String> getDeepAutocompleteResults(String query) {
         return this.getDeepAutocompleteResults(query, (UEClass)null);
     }
 
+    /**
+     * Returns "Deep" autocomplete results for the given query, restricted to
+     * objects of the given class name.  Deep autocompletes are basically
+     * wildcard searches for full object names, and don't bother processing path
+     * components "smartly."  The given suggestions will replace the entire
+     * given query, if chosen.
+     *
+     * @param query The currently-typed-in string
+     * @param inClassName The class name to restrict suggestions to
+     * @return A list of suggestions
+     */
     public List<String> getDeepAutocompleteResults(String query, String inClassName) {
         return this.getDeepAutocompleteResults(query, this.getClassByName(inClassName));
     }
 
+    /**
+     * Returns "Deep" autocomplete results for the given query, restricted to
+     * objects of the given class.  Deep autocompletes are basically
+     * wildcard searches for full object names, and don't bother processing path
+     * components "smartly."  The given suggestions will replace the entire
+     * given query, if chosen.
+     *
+     * @param query The currently-typed-in string
+     * @param inClass The class to restrict suggestions to
+     * @return A list of suggestions
+     */
     public List<String> getDeepAutocompleteResults(String query, UEClass inClass) {
         ArrayList<String> options = new ArrayList<>();
         try {
