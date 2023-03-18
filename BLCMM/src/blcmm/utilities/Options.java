@@ -242,11 +242,13 @@ public class Options {
                 null,
                 "Enables/Disables being able to toggle individual statements"));
 
-        this.registerOption(new BooleanOption(OptionNames.preferFullObjInOE.toString(), true,
+        this.registerOption(new BooleanOption(OptionNames.preferFullObjInOE.toString(), false,
                 Option.Shown.SETTINGS, "Prefer 'full' Object Names in OE Search Field",
                 null,
-                "When viewing dumps in Object Explorer, this will replace the search field "
-                + "with the 'full' object name, including class type."));
+                "<html>When viewing dumps in Object Explorer, this will replace the search field"
+                + " with the 'full' object name, including class type.<br/>"
+                + "<b>Note:</b> This will limit autocomplete results to the specified type,"
+                + " when the class type is present."));
 
         this.registerOption(new BooleanOption(OptionNames.oeSearchActions.toString(), true,
                 Option.Shown.OE, "Actions Data",

@@ -33,7 +33,7 @@ BLCMM Changelog
   - Class Browser tree does not sort "leaf" entries separately from folders
   - Added setting to normalize the search bar with the "full" object name when
     viewing dumps (ie: including the class type: ClassName'GD_Obj.Foo').  The
-    setting is on by default.
+    setting is off by default.
   - Fixed some inconsistent behavior with the bookmark icon (and hopefully
     didn't introduce new inconsistent behavior...)
   - "getall" queries will correctly report the top-level class of the returned
