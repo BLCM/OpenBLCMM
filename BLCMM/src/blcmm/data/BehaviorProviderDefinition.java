@@ -29,35 +29,39 @@ package blcmm.data;
 
 /**
  * Some custom processing methods for BehaviorProviderDefinitions.
- * 
- * All this needs testing!  I'm sure it's wrong.
- * 
+ *
+ * This is mainly just here to support conversion of ArrayIndexAndLength
+ * and LinkIdAndLinkedBehavior values to more human-useful numbers, for
+ * modders doing BPD modding.  These are shown in the main BLCMM window
+ * when statements are specifically going after a single value, and also
+ * available via a little calculator window.
+ *
  * @author apocalyptech
  */
 public class BehaviorProviderDefinition {
-   
+
     public static int getIndexFromArrayIndexAndLength(int value) {
         return value >> 16;
     }
-   
+
     public static int getLengthFromArrayIndexAndLength(int value) {
         return value & 0xFFFF;
     }
-    
+
     public static int getArrayIndexAndLength(int index, int length) {
         return (index << 16) | (length & 0xFFFF);
     }
-    
+
     public static int getLinkIdFromLinkIdAndLinkedBehavior(int value) {
         return value >> 24;
     }
-    
+
     public static int getBehaviorFromLinkIdAndLinkedBehavior(int value) {
         return value & 0xFFFF;
     }
-    
+
     public static int getLinkIdAndLinkedBehavior(int linkId, int behavior) {
         return (linkId << 24) | (behavior & 0xFFFF);
     }
-    
+
 }
