@@ -14,9 +14,6 @@ BLCMM Changelog
   - Game launch button
   - Hex Multitool launch
   - "Invert Mod" functionality
-  - Code checks for if commands are being attempted on classes rather than
-    objects
-  - Object-aware autocompletion in code edit windows
 - Object Explorer tweaks:
   - Combined all data into a single data package, and included dumps of all
     classes historically omitted from the OE data set.
