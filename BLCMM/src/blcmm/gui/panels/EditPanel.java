@@ -271,15 +271,9 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
                     }
                 }
             };
-            /**
-             * Disabled as part of the opensourcing project -- relies on stuff that's
-             * no longer there.
-             */
-            /*
             textElement.removeKeyListener(textElement.getAutoCompleteAttacher().getKeyAdapter());
             textElement.addKeyListener(keyAdap);
             textElement.addKeyListener(textElement.getAutoCompleteAttacher().getKeyAdapter());
-            */
         }
     }
 
