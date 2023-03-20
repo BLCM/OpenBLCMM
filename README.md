@@ -16,7 +16,13 @@ TODO (immediate)
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
     which got ripped out.
   - BPD index/length.  Check Fragile Minecraft Blocks for an easy test.
-  - BPD number converter applet thing
+  - BPD number converter applet thing (surprisingly, the BPD stuff looks
+    like it might actually be correct right out the gate.  Do some more
+    thorough testing before getting rid of this line, though)
+- Figure out opening SQLite DBs in read-only mode
+- May as well cache *all* our PreparedStatements in DataManager...
+- Apparently multi-selections screw with statement order in the Edit window?
+- Allow multiple OE windows?
 
 TODO (maybe?)
 =============
@@ -25,9 +31,10 @@ TODO (maybe?)
 - Convert StringTable to use a CSV library
   - Will need some one-time conversion stuff in there, and the ability to
     discern between a converted version.
-- Get a Netbeansless build system working (just ant from CLI).  I'm (apoc)
-  still feeling pretty rusty in Java, so having the IDE is pretty nice,
-  but it'd undeniably be kind of nice to be rid of it.
+- Get a Netbeansless build system working (just ant from CLI, or I guess
+  Maven might be the currently-recommended thing?).  I'm (apoc) still
+  feeling pretty rusty in Java, so having the IDE is pretty nice, but
+  it'd undeniably be kind of nice to be rid of it.
 
 TODO (long-term)
 ================
