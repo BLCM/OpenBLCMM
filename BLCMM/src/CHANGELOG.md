@@ -35,6 +35,15 @@ BLCMM Changelog
     didn't introduce new inconsistent behavior...)
   - "getall" queries will correctly report the top-level class of the returned
     objects
+- Autocomplete changes:
+  - Object autocomplete will correctly handle `:` separators in addition to
+    periods.
+  - Fixed some problems with full-object-name substitution in the main code
+    edit area.
+  - Attribute/Field autocompletes will pull from the entire pool of top-level
+    attribute names
+  - Attribute value autocompletes will pull from the entire pool of Enum
+    values
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
 - Added "allow toggling individual statements" option to settings, and improved
@@ -49,16 +58,6 @@ BLCMM Changelog
 - "Restore defaults" button on settings screen will only restore the settings
   shown on the active screen (this prevents clearing the recently-viewed file
   list, for instance)
-- Autocomplete changes:
-  - Object autocomplete will correctly handle `:` separators in addition to
-    periods.
-  - Fixed some problems with full-object-name substitution in the main code
-    edit area.
-  - Attribute/Field autocompletes will pull from the entire pool of top-level
-    attribute names
-  - Attribute value autocompletes will pull from the entire pool of Enum
-    values
-
 - Removed hidden ability to save in legacy FilterTool mod format
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
