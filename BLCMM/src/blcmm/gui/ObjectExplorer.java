@@ -26,7 +26,7 @@
  */
 package blcmm.gui;
 
-import blcmm.data.lib.DataManager;
+import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
 import blcmm.gui.components.ForceClosingJFrame;
@@ -72,16 +72,16 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     private boolean startedMaximized = false;
     private SwingWorker browserworker;
     private TextSearchDialog searchDialog = null;
-    private DataManager dm;
+    private DataManagerManager dmm;
 
     /**
      * Creates new form DumpFrame
      *
-     * @param dm The DataManager to use for this instance of Object Explorer
+     * @param dmm The DataManagerManager to use for this instance of Object Explorer
      */
-    public ObjectExplorer(DataManager dm) {
+    public ObjectExplorer(DataManagerManager dmm) {
         INSTANCE = this;
-        this.dm = dm;
+        this.dmm = new DataManagerManager(dmm);
         GlobalLogger.log("Opened Object Explorer");
         initComponents();
 
@@ -342,7 +342,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);//This will turn the "+" tab into a new tab
         }
         ObjectExplorerPanel panel = (ObjectExplorerPanel) jTabbedPane1.getComponentAt(jTabbedPane1.getSelectedIndex());
-        boolean success = panel.dump(this.dm, options);
+        boolean success = panel.dump(this.dmm.getCurrentDataManager(), options);
     }
 
     /**
@@ -351,8 +351,8 @@ public final class ObjectExplorer extends ForceClosingJFrame {
      */
     private void setClassBrowserData() {
         TitledBorder classborder = (TitledBorder) jPanel1.getBorder();
-        classborder.setTitle("Class Browser - " + this.dm.getPatchType().toString());
-        DefaultMutableTreeNode node = this.buildClassTree(this.dm.getRootClass());
+        classborder.setTitle("Class Browser - " + this.dmm.getCurrentPatchType().toString());
+        DefaultMutableTreeNode node = this.buildClassTree(this.dmm.getCurrentDataManager().getRootClass());
         sortNode(node);
         classExplorerTree.setModel(new DefaultTreeModel(node));
         classExplorerTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -404,9 +404,9 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         Object rootObject = root.getUserObject();
         if (rootObject instanceof UEObject) {
             root.removeAllChildren();
-            packages = this.dm.getTreeObjectsFromClass(ueClass, (UEObject)rootObject);
+            packages = this.dmm.getCurrentDataManager().getTreeObjectsFromClass(ueClass, (UEObject)rootObject);
         } else {
-            packages = this.dm.getTreeObjectsFromClass(ueClass);
+            packages = this.dmm.getCurrentDataManager().getTreeObjectsFromClass(ueClass);
         }
         DefaultMutableTreeNode newNode;
         for (UEObject pack : packages) {
@@ -499,7 +499,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
         @Override
         protected ObjectExplorerPanel getDefaultNewComponent() {
-            return new ObjectExplorerPanel(dm);
+            return new ObjectExplorerPanel(dmm);
         }
 
         @Override

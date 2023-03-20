@@ -28,6 +28,7 @@ package blcmm.gui.panels;
 
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManager.Dump;
+import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
 import blcmm.gui.ObjectExplorer;
@@ -126,18 +127,18 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private final JSpinner deformatSpinner;
     Worker worker;
     boolean controlState = false;
-    private DataManager dm;
+    private DataManagerManager dmm;
     private Dump currentDump;
 
     /**
      * Creates new form ObjectExplorerPanel
      *
-     * @param dm The DataManager object we'll use for all data interaction
+     * @param dmm The DataManagerManager object we'll use for all data interaction
      */
-    public ObjectExplorerPanel(DataManager dm) {
-        this.dm = dm;
+    public ObjectExplorerPanel(DataManagerManager dmm) {
+        this.dmm = dmm;
         initComponents();
-        textElement = new HighlightedTextArea(true);
+        textElement = new HighlightedTextArea(dmm, true);
         textElement.setEditable(true);
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(textElement);
@@ -159,7 +160,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         this.currentDump = null;
 
         // Make sure we've got data
-        int totalDataFiles = this.dm.getTotalDatafiles();
+        int totalDataFiles = this.dmm.getCurrentDataManager().getTotalDatafiles();
         if (totalDataFiles == 0) {
             queryTextField.setText("Download data first");
             textElement.setText("You need to download some data packages from the settings menu for the Object Explorer to do something.");
@@ -243,7 +244,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     // No empty bookmarks
                     return;
                 }
-                Dump dump = dm.getDump(objectToBookmark);
+                Dump dump = dmm.getCurrentDataManager().getDump(objectToBookmark);
                 if (dump.ueObject == null) {
                     JOptionPane.showMessageDialog(null, "Only dumpable objects can be bookmarked",
                             "Bookmark Error",
@@ -254,20 +255,20 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 // This normalizes capitalization and adds in the class prefix, if possible.
                 String toSave = dump.ueObject.getNameWithClassIfPossible();
 
-                String[] bookmarks = Options.INSTANCE.getOEBookmarks(dm.getPatchType());
+                String[] bookmarks = Options.INSTANCE.getOEBookmarks(dmm.getCurrentPatchType());
 
                 List<String> bookmarkList = new ArrayList<>(Arrays.asList(bookmarks));
                 assert bookmarkList.contains(toSave) == bookmarkLabel.getText().equals(STAR_FILLED);
                 if (bookmarkList.contains(toSave) || bookmarkLabel.getText().equals(STAR_FILLED)) {
                     // Our object / query is currently bookmarked. Time to remove it.
                     boolean wasInList = bookmarkList.remove(toSave);
-                    Options.INSTANCE.setOEBookmarks(bookmarkList.toArray(new String[0]), dm.getPatchType());
+                    Options.INSTANCE.setOEBookmarks(bookmarkList.toArray(new String[0]), dmm.getCurrentPatchType());
                     GlobalLogger.log("Object Explorer - Unbookmarked " + toSave + (!wasInList ? " (Element was not in list)" : ""));
                 } else {
                     // Our object isn't currently bookmarked. Time to make it so.
                     String[] result = Arrays.copyOf(bookmarks, bookmarks.length + 1);
                     result[bookmarks.length] = toSave;
-                    Options.INSTANCE.setOEBookmarks(result, dm.getPatchType());
+                    Options.INSTANCE.setOEBookmarks(result, dmm.getCurrentPatchType());
                     // We bookmarked something fill our star
                     GlobalLogger.log("Object Explorer - Bookmarked " + toSave);
                 }
@@ -284,7 +285,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 menu.setOpaque(false);
                 menu.setBorder(null);
                 menu.setFocusable(false);
-                BookmarkTable table = new BookmarkTable(historyIndex > -1 ? history.get(historyIndex).query : null, dm);
+                BookmarkTable table = new BookmarkTable(historyIndex > -1 ? history.get(historyIndex).query : null, dmm.getCurrentDataManager());
                 JScrollPane pane = new JScrollPane(table);
                 int horPadding = 6;
                 table.updateBookmarkBrowser();//This gives us an initial guess for the size, we can now fine-tune
@@ -660,7 +661,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             if (entry.dump != null && entry.dump.ueObject != null) {
                 // TODO: I really don't like this construct; should be able to compare against
                 // a HashSet or something rather than looping over a list
-                check = Arrays.asList(Options.INSTANCE.getOEBookmarks(this.dm.getPatchType())).contains(entry.dump.ueObject.getNameWithClassIfPossible());
+                check = Arrays.asList(Options.INSTANCE.getOEBookmarks(this.dmm.getCurrentPatchType())).contains(entry.dump.ueObject.getNameWithClassIfPossible());
             }
         }
         bookmarkLabel.setText(check ? STAR_FILLED : STAR_OPEN);
@@ -721,15 +722,15 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 // Now do the query!
                 if (className == null) {
                     if (advanced) {
-                        res = dm.getDeepAutocompleteResults(word);
+                        res = dmm.getCurrentDataManager().getDeepAutocompleteResults(word);
                     } else {
-                        res = dm.getShallowAutocompleteResults(word, from_inner);
+                        res = dmm.getCurrentDataManager().getShallowAutocompleteResults(word, from_inner);
                     }
                 } else {
                     if (advanced) {
-                        res = dm.getDeepAutocompleteResults(word, className);
+                        res = dmm.getCurrentDataManager().getDeepAutocompleteResults(word, className);
                     } else {
-                        res = dm.getShallowAutocompleteResults(word, from_inner, className);
+                        res = dmm.getCurrentDataManager().getShallowAutocompleteResults(word, from_inner, className);
                     }
                 }
 
@@ -756,12 +757,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         reloadTabHistory();
         if (query.toLowerCase().startsWith("getall ")) {
             getAll(query.substring("getall".length()).trim());
-        } else if (!query.contains(" ") && this.dm.getClassByName(query) != null) {
+        } else if (!query.contains(" ") && this.dmm.getCurrentDataManager().getClassByName(query) != null) {
             getAll(query);
 
         } else if ((!query.contains(" ") || query.contains(".") && !query.toLowerCase().contains("inclass:") && !query.matches(".*(\\^|\\\\|\\||\\*|\\+|\\(|\\)|\\?).*")) && controlState == false) {
 
-            boolean success = dump(this.dm, new ObjectExplorer.DumpOptions(query));
+            boolean success = dump(this.dmm.getCurrentDataManager(), new ObjectExplorer.DumpOptions(query));
             if (!success) {
                 performSearch();
             }
@@ -901,7 +902,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (worker != null) {
             worker.stop();
         }
-        worker = new Worker(this.dm, query) {
+        worker = new Worker(this.dmm.getCurrentDataManager(), query) {
             @Override
             public void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException {
                 refsLoop(br, matches, query);
@@ -931,7 +932,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (RegexBox) {
             try {
                 Pattern compile = Pattern.compile(query);
-                worker = new Worker(this.dm, query) {// Create new worker
+                worker = new Worker(this.dmm.getCurrentDataManager(), query) {// Create new worker
                     @Override
                     public void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException {
                         regexSearchLoop(br, matches, compile);
@@ -962,7 +963,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             // This is needed to avoid errors when passing it to getClassByName, below
             final String finalClassName = className;
 
-            worker = new Worker(this.dm, query) {
+            worker = new Worker(this.dmm.getCurrentDataManager(), query) {
                 @Override
                 protected TreeSet<UEClass> getAvailableClasses() {
                     if (finalClassName == null) {
@@ -1111,12 +1112,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         UEClass ueClass;
         if (hasFieldName) {
             String[] splitQuery = query.split(" ", 2);
-            ueClass = this.dm.getClassByName(splitQuery[0]);
+            ueClass = this.dmm.getCurrentDataManager().getClassByName(splitQuery[0]);
             if (ueClass != null) {
                 getAllWithField(ueClass, splitQuery[1]);
             }
         } else {
-            ueClass = this.dm.getClassByName(query);
+            ueClass = this.dmm.getCurrentDataManager().getClassByName(query);
             if (ueClass != null) {
                 getAllNoField(ueClass);
             }
@@ -1133,7 +1134,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     public void getAllNoField(UEClass ueClass) {
         GlobalLogger.log("Trying to getall on class: \"" + ueClass.getName() + "\"");
         currentDump = null;
-        Collection<UEObject> objects = this.dm.getAllObjectsInClassTree(ueClass);
+        Collection<UEObject> objects = this.dmm.getCurrentDataManager().getAllObjectsInClassTree(ueClass);
         mainProgressBar.setValue(mainProgressBar.getMaximum());
         if (objects != null && !objects.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -1192,9 +1193,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         StringBuilder output = new StringBuilder();
         int objectCount = 0;
 
-        for (UEClass loopClass : this.dm.getSubclassesSet(ueClass)) {
+        for (UEClass loopClass : this.dmm.getCurrentDataManager().getSubclassesSet(ueClass)) {
 
-            for (File dataFile : this.dm.getAllDatafilesForClass(loopClass)) {
+            for (File dataFile : this.dmm.getCurrentDataManager().getAllDatafilesForClass(loopClass)) {
 
                 try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile)))) {
 

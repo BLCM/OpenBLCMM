@@ -26,6 +26,7 @@
  */
 package blcmm.gui.text;
 
+import blcmm.data.lib.DataManagerManager;
 import blcmm.gui.MainGUI;
 import blcmm.gui.ObjectExplorer;
 import blcmm.utilities.GlobalLogger;
@@ -38,6 +39,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,14 +67,16 @@ public final class HighlightedTextArea extends JTextPane {
 
     private final List<Object> highlights = new ArrayList<>();
     private final UndoManager undoManager;
-    //private final AutoCompleteAttacher autoCompleteAttacher;
+    private final DataManagerManager dmm;
+    private final AutoCompleteAttacher autoCompleteAttacher;
 
-    public HighlightedTextArea(boolean link) {
-        this(link, true);
+    public HighlightedTextArea(DataManagerManager dmm, boolean link) {
+        this(dmm, link, true);
     }
 
-    public HighlightedTextArea(boolean link, boolean allowEdit) {
+    public HighlightedTextArea(DataManagerManager dmm, boolean link, boolean allowEdit) {
         super();
+        this.dmm = dmm;
         //link = false;
         setFont(new Font(MainGUI.CODE_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()));
         setDocument(new myStylizedDocument(link));//Syntax highlighting
@@ -88,11 +92,6 @@ public final class HighlightedTextArea extends JTextPane {
                 }
             });
 
-            /**
-             * Disabled as part of the opensourcing project -- relies on stuff that's
-             * no longer there.
-             */
-            /*
             this.autoCompleteAttacher = new AutoCompleteAttacher(this) {
                 @Override
                 protected AutoCompleteAttacher.AutoCompleteRequirements getAutoCompleteRequirements(boolean advanced) throws BadLocationException {
@@ -108,18 +107,11 @@ public final class HighlightedTextArea extends JTextPane {
                     return reqs;
                 }
             };
-            */
             this.setDragEnabled(Options.INSTANCE.getDragAndDropEnabled());
         } else {
             this.setEditable(false);
             this.undoManager = null;
-            
-            /**
-             * Disabled as part of the opensourcing project -- relies on stuff that's
-             * no longer there.
-             */
-            //this.autoCompleteAttacher = null;
-            
+            this.autoCompleteAttacher = null;
             // Let the caret be visible even when in readonly mode, so the user
             // can still use keyboard easily to select/copy text, if wanted.
             this.getCaret().setVisible(true);
@@ -139,15 +131,9 @@ public final class HighlightedTextArea extends JTextPane {
         return null;
     }
 
-    /**
-     * Disabled as part of the opensourcing project -- relies on stuff that's
-     * no longer there.
-     */
-    /*
     public AutoCompleteAttacher getAutoCompleteAttacher() {
         return autoCompleteAttacher;
     }
-    */
 
     private void caretMoved(CaretEvent e) throws BadLocationException {
         Highlighter hl = getHighlighter();
@@ -206,16 +192,9 @@ public final class HighlightedTextArea extends JTextPane {
                 || operands.contains(character);
     }
 
-    /**
-     * Disabled as part of the opensourcing project -- relies on stuff that's
-     * no longer there.
-     */
-    /*
     private AutoCompleteAttacher.AutoCompleteRequirements getAutoCompleteRequirements2(boolean advanced) throws BadLocationException {
 
-        final GlobalDictionary dict = DataManager.getDictionary();
-
-        if (dict == null) {
+        if (this.dmm.getCurrentDataManager() == null) {
             return null;
         }
         final Document doc = getDocument();
@@ -252,17 +231,36 @@ public final class HighlightedTextArea extends JTextPane {
         char c = begin <= 1 ? '\n' : doc.getText(begin, 1).charAt(0);
 
         Collection<String> words;
-        int from, to = caret;
+        int from;
+        int to = caret;
+        int from_inner;
         if (currentWord.contains("'")) {
-            String classname = currentWord.substring(0, currentWord.indexOf("'"));
+            // This stanza matches on instances of a "full" object referene, with classname in front
+            String className = currentWord.substring(0, currentWord.indexOf("'"));
             String prefix = currentWord.substring(currentWord.indexOf("'") + 1);
-            from = to - (prefix.length() - (prefix.contains(".") ? prefix.lastIndexOf(".") + 1 : 0));
-            if (!advanced) {
-                words = dict.getElementsInClassWithPrefix(classname, prefix);
+
+            if (advanced) {
+                from = to - prefix.length();
+                words = this.dmm.getCurrentDataManager().getDeepAutocompleteResults(prefix, className);
             } else {
-                words = dict.getDeepElementsInClassContaining(classname, prefix);
+                from_inner = Integer.max(0, Integer.max(prefix.lastIndexOf("."), prefix.lastIndexOf(":")));
+                from = to - (prefix.length() - from_inner);
+                words = this.dmm.getCurrentDataManager().getShallowAutocompleteResults(prefix, from_inner, className);
             }
         } else if (c == '=') {
+            // This matches on the inside of a stanza, after an "=" is seen.  It's got processing
+            // here to look backwards to find the attribute name, so the autocomplete could
+            // theoretically adapt based on the attr name.  With the 2023 Datalib rewrite, though,
+            // we're ignoring that completely.  In this rewrite, we're *only* doing enum
+            // autocompletes here, from the complete set of enum values in the entire game.  Not
+            // super ideal, but it should serve for what folks probably mostly use it for.
+            
+            //GlobalLogger.log("Got equals-sign for currentWord \"" + currentWord + "\", doing a value for a specific attr.");
+            words = this.dmm.getCurrentDataManager().getEnumAutocompleteResults(currentWord);
+            from = beginCurrentWord;
+
+            /* Original processing w/ closed-source datalib; includes searching
+             * backwards for the attr name
             begin--;
             while (begin > 0 && Character.isWhitespace(doc.getText(begin, 1).charAt(0)) && doc.getText(begin, 1).charAt(0) != '\n') {
                 begin--;
@@ -272,33 +270,50 @@ public final class HighlightedTextArea extends JTextPane {
                 begin--;
             }
             String field = doc.getText(begin, end - begin + 1).trim();
+            GlobalLogger.log(" - The field: " + field);
             if (!advanced) {
                 words = dict.getArrayValuesWithPrefix(currentWord);
                 words = dict.adHocFilterBasedOnFieldname(words, field);
             } else {
                 words = dict.getArrayValuesContaining(currentWord);
             }
-            from = beginCurrentWord;
+            /* */
         } else if (depth > 0) {
-            words = dict.getArrayKeysWithPrefix(currentWord);
+            // This stanza matches for attribute names while inside a larger stanza of
+            // code.  The original BLCMM autocomplete maybe includes all valid attr
+            // names which might appear in there.  The new version in the 2023 datalib
+            // rewrite, however, is at the moment only autocompleting "top-level"
+            // attr names.  Far from ideal, but maybe better than nothing?
+            //GlobalLogger.log("Got a depth>0 for currentWord \"" + currentWord + "\"");
+            words = this.dmm.getCurrentDataManager().getFieldAutocompleteResults(currentWord);
             from = beginCurrentWord;
         } else {
             if (wordIndex == 3) {
-                words = dict.getFieldsWithPrefix(currentWord);
+                // This stanza handles autocompleting attr names in basic "set foo bar" constructs.
+                // Technically it only checks to see if we're the *third* word in a line, which means
+                // that it could certainly match on other stuff that it shouldn't, but I guess it
+                // seems good enough.  At the moment, it autocompletes from the complete list of
+                // possible attr names from all class types, though I'd like to expand it to look
+                // up the object (at wordIndex 2) to get its class, and then restrict the autocomplete
+                // to just the attrs for that class.
+                //GlobalLogger.log("Doing attr autocomplete for currentWord \"" + currentWord + "\"");
+                words = this.dmm.getCurrentDataManager().getFieldAutocompleteResults(currentWord);
+                from = beginCurrentWord;
             } else {
-                if (!advanced) {
-                    System.out.println("General search for " + currentWord);
-                    words = dict.getElementsWithPrefix(currentWord);
+                // Finally, if we didn't match anything else, this starts an autocomplete for just a
+                // "bare" object name, unrestricted by class.
+                if (advanced) {
+                    from = beginCurrentWord;
+                    words = this.dmm.getCurrentDataManager().getDeepAutocompleteResults(currentWord);
                 } else {
-                    System.out.println("Advanced search for " + currentWord);
-                    words = dict.getDeepElementsContaining(currentWord);
+                    from_inner = Integer.max(0, Integer.max(currentWord.lastIndexOf("."), currentWord.lastIndexOf(":")));
+                    from = beginCurrentWord + from_inner;
+                    words = this.dmm.getCurrentDataManager().getShallowAutocompleteResults(currentWord, from_inner);
                 }
             }
-            from = beginCurrentWord + (currentWord.contains(".") ? currentWord.lastIndexOf(".") + 1 : 0);
         }
         return new AutoCompleteAttacher.AutoCompleteRequirements(from, to, words);
     }
-    */
 
     private static UndoManager addUndoRedo(JTextComponent textcomp) {
         final UndoManager undo = new UndoManager();

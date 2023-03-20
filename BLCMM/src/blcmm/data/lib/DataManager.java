@@ -113,6 +113,8 @@ public class DataManager {
     private PreparedStatement autocompleteShallowWithParentByClassStmt;
     private PreparedStatement autocompleteDeepWithoutClassStmt;
     private PreparedStatement autocompleteDeepByClassStmt;
+    private PreparedStatement autocompleteFieldWithoutClassStmt;
+    private PreparedStatement autocompleteEnumStmt;
 
     /**
      * Custom Exception we can throw when our data isn't found, or is in a
@@ -235,6 +237,22 @@ public class DataManager {
                     + " and sub.subclass=o.class"
                     + " and sub.class=?"
                     + " order by o.name"
+            );
+            this.autocompleteFieldWithoutClassStmt = this.dbConn.prepareStatement(
+                    "select distinct a.name from"
+                    + " attr_name a"
+                    + " where a.name like ?"
+                    + " order by a.name"
+            );
+            // Note the `ESCAPE "\"` SQL in here.  The default SQL "LIKE" wildcard
+            // interprets underscores as "match any single char", so this lets
+            // us escape the user-typed underscores so that they're interpreted
+            // as *literal* underscores.
+            this.autocompleteEnumStmt = this.dbConn.prepareStatement(
+                    "select e.name from"
+                    + " enum e"
+                    + " where e.name like ? escape \"\\\""
+                    + " order by e.name"
             );
 
         } catch (SQLException e) {
@@ -849,6 +867,54 @@ public class DataManager {
             GlobalLogger.log(e);
         }
         return options;
+    }
+
+    /**
+     * Returns autocomplete suggestion for field/attribute names without respect
+     * to what class is being chosen -- ie: it'll be a list of all possible
+     * attribute names that we're aware of.  Only really suitable for top-level
+     * attribute autocompletes; anything inner might have names not in this
+     * list.
+     *
+     * @param current The currently-typed text to act as an initial substring
+     * @return A list of suggestions
+     */
+    public List<String> getFieldAutocompleteResults(String current) {
+        ArrayList<String> results = new ArrayList<>();
+        try {
+            this.autocompleteFieldWithoutClassStmt.setString(1, current + "%");
+            ResultSet rs = this.autocompleteFieldWithoutClassStmt.executeQuery();
+            while (rs.next()) {
+                results.add(rs.getString("name"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+        }
+        return results;
+    }
+
+    /**
+     * Returns autocomplete suggestion for enum values, without respect to
+     * whatever attribute's being used (so the possible autocomplete space will
+     * include *all* enum values in the game).
+     *
+     * @param current The currently-typed text to act as an initial substring
+     * @return A list of suggestions
+     */
+    public List<String> getEnumAutocompleteResults(String current) {
+        ArrayList<String> results = new ArrayList<>();
+        try {
+            this.autocompleteEnumStmt.setString(1, current.replace("_", "\\_") + "%");
+            ResultSet rs = this.autocompleteEnumStmt.executeQuery();
+            while (rs.next()) {
+                results.add(rs.getString("name"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+        }
+        return results;
     }
 
 }

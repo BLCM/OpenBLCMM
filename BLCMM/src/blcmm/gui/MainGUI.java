@@ -28,7 +28,7 @@ package blcmm.gui;
 
 import blcmm.Startup;
 import blcmm.data.lib.DataManager;
-import blcmm.data.lib.DataManager.NoDataException;
+import blcmm.data.lib.DataManagerManager;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.DefaultTextTextField;
 import blcmm.gui.components.ForceClosingJFrame;
@@ -82,7 +82,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -142,8 +141,8 @@ public final class MainGUI extends ForceClosingJFrame {
     private boolean themeSwitchAllowed = true;
 
     private boolean currentlyLoadingPatch = false;
-    
-    private HashMap <PatchType, DataManager> dataManagers;
+
+    private DataManagerManager dmm;
 
     /**
      * Creates new form MainGUI
@@ -158,18 +157,7 @@ public final class MainGUI extends ForceClosingJFrame {
         initComponents();
         addSearchLayer();
         getGameSelectionPanel().addItemListenerToComboBox(this::gameSelectionAction);
-        this.dataManagers = new HashMap<>();
-        for (PatchType type : PatchType.values()) {
-            try {
-                GlobalLogger.log("Starting initialization of " + type.toString() + " Data Manager");
-                this.dataManagers.put(type, new DataManager(type));
-                GlobalLogger.log("Initialized " + type.toString() + " Data Manager");
-            } catch (NoDataException e) {
-                this.dataManagers.put(type, null);
-                GlobalLogger.log("Error initializing " + type.toString() + " Data Manager: " + e.toString());
-            }
-        }
-        this.updateDataManagersSelectedClasses();
+        this.dmm = new DataManagerManager(PatchType.BL2);
 
         this.titlePostfix = titlePostfix;
         themeComboBox.setSelectedItem(Options.INSTANCE.getTheme());
@@ -1009,8 +997,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void gameSelectionAction(ItemEvent e) {
         PatchType type = getGameSelectionPanel().getNonNullGameType();
-        // DataManager's type gets set while it launches now, I think.
-        //DataManager.setBL2(type != PatchType.TPS);
+        this.dmm.setPatchType(type);
         patch.setType(type);
         if (!this.currentlyLoadingPatch) {
             ((CheckBoxTree) jTree1).setChanged(true);
@@ -1306,7 +1293,7 @@ public final class MainGUI extends ForceClosingJFrame {
      * given the current state of the patch in the GUI, and handles the work
      * of opening the file for writing.  The actual file contents are all handled
      * in PatchIO via the writeToFile method.
-     * 
+     *
      * @param patch The patchset to save
      * @param file The file to save to
      * @param exporting Whether or not we're exporting a mod
@@ -1906,33 +1893,24 @@ public final class MainGUI extends ForceClosingJFrame {
         setTitle(NAME + (Utilities.isCreatorMode() ? " (creator mode)" : "")
                 + " | " + VERSION + titleFilename + titlePostfix);
     }
-    
-    public DataManager getCurrentDataManager() {
-        return this.dataManagers.get(this.patch.getType());
+
+    public DataManagerManager getDMM() {
+        return this.dmm;
     }
-    
+
+    public DataManager getCurrentDataManager() {
+        return this.dmm.getCurrentDataManager();
+    }
+
     public void launchObjectExplorerWindow() {
         if (ObjectExplorer.INSTANCE == null) {
-            DataManager dm = this.getCurrentDataManager();
-            if (dm == null) {
-                // TODO: Some error stuff.
-            } else {
-                EventQueue.invokeLater(() -> {
-                    new ObjectExplorer(dm).setVisible(true);
-                });
-            }
+            EventQueue.invokeLater(() -> {
+                new ObjectExplorer(this.dmm).setVisible(true);
+            });
         } else {
             ObjectExplorer.INSTANCE.toFront();
         }
 
-    }
-    
-    public void updateDataManagersSelectedClasses() {
-        for (DataManager dm : this.dataManagers.values()) {
-            if (dm != null) {
-                dm.updateClassesByEnabledCategory(Options.INSTANCE.getOESearchCategories());
-            }
-        }
     }
 
 }

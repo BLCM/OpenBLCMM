@@ -60,12 +60,12 @@ public class ToolSettingsPanel extends JPanel {
     public ToolSettingsPanel(Option.Shown shownPanel, Component focusAfterResetComponent) {
         this(shownPanel, focusAfterResetComponent, null);
     }
-    
+
     public ToolSettingsPanel(Option.Shown shownPanel, Component focusAfterResetComponent, String headerText) {
         this.shownPanel = shownPanel;
         this.focusAfterResetComponent = focusAfterResetComponent;
         this.settings = Options.INSTANCE;
-        generateGUI(headerText);        
+        generateGUI(headerText);
     }
 
     private void generateGUI(String headerText) throws NumberFormatException {
@@ -84,7 +84,7 @@ public class ToolSettingsPanel extends JPanel {
         constr.weighty = 1;
         constr.insets = new Insets(0, 0, 0, 0);
         constr.anchor = GridBagConstraints.WEST;
-        
+
         int y = 0;
         if (headerText != null) {
             JLabel headerLabel = new JLabel("<html><b>" + headerText + "</b></html>");
@@ -159,7 +159,7 @@ public class ToolSettingsPanel extends JPanel {
                 inst.remove(c);
             }
             generateGUI(headerText);
-            
+
             // So for *some* reason, on our "Dangerous settings" tab, if we don't
             // trigger a focus change like this, the GUI appears frozen up after
             // we hit the button.  The button sesms to remain clicked, mousing
@@ -279,9 +279,12 @@ public class ToolSettingsPanel extends JPanel {
     private void toggleHighlightBVCErrors(Option option, JComponent component) {
         MainGUI.INSTANCE.updateComponentTreeUI();
     }
-    
+
     private void updateOESearchCategories(Option option, JComponent component) {
         this.settings.updateOESearchCategories();
-        MainGUI.INSTANCE.updateDataManagersSelectedClasses();
+        // NOTE: Even though OE maintains its own DMM, the individual DataManager
+        // objects are shared between them, so this single call effectively
+        // updates both.
+        MainGUI.INSTANCE.getDMM().updateDataManagersSelectedClasses();
     }
 }
