@@ -26,6 +26,7 @@
  */
 package blcmm.model.properties;
 
+import blcmm.data.lib.DataManager;
 import blcmm.data.lib.UEClass;
 import blcmm.gui.MainGUI;
 import blcmm.model.Category;
@@ -35,7 +36,6 @@ import blcmm.model.ModelElement;
 import blcmm.model.PatchIO;
 import blcmm.model.SetCMPCommand;
 import blcmm.model.SetCommand;
-import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.StringUtilities;
 import java.util.ArrayList;
@@ -622,8 +622,13 @@ public class GlobalListOfProperties {
             }
             HotfixCommand s = (HotfixCommand) el;
             String object = s.getObject();
-            UEClass ueClass = MainGUI.INSTANCE.getDMM().getCurrentDataManager().getClassByName(object);
-            return ueClass != null;
+            DataManager dm = MainGUI.INSTANCE.getDMM().getCurrentDataManager();
+            if (dm == null) {
+                return false;
+            } else {
+                UEClass ueClass = dm.getClassByName(object);
+                return ueClass != null;
+            }
         }
 
         @Override
@@ -842,8 +847,13 @@ public class GlobalListOfProperties {
             }
             SetCommand s = (SetCommand) element;
             String object = s.getObject();
-            UEClass ueClass = MainGUI.INSTANCE.getDMM().getCurrentDataManager().getClassByName(object);
-            return ueClass != null;
+            DataManager dm = MainGUI.INSTANCE.getDMM().getCurrentDataManager();
+            if (dm == null) {
+                return false;
+            } else {
+                UEClass ueClass = dm.getClassByName(object);
+                return ueClass != null;
+            }
         }
 
         @Override
