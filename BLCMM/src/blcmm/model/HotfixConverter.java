@@ -36,24 +36,24 @@ import java.util.regex.Pattern;
  * Class to help with various hotfix conversion needs.  This class was
  * reimplemented based on the calls BLCMM makes into BLCMM_Utilities.jar,
  * without reference to the original sourcecode.
- * 
+ *
  * This class used to live under blcmm.utilities, but my new reimplementations
  * require access to ModelElement.setParent, which as-is is only accessible
  * from other members of blcmm.model.  So, it got moved over here.  Possibly
  * that makes more sense anyway?
- * 
+ *
  * @author apocalyptech
  */
 public class HotfixConverter {
-    
-    private final static Pattern HOTFIX_KEY_PATTERN = Pattern.compile("^(?<prefix>.+?)-(?<name>.+?)(?<count>\\d+)$");
+
+    private final static Pattern HOTFIX_KEY_PATTERN = Pattern.compile("^(?<prefix>.+?)(-(?<name>.+?))?(?<count>\\d+)$");
 
     /**
      * A single hotfix key/value pair.  Really this could just be a Tuple or
      * something, but whatever.
      */
     public class HotfixKeyValuePair {
-        
+
         public String key;
         public String value;
 
@@ -92,9 +92,9 @@ public class HotfixConverter {
         }
 
     }
-    
+
     private final HotfixCountManager hotfixCounts;
-    
+
     public HotfixConverter() {
         this.hotfixCounts = new HotfixCountManager();
     }
@@ -137,27 +137,53 @@ public class HotfixConverter {
         }
         String detectedPrefix = m.group("prefix");
         String detectedName = m.group("name");
+        if (detectedName == null) {
+            detectedName = detectedPrefix;
+        }
         HotfixType detectedType = HotfixType.getByPrefix(detectedPrefix);
         if (detectedType == null) {
             GlobalLogger.log("Unknown hotfix key prefix: " + detectedPrefix);
             return null;
         }
 
-        // Parse the value.  Note the assumed outer quotes, again!
-        String[] valueParts = value.split(",", 5);
-        String param = valueParts[0];
-        if (param.equals("")) {
-            param = "None";
+        // Figure out what we expect out of the hotfix
+        int maxSplits;
+        boolean hasParam;
+        if (detectedPrefix.equalsIgnoreCase("SparkPatchEntry")) {
+            maxSplits = 4;
+            hasParam = false;
+        } else {
+            maxSplits = 5;
+            hasParam = true;
         }
-        if (valueParts.length != 5) {
+
+        // Split apart the hotfix
+        String[] valueParts = value.split(",", maxSplits);
+        if (valueParts.length != maxSplits) {
             GlobalLogger.log("Unknown hotfix value: " + value);
             return null;
         }
+
+        // ... and parse its various bits.
+        String param = null;
+        int curIndex = 0;
+        if (hasParam) {
+            param = valueParts[curIndex++];
+            if (param.equals("")) {
+                param = "None";
+            }
+        }
+        String object = valueParts[curIndex++];
+        String attr = valueParts[curIndex++];
+        String prevValue = valueParts[curIndex++];
+        String newValue = valueParts[curIndex++];
+
+        // Construct a new command with the info
         HotfixCommand newCommand;
-        if (valueParts[3].equals("")) {
-            newCommand = new HotfixCommand(valueParts[1], valueParts[2], valueParts[4]);
+        if (prevValue.equals("")) {
+            newCommand = new HotfixCommand(object, attr, newValue);
         } else {
-            newCommand = new SetCMPCommand(valueParts[1], valueParts[2], valueParts[3], valueParts[4]);
+            newCommand = new SetCMPCommand(object, attr, prevValue, newValue);
         }
 
         // Validate.  This feels a *bit* silly since we're calling getCode() to generate, but if
@@ -175,5 +201,5 @@ public class HotfixConverter {
         wrapper.addElement(newCommand);
         return wrapper;
     }
-    
+
 }
