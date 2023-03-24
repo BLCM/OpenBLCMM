@@ -791,11 +791,16 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (worker != null) {
             worker.stop();
         }
+        if (dm == null) {
+            textElement.setText("Data for " + this.dmm.getCurrentPatchType().name() + " is not available.  Aborting dump!");
+            currentDump = null;
+            return false;
+        }
         if (options.createLogEntry) {
             GlobalLogger.log("dumping " + options.objectToDump);
         }
         Dump dump = dm.getDump(options.objectToDump);
-        String text = dump.text;
+        String text = "Dump from " + this.dmm.getCurrentPatchType().name() + " data:\n" + dump.text;
         if (dump.ueObject == null) {
             textElement.setText(text);
             currentDump = null;
@@ -1138,7 +1143,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         mainProgressBar.setValue(mainProgressBar.getMaximum());
         if (objects != null && !objects.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("Found %s objects of type %s\n", objects.size(), ueClass.getName()));
+            sb.append(String.format("Found %s objects of type %s in %s data\n", objects.size(), ueClass.getName(), this.dmm.getCurrentPatchType().name()));
             objects.forEach(o -> {
                 sb.append(o.getNameWithClassIfPossible());
                 sb.append("\n");
@@ -1278,7 +1283,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             }
         }
 
-        output.insert(0, "Found " + objectCount + " of class " + ueClass.getName() + " with property " + property + "\n");
+        output.insert(0, "Found " + objectCount + " of class \"" + ueClass.getName() + "\" with property \"" + property
+                + "\" in " + this.dmm.getCurrentPatchType().name() + " data\n");
         setQueryAndText("getall " + ueClass.getName() + " " + property, output.toString());
         GlobalLogger.log("Obtained all objects of Class: \"" + ueClass.getName() + "\" and property of: \"" + property + "\"");
         //ObjectExplorer.INSTANCE.cursorNormal();
@@ -1437,7 +1443,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
                         if (news) {
                             if (textElement.getText().isEmpty()) {
-                                textElement.setText("Found your query (" + query + ") in the following () objects:\n");
+                                textElement.setText("Found your query (" + query + ") in the following () objects in " + dmm.getCurrentPatchType().name() + " data:\n");
                             }
 
                             Document doc = textElement.getStyledDocument();

@@ -33,6 +33,8 @@ BLCMM Changelog
   - Added setting to normalize the search bar with the "full" object name when
     viewing dumps (ie: including the class type: ClassName'GD_Obj.Foo').  The
     setting is off by default.
+  - Dumps and searches will report which game they came from in the first line
+    of the textbox.
   - Fixed some inconsistent behavior with the bookmark icon (and hopefully
     didn't introduce new inconsistent behavior...)
   - "getall" queries will correctly report the top-level class of the returned

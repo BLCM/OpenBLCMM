@@ -254,7 +254,7 @@ public final class HighlightedTextArea extends JTextPane {
             // we're ignoring that completely.  In this rewrite, we're *only* doing enum
             // autocompletes here, from the complete set of enum values in the entire game.  Not
             // super ideal, but it should serve for what folks probably mostly use it for.
-            
+
             //GlobalLogger.log("Got equals-sign for currentWord \"" + currentWord + "\", doing a value for a specific attr.");
             words = this.dmm.getCurrentDataManager().getEnumAutocompleteResults(currentWord);
             from = beginCurrentWord;
