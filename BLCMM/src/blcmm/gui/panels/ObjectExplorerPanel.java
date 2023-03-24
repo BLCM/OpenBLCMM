@@ -1326,7 +1326,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         } else {
             if (initial || textElement.getText().trim().isEmpty()) {
                 textElement.setText(
-                        "Welcome to Object Explorerer!\n"
+                        "Welcome to Object Explorer!\n"
                         + "\n"
                         + "On the upper left is the Class Browser, which gives you a tree view into the UE classes in\n"
                         + "the game itself.  Most classes that modders care about can be found under 'GBXDefinition',\n"
