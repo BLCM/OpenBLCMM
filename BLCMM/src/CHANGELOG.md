@@ -18,7 +18,8 @@ BLCMM Changelog
   - Combined all data into a single data package, and included dumps of all
     classes historically omitted from the OE data set.
   - OE has its own game selection dropdown, which is completely separate from
-    the main window's dropdown.
+    the main window's dropdown.  This replaces the former game-notification
+    icon in the main panel area in OE.
   - Data category selection now only affects fulltext/"refs" searching in OE.
     An `Others` category has been added for the newly-added classes.
   - Categories to use for fulltext/refs searching can be toggled at any point

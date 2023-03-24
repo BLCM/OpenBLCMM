@@ -36,7 +36,6 @@ import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
 import blcmm.gui.text.HighlightedTextArea;
 import blcmm.gui.theme.ThemeManager;
-import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
@@ -72,7 +71,6 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -192,12 +190,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         d = new Dimension(Math.max(temp.getPreferredSize().width, refsButton.getPreferredSize().width), Math.max(temp.getPreferredSize().height, refsButton.getPreferredSize().height));
 
         setFixedSize(refsButton, d);
-        //PatchType type = DataManager.isBL2() ? PatchType.BL2 : PatchType.TPS;
-        PatchType type = PatchType.BL2;
-        gameIconLabel.setIcon(new ImageIcon(type.getIcon(25)));
-        gameIconLabel.setToolTipText("Object explorer is currently in " + type + " mode.");
-        gameIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        gameIconLabel.setVerticalAlignment(SwingConstants.CENTER);
+
         infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
         infoLabel.setVerticalAlignment(SwingConstants.CENTER);
 
@@ -343,7 +336,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         deformatButton = new javax.swing.JButton();
         autoFormatButton = new javax.swing.JButton();
         infoLabel = new InfoLabel(InfoLabel.OE_SPECIFIC + "<br/><br/>" + InfoLabel.BASIC_1+ InfoLabel.BASIC_3);
-        gameIconLabel = new javax.swing.JLabel();
         bookmarkLabel = new javax.swing.JLabel();
         collapseArraysToggleButton = new javax.swing.JToggleButton();
 
@@ -430,31 +422,27 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 927, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(gameIconLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(infoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
+                                .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(backButton)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(forwardButton)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(queryTextField)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(bookmarkLabel)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(refsButton)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(collapseArraysToggleButton))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(mainProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(deformatButton)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(autoFormatButton)))))
+                                .addComponent(backButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(forwardButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(queryTextField)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(bookmarkLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(refsButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(collapseArraysToggleButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(mainProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(deformatButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(autoFormatButton)))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -473,7 +461,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     .addComponent(infoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(gameIconLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(autoFormatButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(deformatButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(mainProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -675,7 +662,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton collapseArraysToggleButton;
     private javax.swing.JButton deformatButton;
     private javax.swing.JButton forwardButton;
-    private javax.swing.JLabel gameIconLabel;
     private javax.swing.JLabel infoLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
@@ -1375,10 +1361,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             //textElement.setEditable(true);
             refsButton.setEnabled(true);
         }
-
-        PatchType type = this.dmm.getCurrentPatchType();
-        gameIconLabel.setIcon(new ImageIcon(type.getIcon(25)));
-        gameIconLabel.setToolTipText("Object explorer is currently in " + type + " mode.");
     }
 
     private abstract class Worker extends SwingWorker {
