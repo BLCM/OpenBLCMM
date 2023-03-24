@@ -26,6 +26,10 @@
  */
 package blcmm.model;
 
+import blcmm.model.attrparser.LevelDepArray;
+import blcmm.model.attrparser.LevelDepParser;
+import blcmm.model.attrparser.LevelDepString;
+import blcmm.model.attrparser.LevelDepStruct;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.utilities.GameDetection;
 import blcmm.utilities.GlobalLogger;
@@ -52,6 +56,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -292,7 +297,7 @@ public class PatchIO {
 
         /**
          * Converts an old-style `.hotfix`-formatted file to a series of HotfixWrapper objects.
-         * 
+         *
          * For some details on this ancient format, see: https://github.com/mystise/BL2_Converter
          *
          * @param br A BufferedReader from which to read the file data
@@ -1196,12 +1201,12 @@ public class PatchIO {
      * Writes out a complete patch/mod to a Writer.  The mod will be saved slightly
      * differently if the `exporting` boolean is set -- namely, some messages about
      * importing mods to BLCMM will be added in for exported mods.
-     * 
+     *
      * @param patch The patchset to save
      * @param writer The writer to write to
      * @param exporting Whether or not we're exporting
      * @return A list of Strings to be shown to the user, if possible
-     * @throws IOException 
+     * @throws IOException
      */
     public static List<String> writeToFile(CompletePatch patch, Writer writer, boolean exporting) throws IOException {
         return writeToFile(patch, SaveFormat.BLCMM, writer, exporting);
@@ -1211,22 +1216,22 @@ public class PatchIO {
      * differently if the `exporting` boolean is set -- namely, some messages about
      * importing mods to BLCMM will be added in for exported mods.  This version
      * supports supplying a SaveFormat, but currently only BLCMM output is supported.
-     * 
+     *
      * @param patch The patchset to save
      * @param format The save format to use
      * @param writer The writer to write to
      * @param exporting Whether or not we're exporting
      * @return A list of Strings to be shown to the user, if possible
-     * @throws IOException 
+     * @throws IOException
      */
 
     public static List<String> writeToFile(CompletePatch patch, SaveFormat format, Writer writer, boolean exporting) throws IOException {
-        
+
         // Enforce what kinds of formats we support (ie: at the moment, only BLCMM)
         if (format != SaveFormat.BLCMM) {
             throw new IllegalArgumentException("Only BLCMM saving is supported currently");
         }
-        
+
         // Enforce offline status from settings
         patch.setOffline(Options.INSTANCE.getSaveAsOffline());
         Category root = patch.getRoot();
@@ -1244,12 +1249,7 @@ public class PatchIO {
 
         Category newCommands = new Category("");
         HashSet<ModelElement> excludes = new HashSet<>();
-        /**
-        * Disabled as part of the opensourcing project -- relies on stuff that's
-        * no longer there.
-        */
-        //List<String> res = new ArrayList<>(analyzeLevelMerges(type, root, excludes, newCommands));
-        List<String> res = new ArrayList<>();
+        List<String> res = new ArrayList<>(analyzeLevelMerges(type, root, excludes, newCommands));
         if (newCommands.size() > 0) {
             writer.append("#Level merges:" + LINEBREAK);
             writeFunctionalCodes(newCommands, writer, new HashSet<>());
@@ -1397,11 +1397,6 @@ public class PatchIO {
         return res;
     }
 
-    /**
-     * Disabled as part of the opensourcing project -- relies on stuff that's
-     * no longer there.
-     */
-    /*
     static List<String> analyzeLevelMerges(PatchType type, Category toBeChecked, HashSet<ModelElement> excludes, Category newCommands) {
         List<String> res = new ArrayList<>();
         HashSet<SetCommand> newExcludes = new HashSet<>();
@@ -1413,12 +1408,12 @@ public class PatchIO {
             analyzeCategoryForLevelMerges(toBeChecked, levelMerges);
             for (String object : levelMerges.keySet()) {
                 Collection<SetCommand> coms = levelMerges.get(object);
-                BorderlandsArray<BorderlandsStruct> array = null;
+                LevelDepArray<LevelDepStruct> vanillaArray = null;
                 for (SetCommand com : coms) {
                     currentCommand = com;
                     if (!com.isSelected()) {
                         continue;
-                    } else if (array == null) {
+                    } else if (vanillaArray == null) {
                         if (vanillamerges == null) {
                             Category vmerges = getVanillaLevelList(type);
                             vanillamerges = new HashMap<>();
@@ -1427,36 +1422,41 @@ public class PatchIO {
                                 vanillamerges.put(vcom.getObject(), vcom);
                             }
                         }
-                        array = (BorderlandsArray) BorderlandsArray.parseArray(vanillamerges.get(object).getValue());
+                        // The cast here could throw an exception, but just let it get handled below
+                        vanillaArray = (LevelDepArray) LevelDepParser.parse(vanillamerges.get(object).getValue());
                     }
                     String val2 = com.getValue();
-                    BorderlandsArray<BorderlandsStruct> ar = (BorderlandsArray) BorderlandsArray.parseArray(val2);
-                    for (int i = 0; i < ar.size(); i++) {
-                        String persistent = ar.get(i).getString("PersistentMap");
-                        BorderlandsArray<String> secondaries = ar.get(i).getArray("SecondaryMaps");
-                        for (int j = 0; j < array.size(); j++) {
-                            String persistent2 = array.get(j).getString("PersistentMap");
-                            BorderlandsArray<String> secondaries2 = array.get(j).getArray("SecondaryMaps");
-                            if (persistent.equalsIgnoreCase(persistent2)) {
-                                for (int k = 0; k < secondaries.size(); k++) {
-                                    String newsec = secondaries.get(k);
-                                    boolean present = false;
-                                    for (int l = 0; l < secondaries2.size(); l++) {
-                                        String oldsec = secondaries2.get(l);
-                                        if (oldsec.equalsIgnoreCase(newsec)) {
-                                            present = true;
+                    // This cast too could throw an exception.  Also let it get handled below.
+                    LevelDepArray<LevelDepStruct> userArray = (LevelDepArray) LevelDepParser.parse(val2);
+                    for (int i = 0; i < userArray.size(); i++) {
+                        String userPersistent = userArray.get(i).getString("PersistentMap");
+                        LevelDepArray<LevelDepString> userSecondaries = userArray.get(i).getArray("SecondaryMaps");
+                        for (int j = 0; j < vanillaArray.size(); j++) {
+                            String vanillaPersistent = vanillaArray.get(j).getString("PersistentMap");
+                            LevelDepArray<LevelDepString> vanillaSecondaries = vanillaArray.get(j).getArray("SecondaryMaps");
+                            if (userPersistent.equalsIgnoreCase(vanillaPersistent)) {
+                                for (int k = 0; k < userSecondaries.size(); k++) {
+                                    LevelDepString newsec = userSecondaries.get(k);
+                                    // A null value can happen if the user has an extra comma in there
+                                    if (newsec != null) {
+                                        boolean present = false;
+                                        for (int l = 0; l < vanillaSecondaries.size(); l++) {
+                                            LevelDepString oldsec = vanillaSecondaries.get(l);
+                                            if (oldsec.equalsIgnoreCase(newsec)) {
+                                                present = true;
+                                            }
                                         }
-                                    }
-                                    if (!present) {
-                                        secondaries2.add(newsec);
+                                        if (!present) {
+                                            vanillaSecondaries.add(newsec);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
-                if (array != null) {
-                    SetCommand newcom = new SetCommand(object, "LevelList", array.toString());
+                if (vanillaArray != null) {
+                    SetCommand newcom = new SetCommand(object, "LevelList", vanillaArray.toString());
                     newcom.setParent(newCommands);
                     newcom.turnOnInProfile(p);
                     newcom.profileChanged(p);
@@ -1482,7 +1482,6 @@ public class PatchIO {
         excludes.addAll(newExcludes);
         return res;
     }
-    */
 
     private static void analyzeCategoryForLevelMerges(Category toBeChecked, Map<String, Collection<SetCommand>> levelMerges) {
         for (ModelElement el : toBeChecked.getElements()) {
