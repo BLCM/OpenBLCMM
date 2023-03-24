@@ -1355,7 +1355,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         + "Other search queries you can try in the search box:\n"
                         + "\n"
                         + "    getall <classname>\n"
-                        + "    getall <classname> <attribute>\n"
+                        + "    getall <classname> <property>\n"
                         + "    inclass:<classname> <search>\n"
                         + "    (document pos/neg search stuff...)\n"
                         + "\n"
