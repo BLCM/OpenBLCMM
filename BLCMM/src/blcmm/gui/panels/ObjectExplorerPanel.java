@@ -1186,8 +1186,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         // moment.
         //ObjectExplorer.INSTANCE.cursorWait();
 
-        String startPatternStandard = "  " + property.toLowerCase() + "=";
-        String startPatternArray = "  " + property.toLowerCase() + "(";
+        String startPatternStandard = property.toLowerCase() + "=";
+        String startPatternArray = property.toLowerCase() + "(";
         int startPatternLen = startPatternStandard.length();
         String normalizedProperty = null;
         StringBuilder output = new StringBuilder();
@@ -1243,7 +1243,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                             }
                             if (found) {
                                 if (normalizedProperty == null) {
-                                    normalizedProperty = line.substring(2, startPatternLen-1);
+                                    normalizedProperty = line.substring(0, startPatternLen-1);
                                 }
                                 if (curAttr.isEmpty()) {
                                     curAttr.append(normalizedProperty);
