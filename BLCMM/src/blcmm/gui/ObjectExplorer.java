@@ -138,7 +138,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         setIconImages(MainGUI.INSTANCE.getIconImages());
         MainGUI.INSTANCE.registerObjectExplorerWindowStatus(true);
         init = true;
-        MyAdapter adap = new MyAdapter();
+        HideLeftHandPanelsAdapter adap = new HideLeftHandPanelsAdapter();
         BasicSplitPaneDivider divider = ((BasicSplitPaneUI) topLevelSplitPane.getUI()).getDivider();
         divider.addMouseListener(adap);
         if (!Options.INSTANCE.getOELeftPaneVisible()) {
@@ -587,7 +587,10 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
     }
 
-    private class MyAdapter extends MouseAdapter {
+    /**
+     * An adapter to hide/show the left-hand panels in the OE window
+     */
+    private class HideLeftHandPanelsAdapter extends MouseAdapter {
 
         int pos = 300;
 
@@ -601,9 +604,9 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         public void toggle() {
             if (leftVisible) {
                 pos = topLevelSplitPane.getDividerLocation();
-                topLevelSplitPane.remove(leftHandSplitPlane);
+                topLevelSplitPane.remove(leftHandPanel);
             } else {
-                topLevelSplitPane.setLeftComponent(leftHandSplitPlane);
+                topLevelSplitPane.setLeftComponent(leftHandPanel);
                 topLevelSplitPane.setDividerLocation(pos);
             }
             leftVisible = !leftVisible;
