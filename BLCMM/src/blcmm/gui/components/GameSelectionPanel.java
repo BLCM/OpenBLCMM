@@ -62,6 +62,7 @@ public class GameSelectionPanel extends JPanel {
             @Override
             public Component getListCellRendererComponent(JList<?> jlist, Object o, int i, boolean bln, boolean bln1) {
                 JLabel l = (JLabel) super.getListCellRendererComponent(jlist, o, i, bln, bln1);
+                l.setText(((PatchType) o).getGameName());
                 l.setIcon(new ImageIcon(((PatchType) o).getIcon(4 + Options.INSTANCE.getFontsize())));
                 return l;
             }
