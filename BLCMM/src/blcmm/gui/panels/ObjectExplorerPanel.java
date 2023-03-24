@@ -128,6 +128,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     Worker worker;
     boolean controlState = false;
     private DataManagerManager dmm;
+    private DataManager dm;
     private Dump currentDump;
 
     /**
@@ -159,14 +160,10 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         forwardButton.setFont(forwardButton.getFont().deriveFont(forwardButton.getFont().getSize2D() + 2f));
         this.currentDump = null;
 
-        // Make sure we've got data
-        int totalDataFiles = this.dmm.getCurrentDataManager().getTotalDatafiles();
-        if (totalDataFiles == 0) {
-            queryTextField.setText("Download data first");
-            textElement.setText("You need to download some data packages from the settings menu for the Object Explorer to do something.");
-            queryTextField.setEditable(false);
-            textElement.setEditable(false);
-        }
+        // Update our UI based on the current game selection
+        this.updateGame(true);
+
+        // Attach some handlers to various UI elements
         queryTextField.getActionMap().put("Search", new AbstractAction("Search") {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -527,6 +524,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private void performSearch() {
         if (worker != null && !worker.stop) {
             worker.stop();
+            return;
+        }
+        if (this.dm == null) {
             return;
         }
         String query = queryTextField.getText().trim();
@@ -1285,15 +1285,94 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     * Update our UI based on the currently-selected game.
+     */
     public void updateGame() {
-        //PatchType type = DataManager.isBL2() ? PatchType.BL2 : PatchType.TPS;
-        PatchType type = PatchType.BL2;
-        gameIconLabel.setIcon(new ImageIcon(type.getIcon(25)));
-        gameIconLabel.setToolTipText("Object explorer is currently in " + type + " mode.");
+        this.updateGame(false);
+    }
+
+    /**
+     * Update our UI based on the currently-selected game, optionally performing
+     * actions that should only be done on the initial window load (ie: putting
+     * some text about downloading data into the main text area).
+     *
+     * @param initial Whether or not this is an initial data load.
+     */
+    public final void updateGame(boolean initial) {
+
+        // First stop any active workers
         if (this.worker != null) {
             worker.stop();
-
         }
+
+        // Set our current DataManager and see if we have data for it.
+        this.dm = this.dmm.getCurrentDataManager();
+        int totalDataFiles = 0;
+        if (this.dm != null) {
+            totalDataFiles = this.dm.getTotalDatafiles();
+        }
+        if (totalDataFiles == 0) {
+            if (initial) {
+                queryTextField.setText("Download data first");
+                textElement.setText("No data is present for " + this.dmm.getCurrentPatchType().getGameName() + ".\n"
+                        + "Download a data package and restart BLCMM to search/dump data for the game."
+                );
+            }
+            queryTextField.setEditable(false);
+            // Why bother disabling this?
+            //textElement.setEditable(false);
+            refsButton.setEnabled(false);
+        } else {
+            if (initial || textElement.getText().trim().isEmpty()) {
+                textElement.setText(
+                        "Welcome to Object Explorerer!\n"
+                        + "\n"
+                        + "On the upper left is the Class Browser, which gives you a tree view into the UE classes in\n"
+                        + "the game itself.  Most classes that modders care about can be found under 'GBXDefinition',\n"
+                        + "though that's not the only place they can be found.\n"
+                        + "\n"
+                        + "On the lower left is the Object Browser, which will populate with a tree of objects once\n"
+                        + "you've selected a class in the Class Browser.  If you select 'Object' in the Class Browser,\n"
+                        + "you should have a full tree of the entire game data available to browse.\n"
+                        + "\n"
+                        + "In the textbox above, you can type in any string to search through the game data.  If you\n"
+                        + "type in an object name, you'll get a dump of the object in question.  If you want to search\n"
+                        + "for references to an object instead of dumping it, use the 'Refs' button once the object\n"
+                        + "name is in the search box.  For searches and refs, you can choose what data categories to\n"
+                        + "search through in the main BLCMM settings menu, under 'Object Explorer Data'.  Note that the\n"
+                        + "more categories you enable, the slower searches/refs will take.  The defaults should be\n"
+                        + "reasonable for most use cases, though.\n"
+                        + "\n"
+                        + "Note that when typing in object names, you can use Ctrl-Space to bring up an autocomplete\n"
+                        + "window, which may help you get to the object you're looking for more quickly.  Hitting\n"
+                        + "Ctrl-Space again will autocomplete full object names instead of just the next path\n"
+                        + "components.\n"
+                        + "\n"
+                        + "When viewing an object dump, you can bookmark the dump by clicking on the star next to the\n"
+                        + "search bar.  Doubleclicking on the star will bring up your current bookmarks.\n"
+                        + "\n"
+                        + "Other search queries you can try in the search box:\n"
+                        + "\n"
+                        + "    getall <classname>\n"
+                        + "    getall <classname> <attribute>\n"
+                        + "    inclass:<classname> <search>\n"
+                        + "    (document pos/neg search stuff...)\n"
+                        + "\n"
+                        + "Note too that text searching can make use of regular expressions.  The syntax for Java regex\n"
+                        + "can be found here, though note that all of that may not be supported:\n"
+                        + "\n"
+                        + "    https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html#sum"
+                );
+            }
+            queryTextField.setEditable(true);
+            //textElement.setEditable(true);
+            refsButton.setEnabled(true);
+        }
+
+        PatchType type = this.dmm.getCurrentPatchType();
+        gameIconLabel.setIcon(new ImageIcon(type.getIcon(25)));
+        gameIconLabel.setToolTipText("Object explorer is currently in " + type + " mode.");
     }
 
     private abstract class Worker extends SwingWorker {

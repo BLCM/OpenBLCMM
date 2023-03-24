@@ -26,19 +26,23 @@
  */
 package blcmm.gui;
 
+import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
 import blcmm.gui.components.ForceClosingJFrame;
+import blcmm.gui.components.SimpleGameSelectionComboBox;
 import blcmm.gui.components.VariableTabsTabbedPane;
 import blcmm.gui.panels.ObjectExplorerPanel;
 import blcmm.gui.panels.TextSearchDialog;
+import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
@@ -73,6 +77,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     private SwingWorker browserworker;
     private TextSearchDialog searchDialog = null;
     private DataManagerManager dmm;
+    private DataManager dm;
 
     /**
      * Creates new form DumpFrame
@@ -82,8 +87,13 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     public ObjectExplorer(DataManagerManager dmm) {
         INSTANCE = this;
         this.dmm = new DataManagerManager(dmm);
+        this.dm = null;
         GlobalLogger.log("Opened Object Explorer");
         initComponents();
+
+        // Set up our game selection dropdown
+        getGameSelectionComboBox().addItemListenerToComboBox(this::gameSelectionAction);
+        getGameSelectionComboBox().setType(this.dmm.getCurrentPatchType());
 
         // Resize the main window from our preferences
         if (Options.INSTANCE.getOEWindowMaximized()) {
@@ -129,13 +139,11 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         MainGUI.INSTANCE.registerObjectExplorerWindowStatus(true);
         init = true;
         MyAdapter adap = new MyAdapter();
-        BasicSplitPaneDivider divider = ((BasicSplitPaneUI) jSplitPane1.getUI()).getDivider();
+        BasicSplitPaneDivider divider = ((BasicSplitPaneUI) topLevelSplitPane.getUI()).getDivider();
         divider.addMouseListener(adap);
         if (!Options.INSTANCE.getOELeftPaneVisible()) {
             adap.toggle();
         }
-
-        setClassBrowserData();
 
         Utilities.changeCTRLMasks(this.getRootPane());
         MainGUI.INSTANCE.cursorNormal();
@@ -171,121 +179,131 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jSplitPane2 = new javax.swing.JSplitPane();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        packageExplorerTree = new javax.swing.JTree();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        classExplorerTree = new javax.swing.JTree();
-        jTabbedPane1 = new OETabbedPane();
+        topLevelSplitPane = new javax.swing.JSplitPane();
+        leftHandPanel = new javax.swing.JPanel();
+        gameTypeComboBox = new SimpleGameSelectionComboBox();
+        leftHandSplitPlane = new javax.swing.JSplitPane();
+        classBrowserPanel = new javax.swing.JPanel();
+        classBrowserScrollPane = new javax.swing.JScrollPane();
+        classBrowserTree = new javax.swing.JTree();
+        objectBrowserPanel = new javax.swing.JPanel();
+        objectBrowserScrollPane = new javax.swing.JScrollPane();
+        objectBrowserTree = new javax.swing.JTree();
+        oePanelTabbedPane = new OETabbedPane();
 
         setTitle("Object Explorer");
 
-        jSplitPane1.setDividerLocation(400);
+        topLevelSplitPane.setDividerLocation(400);
 
-        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        leftHandPanel.setLayout(new javax.swing.BoxLayout(leftHandPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Object Browser"));
+        gameTypeComboBox.setMinimumSize(new java.awt.Dimension(0, 24));
+        leftHandPanel.add(gameTypeComboBox);
+
+        leftHandSplitPlane.setDividerLocation(355);
+        leftHandSplitPlane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        classBrowserPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Class Browser"));
+
+        classBrowserTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                classBrowserTreeValueChanged(evt);
+            }
+        });
+        classBrowserScrollPane.setViewportView(classBrowserTree);
+
+        javax.swing.GroupLayout classBrowserPanelLayout = new javax.swing.GroupLayout(classBrowserPanel);
+        classBrowserPanel.setLayout(classBrowserPanelLayout);
+        classBrowserPanelLayout.setHorizontalGroup(
+            classBrowserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(classBrowserPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(classBrowserScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        classBrowserPanelLayout.setVerticalGroup(
+            classBrowserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(classBrowserPanelLayout.createSequentialGroup()
+                .addComponent(classBrowserScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        leftHandSplitPlane.setTopComponent(classBrowserPanel);
+
+        objectBrowserPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Object Browser"));
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Select a class above to list objects in that class.");
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Choosing \"Object\" will give you the full object tree.");
-        treeNode1.add(treeNode2);
-        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Most mod-useful classes are inside GBXDefinition.");
-        treeNode1.add(treeNode2);
-        packageExplorerTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        packageExplorerTree.setRootVisible(false);
-        packageExplorerTree.addTreeWillExpandListener(new javax.swing.event.TreeWillExpandListener() {
+        objectBrowserTree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        objectBrowserTree.setRootVisible(false);
+        objectBrowserTree.addTreeWillExpandListener(new javax.swing.event.TreeWillExpandListener() {
             public void treeWillExpand(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {
-                packageExplorerTreeTreeWillExpand(evt);
+                objectBrowserTreeTreeWillExpand(evt);
             }
             public void treeWillCollapse(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {
             }
         });
-        packageExplorerTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+        objectBrowserTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
-                packageExplorerTreeValueChanged(evt);
+                objectBrowserTreeValueChanged(evt);
             }
         });
-        jScrollPane1.setViewportView(packageExplorerTree);
+        objectBrowserScrollPane.setViewportView(objectBrowserTree);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout objectBrowserPanelLayout = new javax.swing.GroupLayout(objectBrowserPanel);
+        objectBrowserPanel.setLayout(objectBrowserPanelLayout);
+        objectBrowserPanelLayout.setHorizontalGroup(
+            objectBrowserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(objectBrowserPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+                .addComponent(objectBrowserScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        objectBrowserPanelLayout.setVerticalGroup(
+            objectBrowserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(objectBrowserPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                .addComponent(objectBrowserScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jSplitPane2.setRightComponent(jPanel2);
+        leftHandSplitPlane.setBottomComponent(objectBrowserPanel);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Class Browser"));
+        leftHandPanel.add(leftHandSplitPlane);
 
-        classExplorerTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
-            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
-                classExplorerTreeValueChanged(evt);
-            }
-        });
-        jScrollPane2.setViewportView(classExplorerTree);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
-                .addGap(4, 4, 4))
-        );
-
-        jSplitPane2.setTopComponent(jPanel1);
-
-        jSplitPane1.setLeftComponent(jSplitPane2);
-        jSplitPane1.setRightComponent(jTabbedPane1);
+        topLevelSplitPane.setLeftComponent(leftHandPanel);
+        topLevelSplitPane.setRightComponent(oePanelTabbedPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1102, Short.MAX_VALUE)
+            .addComponent(topLevelSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1102, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addComponent(topLevelSplitPane)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void classExplorerTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_classExplorerTreeValueChanged
-        TreePath selectionPath = classExplorerTree.getSelectionPath();
+    private void classBrowserTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_classBrowserTreeValueChanged
+        if (this.dm == null) {
+            return;
+        }
+        TreePath selectionPath = classBrowserTree.getSelectionPath();
         if (selectionPath == null) {
             return;
         }
         UEClass selected = (UEClass)((DefaultMutableTreeNode)selectionPath.getLastPathComponent()).getUserObject();
         setPackageBrowserData(selected);
-    }//GEN-LAST:event_classExplorerTreeValueChanged
+    }//GEN-LAST:event_classBrowserTreeValueChanged
 
-    private void packageExplorerTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_packageExplorerTreeValueChanged
-        TreePath selectionPath = packageExplorerTree.getSelectionPath();
+    private void objectBrowserTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_objectBrowserTreeValueChanged
+        if (this.dm == null) {
+            return;
+        }
+        TreePath selectionPath = objectBrowserTree.getSelectionPath();
         if (selectionPath == null) {
             return;
         }
@@ -295,16 +313,16 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         }
         String objectName = ((UEObject)selectedObject).getName();
         dump(new DumpOptions(objectName, false, false, false));
-    }//GEN-LAST:event_packageExplorerTreeValueChanged
+    }//GEN-LAST:event_objectBrowserTreeValueChanged
 
-    private void packageExplorerTreeTreeWillExpand(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {//GEN-FIRST:event_packageExplorerTreeTreeWillExpand
+    private void objectBrowserTreeTreeWillExpand(javax.swing.event.TreeExpansionEvent evt)throws javax.swing.tree.ExpandVetoException {//GEN-FIRST:event_objectBrowserTreeTreeWillExpand
         // We're never going to deny the tree expansion, but I did want this to happen *before* the
         // expansion actually happens, just so there's no flickering or whatever as the "dummy"
         // entry is replaced by the actual content, etc.
 
         // First get our selected class
         // TODO: Maybe that should live inside UEObject, actually.  Whatever, for now this will do.
-        TreePath classSelectionPath = classExplorerTree.getSelectionPath();
+        TreePath classSelectionPath = classBrowserTree.getSelectionPath();
         if (classSelectionPath == null) {
             return;
         }
@@ -319,29 +337,65 @@ public final class ObjectExplorer extends ForceClosingJFrame {
                 expandingObject.setExpanded(true);
             }
         }
-    }//GEN-LAST:event_packageExplorerTreeTreeWillExpand
+    }//GEN-LAST:event_objectBrowserTreeTreeWillExpand
 
     public JTabbedPane getObjectExplorerTabbedPane() {
-        return this.jTabbedPane1;
+        return this.oePanelTabbedPane;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTree classExplorerTree;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JSplitPane jSplitPane2;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTree packageExplorerTree;
+    private javax.swing.JPanel classBrowserPanel;
+    private javax.swing.JScrollPane classBrowserScrollPane;
+    private javax.swing.JTree classBrowserTree;
+    private javax.swing.JComboBox<String> gameTypeComboBox;
+    private javax.swing.JPanel leftHandPanel;
+    private javax.swing.JSplitPane leftHandSplitPlane;
+    private javax.swing.JPanel objectBrowserPanel;
+    private javax.swing.JScrollPane objectBrowserScrollPane;
+    private javax.swing.JTree objectBrowserTree;
+    private javax.swing.JTabbedPane oePanelTabbedPane;
+    private javax.swing.JSplitPane topLevelSplitPane;
     // End of variables declaration//GEN-END:variables
+
+
+    private void gameSelectionAction(ItemEvent e) {
+        if (e.getStateChange() == ItemEvent.SELECTED) {
+            PatchType type = getGameSelectionComboBox().getNonNullGameType();
+            this.dmm.setPatchType(type);
+            this.dm = this.dmm.getCurrentDataManager();
+            setClassBrowserData();
+            setPackageBrowserData(null);
+            ObjectExplorerPanel panel = (ObjectExplorerPanel) oePanelTabbedPane.getComponentAt(oePanelTabbedPane.getSelectedIndex());
+            panel.updateGame();
+        }
+    }
+
+
+    /**
+     * Returns the GameSelectionComboBox UI component
+     *
+     * @return The game selection panel
+     */
+    private SimpleGameSelectionComboBox getGameSelectionComboBox() {
+        return (SimpleGameSelectionComboBox) gameTypeComboBox;
+    }
+
+    /**
+     * Returns the PatchType currently selected by our game dropdown. Just a
+     * convenience function to avoid repetitive typing, etc.
+     *
+     * @return The PatchType currently selected
+     */
+    private PatchType getSelectedGame() {
+        return getGameSelectionComboBox().getNonNullGameType();
+    }
+
 
     public void dump(DumpOptions options) {
         if (options.createNewTabForResult) {
-            jTabbedPane1.setSelectedIndex(jTabbedPane1.getTabCount() - 1);//This will turn the "+" tab into a new tab
+            oePanelTabbedPane.setSelectedIndex(oePanelTabbedPane.getTabCount() - 1);//This will turn the "+" tab into a new tab
         }
-        ObjectExplorerPanel panel = (ObjectExplorerPanel) jTabbedPane1.getComponentAt(jTabbedPane1.getSelectedIndex());
+        ObjectExplorerPanel panel = (ObjectExplorerPanel) oePanelTabbedPane.getComponentAt(oePanelTabbedPane.getSelectedIndex());
         boolean success = panel.dump(this.dmm.getCurrentDataManager(), options);
     }
 
@@ -350,12 +404,19 @@ public final class ObjectExplorer extends ForceClosingJFrame {
      * classes in the specified game.
      */
     private void setClassBrowserData() {
-        TitledBorder classborder = (TitledBorder) jPanel1.getBorder();
+        TitledBorder classborder = (TitledBorder) classBrowserPanel.getBorder();
         classborder.setTitle("Class Browser - " + this.dmm.getCurrentPatchType().toString());
-        DefaultMutableTreeNode node = this.buildClassTree(this.dmm.getCurrentDataManager().getRootClass());
-        sortNode(node);
-        classExplorerTree.setModel(new DefaultTreeModel(node));
-        classExplorerTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        classBrowserPanel.repaint();
+        DefaultMutableTreeNode node;
+        if (this.dm == null) {
+            node = new DefaultMutableTreeNode("No Data Present");
+        } else {
+            node = this.buildClassTree(this.dm.getRootClass());
+            sortNode(node);
+        }
+        classBrowserTree.setModel(new DefaultTreeModel(node));
+        classBrowserTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        classBrowserScrollPane.getVerticalScrollBar().setMaximum(500);
     }
 
     /**
@@ -389,14 +450,31 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }
 
     private void setPackageBrowserData(UEClass ueClass) {
-        TitledBorder objectborder = (TitledBorder) jPanel2.getBorder();
-        objectborder.setTitle("Object Browser - " + ueClass.getName());
-        jPanel2.repaint();
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
-        this.addPackageData(ueClass, root);
-        packageExplorerTree.setRootVisible(false);
-        packageExplorerTree.setModel(new DefaultTreeModel(root));
-        packageExplorerTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        TitledBorder objectborder = (TitledBorder) objectBrowserPanel.getBorder();
+        if (this.dm == null) {
+            objectborder.setTitle("Object Browser");
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("No Data Present");
+            objectBrowserTree.setRootVisible(true);
+            objectBrowserTree.setModel(new DefaultTreeModel(root));
+        } else if (ueClass == null) {
+            objectborder.setTitle("Object Browser");
+            objectBrowserPanel.repaint();
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+            root.add(new DefaultMutableTreeNode("Select a class above to list objects in that class."));
+            root.add(new DefaultMutableTreeNode("Choosing \"Object\" will give you the full object tree."));
+            root.add(new DefaultMutableTreeNode("Most mod-useful classes are inside GBXDefinition."));
+            objectBrowserTree.setRootVisible(false);
+            objectBrowserTree.setModel(new DefaultTreeModel(root));
+            objectBrowserTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        } else {
+            objectborder.setTitle("Object Browser - " + ueClass.getName());
+            objectBrowserPanel.repaint();
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+            this.addPackageData(ueClass, root);
+            objectBrowserTree.setRootVisible(false);
+            objectBrowserTree.setModel(new DefaultTreeModel(root));
+            objectBrowserTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        }
     }
 
     private void addPackageData(UEClass ueClass, DefaultMutableTreeNode root) {
@@ -522,11 +600,11 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
         public void toggle() {
             if (leftVisible) {
-                pos = jSplitPane1.getDividerLocation();
-                jSplitPane1.remove(jSplitPane2);
+                pos = topLevelSplitPane.getDividerLocation();
+                topLevelSplitPane.remove(leftHandSplitPlane);
             } else {
-                jSplitPane1.setLeftComponent(jSplitPane2);
-                jSplitPane1.setDividerLocation(pos);
+                topLevelSplitPane.setLeftComponent(leftHandSplitPlane);
+                topLevelSplitPane.setDividerLocation(pos);
             }
             leftVisible = !leftVisible;
             Options.INSTANCE.setOELeftPaneVisible(leftVisible);

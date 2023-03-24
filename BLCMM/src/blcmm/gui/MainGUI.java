@@ -38,7 +38,6 @@ import blcmm.gui.components.TimedLabel;
 import blcmm.gui.panels.AboutPanel;
 import blcmm.gui.panels.IntegerConverter;
 import blcmm.gui.panels.MasterSettingsPanel;
-import blcmm.gui.panels.ObjectExplorerPanel;
 import blcmm.gui.panels.SetupGameFilesPanel;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
@@ -97,7 +96,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -1002,15 +1000,6 @@ public final class MainGUI extends ForceClosingJFrame {
         if (!this.currentlyLoadingPatch) {
             ((CheckBoxTree) jTree1).setChanged(true);
         }
-        // We do this so we stop all running queries AND to adjust our current ObjectExplorer game type image.
-        if (ObjectExplorer.INSTANCE != null) {
-            JTabbedPane pane = ObjectExplorer.INSTANCE.getObjectExplorerTabbedPane();
-            for (Component c : pane.getComponents()) {
-                if (c instanceof ObjectExplorerPanel) {
-                    ((ObjectExplorerPanel) c).updateGame();
-                }
-            }
-        }
     }
 
     @Override
@@ -1077,15 +1066,20 @@ public final class MainGUI extends ForceClosingJFrame {
     }
 
     /**
-     * Returns the PatchType currently selected by our game dropdown. Just a
-     * convenience function to avoid repetitive typing, etc.
+     * Returns the GameSelectionPanel UI component
      *
-     * @return The PatchType currently selected
+     * @return The game selection panel
      */
     private GameSelectionPanel getGameSelectionPanel() {
         return (GameSelectionPanel) gameTypePanel;
     }
 
+    /**
+     * Returns the PatchType currently selected by our game dropdown. Just a
+     * convenience function to avoid repetitive typing, etc.
+     *
+     * @return The PatchType currently selected
+     */
     private PatchType getSelectedGame() {
         return getGameSelectionPanel().getNonNullGameType();
     }
