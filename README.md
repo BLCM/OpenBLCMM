@@ -1,5 +1,12 @@
 *(this is gonna be super barebones for awhile...)*
 
+**NOTE:** This branch is *not* compatible with the original BLCMM game data
+packages.  There's currently not precompiled data available (though there
+probably will be Soon™), though the generation scripts are available
+via the [DataDumper PythonSDK mod](https://github.com/BLCM/DataDumper).  Also
+note that the data format may change without warning for awhile yet, as
+the new version approaches release.
+
 TODO (immediate)
 ================
 
@@ -19,10 +26,19 @@ TODO (immediate)
   - BPD number converter applet thing (surprisingly, the BPD stuff looks
     like it might actually be correct right out the gate.  Do some more
     thorough testing before getting rid of this line, though)
+  - Wouldn't hurt to test out some more failure conditions in the map-merging
+    code.  Incomplete/cut-off statements, etc.
+  - Test out various scenarios relating to data availability; make sure that
+    we can't NPE in OE, etc.
 - Figure out opening SQLite DBs in read-only mode
 - May as well cache *all* our PreparedStatements in DataManager...
 - Apparently multi-selections screw with statement order in the Edit window?
-- Allow multiple OE windows?
+- Improve "basic" attr-name autocomplete to restrict results to appropriate
+  field names
+- Options for changing object-opening behavior (ctrl/alt/shift-click, single/
+  double/triple/whatever).  Also an option to disable links altogether?
+- Make sure we handle launching from a readonly filesystem properly
+  (original BLCMM launcher crashes when that happens; main app might too)
 
 TODO (maybe?)
 =============
@@ -35,6 +51,7 @@ TODO (maybe?)
   Maven might be the currently-recommended thing?).  I'm (apoc) still
   feeling pretty rusty in Java, so having the IDE is pretty nice, but
   it'd undeniably be kind of nice to be rid of it.
+- Allow multiple OE windows?
 
 TODO (long-term)
 ================
