@@ -45,6 +45,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -288,15 +289,10 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void classBrowserTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_classBrowserTreeValueChanged
-        if (this.dm == null) {
-            return;
+        UEClass selected = this.getCurrentClassSelection();
+        if (selected != null) {
+            setPackageBrowserData(selected);
         }
-        TreePath selectionPath = classBrowserTree.getSelectionPath();
-        if (selectionPath == null) {
-            return;
-        }
-        UEClass selected = (UEClass)((DefaultMutableTreeNode)selectionPath.getLastPathComponent()).getUserObject();
-        setPackageBrowserData(selected);
     }//GEN-LAST:event_classBrowserTreeValueChanged
 
     private void objectBrowserTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_objectBrowserTreeValueChanged
@@ -358,13 +354,38 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     // End of variables declaration//GEN-END:variables
 
 
+    /**
+     * The action to take when the game selection dropdown is changed (ie:
+     * reloading the browser trees, and sending the signal to the other
+     * panel to do any work there.
+     *
+     * @param e The event that triggered the action.
+     */
     private void gameSelectionAction(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
+            UEClass currentClassSelection = this.getCurrentClassSelection();
             PatchType type = getGameSelectionComboBox().getNonNullGameType();
             this.dmm.setPatchType(type);
             this.dm = this.dmm.getCurrentDataManager();
-            setClassBrowserData();
-            setPackageBrowserData(null);
+            if (currentClassSelection != null) {
+                DefaultMutableTreeNode foundNode = setClassBrowserData(currentClassSelection.getName());
+                setPackageBrowserData(null);
+                if (foundNode != null) {
+                    ArrayList<TreeNode> nodes = new ArrayList<>();
+                    nodes.add(foundNode);
+                    TreeNode treeNode = foundNode.getParent();
+                    while (treeNode != null) {
+                        nodes.add(0, treeNode);
+                        treeNode = treeNode.getParent();
+                    }
+                    TreePath selectedPath = new TreePath(nodes.toArray());
+                    classBrowserTree.scrollPathToVisible(selectedPath);
+                    classBrowserTree.setSelectionPath(selectedPath);
+                }
+            } else {
+                setClassBrowserData();
+                setPackageBrowserData(null);
+            }
             ObjectExplorerPanel panel = (ObjectExplorerPanel) oePanelTabbedPane.getComponentAt(oePanelTabbedPane.getSelectedIndex());
             panel.updateGame();
         }
@@ -390,6 +411,22 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         return getGameSelectionComboBox().getNonNullGameType();
     }
 
+    /**
+     * Gets the current UEClass selected by the Class Browser.  Used to persist
+     * that selection when the user switches games.
+     *
+     * @return The currently-selected UEClass
+     */
+    private UEClass getCurrentClassSelection() {
+        if (this.dm == null) {
+            return null;
+        }
+        TreePath selectionPath = classBrowserTree.getSelectionPath();
+        if (selectionPath == null) {
+            return null;
+        }
+        return (UEClass)((DefaultMutableTreeNode)selectionPath.getLastPathComponent()).getUserObject();
+    }
 
     public void dump(DumpOptions options) {
         if (options.createNewTabForResult) {
@@ -404,6 +441,21 @@ public final class ObjectExplorer extends ForceClosingJFrame {
      * classes in the specified game.
      */
     private void setClassBrowserData() {
+        this.setClassBrowserData(null);
+    }
+
+    /**
+     * Populates the main "Class Browser" panel, which contains a tree of all
+     * classes in the specified game, while also looking for a specific class
+     * while building.  This is used by the game-selection dropdown so that
+     * if a user has a class selected, that same class can be selected when
+     * the new game's tree is populated
+     *
+     * @param classToLookFor The classname to look for while building the tree
+     * @return The TreeNode containing the class, in the new tree
+     */
+    private DefaultMutableTreeNode setClassBrowserData(String classToLookFor) {
+        ArrayList<DefaultMutableTreeNode> foundNodes = new ArrayList<>();
         TitledBorder classborder = (TitledBorder) classBrowserPanel.getBorder();
         classborder.setTitle("Class Browser - " + this.dmm.getCurrentPatchType().toString());
         classBrowserPanel.repaint();
@@ -411,24 +463,38 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         if (this.dm == null) {
             node = new DefaultMutableTreeNode("No Data Present");
         } else {
-            node = this.buildClassTree(this.dm.getRootClass());
+            node = this.buildClassTree(this.dm.getRootClass(), classToLookFor, foundNodes);
             sortNode(node);
         }
         classBrowserTree.setModel(new DefaultTreeModel(node));
         classBrowserTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         classBrowserScrollPane.getVerticalScrollBar().setMaximum(500);
+        if (!foundNodes.isEmpty()) {
+            return foundNodes.get(0);
+        } else {
+            return null;
+        }
     }
 
     /**
      * Recursively loops through our UEClass data structure to build out the
-     * Class Browser tree data
+     * Class Browser tree data.  Will also keep an eye out for a specific class
+     * name, if classToLookFor is not null, and report which TreeNodes were
+     * built for class(es) which match that name.  (In practice that should
+     * only ever be a single node.)
+     *
      * @param root The root UEClass node to recurse from
+     * @param classToLookFor The classname to look for while building the node
+     * @param foundNodes A structure used for reporting which nodes matched classToLookFor
      * @return A DefaultMutableTreeNode which can be added to the tree
      */
-    private DefaultMutableTreeNode buildClassTree(UEClass root) {
+    private DefaultMutableTreeNode buildClassTree(UEClass root, String classToLookFor, ArrayList<DefaultMutableTreeNode> foundNodes) {
         DefaultMutableTreeNode node = new DefaultMutableTreeNode(root);
+        if (classToLookFor != null && root.getName().equalsIgnoreCase(classToLookFor)) {
+            foundNodes.add(node);
+        }
         for (UEClass child : root.getChildren()) {
-            node.insert(this.buildClassTree(child), node.getChildCount());
+            node.insert(this.buildClassTree(child, classToLookFor, foundNodes), node.getChildCount());
         }
         return node;
     }
