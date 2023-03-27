@@ -15,7 +15,7 @@ PythonSDK mod](https://github.com/BLCM/DataDumper).  Note that the data
 format may change without warning for awhile yet, as the new version
 approaches release!
 
-A Changelog can be found at [BLCMM/src/CHANGELOG.md](blob/apoc/BLCMM/src/CHANGELOG.md).
+A Changelog can be found at [BLCMM/src/CHANGELOG.md](BLCMM/src/CHANGELOG.md).
 
 TODO (immediate)
 ================
