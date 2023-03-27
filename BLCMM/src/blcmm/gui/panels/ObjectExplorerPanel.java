@@ -1308,7 +1308,16 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             if (initial) {
                 queryTextField.setText("Download data first");
                 textElement.setText("No data is present for " + this.dmm.getCurrentPatchType().getGameName() + ".\n"
-                        + "Download a data package and restart BLCMM to search/dump data for the game."
+                        + "\n"
+                        + "Download a data package and restart BLCMM to search/dump data for the game.\n"
+                        + "\n"
+                        + "Data packages for this version of BLCMM can currently be found at:\n"
+                        + "\n"
+                        + "    https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link\n"
+                        + "\n"
+                        + "If running BLCMM via Netbeans, place the Jars inside the top-level BLCMM directory.  If\n"
+                        + "running from a Jarfile (which may not even work at the moment), place them alongside\n"
+                        + "BLCMM.jar."
                 );
             }
             queryTextField.setEditable(false);
