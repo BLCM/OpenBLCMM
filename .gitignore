@@ -22,15 +22,9 @@ dist/
 /BLCMM/plugins/
 /BLCMM/plugin output/
 
-# BLCMM Data package generator data files
-/BLCMM Data/input/
-/BLCMM Data/output/
-/BLCMM Data/cj_data/BL2/raw/
-/BLCMM Data/cj_data/BL2/raw-sorted/
-/BLCMM Data/cj_data/BL2/organized/
-/BLCMM Data/cj_data/TPS/raw/
-/BLCMM Data/cj_data/TPS/raw-sorted/
-/BLCMM Data/cj_data/TPS/organized/
+# BLCMM Data
+blcmm_data_*.jar
+/BLCMM/extracted-data
 
 #BLCMM Lib distributor files
 /BLCMM Lib Distributor/other_locations.txt

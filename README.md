@@ -1,11 +1,19 @@
 *(this is gonna be super barebones for awhile...)*
 
 **NOTE:** This branch is *not* compatible with the original BLCMM game data
-packages.  There's currently not precompiled data available (though there
-probably will be Soon™), though the generation scripts are available
-via the [DataDumper PythonSDK mod](https://github.com/BLCM/DataDumper).  Also
-note that the data format may change without warning for awhile yet, as
-the new version approaches release.
+packages.  Prepackaged data files should be available at [this Google
+Drive link](https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link).
+At the moment, the fork is only really tested while running via Netbeans --
+download those data packages and save them inside the `BLCMM` directory.
+The app should see them on startup and extract the sqlite database to
+an `extracted-data` directory.  At the moment there's no real indication that
+that's happening apart from log entries -- once we have a launcher in place,
+that should get that sorted out a bit better.
+
+The generation scripts for the new data can be found in the [DataDumper
+PythonSDK mod](https://github.com/BLCM/DataDumper).  Note that the data
+format may change without warning for awhile yet, as the new version
+approaches release!
 
 TODO (immediate)
 ================
@@ -16,8 +24,13 @@ TODO (immediate)
   - New-version notification in-app
 - Rewrite other linked libraries w/ GPL versions
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Add link/button to github in the about dialog
-- Add Java version in about dialog
+- Memory monitor in main window?
+- About dialog improvements:
+  - Link/button to github
+  - Report Java version
+  - Report data versions
+  - Report memory usage + config?  Though if we have a memory counter on
+    the main window then maybe that's beside the point
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
@@ -30,6 +43,9 @@ TODO (immediate)
     code.  Incomplete/cut-off statements, etc.
   - Test out various scenarios relating to data availability; make sure that
     we can't NPE in OE, etc.
+  - Test out various failure situations on the new datalib packing (new
+    versions, version mismatches, min/max dbver restrictions, checksum failures,
+    mtime updates, etc)
 - Figure out opening SQLite DBs in read-only mode
 - May as well cache *all* our PreparedStatements in DataManager...
 - Apparently multi-selections screw with statement order in the Edit window?
@@ -39,6 +55,11 @@ TODO (immediate)
   double/triple/whatever).  Also an option to disable links altogether?
 - Make sure we handle launching from a readonly filesystem properly
   (original BLCMM launcher crashes when that happens; main app might too)
+- Add in proper version checking in `.blcm` loading.
+- Make sure that data jars can be found when launching from some other dir
+- Feedback to user when extracting/verifying sqlite (that whole Thing might
+  just get moved over into the launcher anyway, but we'll see)
+- Check diskspace prior to sqlite extraction
 
 TODO (maybe?)
 =============
