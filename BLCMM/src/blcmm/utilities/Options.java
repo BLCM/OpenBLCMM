@@ -116,6 +116,8 @@ public class Options {
         oeSearchSkins,
         oeSearchStaticMeshes,
         oeSearchWillowData,
+        oeDataSuccessTimestampBL2,
+        oeDataSuccessTimestampTPS,
     }
 
     public enum OESearch {
@@ -418,6 +420,10 @@ public class Options {
         // A flag for if we disabled delete messages.
         this.registerOption(new BooleanOption(OptionNames.showDeleteConfirmation.toString(), true));
 
+        // Timestamp of the datalib DB files when they was last successfully verified
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampBL2.toString(), 0));
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampTPS.toString(), 0));
+
         // Finally: a bit of aggregation housekeeping
         this.updateOESearchCategories();
     }
@@ -695,6 +701,26 @@ public class Options {
     }
 
     /**
+     * Convenience function to get a long option by OptionNames enum entry.
+     *
+     * @param optionName The option to retrieve
+     * @return The current option data
+     */
+    public long getLongOptionData(OptionNames optionName) {
+        return this.getLongOptionData(optionName.toString());
+    }
+
+    /**
+     * Convenience function to set a long option by OptionNames enum entry.
+     *
+     * @param optionName The option whose value to set
+     * @param optionValue The new option data.
+     */
+    public void setLongOptionData(OptionNames optionName, long optionValue) {
+        this.setLongOptionData(optionName.toString(), optionValue);
+    }
+
+    /**
      * Convenience function to get a filename option by OptionNames enum entry.
      *
      * @param optionName The option to retrieve
@@ -802,6 +828,27 @@ public class Options {
      */
     public void setIntOptionData(String optionName, int optionValue) {
         ((IntOption) this.getOption(optionName)).setData(optionValue);
+        this.save();
+    }
+
+    /**
+     * Convenience function to get a long option by name.
+     *
+     * @param optionName The option to retrieve
+     * @return The current option data
+     */
+    public long getLongOptionData(String optionName) {
+        return ((LongOption) this.getOption(optionName)).getData();
+    }
+
+    /**
+     * Convenience function to set a long option by name.
+     *
+     * @param optionName The option whose value to set
+     * @param optionValue The new option data.
+     */
+    public void setLongOptionData(String optionName, long optionValue) {
+        ((LongOption) this.getOption(optionName)).setData(optionValue);
         this.save();
     }
 
@@ -1142,6 +1189,22 @@ public class Options {
 
     public void setOnlineServiceNumber(int serviceNumber) {
         this.setIntOptionData(Options.OptionNames.onlineServiceNumber, serviceNumber);
+    }
+
+    public long getOEDataSuccessTimestampBL2() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampBL2);
+    }
+
+    public void setOEDataSuccessTimestampBL2(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampBL2, newTimestamp);
+    }
+
+    public long getOEDataSuccessTimestampTPS() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampTPS);
+    }
+
+    public void setOEDataSuccessTimestampTPS(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampTPS, newTimestamp);
     }
 
     public final void updateOESearchCategories() {

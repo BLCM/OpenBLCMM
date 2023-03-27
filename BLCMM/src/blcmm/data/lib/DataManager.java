@@ -29,13 +29,24 @@ package blcmm.data.lib;
 
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Options;
 import blcmm.utilities.Options.OESearch;
+import blcmm.utilities.Utilities;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -43,13 +54,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * New SQLite-backed Data Library.
@@ -85,12 +100,26 @@ import java.util.TreeSet;
  */
 public class DataManager {
 
+    // Some basic info
     private PatchType patchType;
     private String dataBaseDir;
     private String dbFilePath;
-    private String dumpFilePath;
     private Connection dbConn;
     private UEClass rootClass;
+
+    // Jarfile Info
+    private String jarFilename;
+    private JarFile jarFile;
+    private String dataPathBase;
+    private String dataPathDumps;
+    private String jarDumpVersion;
+
+    // Supported database versions, and other metadata
+    private final int minDatabaseSupported = 1;
+    private final int maxDatabaseSupported = 1;
+    private int databaseVersion;
+    private String dumpVersion;
+    private Date dataCompiled;
 
     // Lots of various similar lookups; a bit silly to be storing this much
     // info multiple times like this, but there's not *that* many classes.
@@ -153,14 +182,46 @@ public class DataManager {
      */
     public DataManager(PatchType patchType) throws NoDataException {
         this.patchType = patchType;
-        this.dataBaseDir = Paths.get("data", patchType.toString()).toString();
-        this.dbFilePath = Paths.get(this.dataBaseDir, "data.db").toString();
-        this.dumpFilePath = Paths.get(this.dataBaseDir, "dumps").toString();
-        this.totalDatafiles = 0;
+
+        // Extract the sqlite database if required
+        boolean extracted = false;
+        if (!this.checkDataFiles()) {
+            // This will throw a NoDataException if it doesn't extract+verify
+            GlobalLogger.log("Extracting " + patchType.name() + " database from jar");
+            this.extractDatabase();
+            extracted = true;
+        }
 
         // Database stuff!
+        this.totalDatafiles = 0;
         try {
-            this.dbConn = DriverManager.getConnection("jdbc:sqlite:" + this.dbFilePath);
+            this.doInitialDatabaseConection();
+
+            // Doublecheck that the versions match.  If not, try extracting the
+            // data again, unless we've already done an extraction on this run.
+            this.jarDumpVersion = this.getJarDumpVersion();
+            if (!this.dumpVersion.equals(this.jarDumpVersion)) {
+                if (extracted) {
+                    throw new NoDataException("Verified database integrity but the dump version does not match: "
+                            + "database dump version is: " + this.dumpVersion
+                            + ", Jar dump version is: " + this.jarDumpVersion
+                    );
+                } else {
+                    // Close the DB, re-extract, and reconnect.  (And redo the check)
+                    this.dbConn.close();
+                    GlobalLogger.log("Dump versions didn't match between database and jarfile for " + patchType.name() + ", re-extracting data");
+                    this.extractDatabase();
+                    this.doInitialDatabaseConection();
+
+                    // Now doublecheck one more time!
+                    if (!this.dumpVersion.equals(this.jarDumpVersion)) {
+                        throw new NoDataException("Verified database integrity but the dump version does not match: "
+                                + "database dump version is: " + this.dumpVersion
+                                + ", Jar dump version is: " + this.jarDumpVersion
+                        );
+                    }
+                }
+            }
 
             // Load in our categories
             Statement stmt = this.dbConn.createStatement();
@@ -262,12 +323,348 @@ public class DataManager {
     }
 
     /**
+     * Checks our data Jar to make sure that it contains everything we need.
+     * Returns true if everything is good to go, or False if the sqlite database
+     * needs to be extracted/verified again.
+     *
+     * @return True if all is well, or False if the database needs extraction.
+     * @throws blcmm.data.lib.DataManager.NoDataException
+     */
+    private boolean checkDataFiles() throws NoDataException {
+
+        //this.jarFilename = "blcmm_data_" + patchType.name() + ".jar";
+
+        // Actually, let's let these filenames be versioned, and always take the most recent
+        File thisDir = new File(".");
+        String jarPrefix = "blcmm_data_" + patchType.name() + "-";
+        File[] jars = thisDir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith(jarPrefix) && name.endsWith(".jar");
+            }
+        });
+        if (jars.length > 0) {
+            Arrays.sort(jars);
+            this.jarFilename = jars[jars.length-1].toString();
+        } else {
+            throw new NoDataException("No jarfiles found for " + this.patchType.name());
+        }
+
+        // Now start processing
+        try {
+
+            this.jarFile = new JarFile(new File(this.jarFilename));
+            GlobalLogger.log("Found data jarfile at: " + this.jarFilename);
+            this.dataPathBase = Paths.get("data", patchType.name()).toString();
+            this.dataPathDumps = Paths.get(this.dataPathBase, "dumps").toString();
+            this.dataBaseDir = Paths.get("extracted-data", patchType.name()).toString();
+            this.dbFilePath = Paths.get(this.dataBaseDir, "data.db").toString();
+
+            // Check to see if the database file exists
+            File dbFile = new File(this.dbFilePath);
+            if (!dbFile.exists()) {
+                return false;
+            }
+
+            // Check the database file to see if we've already checked it
+            long lastVerified;
+            switch (patchType) {
+                case TPS:
+                    lastVerified = Options.INSTANCE.getOEDataSuccessTimestampTPS();
+                    break;
+                case BL2:
+                default:
+                    lastVerified = Options.INSTANCE.getOEDataSuccessTimestampBL2();
+                    break;
+            }
+            if (lastVerified == 0) {
+                return false;
+            }
+            BasicFileAttributes attrs = Files.readAttributes(dbFile.toPath(), BasicFileAttributes.class);
+            if (attrs.lastModifiedTime().toMillis() == lastVerified) {
+                return true;
+            }
+
+            // Verify the database checksum
+            GlobalLogger.log(patchType.name() + " data jar file modification time doesn't match; re-verifying");
+            return this.verifyDatabaseChecksum();
+
+        } catch (MalformedURLException e) {
+            throw new NoDataException("Couldn't construct path to data jar", e);
+        } catch (IOException e) {
+            throw new NoDataException("Could not read data jar", e);
+        }
+    }
+
+    /**
+     * Verifies the extracted SQLite database checksum.  Returns True if the
+     * checksum succeeded or False otherwise.
+     *
+     * @return True if the database checksum matches what's in the Jar
+     */
+    private boolean verifyDatabaseChecksum() {
+        try {
+            String diskHash = Utilities.sha256(this.getJarStreamBase("data.db"));
+            BufferedReader br = this.getJarBufferedReaderBase("data.db.sha256sum");
+            if (br == null) {
+                GlobalLogger.log("ERROR: Could not find sha256sum for database in data jar");
+                return false;
+            }
+            String checkHash = br.readLine().trim();
+            br.close();
+            return diskHash.equalsIgnoreCase(checkHash);
+        } catch (IOException|NoSuchAlgorithmException e) {
+            GlobalLogger.log(e);
+            return false;
+        }
+    }
+
+    /**
+     * Extracts the SQLite database from the Jarfile so it can be accessed
+     * directly.  Will throw a NoDataException under various circumstances if
+     * the database can't be extracted.  This method will validate the
+     * checksum after extraction.
+     *
+     * @throws blcmm.data.lib.DataManager.NoDataException
+     */
+    private void extractDatabase() throws NoDataException {
+        InputStream fromJar = this.getJarStreamBase("data.db");
+        File dbDir = new File(this.dataBaseDir);
+        if (!dbDir.exists()) {
+            dbDir.mkdirs();
+        }
+        try {
+            byte[] buffer = new byte[4096];
+            OutputStream toDisk = new FileOutputStream(new File(this.dbFilePath));
+            int read;
+            while ((read = fromJar.read(buffer)) != -1) {
+                toDisk.write(buffer, 0, read);
+            }
+            toDisk.close();
+            fromJar.close();
+        } catch (IOException e) {
+            GlobalLogger.log(e);
+            throw new NoDataException("Could not read database from Jarfile", e);
+        }
+
+        // Theoretically at this point we're good to go.  Check the checksum, though.
+        GlobalLogger.log("Checking " + patchType.name() + " database integrity, post-extraction");
+        if (!this.verifyDatabaseChecksum()) {
+            throw new NoDataException("Database checksum could not be verified");
+        }
+
+        // And now we're all but guaranteed to be good.  Save the mtime so we
+        // don't have to check again.
+        try {
+            BasicFileAttributes attrs = Files.readAttributes(Paths.get(this.dbFilePath), BasicFileAttributes.class);
+            switch (this.patchType) {
+                case TPS:
+                    Options.INSTANCE.setOEDataSuccessTimestampTPS(attrs.lastModifiedTime().toMillis());
+                    break;
+                case BL2:
+                default:
+                    Options.INSTANCE.setOEDataSuccessTimestampBL2(attrs.lastModifiedTime().toMillis());
+                    break;
+            }
+        } catch (IOException e) {
+            GlobalLogger.log(e);
+            throw new NoDataException("Error processing database verification cache", e);
+        }
+    }
+
+    /**
+     * Performs the initial database connection, checks its database version against
+     * the values we support, and pulls the rest of the DB metadata in.  This is
+     * abstracted out from the main constructor because we may end up calling it
+     * more than once if the sqlite database is out-of-sync with the version
+     * from the Jar
+     *
+     * @throws SQLException
+     * @throws blcmm.data.lib.DataManager.NoDataException
+     */
+    private void doInitialDatabaseConection() throws SQLException, NoDataException {
+
+        // Connect to the database
+        this.dbConn = DriverManager.getConnection("jdbc:sqlite:" + this.dbFilePath);
+
+        // Load in metadata
+        Statement stmt = this.dbConn.createStatement();
+        ResultSet rs = stmt.executeQuery("select * from metadata");
+        rs.next();
+        this.databaseVersion = rs.getInt("db_version");
+        if (this.databaseVersion < this.minDatabaseSupported) {
+            throw new NoDataException("Database is version " + this.databaseVersion
+                    + ", but we require at least version " + this.minDatabaseSupported);
+        } else if (this.databaseVersion > this.maxDatabaseSupported) {
+            throw new NoDataException("Database is version " + this.databaseVersion
+                    + ", but we only support up to version " + this.maxDatabaseSupported);
+        }
+        this.dumpVersion = rs.getString("dump_version");
+        this.dataCompiled = rs.getDate("compiled");
+        rs.close();
+        stmt.close();
+    }
+
+    /**
+     * Get the data dump version as specified by the Jar filesystem itself.
+     * This is used to compare against the version stored in the SQLite
+     * database to check for conflicts.
+     *
+     * @return The dump version specified in the Jar filesystem
+     * @throws blcmm.data.lib.DataManager.NoDataException
+     */
+    private String getJarDumpVersion() throws NoDataException {
+        try {
+            BufferedReader versionReader = this.getJarBufferedReaderBase("version.txt");
+            this.jarDumpVersion = versionReader.readLine();
+            versionReader.close();
+            return this.jarDumpVersion;
+        } catch (IOException e) {
+            throw new NoDataException("No dump version information found in jar", e);
+        }
+    }
+
+    /**
      * Get the game type associated with this data.
      *
      * @return The PatchType
      */
     public PatchType getPatchType() {
         return this.patchType;
+    }
+
+    /**
+     * Returns the database version we're currently using.
+     *
+     * @return The database version;
+     */
+    public int getDatabaseVersion() {
+        return this.databaseVersion;
+    }
+
+    /**
+     * Returns the dump version that we're currently using.
+     *
+     * @return The dump version
+     */
+    public String getDumpVersion() {
+        return this.dumpVersion;
+    }
+
+    /**
+     * Returns the timestamp when our data was compiled/generated.
+     *
+     * @return The timestamp
+     */
+    public Date getCompiled() {
+        return this.dataCompiled;
+    }
+
+    /**
+     * Returns the specified JarEntry from our data Jarfile, based on its
+     * absolute path.
+     *
+     * @param path The path to look for
+     * @return The JarEntry for the path
+     */
+    private JarEntry getJarEntry(String path) {
+        return this.jarFile.getJarEntry(path);
+    }
+
+    /**
+     * Returns the specified JarEntry from our data Jarfile, inside the
+     * base directory we expect all our data to be contained.
+     *
+     * @param path The path to look for
+     * @return The JarEntry for the path
+     */
+    private JarEntry getJarEntryBase(String path) {
+        return this.getJarEntry(Paths.get(this.dataPathBase, path).toString());
+    }
+
+    /**
+     * Returns the specified JarEntry from our data Jarfile, inside the
+     * directory which contains all the actual dump information.
+     *
+     * @param path The path to look for
+     * @return The JarEntry for the path
+     */
+    private JarEntry getJarEntryDumps(String path) {
+        return this.getJarEntry(Paths.get(this.dataPathDumps, path).toString());
+    }
+
+    /**
+     * Returns an InputStream from our Jar file based on a JarEntry pointing
+     * to a specific file.  This is used by Object Explorer to get dump info.
+     *
+     * @param entry The path inside the Jar file to retreive
+     * @return An InputStream to the specified entry
+     */
+    public InputStream getStreamFromJarEntry(JarEntry entry) {
+        if (entry == null) {
+            return null;
+        } else {
+            try {
+                return this.jarFile.getInputStream(entry);
+            } catch (IOException e) {
+                GlobalLogger.log(e);
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Returns an InputStream pointing to the specified path in the Jar file,
+     * inside the base directory which we expect to find all our data.
+     *
+     * @param path The path relative to our "base" directory
+     * @return An InputStream for the specified path
+     */
+    private InputStream getJarStreamBase(String path) {
+        return this.getStreamFromJarEntry(this.getJarEntryBase(path));
+    }
+
+    /**
+     * Returns an InputStream pointing to the specified path in the Jar file,
+     * inside the directory which contains all the actual dump info.
+     *
+     * @param path The path relative to our dumps directory
+     * @return An InputStream for the specified path
+     */
+    private InputStream getJarStreamDumps(String path) {
+        return this.getStreamFromJarEntry(this.getJarEntryDumps(path));
+    }
+
+    /**
+     * Returns a BufferedReader pointing to the specified path in the Jar file,
+     * inside the directory which we expect to find all our data.
+     *
+     * @param path The path relative to our "base" directory
+     * @return A BufferedReader for the path
+     */
+    private BufferedReader getJarBufferedReaderBase(String path) {
+        InputStream stream = this.getJarStreamBase(path);
+        if (stream == null) {
+            return null;
+        } else {
+            return new BufferedReader(new InputStreamReader(stream));
+        }
+    }
+
+    /**
+     * Returns a BufferedReader pointing to the specified path in the Jar file,
+     * inside the directory which contains all the actual dump info.
+     *
+     * @param path The path relative to our dumps directory
+     * @return A BufferedReader for the path
+     */
+    private BufferedReader getJarBufferedReaderDumps(String path) {
+        InputStream stream = this.getJarStreamDumps(path);
+        if (stream == null) {
+            return null;
+        } else {
+            return new BufferedReader(new InputStreamReader(stream));
+        }
     }
 
     /**
@@ -611,8 +1008,7 @@ public class DataManager {
                 ueObject.setUeClass(this.classIdToClass.get(classId));
             }
             String dataFileName = rs.getString("class_name") + ".dump." + ueObject.getFileIndex();
-            File dataFile = Paths.get(this.dumpFilePath, dataFileName).toFile();
-            FileInputStream stream = new FileInputStream(dataFile);
+            InputStream stream = this.getJarStreamDumps(dataFileName);
             byte[] data = new byte[ueObject.getBytes()];
             stream.skip(ueObject.getFilePosition());
             stream.read(data);
@@ -637,17 +1033,17 @@ public class DataManager {
      * Return all list of all datafiles containing dumps for the specified
      * UEClass.
      *
-     * TODO: This really shouldn't expose something like a File, since that may
+     * TODO: This really shouldn't expose something like a JarEntry, since that may
      * change (and probably will) in the future.
      *
      * @param ueClass The class for which to find datafiles
-     * @return A list of Files pointing at the datafiles
+     * @return A list of JarEntry objects pointing at the datafiles
      */
-    public List<File> getAllDatafilesForClass(UEClass ueClass) {
-        ArrayList<File> list = new ArrayList<> ();
+    public List<JarEntry> getAllDatafilesForClass(UEClass ueClass) {
+        ArrayList<JarEntry> list = new ArrayList<> ();
         for (int i=1; i<=ueClass.getNumDatafiles(); i++) {
             String dataFileName = ueClass.getName() + ".dump." + i;
-            list.add(Paths.get(this.dumpFilePath, dataFileName).toFile());
+            list.add(this.getJarEntryDumps(dataFileName));
         }
         return list;
     }

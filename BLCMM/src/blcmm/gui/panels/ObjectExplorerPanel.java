@@ -52,8 +52,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -65,6 +63,7 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
+import java.util.jar.JarEntry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -1184,11 +1183,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         StringBuilder output = new StringBuilder();
         int objectCount = 0;
 
-        for (UEClass loopClass : this.dmm.getCurrentDataManager().getSubclassesSet(ueClass)) {
+        for (UEClass loopClass : this.dm.getSubclassesSet(ueClass)) {
 
-            for (File dataFile : this.dmm.getCurrentDataManager().getAllDatafilesForClass(loopClass)) {
+            for (JarEntry dataFile : this.dm.getAllDatafilesForClass(loopClass)) {
 
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile)))) {
+                try {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(this.dm.getStreamFromJarEntry(dataFile)));
 
                     String toMatch;
                     String current = null;
@@ -1404,14 +1404,15 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
                 for (UEClass ueClass : this.getAvailableClasses()) {
 
-                    for (File dataFile : this.dm.getAllDatafilesForClass(ueClass)) {
+                    for (JarEntry dataFile : this.dm.getAllDatafilesForClass(ueClass)) {
 
                         if (stop) {
                             return null;
                         }
                         int old = matches.size();
 
-                        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(dataFile)))) {
+                        try {
+                            BufferedReader br = new BufferedReader(new InputStreamReader(this.dm.getStreamFromJarEntry(dataFile)));
                             loop(br, matches);
                             news = old != matches.size();
 
