@@ -23,7 +23,7 @@ if you'd like to help out with development.
 **NOTE:** This branch is *not* compatible with the original BLCMM game data
 packages.  Prepackaged data files should be available for now at [this Google
 Drive link](https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link)
-(that is not be the final location of the datafiles -- once we're closer to
+(that is not the final location of the datafiles -- once we're closer to
 a public release, they'll be put somewhere more official).  To use those data
 packages while running inside Netbeans, download them and save them inside the
 checked-out `BLCMM` directory.  The app should see them on startup and extract
