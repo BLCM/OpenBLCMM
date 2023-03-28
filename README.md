@@ -25,7 +25,6 @@ TODO (immediate)
 - AoDK support (both in OpenBLCMM itself and OE)
 - Rewrite launcher w/ GPL version
   - New-version notification in-app
-- Rewrite other linked libraries w/ GPL versions
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Memory monitor in main window?
 - About dialog improvements:
@@ -34,6 +33,20 @@ TODO (immediate)
   - Report data versions
   - Report memory usage + config?  Though if we have a memory counter on
     the main window then maybe that's beside the point
+- Figure out opening SQLite DBs in read-only mode
+- May as well cache *all* our PreparedStatements in DataManager...
+- Apparently multi-selections screw with statement order in the Edit window?
+- Improve "basic" attr-name autocomplete to restrict results to appropriate
+  field names
+- Options for changing object-opening behavior (ctrl/alt/shift-click, single/
+  double/triple/whatever).  Also an option to disable links altogether?
+- Make sure we handle launching from a readonly filesystem properly
+  (original BLCMM launcher crashes when that happens; main app might too)
+- Add in proper version checking in `.blcm` loading.
+- Make sure that data jars can be found when launching from some other dir
+- Feedback to user when extracting/verifying sqlite (that whole Thing might
+  just get moved over into the launcher anyway, but we'll see)
+- Check diskspace prior to sqlite extraction
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
@@ -50,20 +63,6 @@ TODO (immediate)
     versions, version mismatches, min/max dbver restrictions, checksum failures,
     mtime updates, etc)
   - Do at least a bit of testing in all currently-supported Java versions
-- Figure out opening SQLite DBs in read-only mode
-- May as well cache *all* our PreparedStatements in DataManager...
-- Apparently multi-selections screw with statement order in the Edit window?
-- Improve "basic" attr-name autocomplete to restrict results to appropriate
-  field names
-- Options for changing object-opening behavior (ctrl/alt/shift-click, single/
-  double/triple/whatever).  Also an option to disable links altogether?
-- Make sure we handle launching from a readonly filesystem properly
-  (original BLCMM launcher crashes when that happens; main app might too)
-- Add in proper version checking in `.blcm` loading.
-- Make sure that data jars can be found when launching from some other dir
-- Feedback to user when extracting/verifying sqlite (that whole Thing might
-  just get moved over into the launcher anyway, but we'll see)
-- Check diskspace prior to sqlite extraction
 
 TODO (maybe?)
 =============
