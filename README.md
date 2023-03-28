@@ -17,11 +17,12 @@ approaches release!
 
 A Changelog can be found at [BLCMM/src/CHANGELOG.md](BLCMM/src/CHANGELOG.md).
 
+OpenBLCMM's license (GPLv3) can be found at [BLCMM/src/LICENSE.txt](BLCMM/src/LICENSE.txt).
+
 TODO (immediate)
 ================
 
-- Rename to BLCMM-Basic or something?
-- AoDK support (both in BLCMM itself and OE)
+- AoDK support (both in OpenBLCMM itself and OE)
 - Rewrite launcher w/ GPL version
   - New-version notification in-app
 - Rewrite other linked libraries w/ GPL versions
@@ -48,6 +49,7 @@ TODO (immediate)
   - Test out various failure situations on the new datalib packing (new
     versions, version mismatches, min/max dbver restrictions, checksum failures,
     mtime updates, etc)
+  - Do at least a bit of testing in all currently-supported Java versions
 - Figure out opening SQLite DBs in read-only mode
 - May as well cache *all* our PreparedStatements in DataManager...
 - Apparently multi-selections screw with statement order in the Edit window?
@@ -85,7 +87,7 @@ TODO (long-term)
   side.  But that way we could have, for instance, separate "BL2 Steam"
   and "BL2 EGS" buttons, etc.  At the moment, the detection routines just
   return the first thing they find, though.
-- Maybe completely separate BLCMM from OE?
+- Maybe completely separate OpenBLCMM from OE?
 - Maybe completely separate INI tweaks into their own little app?
 - Pass around references to stuff like our Options instance, rather than
   referring to global "instance" vars?

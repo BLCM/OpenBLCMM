@@ -1,6 +1,6 @@
 *(this is gonna be real barebones for awhile)*
 
-BLCMM was developed using NetBeans, most recently with NetBeans IDE 16.
+OpenBLCMM was developed using NetBeans, most recently with NetBeans IDE 16.
 
 The currently-checked-in project expects a NetBeans Java platform named
 "`JDK_19`" -- you can get to that via NetBeans' `Tools -> Java Platforms`.
