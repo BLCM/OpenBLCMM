@@ -21,14 +21,15 @@ for public use.  Check out our [short notes on its development environment](READ
 if you'd like to help out with development.
 
 **NOTE:** This branch is *not* compatible with the original BLCMM game data
-packages.  Prepackaged data files should be available at [this Google
-Drive link](https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link).
-To use those data packages while running inside Netbeans, download them and
-save them inside the checked-out `BLCMM` directory.  The app should see them
-on startup and extract the sqlite database to an `extracted-data` directory.
-At the moment there's no real indication that that's happening apart from
-log entries -- once we have a launcher in place, that should get that sorted
-out a bit better.
+packages.  Prepackaged data files should be available for now at [this Google
+Drive link](https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link)
+(that is not be the final location of the datafiles -- once we're closer to
+a public release, they'll be put somewhere more official).  To use those data
+packages while running inside Netbeans, download them and save them inside the
+checked-out `BLCMM` directory.  The app should see them on startup and extract
+the sqlite database to an `extracted-data` directory.  At the moment there's no
+real indication that that's happening apart from log entries -- once we have a
+launcher in place, that should get that sorted out a bit better.
 
 The generation scripts for the new data can be found in the [DataDumper
 PythonSDK mod](https://github.com/BLCM/DataDumper).  Note that the data
