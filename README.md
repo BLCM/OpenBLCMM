@@ -1,26 +1,62 @@
-*(this is gonna be super barebones for awhile...)*
+OpenBLCMM
+---------
+
+OpenBLCMM is a fully-opensource fork of the
+[Borderlands Community Mod Manager](https://borderlandsmodding.com/running-mods/#managing-text-based-mods-starting-blcmm),
+which is the tool for managing text-based mods for Borderlands 2 and
+The Pre-Sequel.  BLCMM was written by LightChaosman with some contributions
+from other community members and officially released in 2018.  In 2022,
+LightChaosman opensourced the ["core" BLCMM code on github](https://github.com/LightChaosman/blcmm).
+In 2023 this project was started to fix up some longstanding issues
+with BLCMM, and provide a fully-opensource version of the entire BLCMM
+application.
+
+This fork is still in development but is proceeding along nicely.  It
+intentionally omits a few features from the original BLCMM app -- perhaps
+most notably, it no longer provides any hex-editing functionality, since
+[PythonSDK](https://borderlandsmodding.com/sdk-mods/) is the current
+recommended method for doing so.  As it stands, OpenBLCMM has not really
+been tested outside of its development environment, and isn't really ready
+for public use.  Check out our [short notes on its development environment](README-developing.md)
+if you'd like to help out with development.
 
 **NOTE:** This branch is *not* compatible with the original BLCMM game data
 packages.  Prepackaged data files should be available at [this Google
 Drive link](https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link).
-At the moment, the fork is only really tested while running via Netbeans --
-download those data packages and save them inside the `BLCMM` directory.
-The app should see them on startup and extract the sqlite database to
-an `extracted-data` directory.  At the moment there's no real indication that
-that's happening apart from log entries -- once we have a launcher in place,
-that should get that sorted out a bit better.
+To use those data packages while running inside Netbeans, download them and
+save them inside the checked-out `BLCMM` directory.  The app should see them
+on startup and extract the sqlite database to an `extracted-data` directory.
+At the moment there's no real indication that that's happening apart from
+log entries -- once we have a launcher in place, that should get that sorted
+out a bit better.
 
 The generation scripts for the new data can be found in the [DataDumper
 PythonSDK mod](https://github.com/BLCM/DataDumper).  Note that the data
 format may change without warning for awhile yet, as the new version
 approaches release!
 
+Changelog
+=========
+
 A Changelog can be found at [BLCMM/src/CHANGELOG.md](BLCMM/src/CHANGELOG.md).
 
-OpenBLCMM's license (GPLv3) can be found at [BLCMM/src/LICENSE.txt](BLCMM/src/LICENSE.txt).
+Hex Edits
+=========
 
-TODO (immediate)
-================
+As mentioned above, OpenBLCMM no longer provides hex-editing functionality,
+since [PythonSDK](https://borderlandsmodding.com/sdk-mods/) is the
+community-recommended method for doing so.  We do have a document here for
+all the hex edits we were aware of:
+
+* [README-hexedits.md](README-hexedits.md)
+
+Not all the edits in that doc were accessible via BLCMM.  That info might be
+moved to a separate wiki or documentation area in the future!
+
+TODO
+====
+
+### Immediate (would like to get done before public release)
 
 - AoDK support (both in OpenBLCMM itself and OE)
 - Rewrite launcher w/ GPL version
@@ -66,8 +102,7 @@ TODO (immediate)
     mtime updates, etc)
   - Do at least a bit of testing in all currently-supported Java versions
 
-TODO (maybe?)
-=============
+### Can probably wait until after the first public release
 
 - Add some caching to IconManager -- probably had it originally.
 - Convert StringTable to use a CSV library
@@ -79,8 +114,8 @@ TODO (maybe?)
   it'd undeniably be kind of nice to be rid of it.
 - Allow multiple OE windows?
 
-TODO (long-term)
-================
+### Longer-term ideas, or stuff that I'm not super sure about
+
 - Improve game-detection routines to be able to enumerate *all* detected
   game installs. in addition to user-selected install(s) via a Settings
   screen.  With current functionality, this would basically only ever be
@@ -92,4 +127,10 @@ TODO (long-term)
 - Maybe completely separate INI tweaks into their own little app?
 - Pass around references to stuff like our Options instance, rather than
   referring to global "instance" vars?
+
+License
+=======
+
+OpenBLCMM is licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
+A copy can be found at [BLCMM/src/LICENSE.txt](BLCMM/src/LICENSE.txt).
 
