@@ -25,6 +25,8 @@ TODO (immediate)
 - AoDK support (both in OpenBLCMM itself and OE)
 - Rewrite launcher w/ GPL version
   - New-version notification in-app
+- Cut cruft from resources jar, recreate stuff that needs recreation, and
+  pull all that into the main project instead of in a separate jar.
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Memory monitor in main window?
 - About dialog improvements:
