@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2023 CJ Kucera
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,11 +17,12 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 
@@ -35,19 +36,19 @@ import javax.imageio.ImageIO;
 
 /**
  * Class to manage icons that the game uses.  This class was
- * reimplemented based on the calls BLCMM makes into BLCMM_Utilities.jar,
+ * reimplemented based on the calls BLCMM made into BLCMM_Utilities.jar,
  * without reference to the original sourcecode.
- * 
+ *
  * @author apocalyptech
  */
 public class IconManager {
-    
+
     static final String BLCMM_ICON_PATH = "/resources/Icon.png";
-    
+
     /**
      * Returns the specified icon, or an "empty" image if the path can't be
      * found or loaded.
-     * 
+     *
      * @param path The resource path to the icon
      * @return The icon for the game
      */
@@ -65,33 +66,33 @@ public class IconManager {
         }
         return new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
     }
-    
+
     /**
      * Returns the specified icon, scaled to the given width/height.
-     * 
+     *
      * @param path The resource path to the icon
      * @param size The size to scale to -- images are assumed to be square
      * @return The icon for the game
-     */    
+     */
     public static Image getIcon(String path, int size) {
         Image im = getIcon(path);
         return im.getScaledInstance(size, size, Image.SCALE_SMOOTH);
     }
 
     /**
-     * Returns the full-size BLCMM Icon itself
-     * 
-     * @return The BLCMM icon
+     * Returns the full-size OpenBLCMM Icon itself
+     *
+     * @return The OpenBLCMM icon
      */
     public static Image getBLCMMIcon() {
         return getIcon(BLCMM_ICON_PATH);
     }
 
     /**
-     * Returns the BLCMM icon, scaled to the specified size
-     * 
+     * Returns the OpenBLCMM icon, scaled to the specified size
+     *
      * @param size The width and height of the requested icon (assumed to be square)
-     * @return The scaled BLCMM icon
+     * @return The scaled OpenBLCMM icon
      */
     public static Image getBLCMMIcon(int size) {
         return getIcon(BLCMM_ICON_PATH, size);

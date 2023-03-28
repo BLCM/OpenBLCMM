@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,11 +17,12 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm;
@@ -105,7 +106,7 @@ public class Startup {
             return;
         }
         if (!confirmIO()) {
-            GlobalLogger.log("Closing BLCMM because we can't confirm IO");
+            GlobalLogger.log("Closing " + Meta.NAME + " because we can't confirm IO");
             GlobalLogger.markAsPermanentLog();
             return;
         }
@@ -133,7 +134,7 @@ public class Startup {
         } else {
             GlobalLogger.setLogFolder(LAUNCHER.getParent() + "/blcmm_logs");
         }
-        GlobalLogger.log("Running BLCMM version " + MainGUI.VERSION);
+        GlobalLogger.log("Running " + Meta.NAME + " version " + Meta.VERSION);
         GlobalLogger.log("Running Java version " + System.getProperty("java.version"));
         GlobalLogger.log("Arguments provided; VM arguments: " + Arrays.toString(vmArguments.toArray()) + " - Runtime arguments: " + Arrays.toString(args));
         GlobalLogger.log("Username: " + System.getProperty("user.name"));
@@ -162,7 +163,10 @@ public class Startup {
             File f2 = new File("one_time_blcmm_startup.blcm");
             if (!f2.exists()) {
                 MainGUI.setTheme(ThemeManager.getDefaultTheme());
-                JOptionPane.showMessageDialog(null, "Please use the launcher to run BLCMM.", "No launcher used", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                        "Please use the launcher to run " + Meta.NAME + ".",
+                        "No launcher used",
+                        JOptionPane.WARNING_MESSAGE);
                 System.exit(0);
             }
             f2.delete();
@@ -178,7 +182,7 @@ public class Startup {
         // rather than always being alongside the launcher.  Don't want to actually use
         // this anywhere until it's seen some action on various platforms, and under
         // various conditions.
-        GlobalLogger.log("Your BLCMM installation can be found here: " + BLCMMUtilities.getBLCMMDataDir());
+        GlobalLogger.log("Your " + Meta.NAME + " installation can be found here: " + BLCMMUtilities.getBLCMMDataDir());
         GlobalLogger.log("Working directory: " + System.getProperty("user.dir").replaceAll("\\\\", "/"));
 
         java.awt.EventQueue.invokeLater(() -> {
@@ -207,7 +211,7 @@ public class Startup {
                     + "Type=Application\n"
                     + "Terminal=false\n"
                     + "Icon=" + iconPath + "\n"
-                    + "Name=BLCMM\n"
+                    + "Name=" + Meta.NAME + "\n"
                     + "StartupNotify=true\n"
                     + "Comment=Edit Borderlands 2 and Pre-Sequel mods");
             sb.append("Exec=/usr/bin/java -jar \"" + launcherPath + "\"\n");
@@ -315,11 +319,11 @@ public class Startup {
                     = "Use the middle mouse button in the Object Explorer to open a new tab\n"
                     + "Press CTRL+Space while editing for auto-complete\n"
                     + "Is something unavailable? Hover your mouse over the button for info\n"
-                    + "Hotfixes work mostly the same as regular set commands with BLCMM\n"
-                    + "Extra features for BLCMM can be downloaded in the settings menu\n"
+                    + "Hotfixes work mostly the same as regular set commands with " + Meta.NAME + "\n"
+                    + "Extra features for " + Meta.NAME + " can be downloaded in the settings menu\n"
                     + "Use 'Format code' or 'Deformat code' to make dumped objects or code more readable\n"
                     + "Most tools to reorganize mods are found in the right-mouse menu\n"
-                    + "Did BLCMM crash? a backup of your current file is made every 2 minutes\n"
+                    + "Did " + Meta.NAME + " crash? a backup of your current file is made every 2 minutes\n"
                     + "Hide the left side of the object explorer by double-clicking the divider";
 
             Utilities.writeStringToFile(hints, f);
@@ -393,9 +397,9 @@ public class Startup {
         } catch (IOException e) {
             b = false;
             JOptionPane.showMessageDialog(null, ""
-                    + "BLCMM does not seem to be able to write to files.\n"
-                    + "Check your file permissions / run BLCMM as an administrator / run it at a different location.\n"
-                    + "BLCMM will now shut down, since it requires file I/O.",
+                    + Meta.NAME + " does not seem to be able to write to files.\n"
+                    + "Check your file permissions or run it at a different location.\n"
+                    + Meta.NAME + " will now shut down, since it requires file I/O.",
                     "No I/O permissions", JOptionPane.ERROR_MESSAGE);
 
         } finally {
@@ -439,7 +443,7 @@ public class Startup {
     }
 
     public static boolean promptRestart(boolean launcher) throws HeadlessException {
-        int restart = JOptionPane.showConfirmDialog(null, "BLCMM needs to restart for the selected options to work properly. Restart now?", "Restart?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int restart = JOptionPane.showConfirmDialog(null, Meta.NAME + " needs to restart for the selected options to work properly. Restart now?", "Restart?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (restart != JOptionPane.YES_OPTION) {
             return false;
         }
@@ -459,7 +463,7 @@ public class Startup {
     private static void startBLCMM() {
         String path = new File(System.getProperty("user.dir")).getAbsolutePath();
         String path2 = path.replaceAll("\\\\", "/");
-        File f = new File(path2 + "/BLCMM.jar");
+        File f = new File(path2 + "/" + Meta.JARFILE);
         String path3 = f.getAbsolutePath().replaceAll("\\\\", "/");
         String[] command4 = new String[]{"java", "-jar", "-XX:MaxHeapFreeRatio=50", path3, "-launcher=" + LAUNCHER.getAbsolutePath()};
         try {
@@ -467,8 +471,8 @@ public class Startup {
         } catch (IOException ex) {
             GlobalLogger.log(ex);
             JOptionPane.showMessageDialog(null,
-                    "Unable to launch BLCMM: " + ex.getMessage(),
-                    "Error launching BLCMM", JOptionPane.ERROR_MESSAGE);
+                    "Unable to launch " + Meta.NAME + ": " + ex.getMessage(),
+                    "Error launching " + Meta.NAME, JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -565,11 +569,11 @@ public class Startup {
 
             String text;
             if (memError) {
-                text = "<html><b>BLCMM ran out of memory!</b><br/>"
+                text = "<html><b>" + Meta.NAME + " ran out of memory!</b><br/>"
                         + "<br/>"
                         + "This can happen when trying to load large mods like Randomizers.<br/>"
                         + "<br/>"
-                        + "To prevent this error from happening in the future, assign BLCMM more<br/>"
+                        + "To prevent this error from happening in the future, assign " + Meta.NAME + " more<br/>"
                         + "RAM on the launcher screen.  At the launcher, click the checkbox<br/>"
                         + "in the top left, and adjust the memory usage there!";
             } else {

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,34 +17,34 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.utilities;
 
+import blcmm.model.PatchType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import blcmm.model.PatchType;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 /**
- * A small class to provide some miscellaneous BLCMM-specific utilities which
+ * A small class to provide some miscellaneous OpenBLCMM-specific utilities which
  * don't really belong in the main Utilities class. Could probably bear to have
  * various things moved over here.
  */
 public class BLCMMUtilities {
 
     /**
-     * Holds the path to the launcher used to launch BLCMM, if it was launched
+     * Holds the path to the launcher used to launch OpenBLCMM, if it was launched
      * that way.
      */
     private static File launcher = null;
@@ -82,7 +82,7 @@ public class BLCMMUtilities {
      * writable by the user.
      */
     public static String getBLCMMDataDir() {
-        String appDirName = "BLCMM";
+        String appDirName = "OpenBLCMM";
         String detectedDir = Utilities.getAppDataDir(appDirName);
         if (detectedDir == null) {
             // If we couldn't find a dir, check to see if we can use the

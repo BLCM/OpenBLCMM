@@ -198,7 +198,8 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Uninstall BLCMM"/>
+                <Property name="text" type="java.lang.String" value="Uninstall OpenBLCMM"/>
+                <Property name="actionCommand" type="java.lang.String" value="Uninstall OpenBLCMM"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem2ActionPerformed"/>

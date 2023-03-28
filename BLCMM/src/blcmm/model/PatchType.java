@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2023 CJ Kucera
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,11 +17,12 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 
@@ -35,8 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Enum to describe the patch types available for BLCMM.  This class was
- * reimplemented based on the calls BLCMM makes into BLCMM_Utilities.jar,
+ * Enum to describe the patch types available for OpenBLCMM.  This class was
+ * reimplemented based on the calls BLCMM made into BLCMM_Utilities.jar,
  * without reference to the original sourcecode.
  *
  * @author apocalyptech
@@ -308,7 +309,7 @@ public enum PatchType {
     }
 
     /**
-     * Returns the initial text of the area of the BLCMM file which contains hotfixes.
+     * Returns the initial text of the area of the OpenBLCMM file which contains hotfixes.
      * This brings us right up to the opening-paren of the hotfix key statement.
      *
      * @param offline If this is being saved in offline mode or not
@@ -333,7 +334,7 @@ public enum PatchType {
     }
 
     /**
-     * Returns the "center" text of the area of the BLCMM file which contains hotfixes.
+     * Returns the "center" text of the area of the OpenBLCMM file which contains hotfixes.
      * This closes the paren on the key statement and brings us up to the open-paren
      * of the values statement.
      *
@@ -355,7 +356,7 @@ public enum PatchType {
     }
 
     /**
-     * Returns the end of the area of the BLCMM file which contains hotfixes. This
+     * Returns the end of the area of the OpenBLCMM file which contains hotfixes. This
      * closes the hotfix value statement and then closes out the file.
      *
      * @param offline If this is being saved in offline mode or not

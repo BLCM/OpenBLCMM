@@ -25,45 +25,17 @@
  * work.
  *
  */
-package blcmm.model;
+package blcmm;
 
 /**
+ * Just some general application metadata -- ie: app name + version
  *
- * @author LightChaosman
+ * @author pez
  */
-public class Comment extends ModelElement {
+public class Meta {
 
-    private final String comment;
-
-    public Comment(String comment) {
-        assert !SetCommand.isValidCommand(comment);
-        this.comment = comment;
-        this.transientData = new TransientModelData(this);
-    }
-
-    @Override
-    public Category getParent() {
-        return (Category) super.getParent();
-    }
-
-    @Override
-    protected String toXMLString() {
-        return String.format("<comment>%s</comment>", comment);
-    }
-
-    @Override
-    public String toString() {
-        return comment;
-    }
-
-    @Override
-    public Comment copy() {
-        Comment copy = new Comment(comment);
-        return copy;
-    }
-
-    public String getComment() {
-        return comment;
-    }
+    public static final String VERSION = "1.3.0";
+    public static final String NAME = "OpenBLCMM";
+    public static final String JARFILE = "OpenBLCMM.jar";
 
 }

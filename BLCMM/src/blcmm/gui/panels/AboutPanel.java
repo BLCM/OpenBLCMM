@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,15 +17,17 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.gui.panels;
 
+import blcmm.Meta;
 import blcmm.utilities.IconManager;
 import java.awt.Desktop;
 import java.awt.GridBagConstraints;
@@ -52,11 +54,20 @@ public final class AboutPanel extends JPanel {
     public AboutPanel(boolean showDonate) {
         this.setLayout(new GridBagLayout());
 
-        JLabel mainLabel = new JLabel("<html>The Borderlands Community Mod Manager was developed by LightChaosman.<br/>"
-                + "Special thanks to apocalyptech, Bugworm, c0dycode, and FromDarkHell for aiding in the development process<br/>"
-                + "and thanks to the entire borderlands modding community for feedback.<br/>"
+        // Intentionally used Meta.NAME as part of the third-party-lib stanza
+        // but hardcoded "OpenBLCMM" earlier, since the earlier statement should
+        // remain historically accurate even if someone else forks this in the
+        // future.
+        JLabel mainLabel = new JLabel("<html>The Borderlands Community Mod Manager was developed by LightChaosman, with<br/>"
+                + "assistance from apocalyptech, Bugworm, c0dycode, and FromDarkHell.<br/>"
                 + "<br/>"
-                + "BLCMM makes use of the following third-party libraries:<br/>"
+                + "OpenBLCMM is a fully-opensourced version of BLCMM maintained by the BLCMods community (with<br/>"
+                + "apocalyptech as the current lead).  Thanks to LightChaosman for opensourcing the BLCMM core!<br/>"
+                + "<br/>"
+                + "Special thanks to everyone who's contributed to the development process, and thanks to the entire<br/>"
+                + "Borderlands modding community for feedback.<br/>"
+                + "<br/>"
+                + Meta.NAME + " makes use of the following third-party libraries:<br/>"
                 + "  - StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.<br/>"
                 + "  - Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0<br/>"
                 + "  - Xerial's sqlite-jdbc, available under the Apache License v2.0<br/>"
@@ -78,7 +89,7 @@ public final class AboutPanel extends JPanel {
         });
         JButton okButton = new JButton("OK");
         okButton.addActionListener(e -> SwingUtilities.getWindowAncestor(AboutPanel.this).dispose());
-        JLabel donateMeme = new JLabel("If you like the tool, consider donating. We accept cash or beers.");
+        JLabel donateMeme = new JLabel("Donations will go to LightChaosman, the original author of BLCMM.");
 
         add(mainLabel, new GridBagConstraints(0, 0, 3, 1, 1, 1, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(20, 20 + (wPay - wLog) / 2, 5, 20), 0, 0));
         if (showDonate) {

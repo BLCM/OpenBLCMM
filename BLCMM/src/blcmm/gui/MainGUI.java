@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,15 +17,17 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.gui;
 
+import blcmm.Meta;
 import blcmm.Startup;
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManagerManager;
@@ -120,9 +122,6 @@ public final class MainGUI extends ForceClosingJFrame {
     public static final String DEFAULT_FONT_NAME = "Dialog", CODE_FONT_NAME = "Monospaced";
     public static MainGUI INSTANCE;
 
-    public static final String VERSION = "1.3.0";
-    private static final String NAME = "BLCMM";
-
     private final String titlePostfix;
     private File currentFile;
     private File exportPath = null;
@@ -145,7 +144,7 @@ public final class MainGUI extends ForceClosingJFrame {
     /**
      * Creates new form MainGUI
      *
-     * @param usedLauncher indicates if the launcher was used to launch BLCMM
+     * @param usedLauncher indicates if the launcher was used to launch OpenBLCMM
      * @param toOpen The file to open, as passed to us by the launcher
      * @param titlePostfix A string to add onto the title of this window
      */
@@ -171,7 +170,7 @@ public final class MainGUI extends ForceClosingJFrame {
         timedLabel.setFont(timedLabel.getFont().deriveFont(Font.BOLD));
         timedLabel.setText("");
         if (!usedLauncher && !Utilities.isCreatorMode()) {
-            ((TimedLabel) timedLabel).putString("launcher", "Please use the Launcher to launch BLCMM", 1, ThemeManager.ColorType.UINimbusSelectedText);
+            ((TimedLabel) timedLabel).putString("launcher", "Please use the Launcher to launch " + Meta.NAME, 1, ThemeManager.ColorType.UINimbusSelectedText);
         }
 
         // Re-apply our theme, to hopefully get our tree icons sorted
@@ -355,7 +354,7 @@ public final class MainGUI extends ForceClosingJFrame {
                 File backupFile = AutoBackupper.getMostRecentBackupFile();
                 if (backupFile != null) {
                     int confirm = JOptionPane.showConfirmDialog(null,
-                            "It appears BLCMM crashed last time.\nWould you like to open the most recent backup file?",
+                            "It appears " + Meta.NAME + " crashed last time.\nWould you like to open the most recent backup file?",
                             "Open backup file?", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         opened = openPatch(backupFile);
@@ -373,7 +372,7 @@ public final class MainGUI extends ForceClosingJFrame {
             GlobalLogger.log(e);
             GlobalLogger.markAsPermanentLog();//should be redundant
             JOptionPane.showMessageDialog(MainGUI.INSTANCE, String.format(""
-                    + "<html>A fatal error occured while opening BLCMM. It was caused by opening the following file:<br/>"
+                    + "<html>A fatal error occured while opening " + Meta.NAME + ". It was caused by opening the following file:<br/>"
                     + "<b>%s</b><br/>"
                     + "Please send the log file and the file you were trying to open to the devolopers."
                     + "Try opening a different file, or create a new file.",
@@ -693,7 +692,8 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         HelpMenu.add(jMenuItem1);
 
-        jMenuItem2.setText("Uninstall BLCMM");
+        jMenuItem2.setText("Uninstall OpenBLCMM");
+        jMenuItem2.setActionCommand("Uninstall OpenBLCMM");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -728,7 +728,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
-        JDialog jDialog = new JDialog(this, "About | BLCMM version " + VERSION);
+        JDialog jDialog = new JDialog(this, "About | " + Meta.NAME + " version " + Meta.VERSION);
         jDialog.add(new AboutPanel(true));
         jDialog.setModal(true);
         jDialog.pack();
@@ -942,7 +942,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_getMoreModsMenuButtonActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        int choice = JOptionPane.showConfirmDialog(null, "This will delete all BLCMM files, including data packages, plugins, plugin outputs.\n"
+        int choice = JOptionPane.showConfirmDialog(null, "This will delete all " + Meta.NAME + " files, including data packages, plugins, plugin outputs.\n"
                 + "All that will remain is the launcher and the logs.\n\n"
                 + "Proceed?", "Proceed with uninstall?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (choice != JOptionPane.YES_OPTION) {
@@ -953,7 +953,10 @@ public final class MainGUI extends ForceClosingJFrame {
             Startup.promptRestart(true);
         } catch (IOException ex) {
             GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(null, "Something went wrong when preparing for uninstalling BLCMM.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Something went wrong when preparing for uninstalling " + Meta.NAME + ".",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -1884,8 +1887,8 @@ public final class MainGUI extends ForceClosingJFrame {
         if (filename != null) {
             titleFilename = " | " + filename;
         }
-        setTitle(NAME + (Utilities.isCreatorMode() ? " (creator mode)" : "")
-                + " | " + VERSION + titleFilename + titlePostfix);
+        setTitle(Meta.NAME + (Utilities.isCreatorMode() ? " (creator mode)" : "")
+                + " | " + Meta.VERSION + titleFilename + titlePostfix);
     }
 
     public DataManagerManager getDMM() {

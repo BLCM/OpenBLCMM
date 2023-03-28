@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,23 +17,25 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.gui.panels;
 
+import blcmm.Meta;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import blcmm.utilities.GameDetection;
-import blcmm.utilities.Utilities;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.OSInfo;
+import blcmm.utilities.Utilities;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -234,8 +236,8 @@ public class IniTweaksPanel extends javax.swing.JPanel {
             initPanel(panel, null);
             String gameLabel = type.toString();
             JLabel label = new JLabel("<html><body style='width: 5in;'>"
-                    + "<center><b>Note:<b><br/>BLCMM found an executable for " + gameLabel + ", but no configuration files.<br/>"
-                    + "Please run " + gameLabel + " once, then restart BLCMM.");
+                    + "<center><b>Note:<b><br/>" + Meta.NAME + " found an executable for " + gameLabel + ", but no configuration files.<br/>"
+                    + "Please run " + gameLabel + " once, then restart " + Meta.NAME + ".");
             panel.add(label, new GridBagConstraints(0, 1000, 3, 1, 1d, 50000d, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         } else {
             initPanel(panel, getActions(type));
@@ -297,7 +299,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         // to support that.  "in" should be better than "px", at least.
         cs.gridy = 1;
         panel.add(new JLabel("<html><body style='width: 4.5in;'>"
-                + "<b>Note:</b> BLCMM cannot autodetect " + gameLabel + " INI files"
+                + "<b>Note:</b> " + Meta.NAME + " cannot autodetect " + gameLabel + " INI files"
                 + " unless it has been run at least once.  If this is a fresh"
                 + " desktop or account, make sure to run " + gameLabel + " at least once."),
                 cs);
@@ -342,7 +344,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         // to support that.  "in" should be better than "px", at least.
         cs.gridy = 1;
         panel.add(new JLabel("<html><body style='width: 4.5in;'>"
-                + "<b>Note:</b> BLCMM cannot autodetect " + gameLabel
+                + "<b>Note:</b> " + Meta.NAME + " cannot autodetect " + gameLabel
                 + " unless it has been run at least once.  If this is a fresh"
                 + " desktop or account, make sure to run " + gameLabel + " at least once."),
                 cs);
@@ -443,7 +445,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         fewerCutscenes.setDescription("<html>Removes some cutscenes from the game. As a side effect, your loading screens turn black.<br/>There's also a mod that disables more cutscenes, without this side effect, by FromDarkHell");
         actions.add(fewerCutscenes);
         if (type == PatchType.TPS) {
-            fewerCutscenes.disable("This feature soft-locks TPS while enabled, so it's not available through BLCMM.", false);
+            fewerCutscenes.disable("This feature soft-locks TPS while enabled, so it's not available through " + Meta.NAME + ".", false);
         }
         return actions;
     }
@@ -467,7 +469,7 @@ public class IniTweaksPanel extends javax.swing.JPanel {
 
             String pirateWarningMessage
                     = "<html><b>WARNING:</b> If you are using a pirated version of " + name + ", note that we can provide<br/>"
-                    + "<i>NO SUPPORT</i> for BLCMM in the Discord or otherwise.<br/>"
+                    + "<i>NO SUPPORT</i> for " + Meta.NAME + " in the Discord or otherwise.<br/>"
                     + "<br/>"
                     + "There is no guarantee that hex-editing will work, or that mods will work even if the hex-edits do.<br/>"
                     + "A pirated TPS may fail where a pirated BL2 may succeed, etc.  Basically: if you use a pirated version,<br/>"

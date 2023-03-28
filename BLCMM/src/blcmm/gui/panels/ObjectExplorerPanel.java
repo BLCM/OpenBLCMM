@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,15 +17,17 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.gui.panels;
 
+import blcmm.Meta;
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManager.Dump;
 import blcmm.data.lib.DataManagerManager;
@@ -1114,7 +1116,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         }
         if (ueClass == null) {
             JOptionPane.showMessageDialog(this,
-                    ("Unfortunately, the classs you entered can not be dumped using BLCMM."),
+                    ("Unfortunately, the class you entered cannot be dumped using " + Meta.NAME + "."),
                     "Unknown class",
                     JOptionPane.PLAIN_MESSAGE);
         }
@@ -1309,15 +1311,15 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 queryTextField.setText("Download data first");
                 textElement.setText("No data is present for " + this.dmm.getCurrentPatchType().getGameName() + ".\n"
                         + "\n"
-                        + "Download a data package and restart BLCMM to search/dump data for the game.\n"
+                        + "Download a data package and restart " + Meta.NAME + " to search/dump data for the game.\n"
                         + "\n"
-                        + "Data packages for this version of BLCMM can currently be found at:\n"
+                        + "Data packages for this version of " + Meta.NAME + " can currently be found at:\n"
                         + "\n"
                         + "    https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link\n"
                         + "\n"
-                        + "If running BLCMM via Netbeans, place the Jars inside the top-level BLCMM directory.  If\n"
+                        + "If running " + Meta.NAME + " via Netbeans, place the Jars inside the top-level BLCMM directory.  If\n"
                         + "running from a Jarfile (which may not even work at the moment), place them alongside\n"
-                        + "BLCMM.jar."
+                        + Meta.JARFILE + "."
                 );
             }
             queryTextField.setEditable(false);
@@ -1341,7 +1343,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         + "type in an object name, you'll get a dump of the object in question.  If you want to search\n"
                         + "for references to an object instead of dumping it, use the 'Refs' button once the object\n"
                         + "name is in the search box.  For searches and refs, you can choose what data categories to\n"
-                        + "search through in the main BLCMM settings menu, under 'Object Explorer Data'.  Note that the\n"
+                        + "search through in the main " + Meta.NAME + " settings menu, under 'Object Explorer Data'.  Note that the\n"
                         + "more categories you enable, the slower searches/refs will take.  The defaults should be\n"
                         + "reasonable for most use cases, though.\n"
                         + "\n"

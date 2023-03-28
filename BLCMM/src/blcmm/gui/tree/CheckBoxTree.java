@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,26 +17,25 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.gui.tree;
 
+import blcmm.Meta;
 import blcmm.gui.MainGUI;
 import blcmm.gui.tree.rightmouse.*;
 import blcmm.model.*;
-import blcmm.utilities.Options;
-import blcmm.utilities.Utilities;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.OSInfo;
+import blcmm.utilities.Options;
+import blcmm.utilities.Utilities;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
@@ -61,7 +60,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.EventListenerList;
@@ -719,7 +717,7 @@ public final class CheckBoxTree extends JTree {
                 boolean cancelbecauseLeaf = false;
                 if (((DefaultMutableTreeNode) tp.getLastPathComponent()).isLeaf() && !Options.INSTANCE.getLeafSelectionAllowed()) {
                     int allow = JOptionPane.showConfirmDialog(tree,
-                            "BLCMM usually disallows toggling individual statements.\nEnable that functionality anyway?",
+                            Meta.NAME + " usually disallows toggling individual statements.\nEnable that functionality anyway?",
                             "Allow toggling individual statements?",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE);

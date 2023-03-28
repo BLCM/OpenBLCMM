@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2023 CJ Kucera
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,11 +17,12 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 
@@ -40,7 +41,7 @@ import java.util.HashMap;
  * retrieve game data, and the data returned would depend on that state.
  *
  * In the new model, though, a DataManager is instantiated for a specific
- * game, and it will only be bound to that game.  BLCMM will keep multiple
+ * game, and it will only be bound to that game.  OpenBLCMM will keep multiple
  * DataManager objects alive (one per game we have data for), and keeps track
  * of which one is "current."  This is easy enough when all components of
  * the application are acting on the same dataset, which has historically
@@ -48,8 +49,8 @@ import java.util.HashMap;
  * when that was toggled, OE starts pulling from the new game data as well.
  *
  * Well, with the rewrite, we're aiming to decouple that a bit, so that OE
- * could be querying different data than the BLCMM-configured patch type,
- * etc.  So, this class was born to provide both BLCMM and OE a common way
+ * could be querying different data than the OpenBLCMM-configured patch type,
+ * etc.  So, this class was born to provide both OpenBLCMM and OE a common way
  * to manage which game data's currently in use.
  *
  * @author apocalyptech

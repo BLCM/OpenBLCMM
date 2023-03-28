@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,23 +17,25 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.gui.panels;
 
+import blcmm.Meta;
 import blcmm.gui.theme.ThemeManager;
+import java.awt.Color;
 import java.awt.Desktop;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Color;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -50,10 +52,10 @@ public final class SetupGameFilesPanel extends JPanel {
 
         JLabel topLabel = new JLabel(
                 "<html>"
-                + "BLCMM is no longer needed to do hex-edits for Borderlands 2 or The Pre-Sequel.  <b>Instead, use PythonSDK<br/>"
+                + Meta.NAME + " is no longer needed to do hex-edits for Borderlands 2 or The Pre-Sequel.  <b>Instead, use PythonSDK<br/>"
                 + "to do the work!</b>  PythonSDK works just fine on Steam or EGS."
         );
-        
+
         JButton sdkButton = new JButton();
         Color linkColor = ThemeManager.getColor(ThemeManager.ColorType.UITextLink);
         sdkButton.setText("<html><font color=\"" + Integer.toHexString(linkColor.getRGB()).substring(2) + "\"><u>" + sdkURL + "</u></font></html>");
@@ -69,20 +71,20 @@ public final class SetupGameFilesPanel extends JPanel {
                 }
             }
         });
-        
+
         JLabel bottomLabel = new JLabel(
                 "<html>"
                 + "Even though PythonSDK modding is a completely separate style of modding from BLCMM text-based mods,<br/>"
                 + "you can use the two together with no problems at all.  So, install PythonSDK to get your Borderlands<br/>"
-                + "install ready for modding, and continue using BLCMM for managing the content of your text-based mods.<br/>"
+                + "install ready for modding, and continue using " + Meta.NAME + " for managing the content of your text-based mods.<br/>"
                 + "<br/>"
                 + "An additional benefit of using PythonSDK to enable mods is that you can also benefit from an ever-growing<br/>"
-                + "collection of SDK-based mods, which allow modders to do things impossible in the kinds of mods that BLCMM<br/>"
+                + "collection of SDK-based mods, which allow modders to do things impossible in the kinds of mods that " + Meta.NAME + "<br/>"
                 + "manages.<br/>"
                 + "<br/>"
                 + "The INI-file tweaks previously available on this screen have been moved to their own \"INI Tweaks\" dialog."
         );
-        
+
         JButton okButton = new JButton("OK");
         okButton.addActionListener(e -> SwingUtilities.getWindowAncestor(SetupGameFilesPanel.this).dispose());
 

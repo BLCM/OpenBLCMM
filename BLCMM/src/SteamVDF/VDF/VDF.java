@@ -29,35 +29,35 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class VDF extends VDFBaseElement {
-	
+
 	private static File VDFFile;
-	
+
 	public VDF() {
 		super();
 	}
-	
+
 	public VDF(String file) throws IOException {
 		this(new File(file));
 	}
-	
+
 	public VDF(File file) throws IOException {
 		this(fileToLine(file));
 	}
-	
+
 	public VDF(String[] VDFLine) {
 		String ElementName = null;
 		VDFElement Element = null;
-		    
+
 		for (int i = 0; i < VDFLine.length; i++) {
-                    
+
                     String[] Line = VDFLine[i].trim().split("\t\t");
-                    // Added 2023-02-13 for BLCMM by Apocalyptech -- some older libraryfolder VDFs,
+                    // Added 2023-02-13 for OpenBLCMM by Apocalyptech -- some older libraryfolder VDFs,
                     // at least, seem to use a different separator.  This should let the library
                     // support either.
                     if (Line.length == 1) {
                         Line = VDFLine[i].trim().split(" \t");
                     }
-                    
+
 		    if (Line[0].startsWith("\"") && Line[0].endsWith("\"")) {
 		    	if (Line.length == 2) {
 		    		if (Element == null)
@@ -81,10 +81,10 @@ public class VDF extends VDFBaseElement {
 		    }
 		}
 	}
-	
+
 	private static String[] fileToLine(File file) throws IOException {
 		VDFFile = file;
-		
+
 		ArrayList<String> BufferLine = new ArrayList<>();
 		BufferedReader BufferReader = new BufferedReader(new FileReader(file));
 		String LineRead = null;
@@ -92,28 +92,28 @@ public class VDF extends VDFBaseElement {
 			BufferLine.add(LineRead);
 		}
 		BufferReader.close();
-		
+
 		String[] VDFLine = new String[BufferLine.size()];
-		
+
 		return BufferLine.toArray(VDFLine);
 	}
-	
+
 	private static String removeQuote(String str) {
 		return str.replace("\"", "");
 	}
-	
+
 	public File getFile() {
 		return VDFFile;
 	}
-	
+
 	public void Save() throws IOException {
 		this.Save(VDFFile);
 	}
-	
+
 	public void Save(String file) throws IOException {
 		this.Save(new File(file));
 	}
-	
+
 	public void Save(File file) throws IOException {
 		BufferedWriter BufferWriter = new BufferedWriter(new FileWriter(file));
 		BufferWriter.write(this.toString());

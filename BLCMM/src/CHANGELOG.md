@@ -1,7 +1,8 @@
-BLCMM Changelog
-===============
+OpenBLCMM Changelog
+===================
 
 **v1.3.0** Unreleased
+- Renamed to OpenBLCMM
 - Released under GPLv3
   - Various components rewritten from scratch as part of the FOSS process
 - Compatibility through Java 19
@@ -32,7 +33,7 @@ BLCMM Changelog
   - Class Browser tree is sorted case-insensitively
   - Class Browser tree does not sort "leaf" entries separately from folders
   - Added setting to normalize the search bar with the "full" object name when
-    viewing dumps (ie: including the class type: ClassName'GD_Obj.Foo').  The
+    viewing dumps (ie: including the class type: `ClassName'GD_Obj.Foo'`).  The
     setting is off by default.
   - Dumps and searches will report which game they came from in the first line
     of the textbox.
@@ -52,7 +53,7 @@ BLCMM Changelog
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
 - Added "allow toggling individual statements" option to settings, and improved
-  dynamically setting the option from the main BLCMM window.
+  dynamically setting the option from the main OpenBLCMM window.
 - Added a "log-latest.log" logfile which never gets removed, and updated the
   filenames for the date-stamped logfiles to use human-readable dates.
 - Improved Steam Library Folder detection using StidOfficial's SteamVDF
@@ -69,7 +70,7 @@ BLCMM Changelog
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
 - When creating and saving a new file, it now opens on the next boot
-- Opening a .blcm file trough Windows' context menu now actually opens the file in BLCMM
+- Opening a .blcm file trough Windows' context menu now actually opens the file in OpenBLCMM
 
 **v1.2.0** May 22, 2020
 - Added the ability to drag-and-drop text around plenty of BLCMM's text boxes.

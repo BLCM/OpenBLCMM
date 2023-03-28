@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018-2020  LightChaosman
  *
- * BLCMM is free software: you can redistribute it and/or modify
+ * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -17,15 +17,17 @@
  * Additional permission under GNU GPL version 3 section 7:
  *
  * If you modify this Program, or any covered work, by linking or
- * combining it with BLCMM Launcher, BLCMM Lib Distributor, BLCMM
- * Resources, or BLCMM Utilities (or modified versions of those
- * libraries), containing parts covered by the terms of their
- * proprietary license, the licensors of this Program grant you
- * additional permission to convey the resulting work.
+ * combining it with the original proprietary BLCMM Launcher, BLCMM
+ * Lib Distributor, BLCMM Utilities, or BLCMM Data Interaction Library
+ * Jarfiles (or modified versions of those libraries), containing parts
+ * covered by the terms of their proprietary license, the licensors of
+ * this Program grant you additional permission to convey the resulting
+ * work.
  *
  */
 package blcmm.model;
 
+import blcmm.Meta;
 import blcmm.model.attrparser.LevelDepArray;
 import blcmm.model.attrparser.LevelDepParser;
 import blcmm.model.attrparser.LevelDepString;
@@ -1200,7 +1202,7 @@ public class PatchIO {
     /**
      * Writes out a complete patch/mod to a Writer.  The mod will be saved slightly
      * differently if the `exporting` boolean is set -- namely, some messages about
-     * importing mods to BLCMM will be added in for exported mods.
+     * importing mods to OpenBLCMM will be added in for exported mods.
      *
      * @param patch The patchset to save
      * @param writer The writer to write to
@@ -1214,7 +1216,7 @@ public class PatchIO {
     /**
      * Writes out a complete patch/mod to a Writer.  The mod will be saved slightly
      * differently if the `exporting` boolean is set -- namely, some messages about
-     * importing mods to BLCMM will be added in for exported mods.  This version
+     * importing mods to OpenBLCMM will be added in for exported mods.  This version
      * supports supplying a SaveFormat, but currently only BLCMM output is supported.
      *
      * @param patch The patchset to save
@@ -1262,7 +1264,7 @@ public class PatchIO {
             writer.append(LINEBREAK);
             writer.append("#Direct-Execute Warning:" + LINEBREAK);
             writer.append(String.format(
-                    "say WARNING: \"%s\" must be imported into BLCMM to run "
+                    "say WARNING: \"%s\" must be imported into " + Meta.NAME + " to run "
                     + "properly with UCP or other mods.\n",
                     root.getName()).replace("\n", LINEBREAK));
         }
