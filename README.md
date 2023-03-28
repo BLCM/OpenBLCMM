@@ -132,5 +132,5 @@ License
 =======
 
 OpenBLCMM is licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
-A copy can be found at [BLCMM/src/LICENSE.txt](BLCMM/src/LICENSE.txt).
+A copy can be found at [LICENSE.txt](LICENSE.txt).
 
