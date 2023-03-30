@@ -1011,8 +1011,39 @@ public class DataManager {
             String dataFileName = rs.getString("class_name") + ".dump." + ueObject.getFileIndex();
             InputStream stream = this.getJarStreamDumps(dataFileName);
             byte[] data = new byte[ueObject.getBytes()];
-            stream.skip(ueObject.getFilePosition());
-            stream.read(data);
+
+            // Skip to the correct spot.  This might be a little overkill, but it
+            // turns out that we *do* have to do this for the calls to stream.read()
+            // down below, so I figure let's make sure this works too.
+            long pos = ueObject.getFilePosition();
+            long totalSkipped = 0;
+            long thisSkipped = 0;
+            thisSkipped = stream.skip(pos-totalSkipped);
+            totalSkipped += thisSkipped;
+            while (totalSkipped != pos && thisSkipped != 0) {
+                thisSkipped = stream.skip(pos-totalSkipped);
+                totalSkipped += thisSkipped;
+            }
+            if (totalSkipped != pos) {
+                return new Dump(null, "Error reading dump: tried to seek to " + pos + " but only got to " + totalSkipped);
+            }
+
+            // Read the data.  It seems that when reading from a Jarfile, we may
+            // not get all the data at once always, so we're doing this stupid
+            // little loop.  Ah well.
+            int size = ueObject.getBytes();
+            int totalRead = 0;
+            int thisRead = 0;
+            thisRead = stream.read(data, 0, size);
+            totalRead += thisRead;
+            while (totalRead != size && thisRead != -1) {
+                thisRead = stream.read(data, totalRead, size-totalRead);
+                totalRead += thisRead;
+            }
+            if (totalRead != size) {
+                return new Dump(null, "Error reading dump: tried to read " + size + " bytes, but only got " + totalRead);
+            }
+
             rs.close();
             stmt.close();
             return new Dump(ueObject, new String(data, StandardCharsets.ISO_8859_1));
