@@ -860,7 +860,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 sb.append(line).append("\n");
             }
         }
-        assert curname == null;//We should always end with the Object properties, being non-arrays
+        if (curname != null) {
+            // There used to be an "assert curname == null", but I honestly don't even want
+            // to crash in the development environment, so just report and log, instead.
+            sb.append("ERROR: Collapsing arrays failed -- possible truncated object dump?");
+            GlobalLogger.log("Collapsing arrays failed -- possible truncated object dump?");
+        }
         return sb.toString();
     }
 
