@@ -356,8 +356,8 @@ public class DataManager {
 
             this.jarFile = new JarFile(new File(this.jarFilename));
             GlobalLogger.log("Found data jarfile at: " + this.jarFilename);
-            this.dataPathBase = Paths.get("data", patchType.name()).toString();
-            this.dataPathDumps = Paths.get(this.dataPathBase, "dumps").toString();
+            this.dataPathBase = "data/" + patchType.name();
+            this.dataPathDumps = this.dataPathBase + "/dumps";
             this.dataBaseDir = Paths.get("extracted-data", patchType.name()).toString();
             this.dbFilePath = Paths.get(this.dataBaseDir, "data.db").toString();
 
@@ -430,6 +430,9 @@ public class DataManager {
      */
     private void extractDatabase() throws NoDataException {
         InputStream fromJar = this.getJarStreamBase("data.db");
+        if (fromJar == null) {
+            throw new NoDataException("SQLite database was not found in data jar");
+        }
         File dbDir = new File(this.dataBaseDir);
         if (!dbDir.exists()) {
             dbDir.mkdirs();
@@ -580,7 +583,7 @@ public class DataManager {
      * @return The JarEntry for the path
      */
     private JarEntry getJarEntryBase(String path) {
-        return this.getJarEntry(Paths.get(this.dataPathBase, path).toString());
+        return this.getJarEntry(this.dataPathBase + "/" + path);
     }
 
     /**
@@ -591,7 +594,7 @@ public class DataManager {
      * @return The JarEntry for the path
      */
     private JarEntry getJarEntryDumps(String path) {
-        return this.getJarEntry(Paths.get(this.dataPathDumps, path).toString());
+        return this.getJarEntry(this.dataPathDumps + "/" + path);
     }
 
     /**
