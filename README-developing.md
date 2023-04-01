@@ -57,7 +57,9 @@ and then start the tracing agent with:
     java -agentlib:native-image-agent=config-output-dir=conf-dir
         -jar OpenBLCMM.jar
 
-... and then kick off the compilation with:
+... and then after you've clicked around the app as much as possible
+*(I should probably make a checklist)*, quit the app and then kick off
+the compilation with:
 
     native-image -Djava.awt.headless=false
         -H:ReflectionConfigurationFiles=conf-dir/reflect-config.json
@@ -115,7 +117,8 @@ on Windows.
     4. Make sure that running `native-image --version` reports something
        like `GraalVM 22.3.1 Java 17 CE`
 
-At that point you're good to go.
+At that point you're good to go - make sure to run the various commands
+from inside that Visual Studio-wrapped prompt.
 
 Once "vanilla" GraalVM supports compiling Swing/AWT apps properly on
 Windows, it's possible we may move over to that instead.  The install
