@@ -159,6 +159,7 @@ public class Startup {
                 }
             }
         }
+        /*
         if (!usedLauncher && !Utilities.isCreatorMode()) {
             File f2 = new File("one_time_blcmm_startup.blcm");
             if (!f2.exists()) {
@@ -171,6 +172,7 @@ public class Startup {
             }
             f2.delete();
         }
+        */
         firstTime();//load options and set theme
         generateHintsFile();
         updateLauncher();

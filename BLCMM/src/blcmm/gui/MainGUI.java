@@ -169,9 +169,11 @@ public final class MainGUI extends ForceClosingJFrame {
 
         timedLabel.setFont(timedLabel.getFont().deriveFont(Font.BOLD));
         timedLabel.setText("");
+        /*
         if (!usedLauncher && !Utilities.isCreatorMode()) {
             ((TimedLabel) timedLabel).putString("launcher", "Please use the Launcher to launch " + Meta.NAME, 1, ThemeManager.ColorType.UINimbusSelectedText);
         }
+        */
 
         // Re-apply our theme, to hopefully get our tree icons sorted
         setTheme(ThemeManager.getTheme());
