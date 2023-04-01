@@ -86,6 +86,10 @@ TODO
 - Feedback to user when extracting/verifying sqlite (that whole Thing might
   just get moved over into the launcher anyway, but we'll see)
 - Check diskspace prior to sqlite extraction
+- Doublecheck username suppression in logs:
+  - INI files
+  - "installation can be found"
+  - elsewhere...
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
@@ -102,6 +106,8 @@ TODO
     versions, version mismatches, min/max dbver restrictions, checksum failures,
     mtime updates, etc)
   - Do at least a bit of testing in all currently-supported Java versions
+  - We decode dump data using `ISO_8859_1` -- search through the data to find
+    out if there's edge cases where that'll fail.
 
 ### Can probably wait until after the first public release
 
