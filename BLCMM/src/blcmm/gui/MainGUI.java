@@ -1901,11 +1901,30 @@ public final class MainGUI extends ForceClosingJFrame {
         return this.dmm.getCurrentDataManager();
     }
 
+    /**
+     * Launches the Object Explorer window in a non-immediate fashion (the
+     * main app will remain usable while OE is on its way up).
+     */
     public void launchObjectExplorerWindow() {
+        this.launchObjectExplorerWindow(false);
+    }
+
+    /**
+     * Launches the Object Explorer window, either immediately (so the main
+     * GUI is blocked until OE is up) or non-immediate (so the main app will
+     * remain usable while OE's on its way up).
+     *
+     * @param immediate Whether or not to launch immediately.
+     */
+    public void launchObjectExplorerWindow(boolean immediate) {
         if (ObjectExplorer.INSTANCE == null) {
-            EventQueue.invokeLater(() -> {
+            if (immediate) {
                 new ObjectExplorer(this.dmm).setVisible(true);
-            });
+            } else {
+                EventQueue.invokeLater(() -> {
+                    new ObjectExplorer(this.dmm).setVisible(true);
+                });
+            }
         } else {
             ObjectExplorer.INSTANCE.toFront();
         }
