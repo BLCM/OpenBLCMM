@@ -413,7 +413,24 @@ public class DataManager {
             }
             String checkHash = br.readLine().trim();
             br.close();
-            return diskHash.equalsIgnoreCase(checkHash);
+
+            boolean hashSuccess = diskHash.equalsIgnoreCase(checkHash);
+            if (hashSuccess) {
+                // If the hashes matched, save the mtime so we don't have to
+                // check again.
+                BasicFileAttributes attrs = Files.readAttributes(Paths.get(this.dbFilePath), BasicFileAttributes.class);
+                switch (this.patchType) {
+                    case TPS:
+                        Options.INSTANCE.setOEDataSuccessTimestampTPS(attrs.lastModifiedTime().toMillis());
+                        break;
+                    case BL2:
+                    default:
+                        Options.INSTANCE.setOEDataSuccessTimestampBL2(attrs.lastModifiedTime().toMillis());
+                        break;
+                }
+            }
+            return hashSuccess;
+
         } catch (IOException|NoSuchAlgorithmException e) {
             GlobalLogger.log(e);
             return false;
@@ -457,23 +474,6 @@ public class DataManager {
             throw new NoDataException("Database checksum could not be verified");
         }
 
-        // And now we're all but guaranteed to be good.  Save the mtime so we
-        // don't have to check again.
-        try {
-            BasicFileAttributes attrs = Files.readAttributes(Paths.get(this.dbFilePath), BasicFileAttributes.class);
-            switch (this.patchType) {
-                case TPS:
-                    Options.INSTANCE.setOEDataSuccessTimestampTPS(attrs.lastModifiedTime().toMillis());
-                    break;
-                case BL2:
-                default:
-                    Options.INSTANCE.setOEDataSuccessTimestampBL2(attrs.lastModifiedTime().toMillis());
-                    break;
-            }
-        } catch (IOException e) {
-            GlobalLogger.log(e);
-            throw new NoDataException("Error processing database verification cache", e);
-        }
     }
 
     /**
