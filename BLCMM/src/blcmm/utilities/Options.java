@@ -118,8 +118,10 @@ public class Options {
         oeSearchSkins,
         oeSearchStaticMeshes,
         oeSearchWillowData,
-        oeDataSuccessTimestampBL2,
-        oeDataSuccessTimestampTPS,
+        oeDataSuccessTimestampDbBL2,
+        oeDataSuccessTimestampDbTPS,
+        oeDataSuccessTimestampJarBL2,
+        oeDataSuccessTimestampJarTPS,
     }
 
     public enum OESearch {
@@ -157,10 +159,17 @@ public class Options {
      * plugin is temporarily unavailable or something.
      */
     private final HashSet<String> IGNORE_OPTIONS = new HashSet(Arrays.asList(
+            // Old from the original BLCMM, and no longer wanted
             "contentEdits",
             "truncateCommands",
             "structuralEdits",
-            "developerMode"
+            "developerMode",
+
+            // Old from during OpenBLCMM development.  Possibly not worth
+            // having in here, but it'll clean out my own configs, so sure.
+            // These were replaced by Db/Jar-specific options.
+            "oeDataSuccessTimestampBL2",
+            "oeDataSuccessTimestampTPS"
     ));
 
     /**
@@ -422,9 +431,11 @@ public class Options {
         // A flag for if we disabled delete messages.
         this.registerOption(new BooleanOption(OptionNames.showDeleteConfirmation.toString(), true));
 
-        // Timestamp of the datalib DB files when they was last successfully verified
-        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampBL2.toString(), 0));
-        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampTPS.toString(), 0));
+        // Timestamp of the datalib DB/Jar files when they was last successfully verified
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampDbBL2.toString(), 0));
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampDbTPS.toString(), 0));
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampJarBL2.toString(), 0));
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampJarTPS.toString(), 0));
 
         // Finally: a bit of aggregation housekeeping
         this.updateOESearchCategories();
@@ -1193,20 +1204,36 @@ public class Options {
         this.setIntOptionData(Options.OptionNames.onlineServiceNumber, serviceNumber);
     }
 
-    public long getOEDataSuccessTimestampBL2() {
-        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampBL2);
+    public long getOEDataSuccessTimestampDbBL2() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampDbBL2);
     }
 
-    public void setOEDataSuccessTimestampBL2(long newTimestamp) {
-        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampBL2, newTimestamp);
+    public void setOEDataSuccessTimestampDbBL2(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampDbBL2, newTimestamp);
     }
 
-    public long getOEDataSuccessTimestampTPS() {
-        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampTPS);
+    public long getOEDataSuccessTimestampDbTPS() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampDbTPS);
     }
 
-    public void setOEDataSuccessTimestampTPS(long newTimestamp) {
-        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampTPS, newTimestamp);
+    public void setOEDataSuccessTimestampDbTPS(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampDbTPS, newTimestamp);
+    }
+
+    public long getOEDataSuccessTimestampJarBL2() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampJarBL2);
+    }
+
+    public void setOEDataSuccessTimestampJarBL2(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampJarBL2, newTimestamp);
+    }
+
+    public long getOEDataSuccessTimestampJarTPS() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampJarTPS);
+    }
+
+    public void setOEDataSuccessTimestampJarTPS(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampJarTPS, newTimestamp);
     }
 
     public final void updateOESearchCategories() {

@@ -31,6 +31,7 @@ package blcmm.model;
 import blcmm.utilities.IconManager;
 import blcmm.utilities.Options;
 import java.awt.Image;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -394,5 +395,88 @@ public enum PatchType {
     public Image getIcon(int size) {
         return IconManager.getIcon(this.iconPath, size);
     }
+
+    /**
+     * Returns the timestamp of our extracted SQLite data as of the last time
+     * it was successfully verified, as reported in our app options file.  It's
+     * possible this belongs more in DataManager than here, but I'd kind of
+     * prefer to keep the case-handling internal.  (Though there are doubtless
+     * cases where I have *not* done so, throughout the code.
+     *
+     * @return The timestamp of the database file (in milliseconds) when last
+     *         it was successfully verified, or 0 if the verification has never
+     *         succeeded yet.
+     */
+    public long getOEDataSuccessTimestampDb() {
+        switch (this) {
+            case TPS:
+                return Options.INSTANCE.getOEDataSuccessTimestampDbTPS();
+            case BL2:
+            default:
+                return Options.INSTANCE.getOEDataSuccessTimestampDbBL2();
+        }
+    }
+
+    /**
+     * Returns the timestamp of our data Jar file, as of the last time the
+     * extracted SQLite database was verified against the checksum in the
+     * Jar file, as reported in our app options file.  It's possible this
+     * belongs more in DataManager than here, but I'd kind of prefer to keep the
+     * case-handling internal.  (Though there are doubtless cases where I have
+     * *not* done so, throughout the code.
+     *
+     * @return The timestamp of the Jar file (in milliseconds) when the DB was
+     *         successfully verified, or 0 if the verification has never
+     *         succeeded yet.
+     */
+    public long getOEDataSuccessTimestampJar() {
+        switch (this) {
+            case TPS:
+                return Options.INSTANCE.getOEDataSuccessTimestampJarTPS();
+            case BL2:
+            default:
+                return Options.INSTANCE.getOEDataSuccessTimestampJarBL2();
+        }
+    }
+
+    /**
+     * Given a BasicFileAttributes object, update our last-successfully-verified
+     * timestamp for the extracted SQLite database in the options file.  As with
+     * the getters above, arguably this should be in DataManager rather than
+     * here...
+     *
+     * @param attrs The attributes containing the file's timestamp to store.
+     */
+    public void setOEDataSuccessTimestampDb(BasicFileAttributes attrs) {
+        switch (this) {
+            case TPS:
+                Options.INSTANCE.setOEDataSuccessTimestampDbTPS(attrs.lastModifiedTime().toMillis());
+                break;
+            case BL2:
+            default:
+                Options.INSTANCE.setOEDataSuccessTimestampDbBL2(attrs.lastModifiedTime().toMillis());
+                break;
+        }
+    }
+
+    /**
+     * Given a BasicFileAttributes object, update our last-successfully-verified
+     * timestamp for the data jarfile in the options file.  As with the getters
+     * above, arguably this should be in DataManager rather than here...
+     *
+     * @param attrs The attributes containing the file's timestamp to store.
+     */
+    public void setOEDataSuccessTimestampJar(BasicFileAttributes attrs) {
+        switch (this) {
+            case TPS:
+                Options.INSTANCE.setOEDataSuccessTimestampJarTPS(attrs.lastModifiedTime().toMillis());
+                break;
+            case BL2:
+            default:
+                Options.INSTANCE.setOEDataSuccessTimestampJarBL2(attrs.lastModifiedTime().toMillis());
+                break;
+        }
+    }
+
 
 }

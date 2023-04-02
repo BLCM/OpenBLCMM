@@ -30,7 +30,6 @@ package blcmm.data.lib;
 
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
-import blcmm.utilities.Options;
 import blcmm.utilities.Options.OESearch;
 import blcmm.utilities.Utilities;
 import java.io.BufferedReader;
@@ -110,6 +109,7 @@ public class DataManager {
 
     // Jarfile Info
     private String jarFilename;
+    private File jarFileObj;
     private JarFile jarFile;
     private String dataPathBase;
     private String dataPathDumps;
@@ -346,7 +346,8 @@ public class DataManager {
         });
         if (jars.length > 0) {
             Arrays.sort(jars);
-            this.jarFilename = jars[jars.length-1].toString();
+            this.jarFileObj = jars[jars.length-1];
+            this.jarFilename = this.jarFileObj.toString();
         } else {
             throw new NoDataException("No jarfiles found for " + this.patchType.name());
         }
@@ -354,7 +355,7 @@ public class DataManager {
         // Now start processing
         try {
 
-            this.jarFile = new JarFile(new File(this.jarFilename));
+            this.jarFile = new JarFile(this.jarFileObj);
             GlobalLogger.log("Found data jarfile at: " + this.jarFilename);
             this.dataPathBase = "data/" + patchType.name();
             this.dataPathDumps = this.dataPathBase + "/dumps";
@@ -368,21 +369,14 @@ public class DataManager {
             }
 
             // Check the database file to see if we've already checked it
-            long lastVerified;
-            switch (patchType) {
-                case TPS:
-                    lastVerified = Options.INSTANCE.getOEDataSuccessTimestampTPS();
-                    break;
-                case BL2:
-                default:
-                    lastVerified = Options.INSTANCE.getOEDataSuccessTimestampBL2();
-                    break;
-            }
-            if (lastVerified == 0) {
+            long lastVerifiedDb = patchType.getOEDataSuccessTimestampDb();
+            long lastVerifiedJar = patchType.getOEDataSuccessTimestampJar();
+            if (lastVerifiedDb == 0 || lastVerifiedJar == 0) {
                 return false;
             }
-            BasicFileAttributes attrs = Files.readAttributes(dbFile.toPath(), BasicFileAttributes.class);
-            if (attrs.lastModifiedTime().toMillis() == lastVerified) {
+            BasicFileAttributes dbAttrs = Files.readAttributes(dbFile.toPath(), BasicFileAttributes.class);
+            BasicFileAttributes jarAttrs = Files.readAttributes(this.jarFileObj.toPath(), BasicFileAttributes.class);
+            if (dbAttrs.lastModifiedTime().toMillis() == lastVerifiedDb && jarAttrs.lastModifiedTime().toMillis() == lastVerifiedJar) {
                 return true;
             }
 
@@ -418,16 +412,8 @@ public class DataManager {
             if (hashSuccess) {
                 // If the hashes matched, save the mtime so we don't have to
                 // check again.
-                BasicFileAttributes attrs = Files.readAttributes(Paths.get(this.dbFilePath), BasicFileAttributes.class);
-                switch (this.patchType) {
-                    case TPS:
-                        Options.INSTANCE.setOEDataSuccessTimestampTPS(attrs.lastModifiedTime().toMillis());
-                        break;
-                    case BL2:
-                    default:
-                        Options.INSTANCE.setOEDataSuccessTimestampBL2(attrs.lastModifiedTime().toMillis());
-                        break;
-                }
+                this.patchType.setOEDataSuccessTimestampDb(Files.readAttributes(Paths.get(this.dbFilePath), BasicFileAttributes.class));
+                this.patchType.setOEDataSuccessTimestampJar(Files.readAttributes(this.jarFileObj.toPath(), BasicFileAttributes.class));
             }
             return hashSuccess;
 
