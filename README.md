@@ -110,7 +110,6 @@ TODO
 
 ### Can probably wait until after the first public release
 
-- Add some caching to IconManager -- probably had it originally.
 - Convert StringTable to use a CSV library
   - Will need some one-time conversion stuff in there, and the ability to
     discern between a converted version.
