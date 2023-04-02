@@ -59,9 +59,9 @@ TODO
 
 ### Immediate (would like to get done before public release)
 
+- Get prefs/data-extract dir stuff to work properly when *not* in
+  Creator Mode; right now everything's sort of Creator Mode.
 - GUI notification of sqlite extraction/verification, when appropriate
-- Also: updating timestamp on data jar doesn't trigger re-verification.  Probably should.
-- Check for symlinks when checking datalib last-validated, and follow for timestamps.
 - Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
 - New-version notification in-app
@@ -87,7 +87,17 @@ TODO
 - Feedback to user when extracting/verifying sqlite (that whole Thing might
   just get moved over into the launcher anyway, but we'll see)
 - Check diskspace prior to sqlite extraction
+- "No results found" when refs doesn't return anything, in OE
 - Get a real Markdown renderer for the Changelog window?
+- Figure out what the proper default-file-open location should be for the
+  various cases, and make sure we're handling those properly.
+- I don't think any settings actually require app restarts; maybe at least
+  hide that stuff, for now?
+- Try to trigger out-of-memory and make sure that the reporting for that
+  works well enough (and that the messages there make sense).  Also maybe
+  provide a clickable button/link to the Github Issues page.
+  - Maybe add that into the crash report window in general, yeah?  Check
+    `MyExceptionHandler` in `Startup.java`
 - Doublecheck username suppression in logs:
   - INI files
   - "installation can be found"
@@ -110,6 +120,8 @@ TODO
   - Do at least a bit of testing in all currently-supported Java versions
   - We decode dump data using `ISO_8859_1` -- search through the data to find
     out if there's edge cases where that'll fail.
+  - Uninstalls?  I actually think that the uninstall function does nothing
+    right now; looks like it's probably the launcher which used to do that.
 
 ### Can probably wait until after the first public release
 
