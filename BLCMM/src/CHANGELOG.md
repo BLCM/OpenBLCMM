@@ -6,7 +6,12 @@ OpenBLCMM Changelog
 - Released under GPLv3
   - Various components rewritten from scratch as part of the FOSS process
 - Compatibility through Java 19
+- Windows EXE packaging updated -- no need to install Java!
 - Removed features:
+  - GUI Launcher / Autoupdates
+  - GUI to set system memory.  The Windows EXE version doesn't really need it
+    due to how the new system handles RAM.  Linux/Mac users can instead update
+    the memory parameter directly in the launcher shell script.
   - Hex Edits and Console Key (PythonSDK should be used for these, instead)
   - Plugin functionality
   - First-startup dialogs (welcome, game setup, question-mark/TINS prompt)
@@ -67,6 +72,8 @@ OpenBLCMM Changelog
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.
+- Replaced icon resources with known-free-to-use versions, and updated the
+  OpenBLCMM icon to a new one to distinguish it from the original BLCMM.
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
 - When creating and saving a new file, it now opens on the next boot

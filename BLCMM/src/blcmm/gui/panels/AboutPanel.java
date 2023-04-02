@@ -67,10 +67,12 @@ public final class AboutPanel extends JPanel {
                 + "Special thanks to everyone who's contributed to the development process, and thanks to the entire<br/>"
                 + "Borderlands modding community for feedback.<br/>"
                 + "<br/>"
-                + Meta.NAME + " makes use of the following third-party libraries:<br/>"
+                + Meta.NAME + " makes use of the following third-party libraries/resources:<br/>"
                 + "  - StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.<br/>"
                 + "  - Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0<br/>"
                 + "  - Xerial's sqlite-jdbc, available under the Apache License v2.0<br/>"
+                + "  - Some icons from Dave Gandy's Font Awesome set, available under CC BY 3.0<br/>"
+                + "  - An icon from Fathema Khanom's User Interface set, available under Flaticon's Free License<br/>"
         );
         int wLog = 64, wPay = 100;
         mainLabel.setIcon(new ImageIcon(IconManager.getBLCMMIcon(wLog)));

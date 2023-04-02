@@ -102,9 +102,6 @@ public class Startup {
         List<String> vmArguments = runtimeMxBean.getInputArguments();
         System.setProperty("sun.awt.exception.handler", MyExceptionHandler.class.getName());
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandler());
-        if (!FileVerifier.verifyFiles()) {
-            return;
-        }
         if (!confirmIO()) {
             GlobalLogger.log("Closing " + Meta.NAME + " because we can't confirm IO");
             GlobalLogger.markAsPermanentLog();
