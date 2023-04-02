@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -74,16 +75,36 @@ import javax.swing.SwingUtilities;
  */
 public class Utilities {
 
+    private static boolean creatorMode = false;
+
     /**
-     * Returns true if and only if we're running this project inside the
-     * developer environment
+     * Returns true if we're in Creator Mode.  This can be triggered by two
+     * things:
+     *
+     * 1. If Java assertions are enabled (generally via the -ea arg).
+     * That's in the default runtime args when in our Netbeans project, so
+     * folks hacking on code should get Creator Mode automatically.
+     *
+     * 2. If the user specifically used the "-creator" argument on the app.
      *
      * @return
      */
     public static boolean isCreatorMode() {
+        if (Utilities.creatorMode) {
+            return true;
+        }
         boolean x = false;
         assert x = true;
         return x;
+    }
+
+    /**
+     * Sets our Creator Mode flag to True.  Note that Creator Mode will be
+     * active even without this flag, if Java assertions are enabled (generally
+     * via the -ea argument)
+     */
+    public static void setCreatorMode() {
+        Utilities.creatorMode = true;
     }
 
     /**
@@ -858,6 +879,42 @@ public class Utilities {
             }
             sb.append("</pre>");
             return sb.toString();
+        }
+    }
+
+    /**
+     * Returns the main Jar/EXE location for OpenBLCMM, or null if we can't.
+     *
+     * @return The location of the main Jar/EXE
+     */
+    public static File getMainJarLocation() {
+        try {
+            return new File(Utilities.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the default location for file-open type interactions, assuming we
+     * don't have any better place to direct the user to.  For Creator Mode,
+     * this should probably just be the current directory (which'll place it
+     * inside the working project); for other modes, maybe the location of
+     * the Jar/EXE is appropriate?
+     *
+     * @return Where file-open type behaviors should default to, in the absence
+     * of better ideas.
+     */
+    public static File getDefaultOpenLocation() {
+        if (Utilities.isCreatorMode()) {
+            return new File("").getAbsoluteFile();
+        } else {
+            File mainJar = Utilities.getMainJarLocation();
+            if (mainJar == null) {
+                return new File("").getAbsoluteFile();
+            } else {
+                return mainJar.getParentFile();
+            }
         }
     }
 

@@ -74,6 +74,7 @@ OpenBLCMM Changelog
   statements -- should possibly be more accepting now.
 - Replaced icon resources with known-free-to-use versions, and updated the
   OpenBLCMM icon to a new one to distinguish it from the original BLCMM.
+- Added "-creator" CLI argument to launch OpenBLCMM in Creator Mode.
 
 (changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
 - When creating and saving a new file, it now opens on the next boot

@@ -29,8 +29,8 @@ package blcmm.utilities.options;
 
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.panels.ToolSettingsPanel;
-import blcmm.utilities.BLCMMUtilities;
 import blcmm.utilities.Options;
+import blcmm.utilities.Utilities;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import javax.swing.JButton;
@@ -109,7 +109,7 @@ public class FilenameOption extends Option<String> {
         FilenameOption option = this;
         JButton but = new JButton("Select file");
         but.addActionListener((ActionEvent ae) -> {
-            JFileChooser fc = new BLCMM_FileChooser(BLCMMUtilities.getLauncher().getParentFile());
+            JFileChooser fc = new BLCMM_FileChooser(Utilities.getDefaultOpenLocation());
             int returnVal = fc.showOpenDialog(panel);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();

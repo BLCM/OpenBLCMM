@@ -32,21 +32,17 @@ import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import blcmm.utilities.options.*;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -169,7 +165,10 @@ public class Options {
             // having in here, but it'll clean out my own configs, so sure.
             // These were replaced by Db/Jar-specific options.
             "oeDataSuccessTimestampBL2",
-            "oeDataSuccessTimestampTPS"
+            "oeDataSuccessTimestampTPS",
+
+            // We don't have a launcher or splash image anymore
+            "splashImage"
     ));
 
     /**
@@ -350,32 +349,6 @@ public class Options {
                 1, 99,
                 null,
                 "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));
-
-        //Next, the launcher splash screen selector. This requires some extra magic;
-        try {
-            JarFile launcher = new JarFile(BLCMMUtilities.getLauncher());
-            ByteArrayOutputStream result;
-            try (BufferedInputStream bis = new BufferedInputStream(launcher.getInputStream(launcher.getJarEntry("resources/BGs.txt")))) {
-                result = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = bis.read(buffer)) != -1) {
-                    result.write(buffer, 0, length);
-                }
-            }
-            String res = new String(result.toByteArray());
-            StringTable table = StringTable.generateTable(res);
-            this.registerOption(SelectionOption.createStringSelectionOption("splashImage", "Default",
-                    Option.Shown.SETTINGS, "Splash screen image",
-                    null, "The image shown on the launcher", table));
-            launcher.close();
-        } catch (NoSuchFileException e) {
-            // This mostly just happens when developing via NetBeans, but whatever.  Don't bother stack-tracing
-            GlobalLogger.log(Meta.NAME + " Launcher not found -- not providing splash screen setting");
-        } catch (Exception e) {
-            //If we fail, we fail. One reason this can happen is if the launcher doesn't have the specified file in it yet
-            e.printStackTrace();
-        }
 
         // Next: options which don't show up on the settings panel.  Order
         // doesn't really matter here.

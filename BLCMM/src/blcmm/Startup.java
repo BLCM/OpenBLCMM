@@ -34,7 +34,6 @@ import blcmm.utilities.AutoBackupper;
 import blcmm.utilities.BLCMMUtilities;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.OSInfo;
-import blcmm.utilities.OSInfo.OS;
 import blcmm.utilities.Options;
 import blcmm.utilities.StringTable;
 import blcmm.utilities.Utilities;
@@ -47,17 +46,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -72,7 +64,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingWorker;
 import javax.swing.ToolTipManager;
 
 /**
@@ -89,10 +80,8 @@ public class Startup {
         CRASH_FLAG_FILE.delete();
     }
 
-    private static File LAUNCHER;
     private static String titlePostfix;
     private static File file;
-    private static boolean usedLauncher;
 
     /**
      * @param args the command line arguments
@@ -108,32 +97,25 @@ public class Startup {
             return;
         }
 
-        usedLauncher = false;
+        // Process any arguments we have
         file = null;
-        for (String arg : args) {
-            if (arg.startsWith("-f=")) {
+        for (String arg: args) {
+            // Set Creator Mode if we've been told to.  (Note that Creator Mode is
+            // also set automatically if Java assertions are active, which is the
+            // default behavior when running this project via Netbeans.)
+            if (arg.equalsIgnoreCase("-creator")) {
+                Utilities.setCreatorMode();
+            } else if (arg.startsWith("-f=")) {
                 file = new File(arg.substring("-f=".length()));
-            } else if (arg.startsWith("-launcher=")) {
-                LAUNCHER = new File(arg.substring("-launcher=".length()));
-                usedLauncher = true;
             }
         }
-        String message = null;
-        if (LAUNCHER == null || !LAUNCHER.exists() || !LAUNCHER.isFile()) {
-            message = "Changing launcher back to the one in the parent folder";
-            if (LAUNCHER != null) {
-                message += " - because: " + LAUNCHER.exists() + " " + LAUNCHER.isFile();
-            }
-            LAUNCHER = new File(new File(System.getProperty("user.dir")).getParentFile().getAbsolutePath() + "/BLCMM_Launcher.jar");//The location of the main launcher
-        }
-        if (message != null) {//dev enviroment
-            GlobalLogger.log(message);
-        } else {
-            GlobalLogger.setLogFolder(LAUNCHER.getParent() + "/blcmm_logs");
-        }
+
         GlobalLogger.log("Running " + Meta.NAME + " version " + Meta.VERSION);
         GlobalLogger.log("Running Java version " + System.getProperty("java.version"));
         GlobalLogger.log("Arguments provided; VM arguments: " + Arrays.toString(vmArguments.toArray()) + " - Runtime arguments: " + Arrays.toString(args));
+        if (Utilities.isCreatorMode()) {
+            GlobalLogger.log("Running in Creator Mode!");
+        }
         GlobalLogger.log("Username: " + System.getProperty("user.name"));
 
         // Total amount of free memory available to the JVM
@@ -141,9 +123,6 @@ public class Startup {
         // Maximum amount of memory the JVM will attempt to use (Long.MAX_VALUE if there is no limit)
         GlobalLogger.log("Maximum Memory: " + (Runtime.getRuntime().maxMemory() == Long.MAX_VALUE ? "No Limit"
                 : humanReadableByteCount(Runtime.getRuntime().maxMemory())));
-
-        BLCMMUtilities.setUsedLauncher(usedLauncher);
-        BLCMMUtilities.setLauncher(LAUNCHER);
 
         titlePostfix = "";
         for (String vmarg : vmArguments) {
@@ -156,71 +135,21 @@ public class Startup {
                 }
             }
         }
-        /*
-        if (!usedLauncher && !Utilities.isCreatorMode()) {
-            File f2 = new File("one_time_blcmm_startup.blcm");
-            if (!f2.exists()) {
-                MainGUI.setTheme(ThemeManager.getDefaultTheme());
-                JOptionPane.showMessageDialog(null,
-                        "Please use the launcher to run " + Meta.NAME + ".",
-                        "No launcher used",
-                        JOptionPane.WARNING_MESSAGE);
-                System.exit(0);
-            }
-            f2.delete();
-        }
-        */
+
         firstTime();//load options and set theme
         generateHintsFile();
-        updateLauncher();
 
         ToolTipManager.sharedInstance().setInitialDelay(500);//make tooltips tolerable
         ToolTipManager.sharedInstance().setDismissDelay(10000);
 
-        // TESTING!  This is a new function which maybe we'll start using to store data,
-        // rather than always being alongside the launcher.  Don't want to actually use
-        // this anywhere until it's seen some action on various platforms, and under
-        // various conditions.
+        // Report on some various vars
         GlobalLogger.log("Your " + Meta.NAME + " installation can be found here: " + BLCMMUtilities.getBLCMMDataDir());
         GlobalLogger.log("Working directory: " + System.getProperty("user.dir").replaceAll("\\\\", "/"));
+        GlobalLogger.log("Default file-open location: " + Utilities.getDefaultOpenLocation().toString());
 
         java.awt.EventQueue.invokeLater(() -> {
-            new MainGUI(usedLauncher, file, titlePostfix).setVisible(true);
+            new MainGUI(file, titlePostfix).setVisible(true);
         });
-    }
-
-    private static void ShortcutCreator(OS OperatingSystem) throws IOException {
-        if (OperatingSystem == OS.UNIX) {
-            String launcherPath = new File(System.getProperty("user.dir")).getParentFile().getAbsolutePath().replaceAll("\\\\", "/") + "/BLCMM_Launcher.jar";
-            String iconPath = new File(System.getProperty("user.dir")).getParentFile().getAbsolutePath().replaceAll("\\\\", "/") + "/BLCMM/launcher/icon.png";
-            File desktop = new File("/home/" + System.getProperty("user.name") + "/Desktop/BLCMM_Launcher.desktop");
-            if (desktop.exists()) {
-                String content = new String(Files.readAllBytes(Paths.get(desktop.getAbsolutePath())), StandardCharsets.UTF_8);
-                if (content.contains(launcherPath)) {
-                    return;
-                }
-            } else {
-                desktop.getParentFile().mkdirs();
-                desktop.createNewFile();
-            }
-            StringBuilder sb = new StringBuilder();
-            sb.append("#!/usr/bin/env xdg-open\n"
-                    + "[Desktop Entry]\n"
-                    + "Version=1.0\n"
-                    + "Type=Application\n"
-                    + "Terminal=false\n"
-                    + "Icon=" + iconPath + "\n"
-                    + "Name=" + Meta.NAME + "\n"
-                    + "StartupNotify=true\n"
-                    + "Comment=Edit Borderlands 2 and Pre-Sequel mods");
-            sb.append("Exec=/usr/bin/java -jar \"" + launcherPath + "\"\n");
-            String DesktopString = sb.toString();
-            PrintWriter writer = new PrintWriter(new FileWriter(desktop, true));
-            writer.println(DesktopString);
-            writer.close();
-        } else {
-            return;
-        }
     }
 
     private static void firstTime() {
@@ -331,59 +260,6 @@ public class Startup {
         }
     }
 
-    private static void updateLauncher() {
-        File newLauncher = new File("launcher/" + LAUNCHER.getName());//if it exists, it's here
-        boolean needsupdate = false;
-        if (newLauncher.exists() && LAUNCHER.exists()) {
-            try {
-                String sha1 = Utilities.sha256(LAUNCHER);
-                String sha2 = Utilities.sha256(newLauncher);
-                if (!sha1.equals(sha2)) {
-                    needsupdate = true;
-                    GlobalLogger.log("Replacing the launcher (" + LAUNCHER.getAbsolutePath() + ")");
-                }
-            } catch (IOException | NoSuchAlgorithmException ex) {
-                GlobalLogger.log("Error while getting hashes for launcher: " + ex.getMessage());
-            }
-        } else {
-            if (!LAUNCHER.exists()) {
-                GlobalLogger.log("Could not find the old launcher at: " + Utilities.hideUserName(LAUNCHER.getAbsolutePath()));
-            }
-            if (!newLauncher.exists()) {
-                GlobalLogger.log("Could not find the new launcher at: " + Utilities.hideUserName(newLauncher.getAbsolutePath()));
-            }
-        }
-        if (needsupdate) {
-            SwingWorker sw = new SwingWorker() {
-                @Override
-                protected Object doInBackground() throws Exception {
-                    boolean updated = false;
-                    IOException ex = null;
-                    for (int i = 0; i < 60; i++) {
-                        try {
-                            Files.copy(newLauncher.toPath(), LAUNCHER.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            GlobalLogger.log("Succesfully updated launcher");
-                            updated = true;
-                            break;
-                        } catch (IOException e) {
-                            ex = e;
-                            Thread.sleep(1000);
-                        }
-                    }
-                    if (!updated && ex != null) {
-                        JOptionPane.showMessageDialog(null,
-                                "Error updating launcher: " + ex.getMessage(),
-                                "Error updating launcher", JOptionPane.ERROR_MESSAGE);
-                        GlobalLogger.log("Error while trying to update launcher:" + ex.getMessage());
-                    }
-                    return null;
-                }
-            };
-            sw.execute();
-        }
-
-    }
-
     private static boolean confirmIO() {
         File f = new File("io.temp");
         boolean b = true;
@@ -441,7 +317,7 @@ public class Startup {
         return CRASHED_LAST_TIME;
     }
 
-    public static boolean promptRestart(boolean launcher) throws HeadlessException {
+    public static boolean promptRestart() throws HeadlessException {
         int restart = JOptionPane.showConfirmDialog(null, Meta.NAME + " needs to restart for the selected options to work properly. Restart now?", "Restart?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (restart != JOptionPane.YES_OPTION) {
             return false;
@@ -450,11 +326,7 @@ public class Startup {
         if (!dispose) {
             return false;
         }
-        if (launcher) {
-            startLauncher();
-        } else {
-            startBLCMM();
-        }
+        startBLCMM();
         MainGUI.INSTANCE.superDispose();
         return true;
     }
@@ -464,7 +336,7 @@ public class Startup {
         String path2 = path.replaceAll("\\\\", "/");
         File f = new File(path2 + "/" + Meta.JARFILE);
         String path3 = f.getAbsolutePath().replaceAll("\\\\", "/");
-        String[] command4 = new String[]{"java", "-jar", "-XX:MaxHeapFreeRatio=50", path3, "-launcher=" + LAUNCHER.getAbsolutePath()};
+        String[] command4 = new String[]{"java", "-jar", "-XX:MaxHeapFreeRatio=50", path3};
         try {
             Runtime.getRuntime().exec(command4);
         } catch (IOException ex) {
@@ -472,19 +344,6 @@ public class Startup {
             JOptionPane.showMessageDialog(null,
                     "Unable to launch " + Meta.NAME + ": " + ex.getMessage(),
                     "Error launching " + Meta.NAME, JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private static void startLauncher() {
-        String path3 = LAUNCHER.getAbsolutePath().replaceAll("\\\\", "/");
-        String[] command4 = new String[]{"java", "-jar", path3, "-fromblcmm"};//This also works with the .exe version of the launcher
-        try {
-            Runtime.getRuntime().exec(command4, null, LAUNCHER.getParentFile());
-        } catch (IOException ex) {
-            GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(null,
-                    "Unable to start launcher: " + ex.getMessage(),
-                    "Error starting launcher", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -572,9 +431,11 @@ public class Startup {
                         + "<br/>"
                         + "This can happen when trying to load large mods like Randomizers.<br/>"
                         + "<br/>"
-                        + "To prevent this error from happening in the future, assign " + Meta.NAME + " more<br/>"
-                        + "RAM on the launcher screen.  At the launcher, click the checkbox<br/>"
-                        + "in the top left, and adjust the memory usage there!";
+                        + "If you're using the Jar version of " + Meta.NAME + ", edit the .bat/.sh<br/>"
+                        + "script used to launch the appplication and change the -Xmx parameter found<br/>"
+                        + "in the script.  If using the Windows EXE version, please report your problem<br/>"
+                        + "to the " + Meta.NAME + " developers, along with the mod(s) you're using, and<br/>"
+                        + "we'll try to figure it out for you.<br/>";
             } else {
                 text = "<html>An unknown error has ocurred, please contact the developer.<br/>"
                         + "A log file with the error has been generated.<br/>"

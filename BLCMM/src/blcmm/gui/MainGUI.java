@@ -144,11 +144,10 @@ public final class MainGUI extends ForceClosingJFrame {
     /**
      * Creates new form MainGUI
      *
-     * @param usedLauncher indicates if the launcher was used to launch OpenBLCMM
-     * @param toOpen The file to open, as passed to us by the launcher
+     * @param toOpen The file to open
      * @param titlePostfix A string to add onto the title of this window
      */
-    public MainGUI(final boolean usedLauncher, final File toOpen, final String titlePostfix) {
+    public MainGUI(final File toOpen, final String titlePostfix) {
         INSTANCE = this;
         GUI_IO_Handler.MASTER_UI = INSTANCE;
         initComponents();
@@ -752,7 +751,7 @@ public final class MainGUI extends ForceClosingJFrame {
         MasterSettingsPanel panel = new MasterSettingsPanel();
         JOptionPane.showMessageDialog(this, panel, "Settings", JOptionPane.PLAIN_MESSAGE);
         if (panel.needsToolReset()) {
-            Startup.promptRestart(false);
+            Startup.promptRestart();
         }
 
         // Resize our tree if need be.
@@ -944,15 +943,15 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_getMoreModsMenuButtonActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        int choice = JOptionPane.showConfirmDialog(null, "This will delete all " + Meta.NAME + " files, including data packages, plugins, plugin outputs.\n"
-                + "All that will remain is the launcher and the logs.\n\n"
+        int choice = JOptionPane.showConfirmDialog(null, "This will delete all " + Meta.NAME + " files, including data packages.\n"
+                + "All that will remain is the logfiles and config files.\n\n"
                 + "Proceed?", "Proceed with uninstall?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (choice != JOptionPane.YES_OPTION) {
             return;
         }
         try {
             new File("uninstall.me").createNewFile();
-            Startup.promptRestart(true);
+            Startup.promptRestart();
         } catch (IOException ex) {
             GlobalLogger.log(ex);
             JOptionPane.showMessageDialog(null,
@@ -1108,7 +1107,7 @@ public final class MainGUI extends ForceClosingJFrame {
         } else {
             return currentFile.getAbsoluteFile().getParentFile();
         }
-        return BLCMMUtilities.getLauncher().getParentFile();
+        return Utilities.getDefaultOpenLocation();
     }
 
     public File getExportDialogPath() {
@@ -1145,7 +1144,7 @@ public final class MainGUI extends ForceClosingJFrame {
                 return lastImportDir;
             }
         }
-        return BLCMMUtilities.getLauncher().getParentFile();
+        return Utilities.getDefaultOpenLocation();
     }
 
     /**

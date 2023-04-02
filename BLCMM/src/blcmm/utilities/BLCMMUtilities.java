@@ -44,39 +44,11 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 public class BLCMMUtilities {
 
     /**
-     * Holds the path to the launcher used to launch OpenBLCMM, if it was launched
-     * that way.
-     */
-    private static File launcher = null;
-
-    /**
-     * A boolean so we know whether we were launched with the launcher or not.
-     */
-    private static boolean usedLauncher = false;
-
-    public static File getLauncher() {
-        return launcher;
-    }
-
-    public static void setLauncher(File launcher) {
-        BLCMMUtilities.launcher = launcher;
-    }
-
-    public static boolean isUsedLauncher() {
-        return usedLauncher;
-    }
-
-    public static void setUsedLauncher(boolean usedLauncher) {
-        BLCMMUtilities.usedLauncher = usedLauncher;
-    }
-
-    /**
      * Returns a directory which we can use to store data, should we want to. If
      * we couldn't find existing app data directories via the detection in
-     * Utilities, we'll try using the launcher's directory (if that exists), or
-     * failing that just our current working directory. Note that the actual
-     * directory returned here is not guaranteed to exist, but all its parent
-     * dirs should exist.
+     * Utilities, we'll default to our current working directory. Note that the
+     * actual directory returned here is not guaranteed to exist, but all its
+     * parent dirs should exist.
      *
      * @return A path to a directory we should be able to use to store data,
      * writable by the user.
@@ -85,20 +57,11 @@ public class BLCMMUtilities {
         String appDirName = "OpenBLCMM";
         String detectedDir = Utilities.getAppDataDir(appDirName);
         if (detectedDir == null) {
-            // If we couldn't find a dir, check to see if we can use the
-            // launcher's dir.
-            if (isUsedLauncher()) {
-                detectedDir = launcher.getParent();
-                if (new File(detectedDir).exists()) {
-                    return detectedDir + "/" + appDirName;
-                }
-            }
-
-            // If we got here, there's no launcher dir and nothing could be
-            // autodetected.  Fall back to the current working directory,
-            // I guess.  Let's just assume that this exists.  To remain
-            // compatible with the way the app has always worked when run
-            // without a launcher, we're going to NOT add appDirName here.
+            // If we got here, nothing could be autodetected.  Fall back to the
+            // current working directory, I guess.  Let's just assume that this
+            // exists.  To remain compatible with the way the app has always
+            // worked when run without a launcher, we're going to NOT add
+            // appDirName here.
             return System.getProperty("user.dir");
 
         } else {

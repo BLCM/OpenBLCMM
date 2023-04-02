@@ -31,10 +31,10 @@ import blcmm.Meta;
 import blcmm.model.PatchIO;
 import blcmm.model.PatchType;
 import blcmm.utilities.AutoBackupper;
-import blcmm.utilities.BLCMMUtilities;
 import blcmm.utilities.GameDetection;
 import blcmm.utilities.IconManager;
 import blcmm.utilities.Options;
+import blcmm.utilities.Utilities;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -66,7 +66,7 @@ public class BLCMM_FileChooser extends JFileChooser {
     }
 
     public BLCMM_FileChooser(String path, String currentFileName, boolean appendBlcmExtension, boolean saveAs) {
-        super(path == null ? BLCMMUtilities.getLauncher().getParent() : path);
+        super(path == null ? Utilities.getDefaultOpenLocation().toString() : path);
         addDirectoryShortcutsToFileChooser(BLCMM_FileChooser.this);
         this.appendBlcmExtension = appendBlcmExtension;
         super.setPreferredSize(new Dimension(750, 400));
@@ -182,7 +182,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         // The BLCMM install dir itself (actually, its parent)
         panel.add(directoryShortcutButton(fc,
                 "Open " + Meta.NAME + " Install Dir",
-                BLCMMUtilities.getLauncher().getParentFile().getAbsolutePath(),
+                Utilities.getDefaultOpenLocation().getAbsolutePath(),
                 new ImageIcon(IconManager.getBLCMMIcon(16))), cs);
         cs.gridy++;
 
