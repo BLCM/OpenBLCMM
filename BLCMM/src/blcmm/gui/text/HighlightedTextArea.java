@@ -403,7 +403,7 @@ public final class HighlightedTextArea extends JTextPane {
                 if (search != null && e.getClickCount() == 2) {
                     MainGUI.INSTANCE.launchObjectExplorerWindow(true);
                     boolean newTab = SwingUtilities.isMiddleMouseButton(e) || e.isControlDown() || e.isMetaDown();
-                    GlobalLogger.log("Dumping " + search + "after clicking link. newTab = " + newTab);
+                    GlobalLogger.log("Dumping " + search + " after clicking link. newTab = " + newTab);
                     ObjectExplorer.DumpOptions options = new ObjectExplorer.DumpOptions(search, true, newTab, false);
                     ObjectExplorer.INSTANCE.dump(options);
                     mouseMoved(e);
