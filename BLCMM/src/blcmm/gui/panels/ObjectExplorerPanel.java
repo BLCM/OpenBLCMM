@@ -1508,6 +1508,29 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     }
                 }
                 return null;
+            } catch (BadLocationException e2) {
+                // This one's... weird.  To trigger it, do a search or refs or whatever, and while the
+                // query is processing, click near the beginning of the first line and hit Enter.  A
+                // newline will be inserted, and then when the results next update, this should pop.
+                // I have no idea why the user's allowed to do this.  We call `textElement.setEditable(false)`
+                // before running the query, and `textElement.isEditable()` continues to report `false`
+                // throughout the whole process, so theoretically we should be all good.  That setting
+                // *does* seem to mostly work.  You can't click-and-drag segments of text, and you can't
+                // type arbitrary things, but Enter for some reason continues to work!  In the end I just
+                // gave up looking around for that and am handling it all custom-like, in here.
+                GlobalLogger.log("Error while formatting results textarea -- likely mid-query textarea edit!");
+                GlobalLogger.log(e2);
+                Document doc = textElement.getStyledDocument();
+                doc.insertString(doc.getEndPosition().getOffset()-1,
+                        "\n\n"
+                        + "Error attempting to display results: " + e2.toString() + "\n"
+                        + "\n"
+                        + "This is generally because something managed to edit the textarea before the\n"
+                        + "processing had finished, and interrupted some of the update routines.  Please\n"
+                        + "give it another go, and if it still causes problems, report this problem\n"
+                        + "to the developers along with your most recent logfile.\n",
+                        null);
+                return null;
             } catch (Exception e2) {
                 e = e2;
                 return null;
