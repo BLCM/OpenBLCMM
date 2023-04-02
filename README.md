@@ -59,11 +59,9 @@ TODO
 
 ### Immediate (would like to get done before public release)
 
+- Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
-- Rewrite launcher w/ GPL version
-  - New-version notification in-app
-- Cut cruft from resources jar, recreate stuff that needs recreation, and
-  pull all that into the main project instead of in a separate jar.
+- New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Memory monitor in main window?
 - About dialog improvements:
@@ -86,6 +84,7 @@ TODO
 - Feedback to user when extracting/verifying sqlite (that whole Thing might
   just get moved over into the launcher anyway, but we'll see)
 - Check diskspace prior to sqlite extraction
+- Get a real Markdown renderer for the Changelog window?
 - Doublecheck username suppression in logs:
   - INI files
   - "installation can be found"
@@ -134,6 +133,25 @@ TODO
 - Maybe completely separate INI tweaks into their own little app?
 - Pass around references to stuff like our Options instance, rather than
   referring to global "instance" vars?
+
+Third-Party Content
+===================
+
+OpenBLCMM makes use of the following third party libraries/resources:
+
+- [StidOfficial](https://github.com/StidOfficial)'s [SteamVDF library](https://github.com/StidOfficial/SteamVDF)
+  for some Steam data parsing, available under the GPLv3.
+- [Apache Commons Text](https://commons.apache.org/proper/commons-text/) and
+  [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/), available
+  under the Apache License v2.0.
+- [Xerial](https://github.com/Xerial)'s [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc),
+  available under the Apache License v2.0.
+- Some icons from [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
+  [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under
+  CC BY 3.0.
+- An icon from [Fathema Khanom](https://www.flaticon.com/authors/fathema-khanom)'s
+  [User Interface set](https://www.flaticon.com/packs/user-interface-2899), available
+  under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
 
 License
 =======
