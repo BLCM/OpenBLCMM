@@ -62,7 +62,6 @@ TODO
 
 ### Immediate (would like to get done before public release)
 
-- GUI notification of sqlite extraction/verification, when appropriate
 - Check diskspace prior to sqlite extraction
 - Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
