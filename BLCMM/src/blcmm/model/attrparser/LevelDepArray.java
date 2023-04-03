@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2023 CJ Kucera
+ * Copyright (C) 2023 Christopher J. Kucera
+ * <cj@apocalyptech.com>
+ * <https://apocalyptech.com/contact.php>
  *
  * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

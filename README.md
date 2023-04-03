@@ -60,6 +60,7 @@ TODO
 ### Immediate (would like to get done before public release)
 
 - GUI notification of sqlite extraction/verification, when appropriate
+- Check diskspace prior to sqlite extraction
 - Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
 - New-version notification in-app
@@ -69,8 +70,7 @@ TODO
   - Link/button to github
   - Report Java version
   - Report data versions
-  - Report memory usage + config?  Though if we have a memory counter on
-    the main window then maybe that's beside the point
+  - Report memory usage + config?
 - Figure out opening SQLite DBs in read-only mode
 - May as well cache *all* our PreparedStatements in DataManager...
 - Apparently multi-selections screw with statement order in the Edit window?
@@ -82,13 +82,8 @@ TODO
   (original BLCMM launcher crashes when that happens; main app might too)
 - Add in proper version checking in `.blcm` loading.
 - Make sure that data jars can be found when launching from some other dir
-- Feedback to user when extracting/verifying sqlite (that whole Thing might
-  just get moved over into the launcher anyway, but we'll see)
-- Check diskspace prior to sqlite extraction
 - "No results found" when refs doesn't return anything, in OE
 - Get a real Markdown renderer for the Changelog window?
-- Figure out what the proper default-file-open location should be for the
-  various cases, and make sure we're handling those properly.
 - I don't think any settings actually require app restarts; maybe at least
   hide that stuff, for now?
 - Try to trigger out-of-memory and make sure that the reporting for that
@@ -126,6 +121,8 @@ TODO
 
 ### Can probably wait until after the first public release
 
+- Figure out allowing the word "set" in value text?  Understand quotes around
+  the value, perhaps?
 - Convert StringTable to use a CSV library
   - Will need some one-time conversion stuff in there, and the ability to
     discern between a converted version.
