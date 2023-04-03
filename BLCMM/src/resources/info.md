@@ -1,6 +1,11 @@
 Provenance of the various resources in here
 ===========================================
 
+**Note:** Any new resources added here will also need to be added into
+the `META-INF/native-image/blcmm/blcmm/resource-config.json` registry,
+for the compiled Windows EXE version to Not Crash when the resources
+are requested.
+
 * `donate.png` - This was just taken from a screenshot at paypal.com from
   their set-up-a-donation-link page, with the HTML/CSS fiddled a little
   bit to just say "Donate" and to make the button less wide.  (Then edited
