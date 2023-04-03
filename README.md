@@ -7,29 +7,32 @@ which is the tool for managing text-based mods for Borderlands 2 and
 The Pre-Sequel.  BLCMM was written by LightChaosman with some contributions
 from other community members and officially released in 2018.  In 2022,
 LightChaosman opensourced the ["core" BLCMM code on github](https://github.com/LightChaosman/blcmm).
-In 2023 this project was started to fix up some longstanding issues
-with BLCMM, and provide a fully-opensource version of the entire BLCMM
-application.
+In 2023, OpenBLCMM development was started to fix up some longstanding
+issues with BLCMM, and to provide a fully-opensource version of the entire
+BLCMM application.
 
 This fork is still in development but is proceeding along nicely.  It
 intentionally omits a few features from the original BLCMM app -- perhaps
 most notably, it no longer provides any hex-editing functionality, since
 [PythonSDK](https://borderlandsmodding.com/sdk-mods/) is the current
-recommended method for doing so.  As it stands, OpenBLCMM has not really
-been tested outside of its development environment, and isn't really ready
-for public use.  Check out our [short notes on its development environment](README-developing.md)
+recommended method for doing so.  OpenBLCMM feels relatively stable at the
+moment, but if you *do* decide to use it to manage your mod files, you may
+want to make backups of your patch files first, just in case.  Check out
+our [short notes on its development environment](README-developing.md)
 if you'd like to help out with development.
 
 **NOTE:** This branch is *not* compatible with the original BLCMM game data
-packages.  Prepackaged data files should be available for now at [this Google
+packages.  New prepackaged data files are available for now at [this Google
 Drive link](https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link)
 (that is not the final location of the datafiles -- once we're closer to
 a public release, they'll be put somewhere more official).  To use those data
 packages while running inside Netbeans, download them and save them inside the
-checked-out `BLCMM` directory.  The app should see them on startup and extract
-the sqlite database to an `extracted-data` directory.  At the moment there's no
-real indication that that's happening apart from log entries -- once we have a
-launcher in place, that should get that sorted out a bit better.
+checked-out `BLCMM` directory.  To use them on a built/compiled version, just
+save them in the same dir as `OpenBLCMM.jar`/`OpenBLCMM.exe`.  The app should
+see them on startup and extract the sqlite database to an `extracted-data`
+directory.  At the moment there's no real indication that that's happening
+apart from log entries -- once we have a launcher in place, that should get
+that sorted out a bit better.
 
 The generation scripts for the new data can be found in the [DataDumper
 PythonSDK mod](https://github.com/BLCM/DataDumper).  Note that the data
