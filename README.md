@@ -59,14 +59,12 @@ TODO
 
 ### Immediate (would like to get done before public release)
 
-- Get prefs/data-extract dir stuff to work properly when *not* in
-  Creator Mode; right now everything's sort of Creator Mode.
 - GUI notification of sqlite extraction/verification, when appropriate
 - Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
 - New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Memory monitor in main window?
+- Memory monitor in main window, when in Creator Mode?
 - About dialog improvements:
   - Link/button to github
   - Report Java version
@@ -100,6 +98,7 @@ TODO
     `MyExceptionHandler` in `Startup.java`
 - Get rid of those annoying registry execeptions when running on Windows
   (on a host which doesn't have the game installed, presumably)
+- Settings migration from vanilla BLCMM
 - Doublecheck username suppression in logs:
   - INI files
   - "installation can be found"
