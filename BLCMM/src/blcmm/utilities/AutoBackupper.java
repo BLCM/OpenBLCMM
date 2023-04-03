@@ -31,6 +31,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public class AutoBackupper {
     public static long BACKUP_INTERVAL = 120000;
     private static int NUMBER_OF_SESSIONS_TO_KEEP = 5;
     private static int NUMBER_OF_BACKUPS_PER_SESSION = 10;
-    private static final File DESTINATION = new File("backups/");
+    private static final File DESTINATION = Paths.get(Utilities.getBLCMMDataDir(), "backups").toFile();
     private static final long CURRENT_SESSION = System.currentTimeMillis();
     private static final LinkedList<File> CURRENT_BACKUPS = new LinkedList<File>();
     private static int COUNTER = 0;
@@ -94,7 +95,7 @@ public class AutoBackupper {
         String date = new SimpleDateFormat("YYYY.MM.dd").format(new Date(CURRENT_SESSION));
         String backupFileName = CURRENT_SESSION + " - " + date + " - " + (++COUNTER) + " - " + filename;
         DESTINATION.mkdir();
-        File f = new File(DESTINATION.toString() + File.separator + backupFileName);
+        File f = Paths.get(DESTINATION.toString(), backupFileName).toFile();
         CURRENT_BACKUPS.add(f);
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(f))) {
             instance.write(bw);

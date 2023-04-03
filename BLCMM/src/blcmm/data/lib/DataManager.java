@@ -359,7 +359,7 @@ public class DataManager {
             GlobalLogger.log("Found data jarfile at: " + this.jarFilename);
             this.dataPathBase = "data/" + patchType.name();
             this.dataPathDumps = this.dataPathBase + "/dumps";
-            this.dataBaseDir = Paths.get("extracted-data", patchType.name()).toString();
+            this.dataBaseDir = Paths.get(Utilities.getBLCMMDataDir(), "extracted-data", patchType.name()).toString();
             this.dbFilePath = Paths.get(this.dataBaseDir, "data.db").toString();
 
             // Check to see if the database file exists

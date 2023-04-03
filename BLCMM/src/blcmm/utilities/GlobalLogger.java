@@ -68,7 +68,7 @@ public class GlobalLogger {
             new LogFile("log-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd-HHmmss")) + ".log"),
             new LogFile("log-latest.log", true),
         };
-        setLogFolder(Paths.get(System.getProperty("user.dir"), "blcmm_logs").toString());
+        setLogFolder(Paths.get(Utilities.getBLCMMDataDir(), "blcmm_logs").toString());
     }
 
     /**

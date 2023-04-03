@@ -34,8 +34,29 @@ package blcmm;
  */
 public class Meta {
 
-    public static final String VERSION = "1.3.0";
+    /**
+     * The application name, used in text throughout the app.
+     */
     public static final String NAME = "OpenBLCMM";
+
+    /**
+     * App version.
+     */
+    public static final String VERSION = "1.3.0";
+
+    /**
+     * User data directory for storing prefs, extracted data, etc.  We could
+     * almost certainly just use NAME for this, but if the name ever gets
+     * changed to something with a space or special chars or something, it might
+     * be nice to have a "normalized" version for the dir name.
+     */
+    public static final String APP_DATA_DIR_NAME = "OpenBLCMM";
+
+    /**
+     * The name of the compiled Jar file.  This may end up getting factored
+     * out, since I don't think there's much actual use for it anymore, and
+     * it wouldn't be accurate for the Windows-compiled version anyway.
+     */
     public static final String JARFILE = "OpenBLCMM.jar";
 
 }

@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -480,7 +481,7 @@ public class Options {
      */
     public static boolean loadOptions() throws FileNotFoundException {
         INSTANCE = new Options();
-        File f = new File(Options.DEFAULT_FILENAME);
+        File f = Paths.get(Utilities.getBLCMMDataDir(), Options.DEFAULT_FILENAME).toFile();
         if (f.exists()) {
             // If the file exists already, attempt to load it.  Don't save
             // anything out, even if we encountered errors while trying to
@@ -501,7 +502,7 @@ public class Options {
      * @return True if the save was successful, false otherwise.
      */
     public boolean save() {
-        return this.saveToFilename(Options.DEFAULT_FILENAME);
+        return this.saveToFilename(Paths.get(Utilities.getBLCMMDataDir(), Options.DEFAULT_FILENAME).toString());
     }
 
     /**

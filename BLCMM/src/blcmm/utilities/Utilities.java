@@ -27,6 +27,8 @@
  */
 package blcmm.utilities;
 
+import blcmm.Meta;
+import blcmm.model.PatchType;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -55,6 +57,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +71,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 /**
  *
@@ -599,6 +603,110 @@ public class Utilities {
         }
     }
 
+    // Migrated from BLCMMUtilities as part of the OpenBLCMM dev process
+    private static void populate(String[] patches, PatchType type, final int maxDistance, List<String> res) {
+        if (GameDetection.getBinariesDir(type) != null) {
+            Map<File, Integer> map = new HashMap<>();
+            String binaries = GameDetection.getBinariesDir(type).replace("\\", "/");
+            LevenshteinDistance ld = new LevenshteinDistance();
+            for (File f : new File(binaries).listFiles()) {
+                for (String patch : patches) {
+                    int dist = ld.apply(f.getName().toLowerCase(), patch);
+                    if (dist <= maxDistance && f.isFile()) {
+                        map.put(f, Math.min(map.getOrDefault(f, dist), dist));
+                    }
+                }
+            }
+            List<File> fs = new ArrayList<>();
+            fs.addAll(map.keySet());
+            fs.sort((t, t1) -> Integer.compare(map.get(t), map.get(t1)));
+            if (fs.size() > 0) {
+                res.add(fs.get(0).getAbsolutePath());
+            }
+        }
+    }
+
+    /**
+     * Called when starting up the GUI to make sure that, if we have files in
+     * our file history, they exist. Will purge the list of any nonexistent
+     * files. If this results in an empty history, we will call our detection
+     * routines to attempt to populate it.
+     *
+     * Migrated from BLCMMUtilities as part of the OpenBLCMM dev process
+     */
+    public static void cleanFileHistory() {
+        String[] fileHistory = Options.INSTANCE.getFileHistory();
+        ArrayList<String> newHistory = new ArrayList<>();
+        File curFile;
+        for (String filename : fileHistory) {
+            curFile = new File(filename);
+            if (curFile.exists()) {
+                newHistory.add(filename);
+            }
+        }
+        if (fileHistory.length != newHistory.size()) {
+            Options.INSTANCE.setFileHistory(newHistory.toArray(new String[0]));
+            populateFileHistory(true);
+        }
+    }
+
+    /**
+     * Returns a directory which we can use to store data, should we want to. If
+     * we couldn't find existing app data directories via the detection in
+     * Utilities, we'll default to our current working directory. Note that the
+     * actual directory returned here is not guaranteed to exist, but all its
+     * parent dirs should exist.  Note that Creative Mode will always choose
+     * the current working directory!
+     *
+     * Migrated from BLCMMUtilities as part of the OpenBLCMM dev process.
+     *
+     * @return A path to a directory we should be able to use to store data,
+     * writable by the user.
+     */
+    public static String getBLCMMDataDir() {
+        if (Utilities.isCreatorMode()) {
+            // In creator mode, we always store stuff in the CWD
+            return System.getProperty("user.dir");
+        } else {
+            // In regular mode, we should be going into an appdir, if we can.
+            String detectedDir = Utilities.getAppDataDir(Meta.APP_DATA_DIR_NAME);
+            if (detectedDir == null) {
+                // If we got here, nothing could be autodetected.  Fall back to the
+                // current working directory, I guess.  Let's just assume that this
+                // exists.  To remain compatible with the way the app has always
+                // worked when run without a launcher, we're going to NOT add
+                // appDirName here.
+                return System.getProperty("user.dir");
+            } else {
+                return detectedDir;
+            }
+        }
+    }
+
+    /**
+     * Populates our file history based on GameDetection, if we don't already
+     * have data in the file history.
+     *
+     * Migrated from BLCMMUtilities as part of the OpenBLCMM dev process.
+     *
+     * @param bl2First Whether to sort BL2-discovered patch files first. True
+     * for BL2, False for TPS.
+     */
+    public static void populateFileHistory(boolean bl2First) {
+        if (Options.INSTANCE.getFileHistory().length == -1) {
+            String[] bl2Patches = new String[]{"patch.txt"};
+            String[] tpsPatches = new String[]{"patch.txt", "patchtps.txt"};
+            final int maxDistance = 4; //arbitrary
+            List<String> res = new ArrayList<>();
+            populate(bl2Patches, PatchType.BL2, maxDistance, res);
+            populate(tpsPatches, PatchType.TPS, maxDistance, res);
+            if (!bl2First) {
+                Collections.reverse(res);
+            }
+            Options.INSTANCE.setFileHistory(res.toArray(new String[0]));
+        }
+    }
+
     public static class CodeFormatter {
 
         private final static String INDENTATION = "    ";
@@ -883,15 +991,30 @@ public class Utilities {
     }
 
     /**
-     * Returns the main Jar/EXE location for OpenBLCMM, or null if we can't.
+     * Returns the main Jar/EXE file path for OpenBLCMM, or null if we can't.
      *
      * @return The location of the main Jar/EXE
      */
-    public static File getMainJarLocation() {
+    public static File getMainJarFile() {
         try {
-            return new File(Utilities.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+            return new File(Utilities.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         } catch (URISyntaxException e) {
             return null;
+        }
+    }
+
+    /**
+     * Returns the main install dir where OpenBLCMM.jar/.exe currently lives,
+     * or null if we can't.
+     *
+     * @return The directory containing our "installation"
+     */
+    public static File getMainInstallDir() {
+        File jarFile = Utilities.getMainJarFile();
+        if (jarFile == null) {
+            return null;
+        } else {
+            return jarFile.getAbsoluteFile().getParentFile();
         }
     }
 
@@ -909,11 +1032,11 @@ public class Utilities {
         if (Utilities.isCreatorMode()) {
             return new File("").getAbsoluteFile();
         } else {
-            File mainJar = Utilities.getMainJarLocation();
-            if (mainJar == null) {
+            File mainJarDir = Utilities.getMainInstallDir();
+            if (mainJarDir == null) {
                 return new File("").getAbsoluteFile();
             } else {
-                return mainJar.getParentFile();
+                return mainJarDir;
             }
         }
     }

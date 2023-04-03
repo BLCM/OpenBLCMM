@@ -31,7 +31,6 @@ import blcmm.gui.MainGUI;
 import blcmm.gui.panels.IniTweaksPanel;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.AutoBackupper;
-import blcmm.utilities.BLCMMUtilities;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.OSInfo;
 import blcmm.utilities.Options;
@@ -124,6 +123,7 @@ public class Startup {
         GlobalLogger.log("Maximum Memory: " + (Runtime.getRuntime().maxMemory() == Long.MAX_VALUE ? "No Limit"
                 : humanReadableByteCount(Runtime.getRuntime().maxMemory())));
 
+        // Adjust the title
         titlePostfix = "";
         for (String vmarg : vmArguments) {
             if (vmarg.startsWith("-Xmx")) {
@@ -136,14 +136,16 @@ public class Startup {
             }
         }
 
-        firstTime();//load options and set theme
-        generateHintsFile();
+        // Load options and set theme
+        firstTime();
 
-        ToolTipManager.sharedInstance().setInitialDelay(500);//make tooltips tolerable
+        // Make tooltips tolerable
+        ToolTipManager.sharedInstance().setInitialDelay(500);
         ToolTipManager.sharedInstance().setDismissDelay(10000);
 
         // Report on some various vars
-        GlobalLogger.log("Your " + Meta.NAME + " installation can be found here: " + BLCMMUtilities.getBLCMMDataDir());
+        GlobalLogger.log(Meta.NAME + " is installed at: " + Utilities.getMainInstallDir());
+        GlobalLogger.log("Your user data directory is: " + Utilities.getBLCMMDataDir());
         GlobalLogger.log("Working directory: " + System.getProperty("user.dir").replaceAll("\\\\", "/"));
         GlobalLogger.log("Default file-open location: " + Utilities.getDefaultOpenLocation().toString());
 
@@ -158,7 +160,7 @@ public class Startup {
             MainGUI.setTheme(ThemeManager.getDefaultTheme());
             Options.INSTANCE.setShowHotfixNames(false);
         } else {
-            BLCMMUtilities.populateFileHistory(true);
+            Utilities.populateFileHistory(true);
             MainGUI.setTheme(Options.INSTANCE.getTheme());
         }
     }
@@ -238,26 +240,6 @@ public class Startup {
     public static void showIniTweaks() {
         IniTweaksPanel panel = new IniTweaksPanel();
         JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    private static void generateHintsFile() {
-        try {
-            File f = new File("hints.txt");
-            String hints
-                    = "Use the middle mouse button in the Object Explorer to open a new tab\n"
-                    + "Press CTRL+Space while editing for auto-complete\n"
-                    + "Is something unavailable? Hover your mouse over the button for info\n"
-                    + "Hotfixes work mostly the same as regular set commands with " + Meta.NAME + "\n"
-                    + "Extra features for " + Meta.NAME + " can be downloaded in the settings menu\n"
-                    + "Use 'Format code' or 'Deformat code' to make dumped objects or code more readable\n"
-                    + "Most tools to reorganize mods are found in the right-mouse menu\n"
-                    + "Did " + Meta.NAME + " crash? a backup of your current file is made every 2 minutes\n"
-                    + "Hide the left side of the object explorer by double-clicking the divider";
-
-            Utilities.writeStringToFile(hints, f);
-        } catch (IOException ex) {
-            GlobalLogger.log(ex);
-        }
     }
 
     private static boolean confirmIO() {

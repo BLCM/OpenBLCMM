@@ -182,7 +182,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         // The BLCMM install dir itself (actually, its parent)
         panel.add(directoryShortcutButton(fc,
                 "Open " + Meta.NAME + " Install Dir",
-                Utilities.getDefaultOpenLocation().getAbsolutePath(),
+                Utilities.getMainInstallDir().toString(),
                 new ImageIcon(IconManager.getBLCMMIcon(16))), cs);
         cs.gridy++;
 

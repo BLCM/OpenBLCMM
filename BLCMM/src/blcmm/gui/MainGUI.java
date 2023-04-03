@@ -342,7 +342,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private void initializeTree(final File toOpen) {
         this.updateTitle();
         // Figure out which "recent" file to open.
-        BLCMMUtilities.cleanFileHistory();
+        Utilities.cleanFileHistory();
         String[] files = Options.INSTANCE.getFileHistory();
         //first try to open the provided file
         boolean opened = false;
