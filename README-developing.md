@@ -19,18 +19,16 @@ green "Play" icon in the main toolbar, or various menu options.
 Compiling for Windows
 ---------------------
 
-This is still a little bit in flux, but I suspect that this is the
-direction we'll end up going with OpenBLCMM, at least for now.
 [GraalVM](https://www.graalvm.org/) is a high-performance JDK which has
 the additional feature of being able to compile Java code to run as
 native binaries, via its [Native Image](https://www.graalvm.org/22.0/reference-manual/native-image/)
 functionality.
 
-At time of writing (April 2023), GraalVM's Native Image doesn't yet
-support Swing/AWT applications for Windows, which is the GUI toolkit
-that BLCMM uses.  Fortunately, there's a sort-of fork called
-[Liberica](https://bell-sw.com/libericajdk/) which also has their own
-[Liberica Native Image Kit](https://bell-sw.com/liberica-native-image-kit/),
+At time of writing (April 2023), GraalVM's Native Image [doesn't yet
+support Swing/AWT applications for Windows](https://github.com/oracle/graal/issues/3084),
+which is the GUI toolkit that BLCMM uses.  Fortunately, there's a
+sort-of fork called [Liberica](https://bell-sw.com/libericajdk/) which
+also has their own [Liberica Native Image Kit](https://bell-sw.com/liberica-native-image-kit/),
 and *that* fork seems to work just fine with BLCMM's code.  So, that's
 what we're using.
 
@@ -86,9 +84,7 @@ hasn't changed in the meantime.
 
 Once the compilation process is done, you should have an `OpenBLCMM.exe`
 and a collection of DLL files (ten of them, currently).  These can be
-zipped up and distributed!  At time of writing, the app also needs to
-have `lib/BLCMM_Resources.jar` distributed as well, though that should
-hopefully not be the case for much longer.
+zipped up and distributed!
 
 ### Installing/Using Those Components
 
