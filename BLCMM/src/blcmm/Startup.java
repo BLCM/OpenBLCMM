@@ -151,7 +151,7 @@ public class Startup {
         GlobalLogger.log("Default file-open location: " + Utilities.getDefaultOpenLocation().toString());
 
         java.awt.EventQueue.invokeLater(() -> {
-            new MainGUI(file, titlePostfix).setVisible(true);
+            new MainGUI(file, titlePostfix);
         });
     }
 

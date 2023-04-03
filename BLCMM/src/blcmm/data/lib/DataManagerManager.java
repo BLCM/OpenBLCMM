@@ -62,6 +62,7 @@ public class DataManagerManager {
     private HashMap <PatchType, DataManager> dataManagers;
     private PatchType currentPatchType;
     private DataManager currentDataManager;
+    private DataStatus dataStatus;
 
     /**
      * Default constructor, most likely called by MainGUI, which initializes a
@@ -69,22 +70,28 @@ public class DataManagerManager {
      * the data could not be loaded), and sets the specified one as the current
      * active one.
      *
-     * @param currentPatchType The currently-active PatchType
+     * @param currentPatchType The currently-active PatchType.
+     * @param dataStatus A DataStatus object to send updates to.
      */
-    public DataManagerManager(PatchType currentPatchType) {
+    public DataManagerManager(PatchType currentPatchType, DataStatus dataStatus) {
+
         this.dataManagers = new HashMap<>();
         for (PatchType type : PatchType.values()) {
+            dataStatus.setGame(type);
             try {
                 GlobalLogger.log("Starting initialization of " + type.toString() + " Data Manager");
-                this.dataManagers.put(type, new DataManager(type));
+                this.dataManagers.put(type, new DataManager(type, dataStatus));
                 GlobalLogger.log("Initialized " + type.toString() + " Data Manager");
+                dataStatus.event("Data initialization successful!", false);
             } catch (DataManager.NoDataException e) {
                 this.dataManagers.put(type, null);
+                dataStatus.event("Error initializing: " + e.getMessage(), false);
                 GlobalLogger.log("Error initializing " + type.toString() + " Data Manager: " + e.toString());
             }
         }
         this.updateDataManagersSelectedClasses();
         this.setPatchType(currentPatchType);
+        dataStatus.finish();
     }
 
     /**

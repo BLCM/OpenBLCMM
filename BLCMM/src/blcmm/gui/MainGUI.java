@@ -35,6 +35,7 @@ import blcmm.data.lib.DataManagerManager;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.DefaultTextTextField;
 import blcmm.gui.components.ForceClosingJFrame;
+import blcmm.gui.components.GUIDataStatus;
 import blcmm.gui.components.GameSelectionPanel;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.components.TimedLabel;
@@ -142,6 +143,8 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private DataManagerManager dmm;
 
+    private File argToOpen;
+
     /**
      * Creates new form MainGUI
      *
@@ -151,12 +154,47 @@ public final class MainGUI extends ForceClosingJFrame {
     public MainGUI(final File toOpen, final String titlePostfix) {
         INSTANCE = this;
         GUI_IO_Handler.MASTER_UI = INSTANCE;
+        this.argToOpen = toOpen;
+        this.titlePostfix = titlePostfix;
+
+        // Load our data in the background.  It's possible (probable?) we could
+        // do this later on instead, but I don't want to worry about whether
+        // or not components have to care about having access to the DMM
+        // object or not, so this is now basically the very first thing that
+        // happens.
+        //
+        // The whole background-worker thing is necessary because our
+        // GUIDataStatus object needs to be able to update the GUI as it reports
+        // on progress, and a SwingWorker is kind of the way to do that.
+        SwingWorker dataLoadWorker = new SwingWorker() {
+
+            @Override
+            protected Object doInBackground() {
+                dmm = new DataManagerManager(PatchType.BL2, new GUIDataStatus());
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                finishInit();
+            }
+
+        };
+        dataLoadWorker.execute();
+    }
+
+    /**
+     * Finishes up the initialization process.  This was originally inline as
+     * part of the constructor, but since the DataManagerManager init is
+     * happening in a SpringWorker, this needed to be able to be called-out-to
+     * once that worker's done.
+     */
+    private void finishInit() {
+
         initComponents();
         addSearchLayer();
         getGameSelectionPanel().addItemListenerToComboBox(this::gameSelectionAction);
-        this.dmm = new DataManagerManager(PatchType.BL2);
 
-        this.titlePostfix = titlePostfix;
         themeComboBox.setSelectedItem(Options.INSTANCE.getTheme());
         jSpinner1.setValue(Options.INSTANCE.getFontsize());
 
@@ -180,8 +218,9 @@ public final class MainGUI extends ForceClosingJFrame {
         initializeWindowSize();
         updateFontSizes();
         Utilities.changeCTRLMasks(this.getRootPane());
+        this.setVisible(true);
         Runnable runnable = () -> {
-            initializeTree(toOpen);
+            initializeTree(this.argToOpen);
             setChangePatchTypeEnabled(patch != null);
             backupThread = startupBackupThread();
         };
