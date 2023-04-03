@@ -1015,7 +1015,15 @@ public class Utilities {
         if (jarFile == null) {
             return null;
         } else {
-            return jarFile.getAbsoluteFile().getParentFile();
+            if (jarFile.isDirectory()) {
+                // This is most likely to be the case when being run from
+                // inside NetBeans itself, 'cause this'll just point to the
+                // top-level classpath where the compiled classes can be
+                // found.
+                return jarFile.getAbsoluteFile();
+            } else {
+                return jarFile.getAbsoluteFile().getParentFile();
+            }
         }
     }
 
