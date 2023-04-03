@@ -98,6 +98,8 @@ TODO
   provide a clickable button/link to the Github Issues page.
   - Maybe add that into the crash report window in general, yeah?  Check
     `MyExceptionHandler` in `Startup.java`
+- Get rid of those annoying registry execeptions when running on Windows
+  (on a host which doesn't have the game installed, presumably)
 - Doublecheck username suppression in logs:
   - INI files
   - "installation can be found"
