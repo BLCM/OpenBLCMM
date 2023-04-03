@@ -69,6 +69,10 @@ OpenBLCMM Changelog
 - "Restore defaults" button on settings screen will only restore the settings
   shown on the active screen (this prevents clearing the recently-viewed file
   list, for instance)
+- Added "Working Dir" file dialog button, for when that differs from the
+  OpenBLCMM install location.
+- Added a folder icon to the file dialog directory presets for Last-Imported
+  and Working directories (instead of the empty space they had previously)
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.

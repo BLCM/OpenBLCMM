@@ -154,7 +154,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         tempDir = GameDetection.getBinariesDir(PatchType.BL2);
         if (tempDir != null) {
             panel.add(directoryShortcutButton(fc,
-                    "Open BL2 Binaries Dir",
+                    "BL2 Binaries Dir",
                     tempDir,
                     new ImageIcon(PatchType.BL2.getIcon(16))), cs);
             cs.gridy++;
@@ -164,7 +164,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         tempDir = GameDetection.getBinariesDir(PatchType.TPS);
         if (tempDir != null) {
             panel.add(directoryShortcutButton(fc,
-                    "Open TPS Binaries Dir",
+                    "TPS Binaries Dir",
                     tempDir,
                     new ImageIcon(PatchType.TPS.getIcon(16))), cs);
             cs.gridy++;
@@ -174,23 +174,40 @@ public class BLCMM_FileChooser extends JFileChooser {
         tempDir = Options.INSTANCE.getLastImport();
         if (tempDir != null && !tempDir.equals("")) {
             panel.add(directoryShortcutButton(fc,
-                    "Open Last Imported Dir",
-                    new File(tempDir).getParent(), null), cs);
+                    "Last Imported Dir",
+                    new File(tempDir).getParent(),
+                    new ImageIcon(IconManager.getIcon("/resources/folder.png", 16))), cs);
             cs.gridy++;
         }
 
-        // The BLCMM install dir itself (actually, its parent)
-        panel.add(directoryShortcutButton(fc,
-                "Open " + Meta.NAME + " Install Dir",
-                Utilities.getMainInstallDir().toString(),
-                new ImageIcon(IconManager.getBLCMMIcon(16))), cs);
-        cs.gridy++;
+        // See if we should also offer a "current" directory.  Only do that
+        // if it differs from our install dir (which, in at least some
+        // cases, it will).
+        File installFile = Utilities.getMainInstallDir();
+        String curDir = System.getProperty("user.dir");
+        File curFile = new File(curDir);
+        if (installFile == null || !installFile.equals(curFile)) {
+            panel.add(directoryShortcutButton(fc,
+                    "Working Dir",
+                    curDir,
+                    new ImageIcon(IconManager.getIcon("/resources/folder.png", 16))), cs);
+            cs.gridy++;
+        }
+
+        // The BLCMM install dir itself, if it's found.
+        if (installFile != null) {
+            panel.add(directoryShortcutButton(fc,
+                    Meta.NAME + " Install Dir",
+                    installFile.toString(),
+                    new ImageIcon(IconManager.getBLCMMIcon(16))), cs);
+            cs.gridy++;
+        }
 
         // Backup dir
         tempDir = AutoBackupper.getDestination();
         if (new File(tempDir).exists()) {
             panel.add(directoryShortcutButton(fc,
-                    "Open Backup Dir",
+                    "Backup Dir",
                     tempDir,
                     new ImageIcon(IconManager.getBLCMMIcon(16))), cs);
             cs.gridy++;
@@ -200,7 +217,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         tempDir = System.getProperty("user.dir") + "/plugin_output";
         if (new File(tempDir).exists()) {
             panel.add(directoryShortcutButton(fc,
-                    "Open Plugin Output",
+                    "Plugin Output",
                     tempDir,
                     new ImageIcon(IconManager.getBLCMMIcon(16))), cs);
             cs.gridy++;

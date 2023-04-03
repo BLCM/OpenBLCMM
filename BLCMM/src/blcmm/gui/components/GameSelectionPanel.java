@@ -34,6 +34,7 @@ import blcmm.utilities.Options;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -65,7 +66,7 @@ public class GameSelectionPanel extends JPanel {
             public Component getListCellRendererComponent(JList<?> jlist, Object o, int i, boolean bln, boolean bln1) {
                 JLabel l = (JLabel) super.getListCellRendererComponent(jlist, o, i, bln, bln1);
                 l.setText(((PatchType) o).getGameName());
-                l.setIcon(new ImageIcon(((PatchType) o).getIcon(4 + Options.INSTANCE.getFontsize())));
+                l.setIcon(new ImageIcon((Image)((PatchType) o).getIcon(4 + Options.INSTANCE.getFontsize())));
                 return l;
             }
         });

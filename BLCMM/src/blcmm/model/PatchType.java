@@ -32,7 +32,7 @@ package blcmm.model;
 
 import blcmm.utilities.IconManager;
 import blcmm.utilities.Options;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -384,7 +384,7 @@ public enum PatchType {
      *
      * @return The icon for the game
      */
-    public Image getIcon() {
+    public BufferedImage getIcon() {
         return IconManager.getIcon(this.iconPath);
     }
 
@@ -394,7 +394,7 @@ public enum PatchType {
      * @param size The size to scale to -- images are assumed to be square
      * @return The icon for the game
      */
-    public Image getIcon(int size) {
+    public BufferedImage getIcon(int size) {
         return IconManager.getIcon(this.iconPath, size);
     }
 

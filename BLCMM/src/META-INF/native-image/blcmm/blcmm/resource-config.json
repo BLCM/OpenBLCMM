@@ -41,6 +41,9 @@
       "pattern":"\\Qresources/padlock.png\\E"
     }, 
     {
+      "pattern":"\\Qresources/folder.png\\E"
+    }, 
+    {
       "pattern":"\\Qresources/speaker.png\\E"
     }
   ]},

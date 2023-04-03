@@ -15,10 +15,16 @@ Provenance of the various resources in here
   under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
   (Though not with the filename used here.)
 
-* `exec.png` / `padlock.png` / `speaker.png` - - Some icons from
+* `exec.png` / `padlock.png` / `speaker.png` - Some icons from
   [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
   [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under
   CC BY 3.0.  (Though not with the filenames used here.)
+
+* `folder.png` - [Free-to-use icon](https://www.flaticon.com/free-icon/folder_148955)
+  from [Smashicons](https://www.flaticon.com/authors/smashicons)'
+  [Essential Collection set](https://www.flaticon.com/packs/essential-collection),
+  available under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
+  (Though not with the filename used here.)
 
 * `<gamedir>/GBX_hotfixes.blcm` - BLCM-formatted mod file containing the
   vanilla hotfixes still provided by GBX at time of writing.  This is the

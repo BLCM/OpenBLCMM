@@ -30,6 +30,7 @@
 
 package blcmm.utilities;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class IconManager {
 
     static final String BLCMM_ICON_PATH = "/resources/Icon.png";
     static final int BLANK_DEFAULT_RES = 256;
-    private final static HashMap<String, HashMap<Integer, Image>> iconCache = new HashMap<> ();
+    private final static HashMap<String, HashMap<Integer, BufferedImage>> iconCache = new HashMap<> ();
 
     /**
      * Returns the specified icon, or an "empty" image if the path can't be
@@ -57,7 +58,7 @@ public class IconManager {
      * @param path The resource path to the icon
      * @return The icon for the game
      */
-    public static Image getIcon(String path) {
+    public static BufferedImage getIcon(String path) {
         return IconManager.getIcon(path, -1);
     }
 
@@ -70,11 +71,11 @@ public class IconManager {
      * @param size The size to scale to -- images are assumed to be square
      * @return The icon for the game
      */
-    public static Image getIcon(String path, int size) {
+    public static BufferedImage getIcon(String path, int size) {
 
         // If we haven't seen this path at all, load in its default resolution
         if (!IconManager.iconCache.containsKey(path)) {
-            Image im = null;
+            BufferedImage im = null;
             try {
                 InputStream stream = IconManager.class.getResourceAsStream(path);
                 if (stream != null) {
@@ -94,12 +95,30 @@ public class IconManager {
 
         // If we haven't seen this *size* at all, do a resize.  We know that
         // -1 is already in here since we populated it above, so we'll never
-        // try to resize to -1x-1.
+        // try to resize to -1x-1.  Also, if the requested size is already
+        // the size of the image, skip trying to resize and just return the
+        // original.
         if (!IconManager.iconCache.get(path).containsKey(size)) {
-            IconManager.iconCache.get(path).put(
-                    size,
-                    IconManager.iconCache.get(path).get(-1).getScaledInstance(size, size, Image.SCALE_SMOOTH)
-            );
+            BufferedImage fullImage = IconManager.iconCache.get(path).get(-1);
+            if (fullImage.getWidth() == size && fullImage.getHeight() == size) {
+                IconManager.iconCache.get(path).put(size, fullImage);
+            } else {
+                // getScaledInstance produces good-looking rescales but returns
+                // an `Image` instead of a `BufferedImage`.  `Image` would be
+                // fine except that it doesn't actually support sensibly getting
+                // the image dimensions, which I want to check above?  WTF.
+                // I tried scaling the image directly to a BufferedImage using
+                // some Graphics2D techniques but it always looked like dogshit,
+                // so instead I'm just going back to getScaledInstance and then
+                // copying the damn thing over.  It sounds from The Internet
+                // that getScaledInstance isn't well thought-of, but eh.
+                Image resized = fullImage.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+                BufferedImage buffered = new BufferedImage(size, size, fullImage.getType());
+                Graphics2D g = buffered.createGraphics();
+                g.drawImage(resized, 0, 0, null);
+                g.dispose();
+                IconManager.iconCache.get(path).put(size, buffered);
+            }
         }
 
         // If we got here, we should have *something*, even if it's just blank.
@@ -111,7 +130,7 @@ public class IconManager {
      *
      * @return The OpenBLCMM icon
      */
-    public static Image getBLCMMIcon() {
+    public static BufferedImage getBLCMMIcon() {
         return getIcon(BLCMM_ICON_PATH);
     }
 
@@ -121,7 +140,7 @@ public class IconManager {
      * @param size The width and height of the requested icon (assumed to be square)
      * @return The scaled OpenBLCMM icon
      */
-    public static Image getBLCMMIcon(int size) {
+    public static BufferedImage getBLCMMIcon(int size) {
         return getIcon(BLCMM_ICON_PATH, size);
     }
 
