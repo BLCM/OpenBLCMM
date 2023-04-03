@@ -167,6 +167,9 @@ OpenBLCMM makes use of the following third party libraries/resources:
 - An icon from [Fathema Khanom](https://www.flaticon.com/authors/fathema-khanom)'s
   [User Interface set](https://www.flaticon.com/packs/user-interface-2899), available
   under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
+- An icon from [Smashicons](https://www.flaticon.com/authors/smashicons)'
+  [Essential Collection set](https://www.flaticon.com/packs/essential-collection),
+  available under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
 
 License
 =======
