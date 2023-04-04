@@ -101,8 +101,8 @@ public final class AboutPanel extends JPanel {
         if (Utilities.isCreatorMode()) {
             sysInfo.put("Creator Mode", "Yes");
         }
-        sysInfo.put("Java VM", System.getProperty("java.vm.name"));
         sysInfo.put("Java Version", System.getProperty("java.version"));
+        sysInfo.put("Java VM", System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version"));
         sysInfo.put("Memory Used", Utilities.humanReadableByteCount(curRuntime.totalMemory() - curRuntime.freeMemory()));
         if (curRuntime.maxMemory() == Long.MAX_VALUE) {
             sysInfo.put("Memory Max", "Unlimited");
@@ -384,33 +384,6 @@ public final class AboutPanel extends JPanel {
                 // pad (x, y)
                 0, 0));
 
-        /*
-        int wLog = 64, wPay = 100;
-        mainLabel.setIcon(new ImageIcon(IconManager.getBLCMMIcon(wLog)));
-        mainLabel.setIconTextGap((wPay - wLog) / 2 + 10);
-        JLabel donateButton = new JLabel(new ImageIcon(new ImageIcon(AboutPanel.class.getClassLoader().getResource("resources/donate.png")).getImage().getScaledInstance(wPay, wPay / 4, Image.SCALE_SMOOTH)));
-        donateButton.setToolTipText("Donate with PayPal");
-        donateButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                try {
-                    URL faq = new URL("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US");
-                    Desktop.getDesktop().browse(faq.toURI());
-                } catch (URISyntaxException | IOException ex) {
-                }
-            }
-        });
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(e -> SwingUtilities.getWindowAncestor(AboutPanel.this).dispose());
-        JLabel donateMeme = new JLabel("Donations will go to LightChaosman, the original author of BLCMM.");
-
-        add(mainLabel, new GridBagConstraints(0, 0, 3, 1, 1, 1, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(20, 20 + (wPay - wLog) / 2, 5, 20), 0, 0));
-        if (showDonate) {
-            add(donateButton, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 20, 20, 5), 0, 0));
-            add(donateMeme, new GridBagConstraints(1, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(10, 5, 20, 5), 0, 0));
-        }
-        add(okButton, new GridBagConstraints(2, 1, 1, 1, 500, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10, 5, 20, 20), 0, 0));
-        */
     }
 
     /**
