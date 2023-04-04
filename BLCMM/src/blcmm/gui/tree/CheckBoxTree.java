@@ -45,6 +45,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.EventListener;
 import java.util.EventObject;
@@ -596,6 +597,28 @@ public final class CheckBoxTree extends JTree {
         }
 
         return firstResult;
+    }
+
+    /**
+     * Returns the paths of all selected values, ordered by how they appear in
+     * the tree, instead of JTree's default, which is the order in which they
+     * were selected.
+     *
+     * @return an array of TreePath objects indicating the selected nodes,
+     * or null if nothing is currently selected
+     */
+    @Override
+    public TreePath[] getSelectionPaths() {
+        int [] treeRows = this.getSelectionRows();
+        if (treeRows == null || treeRows.length == 0) {
+            return null;
+        }
+        Arrays.sort(treeRows);
+        TreePath[] paths = new TreePath[treeRows.length];
+        for (int i=0; i<treeRows.length; i++) {
+            paths[i] = this.getPathForRow(treeRows[i]);
+        }
+        return paths;
     }
 
     private static class CheckboxTreeMouseAdapter extends MouseAdapter {

@@ -69,6 +69,8 @@ OpenBLCMM Changelog
 - "Restore defaults" button on settings screen will only restore the settings
   shown on the active screen (this prevents clearing the recently-viewed file
   list, for instance)
+- Selecting multiple commands to edit will now always show them in the order
+  they appear in the file, instead of the order they were selected.
 - Revamped "About" dialog; now shows various bits of system + version info.
 - Added "Working Dir" file dialog button, for when that differs from the
   OpenBLCMM install location.
