@@ -62,17 +62,10 @@ TODO
 
 ### Immediate (would like to get done before public release)
 
-- Check diskspace prior to sqlite extraction
 - Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
 - New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Memory monitor in main window, when in Creator Mode?
-- About dialog improvements:
-  - Link/button to github
-  - Report Java version
-  - Report data versions
-  - Report memory usage + config?
 - Figure out opening SQLite DBs in read-only mode
 - May as well cache *all* our PreparedStatements in DataManager...
 - Apparently multi-selections screw with statement order in the Edit window?
