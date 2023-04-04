@@ -66,7 +66,6 @@ TODO
 - AoDK support (both in OpenBLCMM itself and OE)
 - New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Figure out opening SQLite DBs in read-only mode
 - May as well cache *all* our PreparedStatements in DataManager...
 - Apparently multi-selections screw with statement order in the Edit window?
 - Improve "basic" attr-name autocomplete to restrict results to appropriate
@@ -93,10 +92,13 @@ TODO
   of known GUI issues we'll need to work through:
   - List handling (specifically in third-party tab on About dialog)
   - Header during data extraction status dialog ("nobr" tags don't work)
+  - Oh, also it might have trouble launching browser URLs?
 - Doublecheck username suppression in logs:
   - INI files
   - "installation can be found"
   - elsewhere...
+- Bundle as a "fat" Jar so that the Java version doesn't have to distribute
+  libs.
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
