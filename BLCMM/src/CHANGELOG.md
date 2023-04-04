@@ -76,6 +76,8 @@ OpenBLCMM Changelog
   OpenBLCMM install location.
 - Added a folder icon to the file dialog directory presets for Last-Imported
   and Working directories (instead of the empty space they had previously)
+- Crash-handling window includes a link to Github Issues for OpenBLCMM, and
+  only the "OK" button will actually close that dialog.
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.

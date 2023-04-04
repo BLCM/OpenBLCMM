@@ -66,4 +66,9 @@ public class Meta {
      */
     public static final String CODE_URL = "https://github.com/BLCM/OpenBLCMM";
 
+    /**
+     * URL to where to submit bugs, shown on the crash handler dialog.
+     */
+    public static final String BUGREPORT_URL = "https://github.com/BLCM/OpenBLCMM/issues";
+
 }

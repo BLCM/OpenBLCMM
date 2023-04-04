@@ -49,6 +49,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -440,11 +442,14 @@ public class Startup {
                 JButton openFile = new JButton("Open log");
                 JButton openFolder = new JButton("Open log folder");
                 JButton openBFolder = new JButton("Open backup folder");
+                JButton openBugReportURL = new JButton("Open Github Issues");
                 panel.add(openBFolder, c);
                 c.gridx++;
                 panel.add(openFolder, c);
                 c.gridx++;
                 panel.add(openFile, c);
+                c.gridx++;
+                panel.add(openBugReportURL, c);
                 c.gridx++;
                 c.insets.right = 10;
 
@@ -454,7 +459,6 @@ public class Startup {
                     } catch (IOException ex) {
                         Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    dialog.dispose();
                 });
                 openFolder.addActionListener((ActionEvent ae) -> {
                     try {
@@ -462,7 +466,6 @@ public class Startup {
                     } catch (IOException ex) {
                         Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    dialog.dispose();
                 });
                 openBFolder.addActionListener((ActionEvent ae) -> {
                     try {
@@ -470,7 +473,14 @@ public class Startup {
                     } catch (IOException ex) {
                         Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    dialog.dispose();
+                });
+                openBugReportURL.addActionListener((ActionEvent ae) -> {
+                    try {
+                        URL urlToBrowse = new URL(Meta.BUGREPORT_URL);
+                        Desktop.getDesktop().browse(urlToBrowse.toURI());
+                    } catch (URISyntaxException | IOException ex) {
+                        Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 });
             }
             panel.add(ok, c);
