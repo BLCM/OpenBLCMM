@@ -343,7 +343,12 @@ public class DataManager {
         this.dataStatusNotifier.event("Checking datafile integrity...", false);
 
         // Actually, let's let these filenames be versioned, and always take the most recent
-        File thisDir = new File(".");
+        File thisDir;
+        if (Utilities.isCreatorMode()) {
+            thisDir = new File(System.getProperty("user.dir"));
+        } else {
+            thisDir = Utilities.getMainInstallDir();
+        }
         String jarPrefix = "blcmm_data_" + patchType.name() + "-";
         File[] jars = thisDir.listFiles(new FilenameFilter() {
             @Override
