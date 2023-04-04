@@ -514,7 +514,8 @@
   "methods":[
     {"name":"handleDropMessage","parameterTypes":["java.awt.Component","int","int","int","int","long[]","long"] }, 
     {"name":"handleEnterMessage","parameterTypes":["java.awt.Component","int","int","int","int","long[]","long"] }, 
-    {"name":"handleMotionMessage","parameterTypes":["java.awt.Component","int","int","int","int","long[]","long"] }
+    {"name":"handleMotionMessage","parameterTypes":["java.awt.Component","int","int","int","int","long[]","long"] },
+    {"name":"handleExitMessage","parameterTypes":["java.awt.Component","long"] }
   ]
 },
 {
