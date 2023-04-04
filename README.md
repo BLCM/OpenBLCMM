@@ -67,13 +67,10 @@ TODO
 - New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - May as well cache *all* our PreparedStatements in DataManager...
-- Apparently multi-selections screw with statement order in the Edit window?
 - Improve "basic" attr-name autocomplete to restrict results to appropriate
   field names
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
   double/triple/whatever).  Also an option to disable links altogether?
-- Make sure we handle launching from a readonly filesystem properly
-  (original BLCMM launcher crashes when that happens; main app might too)
 - Add in proper version checking in `.blcm` loading.
 - Make sure that data jars can be found when launching from some other dir
 - "No results found" when refs doesn't return anything, in OE
