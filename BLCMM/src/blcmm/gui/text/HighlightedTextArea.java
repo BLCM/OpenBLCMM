@@ -29,6 +29,7 @@
 package blcmm.gui.text;
 
 import blcmm.data.lib.DataManagerManager;
+import blcmm.data.lib.UEObject;
 import blcmm.gui.MainGUI;
 import blcmm.gui.ObjectExplorer;
 import blcmm.utilities.GlobalLogger;
@@ -299,7 +300,29 @@ public final class HighlightedTextArea extends JTextPane {
                 // up the object (at wordIndex 2) to get its class, and then restrict the autocomplete
                 // to just the attrs for that class.
                 //GlobalLogger.log("Doing attr autocomplete for currentWord \"" + currentWord + "\"");
-                words = this.dmm.getCurrentDataManager().getFieldAutocompleteResults(currentWord);
+
+                // Search backwards for the previous token, which Should:tm: be an object name
+                begin--;
+                while (begin > 0 && Character.isWhitespace(doc.getText(begin, 1).charAt(0)) && doc.getText(begin, 1).charAt(0) != '\n') {
+                    begin--;
+                }
+                int end = begin;
+                while (begin > 0 && !isDelimiter(doc.getText(begin, 1))) {
+                    begin--;
+                }
+                String objName = doc.getText(begin, end - begin + 2).trim();
+                //GlobalLogger.log("Got object name: " + objName);
+
+                // Now that we (theoretically) have an object name, grab the object if
+                // possible, and if we have it in our DB (and thus know the class),
+                // restrict our results to just fields from that class.  Otherwise,
+                // return all possibilities from our full attr list.
+                UEObject ueObject = this.dmm.getCurrentDataManager().getObjectByName(objName);
+                if (ueObject == null || ueObject.getUeClass() == null) {
+                    words = this.dmm.getCurrentDataManager().getFieldAutocompleteResults(currentWord);
+                } else {
+                    words = this.dmm.getCurrentDataManager().getFieldFromClassAutocompleteResults(ueObject.getUeClass(), currentWord);
+                }
                 from = beginCurrentWord;
             } else {
                 // Finally, if we didn't match anything else, this starts an autocomplete for just a

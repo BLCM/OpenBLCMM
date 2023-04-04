@@ -147,6 +147,7 @@ public class DataManager {
     private PreparedStatement autocompleteDeepWithoutClassStmt;
     private PreparedStatement autocompleteDeepByClassStmt;
     private PreparedStatement autocompleteFieldWithoutClassStmt;
+    private PreparedStatement autocompleteFieldWithClassStmt;
     private PreparedStatement autocompleteEnumStmt;
 
     /**
@@ -310,6 +311,14 @@ public class DataManager {
                     "select distinct a.name from"
                     + " attr_name a"
                     + " where a.name like ?"
+                    + " order by a.name"
+            );
+            this.autocompleteFieldWithClassStmt = this.dbConn.prepareStatement(
+                    "select distinct a.name from"
+                    + " attr_name a, class_aggregate g"
+                    + " where g.aggregate=a.class"
+                    + " and g.id=?"
+                    + " and a.name like ?"
                     + " order by a.name"
             );
             // Note the `ESCAPE "\"` SQL in here.  The default SQL "LIKE" wildcard
@@ -1002,6 +1011,53 @@ public class DataManager {
     }
 
     /**
+     * Given an object name, returns a UEObject for the name, or null otherwise.
+     * Will link up the object with a UEClass if possible, as well.
+     *
+     * @param objectName The name of the object to dump
+     * @return A UEObject
+     */
+    public UEObject getObjectByName(String objectName) {
+
+        // It's possible we have the name in the form ClassType'GD_Class.Path'
+        if (objectName.contains("'")) {
+            String[] parts = objectName.split("'");
+            if (parts.length != 2) {
+                return null;
+            }
+            objectName = parts[1];
+        }
+
+        // Now load
+        try {
+            PreparedStatement stmt = this.dbConn.prepareStatement(
+                    "select o.*, c.name class_name from object o, class c where o.class=c.id and o.name=?");
+            stmt.setString(1, objectName);
+            ResultSet rs = stmt.executeQuery();
+            if (!rs.next()) {
+                return null;
+            }
+            UEObject ueObject = UEObject.getFromDbRow(rs);
+            int classId = rs.getInt("class");
+            if (this.classIdToClass.containsKey(classId)) {
+                ueObject.setUeClass(this.classIdToClass.get(classId));
+            }
+            rs.close();
+            stmt.close();
+            return ueObject;
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+            return null;
+        } catch (IndexOutOfBoundsException e) {
+            GlobalLogger.log(e);
+            return null;
+        } catch (Exception e) {
+            GlobalLogger.log(e);
+            return null;
+        }
+    }
+
+    /**
      * Given an object name, returns a Dump of the object, if possible.
      *
      * @param objectName The name of the object to dump
@@ -1336,6 +1392,33 @@ public class DataManager {
         try {
             this.autocompleteFieldWithoutClassStmt.setString(1, current + "%");
             ResultSet rs = this.autocompleteFieldWithoutClassStmt.executeQuery();
+            while (rs.next()) {
+                results.add(rs.getString("name"));
+            }
+            rs.close();
+        } catch (SQLException e) {
+            GlobalLogger.log(e);
+        }
+        return results;
+    }
+
+    /**
+     * Returns autocomplete suggestion for field/attribute names with respect
+     * to a particular class -- ie: it should be a list of all possible
+     * attribute names for just that one class.  Only really suitable for top-level
+     * attribute autocompletes; anything inner might have names not in this
+     * list.
+     *
+     * @param ueClass The UEClass with which to restrict results.
+     * @param current The currently-typed text to act as an initial substring
+     * @return A list of suggestions
+     */
+    public List<String> getFieldFromClassAutocompleteResults(UEClass ueClass, String current) {
+        ArrayList<String> results = new ArrayList<>();
+        try {
+            this.autocompleteFieldWithClassStmt.setInt(1, ueClass.getId());
+            this.autocompleteFieldWithClassStmt.setString(2, current + "%");
+            ResultSet rs = this.autocompleteFieldWithClassStmt.executeQuery();
             while (rs.next()) {
                 results.add(rs.getString("name"));
             }

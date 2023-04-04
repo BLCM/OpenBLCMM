@@ -51,8 +51,9 @@ OpenBLCMM Changelog
     periods.
   - Fixed some problems with full-object-name substitution in the main code
     edit area.
-  - Attribute/Field autocompletes will pull from the entire pool of top-level
-    attribute names
+  - Attribute name autocompletes will attempt to use class-specific names when
+    possible, or pull from the entire pool of top-level attribute names
+    otherwise.
   - Attribute value autocompletes will pull from the entire pool of Enum
     values
 - "Setup game files for mods" dialog redirects to PythonSDK
