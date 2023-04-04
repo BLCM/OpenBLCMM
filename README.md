@@ -70,8 +70,6 @@ TODO
   field names
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
   double/triple/whatever).  Also an option to disable links altogether?
-- Make sure that data jars can be found when launching from some other dir
-- "No results found" when refs doesn't return anything, in OE
 - Get a real Markdown renderer for the Changelog window?
 - Try to trigger out-of-memory and make sure that the reporting for that
   works well enough (and that the messages there make sense).
