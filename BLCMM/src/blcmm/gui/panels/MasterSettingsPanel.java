@@ -173,7 +173,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
     public boolean needsTreeResize() {
         return toolSettingsPanel.needsTreeResize()
-                || oeSettingsPanel.needsToolReset()
+                || oeSettingsPanel.needsTreeResize()
                 || dangerousSettingsPanel.needsTreeResize();
     }
 
