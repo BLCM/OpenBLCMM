@@ -238,7 +238,6 @@ public class GUIDataStatus implements DataStatus {
             this.append("");
             this.append("<b>Done!</b>");
             this.okButton.setEnabled(true);
-            GlobalLogger.log(this.text.getText());
             this.dialog.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
