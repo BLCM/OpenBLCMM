@@ -112,6 +112,7 @@ public class Startup {
 
         GlobalLogger.log("Running " + Meta.NAME + " version " + Meta.VERSION);
         GlobalLogger.log("Running Java version " + System.getProperty("java.version"));
+        GlobalLogger.log("Using Java VM: " + System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version"));
         GlobalLogger.log("Arguments provided; VM arguments: " + Arrays.toString(vmArguments.toArray()) + " - Runtime arguments: " + Arrays.toString(args));
         if (Utilities.isCreatorMode()) {
             GlobalLogger.log("Running in Creator Mode!");
