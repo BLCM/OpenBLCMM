@@ -442,13 +442,32 @@ public class DataManager {
      */
     private void extractDatabase() throws NoDataException {
         this.dataStatus.event("Extracting Database...", true);
-        InputStream fromJar = this.getJarStreamBase("data.db");
-        if (fromJar == null) {
+
+        // Grab the database entry and its destination dir
+        JarEntry entry = this.getJarEntryBase("data.db");
+        if (entry == null) {
             throw new NoDataException("SQLite database was not found in data jar");
         }
         File dbDir = new File(this.dataBaseDir);
         if (!dbDir.exists()) {
             dbDir.mkdirs();
+        }
+
+        // Now check to make sure we have the diskspace for it.  Going to
+        // require an extra 50MB of space beyond just the DB ...
+        long available = dbDir.getFreeSpace();
+        long required = entry.getSize() + 50000000;
+        if (required > available) {
+            throw new NoDataException("Not enough hard drive space remaining at "
+                    + dbDir.toString() + ", need " + Utilities.bytesToHuman(required)
+                    + " but only have " + Utilities.bytesToHuman(available)
+            );
+        }
+
+        // Now try the extraction
+        InputStream fromJar = this.getJarStreamBase("data.db");
+        if (fromJar == null) {
+            throw new NoDataException("SQLite database could not be read from data jar");
         }
         try {
             byte[] buffer = new byte[4096];

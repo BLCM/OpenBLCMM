@@ -56,11 +56,13 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
@@ -1048,6 +1050,24 @@ public class Utilities {
                 return mainJarDir;
             }
         }
+    }
+
+    /**
+     * Given a size in bytes, return a human-readable string suffixed by
+     * the most appropriate units.
+     *
+     * @param size The size in bytes.
+     * @return A string describing the size.
+     */
+    public static String bytesToHuman(long size) {
+        String[] suffixes = {"B", "KB", "MB", "GB", "TB", "PB"};
+        for (String suffix : suffixes) {
+            if (size < 1024) {
+                return NumberFormat.getNumberInstance(Locale.US).format(size) + " " + suffix;
+            }
+            size /= 1024;
+        }
+        return NumberFormat.getNumberInstance(Locale.US).format(size) + " EB";
     }
 
 }
