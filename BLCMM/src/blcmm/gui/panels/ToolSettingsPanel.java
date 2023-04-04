@@ -148,7 +148,11 @@ public class ToolSettingsPanel extends JPanel {
         constr.insets.bottom = BORDER;
         constr.ipady = 0;
         constr.anchor = GridBagConstraints.WEST;
-        this.add(new JLabel("Some changes may require a restart"), constr);
+        // At the moment, nothing actually requires a restart, so don't bother
+        // showing this.  I'm keeping the label in place, though, just in case
+        // it ever becomes necessary.
+        //this.add(new JLabel("Some changes may require a restart"), constr);
+        this.add(new JLabel(""), constr);
 
         constr.anchor = GridBagConstraints.EAST;
         constr.gridx = 1;
