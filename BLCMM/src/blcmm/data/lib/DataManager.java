@@ -104,7 +104,7 @@ public class DataManager {
 
     // Some basic info
     private PatchType patchType;
-    private DataStatus dataStatus;
+    private DataStatusNotifier dataStatusNotifier;
     private String dataBaseDir;
     private String dbFilePath;
     private Connection dbConn;
@@ -185,9 +185,9 @@ public class DataManager {
      * @param dataStatus A DataStatus object to send messages to
      * @throws blcmm.data.lib.DataManager.NoDataException
      */
-    public DataManager(PatchType patchType, DataStatus dataStatus) throws NoDataException {
+    public DataManager(PatchType patchType, DataStatusNotifier dataStatus) throws NoDataException {
         this.patchType = patchType;
-        this.dataStatus = dataStatus;
+        this.dataStatusNotifier = dataStatus;
 
         // Extract the sqlite database if required
         boolean extracted = false;
@@ -216,7 +216,7 @@ public class DataManager {
                     // Close the DB, re-extract, and reconnect.  (And redo the check)
                     this.dbConn.close();
                     GlobalLogger.log("Dump versions didn't match between database and jarfile for " + patchType.name() + ", re-extracting data");
-                    this.dataStatus.event("Dump versions didn't match", false);
+                    this.dataStatusNotifier.event("Dump versions didn't match", false);
                     this.extractDatabase();
                     this.doInitialDatabaseConection();
 
@@ -340,7 +340,7 @@ public class DataManager {
     private boolean checkDataFiles() throws NoDataException {
 
         //this.jarFilename = "blcmm_data_" + patchType.name() + ".jar";
-        this.dataStatus.event("Checking datafile integrity...", false);
+        this.dataStatusNotifier.event("Checking datafile integrity...", false);
 
         // Actually, let's let these filenames be versioned, and always take the most recent
         File thisDir = new File(".");
@@ -389,7 +389,7 @@ public class DataManager {
 
             // Verify the database checksum
             GlobalLogger.log(patchType.name() + " data jar file modification time doesn't match; re-verifying");
-            this.dataStatus.event("File modification time mismatch detected...", false);
+            this.dataStatusNotifier.event("File modification time mismatch detected...", false);
             return this.verifyDatabaseChecksum();
 
         } catch (MalformedURLException e) {
@@ -406,7 +406,7 @@ public class DataManager {
      * @return True if the database checksum matches what's in the Jar
      */
     private boolean verifyDatabaseChecksum() {
-        this.dataStatus.event("Verifying extacted database checksum...", true);
+        this.dataStatusNotifier.event("Verifying extacted database checksum...", true);
         try {
             String diskHash = Utilities.sha256(this.getJarStreamBase("data.db"));
             BufferedReader br = this.getJarBufferedReaderBase("data.db.sha256sum");
@@ -441,7 +441,7 @@ public class DataManager {
      * @throws blcmm.data.lib.DataManager.NoDataException
      */
     private void extractDatabase() throws NoDataException {
-        this.dataStatus.event("Extracting Database...", true);
+        this.dataStatusNotifier.event("Extracting Database...", true);
 
         // Grab the database entry and its destination dir
         JarEntry entry = this.getJarEntryBase("data.db");
@@ -504,7 +504,7 @@ public class DataManager {
     private void doInitialDatabaseConection() throws SQLException, NoDataException {
 
         // Connect to the database
-        this.dataStatus.event("Connecting to DB and checking supported version...", false);
+        this.dataStatusNotifier.event("Connecting to DB and checking supported version...", false);
         this.dbConn = DriverManager.getConnection("jdbc:sqlite:" + this.dbFilePath);
 
         // Load in metadata

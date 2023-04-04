@@ -30,7 +30,6 @@
 package blcmm.gui.components;
 
 import blcmm.Meta;
-import blcmm.data.lib.DataStatus;
 import blcmm.gui.MainGUI;
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
@@ -50,6 +49,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import blcmm.data.lib.DataStatusNotifier;
 
 /**
  * GUI Status updates for our data extraction/verification progress.  This will
@@ -60,7 +60,7 @@ import javax.swing.text.html.HTMLEditorKit;
  *
  * @author apocalyptech
  */
-public class GUIDataStatus implements DataStatus {
+public class GUIDataStatusNotifier implements DataStatusNotifier {
 
     private PatchType curGame;
     private boolean showingGui;
@@ -70,7 +70,7 @@ public class GUIDataStatus implements DataStatus {
     private final HTMLDocument doc;
     private JButton okButton;
 
-    public GUIDataStatus() {
+    public GUIDataStatusNotifier() {
         this.curGame = null;
         this.showingGui = false;
         this.text = new JTextPane();

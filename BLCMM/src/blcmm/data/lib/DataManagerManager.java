@@ -60,9 +60,10 @@ import java.util.HashMap;
 public class DataManagerManager {
 
     private HashMap <PatchType, DataManager> dataManagers;
+    private HashMap <PatchType, String> dataManagerStatus;
     private PatchType currentPatchType;
     private DataManager currentDataManager;
-    private DataStatus dataStatus;
+    private DataStatusNotifier dataStatus;
 
     /**
      * Default constructor, most likely called by MainGUI, which initializes a
@@ -71,27 +72,30 @@ public class DataManagerManager {
      * active one.
      *
      * @param currentPatchType The currently-active PatchType.
-     * @param dataStatus A DataStatus object to send updates to.
+     * @param dataStatusNotifier A DataStatus object to send updates to.
      */
-    public DataManagerManager(PatchType currentPatchType, DataStatus dataStatus) {
+    public DataManagerManager(PatchType currentPatchType, DataStatusNotifier dataStatusNotifier) {
 
         this.dataManagers = new HashMap<>();
+        this.dataManagerStatus = new HashMap<>();
         for (PatchType type : PatchType.values()) {
-            dataStatus.setGame(type);
+            dataStatusNotifier.setGame(type);
             try {
                 GlobalLogger.log("Starting initialization of " + type.toString() + " Data Manager");
-                this.dataManagers.put(type, new DataManager(type, dataStatus));
+                this.dataManagers.put(type, new DataManager(type, dataStatusNotifier));
                 GlobalLogger.log("Initialized " + type.toString() + " Data Manager");
-                dataStatus.event("Data initialization successful!", false);
+                dataStatusNotifier.event("Data initialization successful!", false);
+                this.dataManagerStatus.put(type, "Loaded, v" + this.dataManagers.get(type).getDumpVersion());
             } catch (DataManager.NoDataException e) {
                 this.dataManagers.put(type, null);
-                dataStatus.event("Error initializing: " + e.getMessage(), false);
+                dataStatusNotifier.event("Error initializing: " + e.getMessage(), false);
                 GlobalLogger.log("Error initializing " + type.toString() + " Data Manager: " + e.toString());
+                this.dataManagerStatus.put(type, "Not loaded: " + e.getMessage());
             }
         }
         this.updateDataManagersSelectedClasses();
         this.setPatchType(currentPatchType);
-        dataStatus.finish();
+        dataStatusNotifier.finish();
     }
 
     /**
@@ -111,6 +115,21 @@ public class DataManagerManager {
         this.dataManagers = dmm.dataManagers;
         this.currentPatchType = dmm.currentPatchType;
         this.currentDataManager = dmm.currentDataManager;
+    }
+
+    /**
+     * Returns an English status describing the state of game data for the
+     * given PatchType.  At the moment just used for the About panel.
+     *
+     * @param type The PatchType to query
+     * @return A string describing if the data is loaded or not.
+     */
+    public String getStatus(PatchType type) {
+        if (this.dataManagerStatus.containsKey(type)) {
+            return this.dataManagerStatus.get(type);
+        } else {
+            return "Unknown!";
+        }
     }
 
     /**

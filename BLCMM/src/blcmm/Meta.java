@@ -61,4 +61,9 @@ public class Meta {
      */
     public static final String JARFILE = "OpenBLCMM.jar";
 
+    /**
+     * URL to the project source control.
+     */
+    public static final String CODE_URL = "https://github.com/BLCM/OpenBLCMM";
+
 }

@@ -43,7 +43,7 @@ import blcmm.model.PatchType;
  *
  * @author apocalyptech
  */
-public interface DataStatus {
+public interface DataStatusNotifier {
 
     /**
      * Sets the Game whose data is currently being processed.

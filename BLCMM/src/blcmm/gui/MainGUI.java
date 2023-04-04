@@ -35,7 +35,7 @@ import blcmm.data.lib.DataManagerManager;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.DefaultTextTextField;
 import blcmm.gui.components.ForceClosingJFrame;
-import blcmm.gui.components.GUIDataStatus;
+import blcmm.gui.components.GUIDataStatusNotifier;
 import blcmm.gui.components.GameSelectionPanel;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.components.TimedLabel;
@@ -170,7 +170,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
             @Override
             protected Object doInBackground() {
-                dmm = new DataManagerManager(PatchType.BL2, new GUIDataStatus());
+                dmm = new DataManagerManager(PatchType.BL2, new GUIDataStatusNotifier());
                 return null;
             }
 
@@ -772,6 +772,11 @@ public final class MainGUI extends ForceClosingJFrame {
         JDialog jDialog = new JDialog(this, "About | " + Meta.NAME + " version " + Meta.VERSION);
         jDialog.add(new AboutPanel(true));
         jDialog.setModal(true);
+        // TODO: this minimum size setting is kind of a total hack.  If we *don't*
+        // set it, the dialog freaks the hell out when it's shrunk even a little.
+        // These values happen to let it work on my system, but will that be enough
+        // on others?  I expect that can't be guaranteed.
+        jDialog.setMinimumSize(new Dimension(630, 570));
         jDialog.pack();
         jDialog.setLocationRelativeTo(this);
         jDialog.setVisible(true);

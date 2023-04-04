@@ -69,6 +69,7 @@ OpenBLCMM Changelog
 - "Restore defaults" button on settings screen will only restore the settings
   shown on the active screen (this prevents clearing the recently-viewed file
   list, for instance)
+- Revamped "About" dialog; now shows various bits of system + version info.
 - Added "Working Dir" file dialog button, for when that differs from the
   OpenBLCMM install location.
 - Added a folder icon to the file dialog directory presets for Last-Imported
