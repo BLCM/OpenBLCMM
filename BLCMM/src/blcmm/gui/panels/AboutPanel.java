@@ -31,6 +31,7 @@ package blcmm.gui.panels;
 import blcmm.Meta;
 import blcmm.gui.MainGUI;
 import blcmm.model.PatchType;
+import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.IconManager;
 import blcmm.utilities.Utilities;
 import java.awt.Desktop;
@@ -192,6 +193,21 @@ public final class AboutPanel extends JPanel {
         });
         buttons.add(clipButton);
 
+        JButton logButton = new JButton();
+        logButton.setText("<html><b>Open Log Dir</b></html>");
+        logButton.setOpaque(true);
+        logButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    Desktop.getDesktop().open(GlobalLogger.getLOG_FOLDER());
+                } catch (IOException ex) {
+                    GlobalLogger.log(ex);
+                }
+            }
+        });
+        buttons.add(logButton);
+
         // Button Panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridBagLayout());
@@ -345,6 +361,7 @@ public final class AboutPanel extends JPanel {
                     URL faq = new URL("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US");
                     Desktop.getDesktop().browse(faq.toURI());
                 } catch (URISyntaxException | IOException ex) {
+                    GlobalLogger.log(ex);
                 }
             }
         });
@@ -407,6 +424,7 @@ public final class AboutPanel extends JPanel {
                     URL sdkToBrowse = new URL(remoteURL);
                     Desktop.getDesktop().browse(sdkToBrowse.toURI());
                 } catch (URISyntaxException | IOException ex) {
+                    GlobalLogger.log(ex);
                 }
             }
         });
