@@ -56,13 +56,11 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
@@ -1054,20 +1052,18 @@ public class Utilities {
 
     /**
      * Given a size in bytes, return a human-readable string suffixed by
-     * the most appropriate units.
+     * the most appropriate units.  This implementation taken from blcmm.Startup.
      *
-     * @param size The size in bytes.
+     * @param bytes The size in bytes.
      * @return A string describing the size.
      */
-    public static String bytesToHuman(long size) {
-        String[] suffixes = {"B", "KB", "MB", "GB", "TB", "PB"};
-        for (String suffix : suffixes) {
-            if (size < 1024) {
-                return NumberFormat.getNumberInstance(Locale.US).format(size) + " " + suffix;
-            }
-            size /= 1024;
+    public static String humanReadableByteCount(long bytes) {
+        if (bytes < 1000) {
+            return bytes + " B";
         }
-        return NumberFormat.getNumberInstance(Locale.US).format(size) + " EB";
+        int exp = (int) (Math.log(bytes) / Math.log(1000));
+        String prefix = "kMGTPE".charAt(exp - 1) + "";
+        return String.format("%.1f %sB", bytes / Math.pow(1000, exp), prefix);
     }
 
 }

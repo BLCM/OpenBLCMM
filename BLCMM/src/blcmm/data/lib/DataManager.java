@@ -459,8 +459,8 @@ public class DataManager {
         long required = entry.getSize() + 50000000;
         if (required > available) {
             throw new NoDataException("Not enough hard drive space remaining at "
-                    + dbDir.toString() + ", need " + Utilities.bytesToHuman(required)
-                    + " but only have " + Utilities.bytesToHuman(available)
+                    + dbDir.toString() + ", need " + Utilities.humanReadableByteCount(required)
+                    + " but only have " + Utilities.humanReadableByteCount(available)
             );
         }
 

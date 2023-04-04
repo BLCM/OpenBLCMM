@@ -119,10 +119,12 @@ public class Startup {
         GlobalLogger.log("Username: " + System.getProperty("user.name"));
 
         // Total amount of free memory available to the JVM
-        GlobalLogger.log("Free Memory: " + humanReadableByteCount(Runtime.getRuntime().maxMemory() - (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())));
+        GlobalLogger.log("Free Memory: " + Utilities.humanReadableByteCount(
+                Runtime.getRuntime().maxMemory() - (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())
+        ));
         // Maximum amount of memory the JVM will attempt to use (Long.MAX_VALUE if there is no limit)
         GlobalLogger.log("Maximum Memory: " + (Runtime.getRuntime().maxMemory() == Long.MAX_VALUE ? "No Limit"
-                : humanReadableByteCount(Runtime.getRuntime().maxMemory())));
+                : Utilities.humanReadableByteCount(Runtime.getRuntime().maxMemory())));
 
         // Adjust the title
         titlePostfix = "";
@@ -164,21 +166,6 @@ public class Startup {
             Utilities.populateFileHistory(true);
             MainGUI.setTheme(Options.INSTANCE.getTheme());
         }
-    }
-
-    /**
-     *
-     * @param bytes
-     * @return A more human friendly version of bytes into the SI unit
-     * measurement like: "1024 bytes to 1.0kB"
-     */
-    private static String humanReadableByteCount(long bytes) {
-        if (bytes < 1000) {
-            return bytes + " B";
-        }
-        int exp = (int) (Math.log(bytes) / Math.log(1000));
-        String prefix = "kMGTPE".charAt(exp - 1) + "";
-        return String.format("%.1f %sB", bytes / Math.pow(1000, exp), prefix);
     }
 
     /**
