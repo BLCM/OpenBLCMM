@@ -66,7 +66,6 @@ TODO
 - AoDK support (both in OpenBLCMM itself and OE)
 - New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- May as well cache *all* our PreparedStatements in DataManager...
 - Improve "basic" attr-name autocomplete to restrict results to appropriate
   field names
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
@@ -75,21 +74,16 @@ TODO
 - Make sure that data jars can be found when launching from some other dir
 - "No results found" when refs doesn't return anything, in OE
 - Get a real Markdown renderer for the Changelog window?
-- I don't think any settings actually require app restarts; maybe at least
-  hide that stuff, for now?
 - Try to trigger out-of-memory and make sure that the reporting for that
-  works well enough (and that the messages there make sense).  Also maybe
-  provide a clickable button/link to the Github Issues page.
-  - Maybe add that into the crash report window in general, yeah?  Check
-    `MyExceptionHandler` in `Startup.java`
+  works well enough (and that the messages there make sense).
 - Get rid of those annoying registry execeptions when running on Windows
-  (on a host which doesn't have the game installed, presumably)
+  (on a host which doesn't have the game installed, presumably).  Actually,
+  I can't seem to get those to show up anymore?
 - Settings migration from vanilla BLCMM
 - Liberica NIK's Swing HTML handling seems to have some issues.  A couple
   of known GUI issues we'll need to work through:
   - List handling (specifically in third-party tab on About dialog)
   - Header during data extraction status dialog ("nobr" tags don't work)
-  - Oh, also it might have trouble launching browser URLs?
 - Doublecheck username suppression in logs:
   - INI files
   - "installation can be found"
