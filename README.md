@@ -66,8 +66,6 @@ TODO
 - AoDK support (both in OpenBLCMM itself and OE)
 - New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Improve "basic" attr-name autocomplete to restrict results to appropriate
-  field names
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
   double/triple/whatever).  Also an option to disable links altogether?
 - Get a real Markdown renderer for the Changelog window?
