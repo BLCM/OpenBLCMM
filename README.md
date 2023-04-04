@@ -70,7 +70,6 @@ TODO
   field names
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
   double/triple/whatever).  Also an option to disable links altogether?
-- Add in proper version checking in `.blcm` loading.
 - Make sure that data jars can be found when launching from some other dir
 - "No results found" when refs doesn't return anything, in OE
 - Get a real Markdown renderer for the Changelog window?
