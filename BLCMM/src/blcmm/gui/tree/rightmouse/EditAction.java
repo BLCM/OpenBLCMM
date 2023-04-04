@@ -34,7 +34,6 @@ import blcmm.model.Category;
 import blcmm.model.ModelElement;
 import blcmm.model.ModelElementContainer;
 import blcmm.model.SetCommand;
-import blcmm.utilities.GlobalLogger;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,7 +87,6 @@ public class EditAction extends RightMouseButtonAction {
         for (TreePath path : paths) {
             ModelElement el = (ModelElement) ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
             inputCodes.add(el);
-            GlobalLogger.log("Added input code: " + el.toString());
             if (el.hasLockedAncestor()) {
                 allowEdit = false;
             }
