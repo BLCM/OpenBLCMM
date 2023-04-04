@@ -1508,6 +1508,16 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         mainProgressBar.repaint();
                     }
                 }
+                if (textElement.getText().length() == 0) {
+                    textElement.setText(
+                            "No results found for the specified query in " + dm.getPatchType().name() + " data.\n"
+                            + "\n"
+                            + "You can try adding to the list of categories to search in the Settings menu via\n"
+                            + "the main " + Meta.NAME + " window, in case the objects you're looking for are\n"
+                            + "excluded by the current settings.  The app does not have to be restarted when the\n"
+                            + "categories have changed -- just click some checkboxes and try again!\n"
+                    );
+                }
                 return null;
             } catch (BadLocationException e2) {
                 // This one's... weird.  To trigger it, do a search or refs or whatever, and while the
