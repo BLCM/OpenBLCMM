@@ -64,7 +64,6 @@ TODO
 
 - Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
-- New-version notification in-app
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
   double/triple/whatever).  Also an option to disable links altogether?
@@ -141,6 +140,8 @@ OpenBLCMM makes use of the following third party libraries/resources:
   under the Apache License v2.0.
 - [Xerial](https://github.com/Xerial)'s [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc),
   available under the Apache License v2.0.
+- [Vincent Durmont](https://github.com/vdurmont)'s [semver4j](https://github.com/vdurmont/semver4j),
+  available under the MIT License.
 - Some icons from [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
   [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under
   CC BY 3.0.
