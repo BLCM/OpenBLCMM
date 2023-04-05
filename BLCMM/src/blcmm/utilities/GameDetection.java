@@ -28,6 +28,8 @@
  */
 package blcmm.utilities;
 
+import SteamVDF.VDF.VDF;
+import SteamVDF.VDF.VDFElement;
 import blcmm.model.PatchType;
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,11 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.swing.filechooser.FileSystemView;
-import SteamVDF.VDF.VDF;
-import SteamVDF.VDF.VDFElement;
 
 public class GameDetection {
 
@@ -129,7 +129,7 @@ public class GameDetection {
         regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation";
         blTPSPath = detectWindows(PatchType.TPS, regKey1, regKey2);
     }
-    
+
     /**
      * Convert a PatchType into an English label for the game.
      * TODO: This should really be handled by the PatchType enum itself!!  At the
@@ -145,7 +145,7 @@ public class GameDetection {
                 return "Borderlands The Pre-Sequel";
             default:
                 return null;
-        }    
+        }
     }
 
     private static String detectWindows(PatchType type, String... regKeys) {
@@ -181,6 +181,9 @@ public class GameDetection {
             in.read(b);
             in.close();
             reg = new String(b);
+            if (reg.trim().isEmpty()) {
+                return null;
+            }
             return reg.split("\\s\\s+")[4];
         } catch (IOException | ArrayIndexOutOfBoundsException | InterruptedException t) {
             GlobalLogger.log(reg);
@@ -335,7 +338,7 @@ public class GameDetection {
                 return libraryFolders;
             }
         }
-        
+
         try {
             VDF parsedVdf = new VDF(vdfFile);
             boolean foundTop = false;
@@ -463,7 +466,7 @@ public class GameDetection {
     private static File getExe(PatchType type, final String testPath) {
         // Default to false for this -- want to make sure that *some* value exists
         UNIX_USING_PROTON.put(type, false);
-        
+
         // TODO: arguably this should be done in the PatchType class
         String filename = null;
         switch (type) {
@@ -679,7 +682,7 @@ public class GameDetection {
         }
         return res;
     }
-    
+
     /**
      * Determines if the computed path to the game's INI files actually exists.
      * This may not be the case until the game's been run once, and of course
