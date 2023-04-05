@@ -7,7 +7,7 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="BLCModsManager" default="default" basedir=".">
+<project name="OpenBLCMM" default="default" basedir=".">
     <description>Builds, tests, and runs the project BLCModsManager.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -74,9 +74,15 @@
     <target name="-post-jar">
 
         <!--
-        This is used to compile all our third-party libraries into a
-        single jarfile, for ease of distribution.
-        https://stackoverflow.com/questions/70526988/netbeans-how-to-create-an-executable-jar-file-with-all-libraries-and-source-fi
+            This is used to compile all our third-party libraries into a
+            single jarfile, for ease of distribution.  Originally taken from:
+            https://stackoverflow.com/questions/70526988/netbeans-how-to-create-an-executable-jar-file-with-all-libraries-and-source-fi
+            ... but modified pretty heavily since.
+
+            Note that if we add more third-party libraries in the future,
+            they'll have to be specifically added to the build process
+            here.  Because we're doing some pathname mapping on a per-jar
+            basis, we can't just wildcard the whole lib dir.
         -->
 
         <property name="store.jar.name" value="OpenBLCMM"/>
@@ -84,31 +90,81 @@
         <property name="store.dir" value="store"/>
         <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
 
-        <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
-
         <delete dir="${store.dir}"/>
         <mkdir dir="${store.dir}"/>
 
         <!--
-        TODO: One thing that happens here is we get a "LICENSE" text at the
-        root of META-INF which is actually for one of the third-party libs.
-        Would be nice to make that stuff a bit more correct.
+            We want to transform some of the inner paths inside our third-party
+            libraries when we merge everything together, so that the original
+            license + manifest files are still available, etc.  The "zipgroupfileset"
+            target doesn't support doing those kinds of mappings, though, and
+            this is the first working method I found of being able to specify
+            these things by wildcard, so we at least don't have to hardcode
+            version numbers in here.
         -->
-        <jar destfile="${store.dir}/temp_final.jar" filesetmanifest="skip">
-            <zipgroupfileset dir="dist" includes="*.jar"/>
-            <zipgroupfileset dir="dist/lib" includes="*.jar"/>
+        <pathconvert property="commons-lang3.wildcard">
+            <fileset dir="dist/lib" includes="commons-lang3-*.jar"/>
+        </pathconvert>
+        <pathconvert property="commons-text.wildcard">
+            <fileset dir="dist/lib" includes="commons-text-*.jar"/>
+        </pathconvert>
+        <pathconvert property="semver4j.wildcard">
+            <fileset dir="dist/lib" includes="semver4j-*.jar"/>
+        </pathconvert>
+        <pathconvert property="sqlite-jdbc.wildcard">
+            <fileset dir="dist/lib" includes="sqlite-jdbc-*.jar"/>
+        </pathconvert>
 
+        <!-- Now get to the actual packaging. -->
+        <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
+        <jar destfile="${store.jar}" filesetmanifest="skip">
+
+            <!-- Include our own classes -->
+            <zipgroupfileset dir="dist" includes="*.jar"/>
+
+            <!--
+                And now all our third-party stuff.  This is where we're moving some
+                files around so that all the original info is present in the combined
+                Jarfile.  This was populated just by looking at the jarfile contents
+                for possible collisions.
+            -->
+            <mappedresources>
+                <zipfileset src="${commons-lang3.wildcard}"/>
+                <compositemapper>
+                    <globmapper from="META-INF/MANIFEST.MF" to="META-INF/commons-lang3-MANIFEST.MF" />
+                    <globmapper from="META-INF/*.txt" to="META-INF/commons-lang3-*.txt" />
+                    <globmapper from="*" to="*" />
+                </compositemapper>
+            </mappedresources>
+            <mappedresources>
+                <zipfileset src="${commons-text.wildcard}"/>
+                <compositemapper>
+                    <globmapper from="META-INF/MANIFEST.MF" to="META-INF/commons-text-MANIFEST.MF" />
+                    <globmapper from="META-INF/*.txt" to="META-INF/commons-text-*.txt" />
+                    <globmapper from="*" to="*" />
+                </compositemapper>
+            </mappedresources>
+            <mappedresources>
+                <zipfileset src="${semver4j.wildcard}"/>
+                <compositemapper>
+                    <globmapper from="META-INF/MANIFEST.MF" to="META-INF/semver4j-MANIFEST.MF" />
+                    <globmapper from="*" to="*" />
+                </compositemapper>
+            </mappedresources>
+            <mappedresources>
+                <zipfileset src="${sqlite-jdbc.wildcard}"/>
+                <compositemapper>
+                    <globmapper from="META-INF/MANIFEST.MF" to="META-INF/sqlite-jdbc-MANIFEST.MF" />
+                    <globmapper from="*" to="*" />
+                </compositemapper>
+            </mappedresources>
+
+            <!-- Include a basic manifest -->
             <manifest>
                 <attribute name="Main-Class" value="${main.class}"/>
             </manifest>
+
         </jar>
-
-        <zip destfile="${store.jar}">
-            <zipfileset src="${store.dir}/temp_final.jar"
-            excludes="META-INF/*.SF, META-INF/*.DSA, META-INF/*.RSA"/>
-        </zip>
-
-        <delete file="${store.dir}/temp_final.jar"/>
 
     </target>
 
