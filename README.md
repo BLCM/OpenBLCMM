@@ -62,7 +62,6 @@ TODO
 
 ### Immediate (would like to get done before public release)
 
-- Figure out a Windows installer (associate `.blcm` extension?)
 - AoDK support (both in OpenBLCMM itself and OE)
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
