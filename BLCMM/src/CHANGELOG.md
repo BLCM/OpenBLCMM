@@ -81,6 +81,8 @@ OpenBLCMM Changelog
   and Working directories (instead of the empty space they had previously)
 - Crash-handling window includes a link to Github Issues for OpenBLCMM, and
   only the "OK" button will actually close that dialog.
+- "Get More Mods" menu item redirects to the ModCabinet wiki instead of the
+  main Github page.
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.

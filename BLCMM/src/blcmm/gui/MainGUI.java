@@ -1033,7 +1033,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void getMoreModsMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getMoreModsMenuButtonActionPerformed
         try {
-            URL faq = new URL("https://github.com/BLCM/BLCMods");
+            URL faq = new URL("https://github.com/BLCM/ModCabinet/wiki");
             Desktop.getDesktop().browse(faq.toURI());
         } catch (IOException | URISyntaxException ex) {
             GlobalLogger.log(ex);
