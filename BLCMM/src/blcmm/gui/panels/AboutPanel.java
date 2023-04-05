@@ -69,7 +69,6 @@ public final class AboutPanel extends JPanel {
     public AboutPanel(boolean showDonate) {
         this.setLayout(new GridBagLayout());
 
-        int donateWidth = 100;
         int cur_y = 0;
 
         // Main header
@@ -304,15 +303,17 @@ public final class AboutPanel extends JPanel {
         thirdTabPanel.setLayout(new GridBagLayout());
         thirdTabPanel.setBorder(BorderFactory.createEtchedBorder());
         JLabel thirdTabLabel = new JLabel(
+                // I'd actually *like* to be using <ul> + <li> for these, but the JVM used by
+                // Liberica NIK-compiled apps doesn't seem to render them properly at the
+                // moment.  So, whatever, we'll just go back to boring ol' dashes.
                 "<html>" + Meta.NAME + " makes use of the following third-party libraries/resources:<br/>"
-                + "<ul>"
-                + "<li>StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.</li>"
-                + "<li>Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0</li>"
-                + "<li>Xerial's sqlite-jdbc, available under the Apache License v2.0</li>"
-                + "<li>Some icons from Dave Gandy's Font Awesome set, available under CC BY 3.0</li>"
-                + "<li>An icon from Fathema Khanom's User Interface set, available under Flaticon's Free License</li>"
-                + "<li>An icon from Smashicons' Essential Collection set, available under Flaticon's Free License</li>"
-                + "</ul>"
+                + "<br/>"
+                + " - StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.<br/>"
+                + " - Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0<br/>"
+                + " - Xerial's sqlite-jdbc, available under the Apache License v2.0<br/>"
+                + " - Some icons from Dave Gandy's Font Awesome set, available under CC BY 3.0<br/>"
+                + " - An icon from Fathema Khanom's User Interface set, available under Flaticon's Free License<br/>"
+                + " - An icon from Smashicons' Essential Collection set, available under Flaticon's Free License<br/>"
         );
         thirdTabPanel.add(thirdTabLabel, new GridBagConstraints(
                 // x, y

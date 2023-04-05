@@ -30,10 +30,12 @@
 package blcmm.gui.components;
 
 import blcmm.Meta;
+import blcmm.data.lib.DataStatusNotifier;
 import blcmm.gui.MainGUI;
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -49,7 +51,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import blcmm.data.lib.DataStatusNotifier;
 
 /**
  * GUI Status updates for our data extraction/verification progress.  This will
@@ -143,7 +144,16 @@ public class GUIDataStatusNotifier implements DataStatusNotifier {
             panel.setLayout(new GridBagLayout());
 
             // Header label with general information
-            JLabel header = new JLabel("<html><b><font size=\"+2\"><nobr>Initializing Game Data</nobr></font></b>");
+            JLabel header = new JLabel("Initializing Game Data");
+            // I would ordinarily just use HTML labels for this, but I was having
+            // a heck of a time getting GridBag to 1) center the text while also
+            // 2) not putting each word on a new line, and the "<nobr>" tag fixed
+            // up #2 for me, but the JVM used in Liberica NIK-compiled applications
+            // apparently doesn't process that tag, so we were back to smooshed
+            // text.  So, whatever -- use a regular text label and do some font
+            // weirdness.
+            Font font = header.getFont();
+            header.setFont(font.deriveFont(Font.BOLD, (float)font.getSize()+6));
             panel.add(header, new GridBagConstraints(
                     // x, y
                     0, 0,
