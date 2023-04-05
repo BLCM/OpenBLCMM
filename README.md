@@ -78,8 +78,6 @@ TODO
   - INI files
   - "installation can be found"
   - elsewhere...
-- Bundle as a "fat" Jar so that the Java version doesn't have to distribute
-  libs.
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there

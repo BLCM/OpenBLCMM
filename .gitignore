@@ -9,6 +9,7 @@ blcmm.iml
 #   build files
 build/
 dist/
+store/
 
 #   BLCMM files
 /BLCMM/logs/
