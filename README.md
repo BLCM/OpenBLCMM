@@ -64,14 +64,7 @@ TODO
 
 - AoDK support (both in OpenBLCMM itself and OE)
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Options for changing object-opening behavior (ctrl/alt/shift-click, single/
-  double/triple/whatever).  Also an option to disable links altogether?
 - Get a real Markdown renderer for the Changelog window?
-- Try to trigger out-of-memory and make sure that the reporting for that
-  works well enough (and that the messages there make sense).
-- Get rid of those annoying registry execeptions when running on Windows
-  (on a host which doesn't have the game installed, presumably).  Actually,
-  I can't seem to get those to show up anymore?
 - Settings migration from vanilla BLCMM
 - Doublecheck username suppression in logs:
   - INI files
@@ -102,6 +95,8 @@ TODO
 
 - Figure out allowing the word "set" in value text?  Understand quotes around
   the value, perhaps?
+- Options for changing object-opening behavior (ctrl/alt/shift-click, single/
+  double/triple/whatever).  Also an option to disable links altogether?
 - Convert StringTable to use a CSV library
   - Will need some one-time conversion stuff in there, and the ability to
     discern between a converted version.
