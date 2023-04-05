@@ -51,6 +51,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -234,7 +235,7 @@ public class Startup {
     }
 
     private static boolean confirmIO() {
-        File f = new File("io.temp");
+        File f = Paths.get(Utilities.getBLCMMDataDir(), "io.temp").toFile();
         boolean b = true;
         try {
             f.createNewFile();
