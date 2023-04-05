@@ -75,10 +75,6 @@ TODO
   (on a host which doesn't have the game installed, presumably).  Actually,
   I can't seem to get those to show up anymore?
 - Settings migration from vanilla BLCMM
-- Liberica NIK's Swing HTML handling seems to have some issues.  A couple
-  of known GUI issues we'll need to work through:
-  - List handling (specifically in third-party tab on About dialog)
-  - Header during data extraction status dialog ("nobr" tags don't work)
 - Doublecheck username suppression in logs:
   - INI files
   - "installation can be found"
