@@ -100,16 +100,40 @@ public class Startup {
             return;
         }
 
-        // Process any arguments we have
+        // Process any arguments we have.  At the moment the only dashed
+        // arg we support is "-creator".  Any other dashed arguments will log
+        // an error (though we'll continue processing 'cause who cares?).  The
+        // first non-dashed argument, if present, will be interpreted as a
+        // filename to load.  A UNIXy "--" arg can be specified to indicate
+        // that any future arguments starting with a dash should *not* be
+        // interpreted as dashed arguments, but rather as a literal string (in
+        // this case, a filename).  So if you did want to load a file whose
+        // filename starts with a dash, you can do:
+        //
+        //     java -jar OpenBLCMM.jar -- -filename-.blcm
+        //
+        // Honestly there's probably an Actually Good library for arg handling
+        // that we should be using here, but I guess this'll do for now.
         file = null;
+        boolean seenDoubleDash = false;
         for (String arg: args) {
             // Set Creator Mode if we've been told to.  (Note that Creator Mode is
             // also set automatically if Java assertions are active, which is the
             // default behavior when running this project via Netbeans.)
-            if (arg.equalsIgnoreCase("-creator")) {
+            if (!seenDoubleDash && arg.equalsIgnoreCase("-creator")) {
                 Utilities.setCreatorMode();
-            } else if (arg.startsWith("-f=")) {
-                file = new File(arg.substring("-f=".length()));
+            } else {
+                if (seenDoubleDash) {
+                    file = new File(arg);
+                    break;
+                } else if (arg.equals("--")) {
+                    seenDoubleDash = true;
+                } else if (arg.startsWith("-")) {
+                    GlobalLogger.log("Invalid argument detected: " + arg);
+                } else {
+                    file = new File(arg);
+                    break;
+                }
             }
         }
 

@@ -6,7 +6,8 @@ OpenBLCMM Changelog
 - Released under GPLv3
   - Various components rewritten from scratch as part of the FOSS process
 - Compatibility through Java 19
-- Windows EXE packaging updated -- no need to install Java!
+- Windows EXE packaging updated, with optional full GUI installer.  No need
+  to install Java!
 - Removed features:
   - GUI Launcher / Autoupdates
   - GUI to set system memory.  The Windows EXE version doesn't really need it
@@ -83,16 +84,15 @@ OpenBLCMM Changelog
   only the "OK" button will actually close that dialog.
 - "Get More Mods" menu item redirects to the ModCabinet wiki instead of the
   main Github page.
+- When creating and saving a new file, it now opens on the next boot
+- Opening a .blcm file through Windows' context menu now actually opens the
+  file in OpenBLCMM, when installed via the installer.
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.
 - Replaced icon resources with known-free-to-use versions, and updated the
   OpenBLCMM icon to a new one to distinguish it from the original BLCMM.
 - Added "-creator" CLI argument to launch OpenBLCMM in Creator Mode.
-
-(changelog entries to confirm, etc -- from original 1.2.1 plans ages ago)
-- When creating and saving a new file, it now opens on the next boot
-- Opening a .blcm file trough Windows' context menu now actually opens the file in OpenBLCMM
 
 **v1.2.0** May 22, 2020
 - Added the ability to drag-and-drop text around plenty of BLCMM's text boxes.
