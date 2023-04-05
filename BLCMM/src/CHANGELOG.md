@@ -58,6 +58,8 @@ OpenBLCMM Changelog
     values
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
+- Added new-version notification to main application.  This can be toggled off
+  in the settings if you don't want to be bothered by it!
 - Added "allow toggling individual statements" option to settings, and improved
   dynamically setting the option from the main OpenBLCMM window.
 - Added a "log-latest.log" logfile which never gets removed, and updated the

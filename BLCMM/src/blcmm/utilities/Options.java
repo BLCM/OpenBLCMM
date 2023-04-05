@@ -101,6 +101,7 @@ public class Options {
         showDeleteConfirmation,
         saveAsOffline,
         onlineServiceNumber,
+        checkForNewVersions,
         oeSearchActions,
         oeSearchAI,
         oeSearchAnimations,
@@ -216,6 +217,13 @@ public class Options {
             return t == null ? ThemeManager.getTheme("dark") : t;
         }
         ));
+
+        this.registerOption(new BooleanOption(
+                OptionNames.checkForNewVersions.toString(), true,
+                Option.Shown.SETTINGS, "Check for new versions on startup",
+                "toggleCheckForNewVersions",
+                "Check for new versions of " + Meta.NAME + " when the "
+                + "app starts up."));
 
         this.registerOption(new IntOption(
                 OptionNames.fontsize.toString(), 12,
@@ -923,6 +931,14 @@ public class Options {
 
     public void setFontSize(int fontsize) {
         this.setIntOptionData(OptionNames.fontsize, fontsize);
+    }
+
+    public boolean getCheckForNewVersions() {
+        return this.getBooleanOptionData(OptionNames.checkForNewVersions);
+    }
+
+    public void setCheckForNewVersions(boolean checkVal) {
+        this.setBooleanOptionData(OptionNames.checkForNewVersions, checkVal);
     }
 
     public boolean getHighlightBVCErrors() {

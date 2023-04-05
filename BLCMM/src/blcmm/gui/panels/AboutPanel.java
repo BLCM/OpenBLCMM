@@ -171,7 +171,12 @@ public final class AboutPanel extends JPanel {
 
         // A list of buttons
         ArrayList<JButton> buttons = new ArrayList<> ();
-        buttons.add(this.createURLButton(Meta.NAME + " Github", Meta.CODE_URL));
+        String newVersion = MainGUI.INSTANCE.getNewVersion();
+        if (newVersion == null) {
+            buttons.add(this.createURLButton(Meta.NAME + " Github", Meta.CODE_URL));
+        } else {
+            buttons.add(this.createURLButton("Download " + Meta.NAME + " v" + newVersion, Meta.RELEASES_URL));
+        }
         JButton clipButton = new JButton();
         clipButton.setText("<html><b>Copy Info to Clipboard</b></html>");
         clipButton.setOpaque(true);
@@ -308,9 +313,10 @@ public final class AboutPanel extends JPanel {
                 // moment.  So, whatever, we'll just go back to boring ol' dashes.
                 "<html>" + Meta.NAME + " makes use of the following third-party libraries/resources:<br/>"
                 + "<br/>"
-                + " - StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3.<br/>"
+                + " - StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3<br/>"
                 + " - Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0<br/>"
                 + " - Xerial's sqlite-jdbc, available under the Apache License v2.0<br/>"
+                + " - Vincent Durmont's semver4j, available under the MIT License<br/>"
                 + " - Some icons from Dave Gandy's Font Awesome set, available under CC BY 3.0<br/>"
                 + " - An icon from Fathema Khanom's User Interface set, available under Flaticon's Free License<br/>"
                 + " - An icon from Smashicons' Essential Collection set, available under Flaticon's Free License<br/>"

@@ -293,4 +293,19 @@ public class ToolSettingsPanel extends JPanel {
         // updates both.
         MainGUI.INSTANCE.getDMM().updateDataManagersSelectedClasses();
     }
+
+    /**
+     * Extra steps when toggling our check-for-new-versions checkbox.  This
+     * is so that we can disable active version check notices on the main
+     * GUI if the checkbox has been disabled.
+     *
+     * @param option The option being toggled
+     * @param component The component which did the toggling
+     */
+    public void toggleCheckForNewVersions(Option option, JComponent component) {
+        if (!(boolean)option.getData()) {
+            MainGUI.INSTANCE.cancelVersionCheckNotices();
+        }
+    }
+
 }

@@ -96,6 +96,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         dangerousSettingsGuiScrollPane = new javax.swing.JScrollPane();
         dangerousSettingsGuiPanel = new javax.swing.JPanel();
 
+        setPreferredSize(new java.awt.Dimension(460, 440));
+
         masterSettingsTabbedPane.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         javax.swing.GroupLayout generalSettingsGuiPanelLayout = new javax.swing.GroupLayout(generalSettingsGuiPanel);

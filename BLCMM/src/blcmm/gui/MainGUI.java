@@ -54,6 +54,7 @@ import blcmm.model.PatchIO;
 import blcmm.model.PatchType;
 import blcmm.model.Profile;
 import blcmm.utilities.*;
+import com.vdurmont.semver4j.Semver;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -82,6 +83,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
@@ -129,11 +131,13 @@ public final class MainGUI extends ForceClosingJFrame {
     private File exportPath = null;
     private CompletePatch patch;
     private SwingWorker backupThread;
+    private SwingWorker versionCheckThread;
     private boolean disposed = false;
     private boolean startedMaximized = false;
     private PatchType openedType;
     private JMenu fileHistoryMenu;
     private JTextField searchField;
+    private String newVersion = null;
 
     private boolean editWindowOpen = false;
     private boolean objectExplorerWindowOpen = false;
@@ -207,11 +211,6 @@ public final class MainGUI extends ForceClosingJFrame {
 
         timedLabel.setFont(timedLabel.getFont().deriveFont(Font.BOLD));
         timedLabel.setText("");
-        /*
-        if (!usedLauncher && !Utilities.isCreatorMode()) {
-            ((TimedLabel) timedLabel).putString("launcher", "Please use the Launcher to launch " + Meta.NAME, 1, ThemeManager.ColorType.UINimbusSelectedText);
-        }
-        */
 
         // Re-apply our theme, to hopefully get our tree icons sorted
         setTheme(ThemeManager.getTheme());
@@ -223,6 +222,10 @@ public final class MainGUI extends ForceClosingJFrame {
             initializeTree(this.argToOpen);
             setChangePatchTypeEnabled(patch != null);
             backupThread = startupBackupThread();
+            versionCheckThread = null;
+            if (Options.INSTANCE.getCheckForNewVersions() && !Utilities.isCreatorMode()) {
+                versionCheckThread = startupVersionCheckThread();
+            }
         };
         boolean showGUIPriorToLoading = true;
         if (showGUIPriorToLoading) {
@@ -372,6 +375,59 @@ public final class MainGUI extends ForceClosingJFrame {
                     });
                     ((TimedLabel) timedLabel).showTemporary("Made backup of mod");
                 }
+                return null;
+            }
+        };
+        thread.execute();
+        return thread;
+    }
+
+    /**
+     * Starts up a new thread to check for a new version in the background
+     *
+     * @return null
+     */
+    private SwingWorker startupVersionCheckThread() {
+        SwingWorker thread = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+
+                try {
+                    Thread.sleep(1000);
+                    if (MainGUI.INSTANCE.disposed) {
+                        return null;
+                    }
+
+                    // Now do the check
+                    URL url = new URL(Meta.UPDATE_VERSION_URL);
+                    URLConnection conn = url.openConnection();
+                    InputStream stream = conn.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+                    String remoteVersionStr = br.readLine().trim();
+                    br.close();
+                    stream.close();
+                    if (MainGUI.INSTANCE.disposed) {
+                        return null;
+                    }
+
+                    // Check the versions
+                    Semver thisVersion = new Semver(Meta.VERSION);
+                    Semver remoteVersion = new Semver(remoteVersionStr);
+                    if (remoteVersion.isGreaterThan(thisVersion)) {
+                        GlobalLogger.log("New version detected: " + remoteVersionStr);
+                        ((TimedLabel) timedLabel).putString("version",
+                                Meta.NAME + " v" + remoteVersionStr + " is available!  Check Help > About",
+                                3);
+                        newVersion = remoteVersionStr;
+                    } else {
+                        GlobalLogger.log("No new " + Meta.NAME + " version detected");
+                    }
+
+                } catch (Exception e) {
+                    GlobalLogger.log("Error checking for new software versions:");
+                    GlobalLogger.log(e);
+                }
+
                 return null;
             }
         };
@@ -776,7 +832,7 @@ public final class MainGUI extends ForceClosingJFrame {
         // set it, the dialog freaks the hell out when it's shrunk even a little.
         // These values happen to let it work on my system, but will that be enough
         // on others?  I expect that can't be guaranteed.
-        jDialog.setMinimumSize(new Dimension(630, 570));
+        jDialog.setMinimumSize(new Dimension(635, 575));
         jDialog.pack();
         jDialog.setLocationRelativeTo(this);
         jDialog.setVisible(true);
@@ -925,7 +981,7 @@ public final class MainGUI extends ForceClosingJFrame {
             SetUIModel(emptypatch);
             currentFile = null;
             openedType = null;
-            getTimedLabel().putString("saveStatus", createNewDynamicString(false), 9);
+            getTimedLabel().putString("saveStatus", createNewDynamicString(false), 3);
             enableIOButtons();
             this.updateTitle("Untitled");
         }
@@ -1073,9 +1129,26 @@ public final class MainGUI extends ForceClosingJFrame {
 
     }
 
+    /**
+     * Cancels our version-check thread, if it's still active, and removes
+     * any version-check notices from our TimedLabel
+     */
+    public void cancelVersionCheckNotices() {
+        if (INSTANCE.versionCheckThread != null) {
+            INSTANCE.versionCheckThread.cancel(true);
+        }
+        ((TimedLabel) timedLabel).remove("version");
+    }
+
+    /**
+     * Cancel any ongoing background threads that might be running
+     */
     public void superDispose() {
         if (INSTANCE.backupThread != null) {
             INSTANCE.backupThread.cancel(true);
+        }
+        if (INSTANCE.versionCheckThread != null) {
+            INSTANCE.versionCheckThread.cancel(true);
         }
         disposed = true;
         super.dispose();//Will delete log
@@ -1237,7 +1310,7 @@ public final class MainGUI extends ForceClosingJFrame {
         long time = (System.currentTimeMillis() - start) / 1000;
         String postfix = time > 4 ? " (" + time + " seconds)" : "";
         getTimedLabel().showTemporary("Successfully opened " + f.getName() + postfix);
-        getTimedLabel().putString("saveStatus", createNewDynamicString(false), 9);
+        getTimedLabel().putString("saveStatus", createNewDynamicString(false), 3);
         updateFileHistoryMenu();
 
         if (ImportAnomalyLog.INSTANCE.size() > 0) {
@@ -1373,7 +1446,7 @@ public final class MainGUI extends ForceClosingJFrame {
             currentFile = file;
             String filename2 = truncateFileName(file, Options.INSTANCE.getFilenameTruncationLength());
             this.updateTitle(filename2);
-            getTimedLabel().putString("saveStatus", createNewDynamicString(true), 9);
+            getTimedLabel().putString("saveStatus", createNewDynamicString(true), 3);
             getTimedLabel().showTemporary("Mod saved", ThemeManager.getColor(ThemeManager.ColorType.UIText));
             addCurrentFileToFrontOfPreviousFiles();
         }
@@ -1937,12 +2010,32 @@ public final class MainGUI extends ForceClosingJFrame {
                 + " | " + Meta.VERSION + titleFilename + titlePostfix);
     }
 
+    /**
+     * Gets our main DataManagerManager object
+     *
+     * @return The main DataManagerManager
+     */
     public DataManagerManager getDMM() {
         return this.dmm;
     }
 
+    /**
+     * Returns the current DataManager that we're working with (will match the
+     * patch type of the current patch).
+     *
+     * @return The current DataManager
+     */
     public DataManager getCurrentDataManager() {
         return this.dmm.getCurrentDataManager();
+    }
+
+    /**
+     * Returns our detected new version of OpenBLCMM, if any.
+     *
+     * @return The new available version
+     */
+    public String getNewVersion() {
+        return this.newVersion;
     }
 
     /**

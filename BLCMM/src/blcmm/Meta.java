@@ -63,12 +63,37 @@ public class Meta {
 
     /**
      * URL to the project source control.
+     *
+     * We're defining a bunch of URLs here which could, at the moment, be
+     * derived from each other, but I didn't want these to be intrinsically
+     * GitHub-specific.
      */
     public static final String CODE_URL = "https://github.com/BLCM/OpenBLCMM";
 
     /**
+     * URL to the project releases.
+     *
+     * We're defining a bunch of URLs here which could, at the moment, be
+     * derived from each other, but I didn't want these to be intrinsically
+     * GitHub-specific.
+     */
+    public static final String RELEASES_URL = "https://github.com/BLCM/OpenBLCMM/releases";
+
+    /**
      * URL to where to submit bugs, shown on the crash handler dialog.
+     *
+     * We're defining a bunch of URLs here which could, at the moment, be
+     * derived from each other, but I didn't want these to be intrinsically
+     * GitHub-specific.
      */
     public static final String BUGREPORT_URL = "https://github.com/BLCM/OpenBLCMM/issues";
+
+    /**
+     * URL to where the app can retrieve the latest version of OpenBLCMM
+     * available.  This should just be a plain text file with only a version
+     * number in it, nothing more.  Note that the URL here is entirely just
+     * for testing purposes; I intend to host it off of github eventually.
+     */
+    public static final String UPDATE_VERSION_URL = "https://apocalyptech.com/scratchpad/openblcmm-latest.txt";
 
 }

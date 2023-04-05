@@ -306,6 +306,10 @@ public class TimedLabel extends JLabel {
         public Color getColor() {
             return color != null ? color : (colorType != null ? ThemeManager.getColor(colorType) : ThemeManager.getColor(ColorType.UIText));
         }
+
+        public String toString() {
+            return "(" + this.weight + "/" + this.maxDisplays + ")" + this.string;
+        }
     }
 
     public static abstract class DynamicString {
