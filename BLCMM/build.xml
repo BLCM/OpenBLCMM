@@ -90,8 +90,7 @@
         <property name="store.dir" value="store"/>
         <property name="store.jar" value="${store.dir}/${store.jar.name}.jar"/>
 
-        <delete dir="${store.dir}"/>
-        <mkdir dir="${store.dir}"/>
+        <delete file="${store.jar}"/>
 
         <!--
             We want to transform some of the inner paths inside our third-party
