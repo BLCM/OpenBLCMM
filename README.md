@@ -64,7 +64,6 @@ TODO
 
 - AoDK support (both in OpenBLCMM itself and OE)
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Get a real Markdown renderer for the Changelog window?
 - Needed testing:
   - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
   - Doublecheck file saving -- there was a lot of autoexec stuff in there
@@ -83,8 +82,6 @@ TODO
   - Do at least a bit of testing in all currently-supported Java versions
   - We decode dump data using `ISO_8859_1` -- search through the data to find
     out if there's edge cases where that'll fail.
-  - Uninstalls?  I actually think that the uninstall function does nothing
-    right now; looks like it's probably the launcher which used to do that.
 
 ### Can probably wait until after the first public release
 
@@ -114,6 +111,11 @@ TODO
 - Maybe completely separate INI tweaks into their own little app?
 - Pass around references to stuff like our Options instance, rather than
   referring to global "instance" vars?
+- Get a real Markdown renderer for the Changelog window
+  - I'd like to do this for sure, but at the moment, Liberica NIK's Swing
+    HTML rendering is a bit wonky, and all the Markdown-displaying
+    libraries I've seen so far seem to just convert to HTML.  So, it'll
+    have to wait for GraalVM/Liberica to fix some stuff.
 
 Third-Party Content
 ===================
