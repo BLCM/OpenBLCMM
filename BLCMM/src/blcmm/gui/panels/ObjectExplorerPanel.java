@@ -1371,6 +1371,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         + "\n"
                         + "    https://docs.oracle.com/javase/8/docs/api/java/util/regex/Pattern.html#sum"
                 );
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        jScrollPane1.getVerticalScrollBar().setValue(0);
+                    }
+                });
             }
             queryTextField.setEditable(true);
             //textElement.setEditable(true);
