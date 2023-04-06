@@ -73,11 +73,6 @@ TODO
     thorough testing before getting rid of this line, though)
   - Wouldn't hurt to test out some more failure conditions in the map-merging
     code.  Incomplete/cut-off statements, etc.
-  - Test out various scenarios relating to data availability; make sure that
-    we can't NPE in OE, etc.
-  - Test out various failure situations on the new datalib packing (new
-    versions, version mismatches, min/max dbver restrictions, checksum failures,
-    mtime updates, etc)
   - Do at least a bit of testing in all currently-supported Java versions
   - We decode dump data using `ISO_8859_1` -- search through the data to find
     out if there's edge cases where that'll fail.
