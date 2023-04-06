@@ -85,6 +85,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -535,7 +536,7 @@ public final class MainGUI extends ForceClosingJFrame {
         HelpMenu = new javax.swing.JMenu();
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        uninstallMenuItem = new javax.swing.JMenuItem();
 
         setTitle("dummy");
 
@@ -789,14 +790,13 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         HelpMenu.add(jMenuItem1);
 
-        jMenuItem2.setText("Uninstall OpenBLCMM");
-        jMenuItem2.setActionCommand("Uninstall OpenBLCMM");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        uninstallMenuItem.setText("Uninstall OpenBLCMM");
+        uninstallMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                uninstallMenuItemActionPerformed(evt);
             }
         });
-        HelpMenu.add(jMenuItem2);
+        HelpMenu.add(uninstallMenuItem);
 
         jMenuBar1.add(HelpMenu);
 
@@ -1043,24 +1043,57 @@ public final class MainGUI extends ForceClosingJFrame {
         }
     }//GEN-LAST:event_getMoreModsMenuButtonActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        int choice = JOptionPane.showConfirmDialog(null, "This will delete all " + Meta.NAME + " files, including data packages.\n"
-                + "All that will remain is the logfiles and config files.\n\n"
-                + "Proceed?", "Proceed with uninstall?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (choice != JOptionPane.YES_OPTION) {
-            return;
+    private void uninstallMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uninstallMenuItemActionPerformed
+        File uninstallFile = Paths.get(Utilities.getMainInstallDir().toString(), "unins000.exe").toFile();
+        if (OSInfo.CURRENT_OS == OSInfo.OS.WINDOWS
+                && System.getProperty("java.vm.version").startsWith("GraalVM")
+                && uninstallFile.exists()
+                ) {
+            int choice = JOptionPane.showConfirmDialog(this,
+                    "This will remove the " + Meta.NAME + " application from your system.\n"
+                    + "Data packs, logfiles, and configuration will remain on disk and\n"
+                    + "must be cleaned out manually if you wish to remove them.\n"
+                    + "\n"
+                    + "If you have data packs, they will be installed at:\n"
+                    + "    " + Utilities.getMainInstallDir().getAbsolutePath() + "\n"
+                    + "\n"
+                    + "Logfiles and configuration files can be found at:\n"
+                    + "    " + Utilities.getBLCMMDataDir() + "\n"
+                    + "\n"
+                    + "Proceed?",
+                    "Proceed with uninstall?",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+            try {
+                GlobalLogger.log("Triggering uninstall application and exiting");
+                Runtime.getRuntime().exec(new String[] {uninstallFile.getAbsolutePath()});
+                this.dispose();
+            } catch (IOException ex) {
+                GlobalLogger.log(ex);
+                JOptionPane.showMessageDialog(null,
+                        "Something went wrong when preparing for uninstalling " + Meta.NAME + ".",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    Meta.NAME + " only has a built-in uninstallation procedure when it was\n"
+                    + "installed via the official installer on Windows systems.  For other\n"
+                    + "platforms, you should just remove the directory in which you unzipped\n"
+                    + "the application.\n"
+                    + "\n"
+                    + "It looks like you can find that directory here:\n"
+                    + "    " + Utilities.getMainInstallDir().getAbsolutePath() + "\n"
+                    + "\n"
+                    + "Logfiles and configuration files can be found at:\n"
+                    + "    " + Utilities.getBLCMMDataDir() + "\n",
+                    "Uninstallation Information",
+                    JOptionPane.OK_OPTION);
         }
-        try {
-            new File("uninstall.me").createNewFile();
-            Startup.promptRestart();
-        } catch (IOException ex) {
-            GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(null,
-                    "Something went wrong when preparing for uninstalling " + Meta.NAME + ".",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_uninstallMenuItemActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         ForceClosingJFrame jFrame = new ForceClosingJFrame("Behavior number converter");
@@ -1539,7 +1572,6 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem14;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel1;
@@ -1560,6 +1592,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenuItem setupGameFilesButton;
     private javax.swing.JComboBox<Theme> themeComboBox;
     private javax.swing.JLabel timedLabel;
+    private javax.swing.JMenuItem uninstallMenuItem;
     // End of variables declaration//GEN-END:variables
 
     private void updateProfileMenu() {
