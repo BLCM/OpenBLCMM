@@ -34,16 +34,17 @@ installed:
 Then:
 
 1. Start a "x64 Native Tools Command Prompt" shell from Visual Studio
-2. If you want, run `native-agent.bat` and interact with the app for awhile.
-   Compare the contents of `conf-dir` with the `META-INF/native-image`
-   dir in sourcecode to see if anything new is required.  If so, add them
-   and rebuild `OpenBLCMM.jar`.
-    1. Note that the agent configuration step isn't additive -- it doesn't
-       read in the existing `conf-dir` and then add to it, it'll just
-       overwrite it with whatever activity it saw on the most recent run.
-       So keep in mind that you'll want to *merge* in the new `conf-dir`
-       data with the established configuration, just in case the new version
-       missed anything.
+2. If you want, run `native-agent-new.bat` or `native-agent-merge.bat` and
+   interact with the app for awhile.  Compare the contents of `conf-dir`
+   with the `META-INF/native-image` dir in sourcecode to see if anything
+   new is required.  If so, add them and rebuild `OpenBLCMM.jar`.
+    1. `native-agent-new.bat` creates a totally fresh `conf-dir` each time,
+       so make sure to be careful about merging in with the originals, since
+       the new one might be missing functionality if you didn't do a totally
+       thorough runthrough.
+    2. `native-agent-merge.bat` should *update* an existing `conf-dir` with
+       new activity, which will probably make updates a little easier to
+       deal with.
 3. Run `native-compile.bat` (or just `native-image -jar OpenBLCMM.jar`) to
    compile `OpenBLCMM.exe`
 4. If you want, use WinRun4J to set an icon on the EXE itself, with
@@ -102,6 +103,13 @@ the compilation with:
         -H:ReflectionConfigurationFiles=conf-dir/reflect-config.json
         -H:ResourceConfigurationFiles=conf-dir/resource-config.json
         -H:JNIConfigurationFiles=conf-dir/jni-config.json
+        -jar OpenBLCMM.jar
+
+Note that there's an alternate version of the tracing agent call which
+will *merge* in an existing `conf-dir` with the newly-seen activity,
+instead of starting fresh:
+
+    java -agentlib:native-image-agent=config-merge-dir=conf-dir
         -jar OpenBLCMM.jar
 
 Having to specify all those arguments to the `native-image` call isn't
