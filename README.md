@@ -111,11 +111,6 @@ TODO
 - Maybe completely separate INI tweaks into their own little app?
 - Pass around references to stuff like our Options instance, rather than
   referring to global "instance" vars?
-- Get a real Markdown renderer for the Changelog window
-  - I'd like to do this for sure, but at the moment, Liberica NIK's Swing
-    HTML rendering is a bit wonky, and all the Markdown-displaying
-    libraries I've seen so far seem to just convert to HTML.  So, it'll
-    have to wait for GraalVM/Liberica to fix some stuff.
 
 Third-Party Content
 ===================
@@ -131,6 +126,8 @@ OpenBLCMM makes use of the following third party libraries/resources:
   available under the Apache License v2.0.
 - [Vincent Durmont](https://github.com/vdurmont)'s [semver4j](https://github.com/vdurmont/semver4j),
   available under the MIT License.
+- [CommonMark](https://github.com/commonmark)'s [commonmark-java](https://github.com/commonmark/commonmark-java),
+  available under the 2-clause BSD License.
 - Some icons from [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
   [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under
   CC BY 3.0.
