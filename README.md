@@ -30,9 +30,8 @@ packages while running inside Netbeans, download them and save them inside the
 checked-out `BLCMM` directory.  To use them on a built/compiled version, just
 save them in the same dir as `OpenBLCMM.jar`/`OpenBLCMM.exe`.  The app should
 see them on startup and extract the sqlite database to an `extracted-data`
-directory.  At the moment there's no real indication that that's happening
-apart from log entries -- once we have a launcher in place, that should get
-that sorted out a bit better.
+directory in the user data dir (where preferences and logfiles are stored,
+etc).
 
 The generation scripts for the new data can be found in the [DataDumper
 PythonSDK mod](https://github.com/BLCM/DataDumper).  Note that the data
