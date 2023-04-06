@@ -38,16 +38,22 @@ Then:
    Compare the contents of `conf-dir` with the `META-INF/native-image`
    dir in sourcecode to see if anything new is required.  If so, add them
    and rebuild `OpenBLCMM.jar`.
+    1. Note that the agent configuration step isn't additive -- it doesn't
+       read in the existing `conf-dir` and then add to it, it'll just
+       overwrite it with whatever activity it saw on the most recent run.
+       So keep in mind that you'll want to *merge* in the new `conf-dir`
+       data with the established configuration, just in case the new version
+       missed anything.
 3. Run `native-compile.bat` (or just `native-image -jar OpenBLCMM.jar`) to
    compile `OpenBLCMM.exe`
 4. If you want, use WinRun4J to set an icon on the EXE itself, with
    `RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico`
 4. Open `openblcmm.iss` in Inno Setup.  Update the version number if required
-   and hit "Compile."  You'll end up with an `OpenBLCMM-<version>.exe` inside
-   an `Output` dir.  That's the installer!
+   and hit "Compile."  You'll end up with an `OpenBLCMM-<version>-Installer.exe`
+   inside an `Output` dir.  That's the installer!
 
-That's it!  Details of those steps follow, divided into the two main sections
-(compiling, and then creating the installer).
+That's it!  Details of those steps follow, divided into the three main sections
+(compiling, EXE icon, and then creating the installer).
 
 Compiling for Windows
 ---------------------
@@ -187,12 +193,11 @@ The main util that most folks seem to probably use for this kind of EXE
 tweaking is [Resource Hacker](http://www.angusj.com/resourcehacker/), which
 seems quite well-established and featureful, but it's not opensource, so I
 didn't really want to use it myself.  Instead, I'm using [WinRun4J](https://winrun4j.sourceforge.net),
-which includes an `RCEDIT.EXE`/`RCEDIT64.EXE` for doing simple tweaks like
-this.
+which includes an `RCEDIT64.EXE` utility for doing simple tweaks like this.
 
 There's no actual installer for WinRun4J, so just unzip it somewhere and
-slap the RCEDIT/RCEDIT64 binary somewhere in your `%PATH%`.  Then once you
-have the compiled EXE available, run:
+slap the RCEDIT64 binary somewhere in your `%PATH%`.  Then once you have
+the compiled EXE available, run:
 
     RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico
 
@@ -217,7 +222,7 @@ Some custom changes inside `openblcmm.iss` that we've made:
 
 * Removed the full paths that the wizard puts on all file paths, so it
   just uses files in the same dir as `openblcmm.iss`.
-* Added the app version number to the output filename.
+* Added the app version number to the output filename, plus the text `Installer`.
 * Pre-install info text was taken from the "Credits" tab on our About dialog.
 * Associated `.blcm` file extension with OpenBLCMM.
 * Included an icon in the app install directory.
