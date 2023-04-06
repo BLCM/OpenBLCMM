@@ -14,6 +14,7 @@ easier for native Windows users, feel free to send in a PR!
 * [Compiling for Windows](#compiling-for-windows)
   * [Installing/Using Those Components](#installingusing-those-components)
   * [Vanilla GraalVM](#vanilla-graalvm)
+* [Setting an EXE Icon](#setting-an-exe-icon)
 * [Building the Installer](#building-the-installer)
 * [Distribution](#distribution)
 
@@ -27,7 +28,8 @@ installed:
 
 1. [Visual Studio](https://visualstudio.microsoft.com/) and its C++ components.
 2. [Liberica NIK](https://bell-sw.com/pages/downloads/native-image-kit/#downloads).
-3. [Inno Setup](https://jrsoftware.org/isinfo.php)
+3. [WinRun4J](https://winrun4j.sourceforge.net), if you want to set an EXE icon
+4. [Inno Setup](https://jrsoftware.org/isinfo.php)
 
 Then:
 
@@ -38,6 +40,8 @@ Then:
    and rebuild `OpenBLCMM.jar`.
 3. Run `native-compile.bat` (or just `native-image -jar OpenBLCMM.jar`) to
    compile `OpenBLCMM.exe`
+4. If you want, use WinRun4J to set an icon on the EXE itself, with
+   `RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico`
 4. Open `openblcmm.iss` in Inno Setup.  Update the version number if required
    and hit "Compile."  You'll end up with an `OpenBLCMM-<version>.exe` inside
    an `Output` dir.  That's the installer!
@@ -168,6 +172,31 @@ to install the `native-image` component:
 
 Visual Studio would still be required, though, and you'd need to kick
 off the processes via that "x64 Native Tools Command Prompt."
+
+Setting an EXE Icon
+-------------------
+
+GraalVM/Liberica Native Image doesn't support setting a custom icon on the
+compiled EXE, and it'd be nice to have.  When installing from an installer
+(see the next section) it's not too important, since the shortcuts all have
+icons, and the app sets its own runtime icons so it looks fine while running.
+Someone looking at the main EXE directly, though, might appreciate having
+the icon in place.
+
+The main util that most folks seem to probably use for this kind of EXE
+tweaking is [Resource Hacker](http://www.angusj.com/resourcehacker/), which
+seems quite well-established and featureful, but it's not opensource, so I
+didn't really want to use it myself.  Instead, I'm using [WinRun4J](https://winrun4j.sourceforge.net),
+which includes an `RCEDIT.EXE`/`RCEDIT64.EXE` for doing simple tweaks like
+this.
+
+There's no actual installer for WinRun4J, so just unzip it somewhere and
+slap the RCEDIT/RCEDIT64 binary somewhere in your `%PATH%`.  Then once you
+have the compiled EXE available, run:
+
+    RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico
+
+That's it!
 
 Building the Installer
 ----------------------
