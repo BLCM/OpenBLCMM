@@ -29,7 +29,7 @@ InfoBeforeFile=installer-pre-text.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=OpenBLCMM-{#MyAppVersion}
+OutputBaseFilename=OpenBLCMM-{#MyAppVersion}-Installer
 SetupIconFile=openblcmm.ico
 Compression=lzma
 SolidCompression=yes
