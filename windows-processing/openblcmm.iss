@@ -67,6 +67,11 @@ Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}/openblcmm.ico"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}/openblcmm.ico"; Tasks: desktopicon
 
-[Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+; Disabling this for now -- I'd seen some slightly weird behavior in the app
+; which *seemed* related to having started it from the installer at the end,
+; so I'm gonna disable this for now.  If I'm being honest, I suspect that the
+; launch-at-end is fine and I'm just seeing casuation where there's only
+; correlation (at best), but I'm leaving it out for now regardless.
+;[Run]
+;Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
