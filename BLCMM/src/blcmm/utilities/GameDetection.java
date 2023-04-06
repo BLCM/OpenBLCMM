@@ -68,7 +68,7 @@ public class GameDetection {
         assert run;
         LOGGED_BIN.add(PatchType.BL2);
         bl2Path = path;
-        GlobalLogger.log("Set BL2 path manually to: " + path);
+        GlobalLogger.log("Set BL2 path manually to: " + Utilities.hideUserName(path));
     }
 
     /**
@@ -80,7 +80,7 @@ public class GameDetection {
         assert run;
         LOGGED_BIN.add(PatchType.TPS);
         blTPSPath = path;
-        GlobalLogger.log("Set TPS path manually to: " + path);
+        GlobalLogger.log("Set TPS path manually to: " + Utilities.hideUserName(path));
     }
 
     public static String getPath(PatchType type) {
@@ -115,8 +115,8 @@ public class GameDetection {
             unixGameDetection();
         }
         GlobalLogger.log("Games folders found:");
-        GlobalLogger.log("Borderlands 2:              " + bl2Path);
-        GlobalLogger.log("Borderlands The Pre Sequel: " + blTPSPath);
+        GlobalLogger.log("Borderlands 2:              " + Utilities.hideUserName(bl2Path));
+        GlobalLogger.log("Borderlands The Pre Sequel: " + Utilities.hideUserName(blTPSPath));
     }
 
     private static void windowsGameDetection() {
@@ -158,10 +158,10 @@ public class GameDetection {
             GlobalLogger.log("Can't find " + game + " Steam installation on registry.");
             path = FindGamePathInLog(type);
         } else if (!new File(path).exists()) {
-            GlobalLogger.log("The found registry installation of " + game + " doesn't exist. (" + path + ")");
+            GlobalLogger.log("The found registry installation of " + game + " doesn't exist. (" + Utilities.hideUserName(path) + ")");
             path = FindGamePathInLog(type);
         } else if (getExe(type, path) == null) {
-            GlobalLogger.log("The found registry installation of " + game + " doesn't have an executable. (" + path + ")");
+            GlobalLogger.log("The found registry installation of " + game + " doesn't have an executable. (" + Utilities.hideUserName(path) + ")");
             path = FindGamePathInLog(type);
         } else {
             GlobalLogger.log("Found " + game + " Steam installation on registry.");
@@ -217,18 +217,20 @@ public class GameDetection {
                             if (!path2.toLowerCase().contains("steam")) {
                                 File file = new File(path2 + "\\.egstore"); // Detect Epic Launcher Installs, they have this directory, its easiest
                                 if(!file.exists()) {
-                                    GlobalLogger.log("Disregarding path due to lack of 'steam' substring: " + path2);
+                                    GlobalLogger.log("Disregarding path due to lack of 'steam' substring: " + Utilities.hideUserName(path2));
                                     break;
                                 }
                             } else if (!new File(path2).exists()) {
-                                GlobalLogger.log("Disregarding path due to not existing: " + path2);
+                                GlobalLogger.log("Disregarding path due to not existing: " + Utilities.hideUserName(path2));
                                 break;
                             } else if (getExe(type, path2) == null) {
-                                GlobalLogger.log("Disregarding path due to not having an executable: " + path2);
+                                GlobalLogger.log("Disregarding path due to not having an executable: " + Utilities.hideUserName(path2));
                                 break;
                             }
                             path = path2;
-                            GlobalLogger.log("Found path for " + game + " in the logs: " + path + " (using log: " + log + ")");
+                            GlobalLogger.log("Found path for " + game + " in the logs: "
+                                    + Utilities.hideUserName(path)
+                                    + " (using log: " + Utilities.hideUserName(log.toString()) + ")");
                             br.close();
                             break fileLoop;//No need to continue reading the file at this point.
                         }
@@ -274,7 +276,7 @@ public class GameDetection {
 
         GlobalLogger.log("Library folders found:");
         for (String folder : libraryFolders) {
-            GlobalLogger.log(folder);
+            GlobalLogger.log(Utilities.hideUserName(folder));
 
             try {
                 // Search for our two case possibilities
@@ -298,7 +300,7 @@ public class GameDetection {
                     }
                 }
             } catch (NullPointerException err) {
-                GlobalLogger.log("Directory " + folder + " is incorrect, it doesn't have any files");
+                GlobalLogger.log("Directory " + Utilities.hideUserName(folder) + " is incorrect, it doesn't have any files");
             }
         }
         if (OSInfo.CURRENT_OS == OSInfo.OS.MAC) {
@@ -438,13 +440,13 @@ public class GameDetection {
         File f = new File(binariesPath);
         if (f.exists()) {
             if (!LOGGED_BIN.contains(type)) {
-                GlobalLogger.log("Binaries dir: " + binariesPath);
+                GlobalLogger.log("Binaries dir: " + Utilities.hideUserName(binariesPath));
                 LOGGED_BIN.add(type);
             }
             return binariesPath;
         } else {
             if (LOGGED_BIN.contains(type)) {
-                GlobalLogger.log("No binaries path found for " + type.toString() + " (" + binariesPath + ")");
+                GlobalLogger.log("No binaries path found for " + type.toString() + " (" + Utilities.hideUserName(binariesPath) + ")");
                 LOGGED_BIN.add(type);
             }
             return null;
@@ -507,13 +509,13 @@ public class GameDetection {
         }
         if (exe == null || !exe.exists()) {
             if (!LOGGED_EXE.contains(type)) {
-                GlobalLogger.log("No executable found for " + type.toString() + " (" + exe + ")");
+                GlobalLogger.log("No executable found for " + type.toString() + " (" + Utilities.hideUserName(exe.toString()) + ")");
                 LOGGED_EXE.add(type);
             }
             return null;
         } else {
             if (!LOGGED_EXE.contains(type)) {
-                GlobalLogger.log("Found executable: " + exe.getAbsolutePath());
+                GlobalLogger.log("Found executable: " + Utilities.hideUserName(exe.getAbsolutePath()));
                 LOGGED_EXE.add(type);
             }
         }
@@ -574,10 +576,10 @@ public class GameDetection {
         String enginePath = OSInfo.CURRENT_OS == OSInfo.OS.MAC ? enginePathM : (OSInfo.CURRENT_OS == OSInfo.OS.WINDOWS ? enginePathW : enginePathL);
         File engine = new File(getPath(type) + enginePath);
         if (!engine.exists()) {
-            GlobalLogger.log("No engine.upk found for " + type.toString() + " (" + engine + ")");
+            GlobalLogger.log("No engine.upk found for " + type.toString() + " (" + Utilities.hideUserName(engine.toString()) + ")");
             return null;
         }
-        GlobalLogger.log("Found engine.upk: " + engine.getAbsolutePath());
+        GlobalLogger.log("Found engine.upk: " + Utilities.hideUserName(engine.getAbsolutePath()));
         return engine;
     }
 
@@ -601,7 +603,7 @@ public class GameDetection {
                     if (new File(res).exists()) {
                         break;
                     }
-                    GlobalLogger.log("Atempting to find config folder failed for: " + res);
+                    GlobalLogger.log("Atempting to find config folder failed for: " + Utilities.hideUserName(res));
                 }
                 return res;
             }
@@ -661,7 +663,7 @@ public class GameDetection {
                 String[] split = myDocuments.split("\\\\");
                 for (String split1 : split) {
                     if (split1.contains("?")) {
-                        GlobalLogger.log("Replacing " + split1 + " with " + username);
+                        //GlobalLogger.log("Replacing " + split1 + " with " + username);
                         myDocuments = myDocuments.replace(split1, username);
                     }
                 }
@@ -677,7 +679,7 @@ public class GameDetection {
     public static String getPathToINIFiles(PatchType type) {
         String res = getGameConfigPathWithPostfix(type, "WillowGame\\Config\\");
         if (!LOGGED_INI.contains(type)) {
-            GlobalLogger.log("Path to INI files of " + type.toString() + ": " + res);
+            GlobalLogger.log("Path to INI files of " + type.toString() + ": " + Utilities.hideUserName(res));
             LOGGED_INI.add(type);
         }
         return res;
@@ -698,7 +700,7 @@ public class GameDetection {
 
     private static String getPathToLogFiles(PatchType type) {
         String res = getGameConfigPathWithPostfix(type, "WillowGame\\Logs\\");
-        GlobalLogger.log("Path to log files: " + res);
+        GlobalLogger.log("Path to log files: " + Utilities.hideUserName(res));
         return res;
     }
 

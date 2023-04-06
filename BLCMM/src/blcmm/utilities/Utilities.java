@@ -113,8 +113,10 @@ public class Utilities {
     }
 
     /**
-     * Replaces usernames in paths by '[username]'. Currently English and Dutch
-     * Windows only.
+     * Replaces usernames in paths by '[user]'. Currently English and Dutch
+     * Windows only.  This now only replaces "proper" user-dir prefixes, to
+     * avoid having false-positive replacements later on in the path, which
+     * should cover essentially all cases anyway.
      *
      * @param text
      * @return
@@ -124,14 +126,19 @@ public class Utilities {
             return null;
         }
 
-        // Replace $HOME with ~ on Linux/Mac
-        if (OSInfo.CURRENT_OS != OSInfo.OS.WINDOWS
-                && System.getenv("HOME") != null
-                && System.getenv("HOME").length() > 0
-                && text.startsWith(System.getenv("HOME"))) {
-            text = "~" + text.substring(System.getenv("HOME").length());
+        String userHome = System.getProperty("user.home");
+        if (userHome != null
+                && userHome.length() > 0
+                && text.startsWith(userHome)) {
+            if (OSInfo.CURRENT_OS != OSInfo.OS.WINDOWS) {
+                return text.replace(userHome, "~");
+            } else {
+                String userName = System.getProperty("user.name");
+                String replaced = userHome.substring(0, userHome.length() - userName.length()) + "[user]";
+                return text.replace(userHome, replaced);
+            }
         }
-        return text.replace(System.getProperty("user.name"), "[username]");
+        return text;
     }
 
     /**

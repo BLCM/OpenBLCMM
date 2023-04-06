@@ -175,10 +175,10 @@ public class Startup {
         ToolTipManager.sharedInstance().setDismissDelay(10000);
 
         // Report on some various vars
-        GlobalLogger.log(Meta.NAME + " is installed at: " + Utilities.getMainInstallDir());
-        GlobalLogger.log("Your user data directory is: " + Utilities.getBLCMMDataDir());
-        GlobalLogger.log("Working directory: " + System.getProperty("user.dir").replaceAll("\\\\", "/"));
-        GlobalLogger.log("Default file-open location: " + Utilities.getDefaultOpenLocation().toString());
+        GlobalLogger.log(Meta.NAME + " is installed at: " + Utilities.hideUserName(Utilities.getMainInstallDir().toString()));
+        GlobalLogger.log("Your user data directory is: " + Utilities.hideUserName(Utilities.getBLCMMDataDir()));
+        GlobalLogger.log("Working directory: " + Utilities.hideUserName(System.getProperty("user.dir")));
+        GlobalLogger.log("Default file-open location: " + Utilities.hideUserName(Utilities.getDefaultOpenLocation().toString()));
 
         java.awt.EventQueue.invokeLater(() -> {
             new MainGUI(file, titlePostfix);

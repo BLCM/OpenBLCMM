@@ -31,6 +31,7 @@
 package blcmm.utilities.log;
 
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Utilities;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -40,14 +41,14 @@ import java.nio.file.Paths;
 
 /**
  * Logging to a logfile, for GlobalLogger.
- * 
+ *
  * BLCMM historically deleted its logfile when the app closed, unless there
  * was a properly-logged exception.  We're now logging to *two* files at once,
  * though -- one a timestamped file which is deleted on close just like before,
  * and the other a "latest" file which is never deleted.  The constructor for
  * this target supports marking a logfile as permanent right at instantiation,
  * to support that.
- * 
+ *
  * @author apocalyptech
  */
 
@@ -58,7 +59,7 @@ public class LogFile implements LogTarget {
     private BufferedWriter writer = null;
     private boolean persistent;
     private static String NEWLINE = System.lineSeparator();
-    
+
     public LogFile(String filenameBase) {
         this(filenameBase, false);
     }
@@ -67,34 +68,34 @@ public class LogFile implements LogTarget {
         this.filenameBase = filenameBase;
         this.persistent = persistent;
     }
-    
+
     /**
      * Get the path to the actual logfile
-     * 
+     *
      * @return The logfile
      */
     public File getLogFile() {
         return this.logFile;
     }
-    
+
     /**
      * What to do if we encounter an Exception (most likely an IOException)
      * while attempting to interact with the on-disk logfile.  Will close
      * the file so no further writes are attempted, and send yet another
      * log entry to GlobalLogger to report on the failure (which should
      * hopefully at least make it to the console).
-     * 
+     *
      * @param report String prefix to report along with the Exception
      * @param e The thrown Exception
      */
     private void handleLoggingException(String report, Exception e) {
         this.close();
-        GlobalLogger.log(report + ", file " + logFile.toString() + ": " + e.toString());
+        GlobalLogger.log(report + ", file " + Utilities.hideUserName(logFile.toString()) + ": " + e.toString());
     }
 
     /**
      * Sets the log folder to send logs to.
-     * 
+     *
      * @param newLogFolder The folder to use.
      */
    @Override
@@ -111,7 +112,7 @@ public class LogFile implements LogTarget {
 
     /**
      * Logs a single line.
-     * 
+     *
      * @param line The message to log
      */
     @Override
@@ -153,7 +154,7 @@ public class LogFile implements LogTarget {
         }
         writer = null;
     }
-    
+
     /**
      * Deletes the logfile, unless we've been marked as persistent, or if
      * markAsPermanentLog has been called.
@@ -168,7 +169,7 @@ public class LogFile implements LogTarget {
             logFile.delete();
         }
     }
-    
+
     /**
      * Marks this logfile as permanent, so it won't be deleted.
      */
@@ -176,5 +177,5 @@ public class LogFile implements LogTarget {
     public void markAsPermanentLog() {
         this.persistent = true;
     }
-    
+
 }

@@ -87,6 +87,9 @@ OpenBLCMM Changelog
 - When creating and saving a new file, it now opens on the next boot
 - Opening a .blcm file through Windows' context menu now actually opens the
   file in OpenBLCMM, when installed via the installer.
+- Username hiding in logfiles only matches at the beginning of the pathnames,
+  instead of at arbitrary points, and has been expanded to include more
+  instances of pathnames being logged.
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.

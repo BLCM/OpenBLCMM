@@ -1316,7 +1316,7 @@ public final class MainGUI extends ForceClosingJFrame {
         if (ImportAnomalyLog.INSTANCE.size() > 0) {
             GUI_IO_Handler.reportImportResults(1, true, patch);
         }
-        GlobalLogger.log("Opened " + f);
+        GlobalLogger.log("Opened " + Utilities.hideUserName(f.toString()));
         return true;
 
     }
@@ -1905,7 +1905,10 @@ public final class MainGUI extends ForceClosingJFrame {
                 } else {
                     report = secs + " seconds";
                 }
-                return String.format("Unsaved changes in %s - %s %s ago", currentFile == null ? "new file" : currentFile.getName(), (save ? "saved" : "opened"), report);
+                return String.format("Unsaved changes in %s - %s %s ago",
+                        currentFile == null ? "new file" : Utilities.hideUserName(currentFile.getName()),
+                        (save ? "saved" : "opened"),
+                        report);
             }
         };
     }

@@ -377,7 +377,7 @@ public class DataManager {
         try {
 
             this.jarFile = new JarFile(this.jarFileObj);
-            GlobalLogger.log("Found data jarfile at: " + this.jarFilename);
+            GlobalLogger.log("Found data jarfile at: " + Utilities.hideUserName(this.jarFilename));
             this.dataPathBase = "data/" + patchType.name();
             this.dataPathDumps = this.dataPathBase + "/dumps";
             this.dataBaseDir = Paths.get(Utilities.getBLCMMDataDir(), "extracted-data", patchType.name()).toString();
