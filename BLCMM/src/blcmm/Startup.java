@@ -41,7 +41,6 @@ import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -315,6 +314,14 @@ public class Startup {
         return CRASHED_LAST_TIME;
     }
 
+    /*
+     * These two methods used to be used when we needed to trigger app restarts
+     * thanks to settings changes and the like (new datapacks, etc).  Nowadays
+     * we don't have anything which could trigger it, so I'm commenting them
+     * out.  The startBLCMM() call, in particular, wouldn't necessarily work
+     * nowadays anyway.  If we ever *do* want to start doing something like this
+     * again, though, it'll be nice to have a place to start, so I'm leaving
+     * them in the file, at least, if commented.
     public static boolean promptRestart() throws HeadlessException {
         int restart = JOptionPane.showConfirmDialog(null, Meta.NAME + " needs to restart for the selected options to work properly. Restart now?", "Restart?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (restart != JOptionPane.YES_OPTION) {
@@ -344,6 +351,7 @@ public class Startup {
                     "Error launching " + Meta.NAME, JOptionPane.ERROR_MESSAGE);
         }
     }
+    /**/
 
     private Startup() {
     }

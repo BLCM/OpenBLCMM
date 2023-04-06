@@ -55,13 +55,6 @@ public class Meta {
     public static final String APP_DATA_DIR_NAME = "OpenBLCMM";
 
     /**
-     * The name of the compiled Jar file.  This may end up getting factored
-     * out, since I don't think there's much actual use for it anymore, and
-     * it wouldn't be accurate for the Windows-compiled version anyway.
-     */
-    public static final String JARFILE = "OpenBLCMM.jar";
-
-    /**
      * URL to the project source control.
      *
      * We're defining a bunch of URLs here which could, at the moment, be

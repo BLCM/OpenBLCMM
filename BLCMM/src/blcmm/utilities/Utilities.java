@@ -1058,6 +1058,21 @@ public class Utilities {
     }
 
     /**
+     * Gets the location where our data pack files should be contained.  This
+     * is effectively identical to getDefaultOpenLocation, but I didn't want
+     * to literally combine them into one function.
+     *
+     * @return The directory where datapacks can be found, or null
+     */
+    public static File getDataPackDirectory() {
+        if (Utilities.isCreatorMode()) {
+            return new File(System.getProperty("user.dir"));
+        } else {
+            return Utilities.getMainInstallDir();
+        }
+    }
+
+    /**
      * Given a size in bytes, return a human-readable string suffixed by
      * the most appropriate units.  This implementation taken from blcmm.Startup.
      *

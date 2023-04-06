@@ -1323,9 +1323,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         + "\n"
                         + "    https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link\n"
                         + "\n"
-                        + "If running " + Meta.NAME + " via Netbeans, place the Jars inside the top-level BLCMM directory.  If\n"
-                        + "running from a Jarfile (which may not even work at the moment), place them alongside\n"
-                        + Meta.JARFILE + "."
+                        + "Data packages should be placed as-is into: " + Utilities.getDataPackDirectory()
                 );
             }
             queryTextField.setEditable(false);

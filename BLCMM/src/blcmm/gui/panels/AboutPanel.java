@@ -59,6 +59,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import org.apache.commons.text.WordUtils;
 
 /**
  *
@@ -127,14 +128,14 @@ public final class AboutPanel extends JPanel {
                     // weights (x, y)
                     1, 1,
                     // anchor
-                    GridBagConstraints.EAST,
+                    GridBagConstraints.NORTHEAST,
                     // fill
                     GridBagConstraints.NONE,
                     // insets
                     new Insets(1, 3, 1, 3),
                     // pad (x, y)
                     0, 0));
-            sysInfoPanel.add(new JLabel("<html>" + entry.getValue()), new GridBagConstraints(
+            sysInfoPanel.add(new JLabel("<html>" + WordUtils.wrap((String)entry.getValue(), 65, "<br>", true)), new GridBagConstraints(
                     // x, y
                     1, sysinfo_cur_y,
                     // width, height

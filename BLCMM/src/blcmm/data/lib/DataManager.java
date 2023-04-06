@@ -352,11 +352,9 @@ public class DataManager {
         this.dataStatusNotifier.event("Checking datafile integrity...", false);
 
         // Actually, let's let these filenames be versioned, and always take the most recent
-        File thisDir;
-        if (Utilities.isCreatorMode()) {
-            thisDir = new File(System.getProperty("user.dir"));
-        } else {
-            thisDir = Utilities.getMainInstallDir();
+        File thisDir = Utilities.getDataPackDirectory();
+        if (thisDir == null) {
+            throw new NoDataException("Could not find datapack directory for " + this.patchType.name());
         }
         String jarPrefix = "blcmm_data_" + patchType.name() + "-";
         File[] jars = thisDir.listFiles(new FilenameFilter() {
@@ -404,7 +402,11 @@ public class DataManager {
             // Verify the database checksum
             GlobalLogger.log(patchType.name() + " data jar file modification time doesn't match; re-verifying");
             this.dataStatusNotifier.event("File modification time mismatch detected...", false);
-            return this.verifyDatabaseChecksum();
+            boolean retVal =  this.verifyDatabaseChecksum();
+            if (!retVal) {
+                this.dataStatusNotifier.event("Database checksum did not match!", false);
+            }
+            return retVal;
 
         } catch (MalformedURLException e) {
             throw new NoDataException("Couldn't construct path to data jar", e);
@@ -422,7 +424,7 @@ public class DataManager {
     private boolean verifyDatabaseChecksum() {
         this.dataStatusNotifier.event("Verifying extacted database checksum...", true);
         try {
-            String diskHash = Utilities.sha256(this.getJarStreamBase("data.db"));
+            String diskHash = Utilities.sha256(new File(this.dbFilePath));
             BufferedReader br = this.getJarBufferedReaderBase("data.db.sha256sum");
             if (br == null) {
                 GlobalLogger.log("ERROR: Could not find sha256sum for database in data jar");

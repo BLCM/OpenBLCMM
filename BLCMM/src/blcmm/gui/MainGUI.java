@@ -834,8 +834,14 @@ public final class MainGUI extends ForceClosingJFrame {
         // TODO: this minimum size setting is kind of a total hack.  If we *don't*
         // set it, the dialog freaks the hell out when it's shrunk even a little.
         // These values happen to let it work on my system, but will that be enough
-        // on others?  I expect that can't be guaranteed.
-        jDialog.setMinimumSize(new Dimension(640, 600));
+        // on others?  I expect that can't be guaranteed.  This keeps on getting
+        // expanded as more things get shoved into the dialog, alas.  At the moment
+        // it'll end up looking a bit too big ordinarily -- one of our potential
+        // database errors can span multiple lines, though, so we need at least this
+        // to account for one of those.  (If more than one throws that error, it's
+        // likely it'll break anyway, but eh...  I suppose we're gonna have AoDK
+        // data in here soon enough, too.)
+        jDialog.setMinimumSize(new Dimension(640, 630));
         jDialog.pack();
         jDialog.setLocationRelativeTo(this);
         jDialog.setVisible(true);
@@ -854,9 +860,17 @@ public final class MainGUI extends ForceClosingJFrame {
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         MasterSettingsPanel panel = new MasterSettingsPanel();
         JOptionPane.showMessageDialog(this, panel, "Settings", JOptionPane.PLAIN_MESSAGE);
+
+        /*
+         * We don't actually have anything which does this anymore, and I want
+         * to comment out the promptRestart (and associated) methods in Startup,
+         * since they sort of don't work anymore, but maybe we'll want to do
+         * something like it in the future, and it'd be nice to have a place to
+         * start.  So anyway, commenting this entirely for now.
         if (panel.needsToolReset()) {
             Startup.promptRestart();
         }
+        /**/
 
         // Resize our tree if need be.
         if (panel.needsTreeResize()) {
