@@ -151,7 +151,9 @@ public class GUIDataStatusNotifier implements DataStatusNotifier {
             // up #2 for me, but the JVM used in Liberica NIK-compiled applications
             // apparently doesn't process that tag, so we were back to smooshed
             // text.  So, whatever -- use a regular text label and do some font
-            // weirdness.
+            // weirdness.  (Actually, since then, I got a response on the Liberica
+            // NIK bugreport, and there's a workaround to get that stuff to work.
+            // Still, I've already switched this over, so I'll just leave it.)
             Font font = header.getFont();
             header.setFont(font.deriveFont(Font.BOLD, (float)font.getSize()+6));
             panel.add(header, new GridBagConstraints(
