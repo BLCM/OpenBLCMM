@@ -116,6 +116,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicTreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 /**
  *
@@ -832,7 +835,7 @@ public final class MainGUI extends ForceClosingJFrame {
         // set it, the dialog freaks the hell out when it's shrunk even a little.
         // These values happen to let it work on my system, but will that be enough
         // on others?  I expect that can't be guaranteed.
-        jDialog.setMinimumSize(new Dimension(635, 575));
+        jDialog.setMinimumSize(new Dimension(640, 600));
         jDialog.pack();
         jDialog.setLocationRelativeTo(this);
         jDialog.setVisible(true);
@@ -995,36 +998,23 @@ public final class MainGUI extends ForceClosingJFrame {
             BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream));
             StringBuilder sb = new StringBuilder();
             String line;
-            sb.append("<html>");
             while ((line = br.readLine()) != null) {
-                sb.append(line).append("<br/>");
-            }
-            br.close();
-            int idx = 0;
-            while ((idx = sb.indexOf("**", idx)) != -1) {
-                int idx2 = sb.indexOf("**", idx + 1);
-                if (idx2 != -1) {
-                    sb.replace(idx, idx + 2, "<b>");
-                    sb.replace(idx2 + 1, idx2 + 3, "</b>");
-                    idx = idx2 + 1;
-                }
-            }
-            idx = 0;
-            while ((idx = sb.indexOf("*", idx)) != -1) {
-                int idx2 = sb.indexOf("*", idx + 1);
-                if (idx2 != -1) {
-                    sb.replace(idx, idx + 1, "<i>");
-                    sb.replace(idx2 + 2, idx2 + 3, "</i>");
-                    idx = idx2 + 1;
-                }
+                sb.append(line);
+                sb.append("\n");
             }
 
-            area.setText(sb.toString().replace(" ", "&nbsp;"));
+            // Render the markdown
+            Parser parser = Parser.builder().build();
+            Node document = parser.parse(sb.toString());
+            HtmlRenderer renderer = HtmlRenderer.builder().build();
+            renderer.render(document);
+
+            area.setText(renderer.render(document));
             area.setEditable(false);
             area.setCaretPosition(0);
-            area.setFont(new java.awt.Font(CODE_FONT_NAME, 0, Options.INSTANCE.getFontsize()));
+            //area.setFont(new java.awt.Font(CODE_FONT_NAME, 0, Options.INSTANCE.getFontsize()));
             JScrollPane scroll = new JScrollPane(area);
-            scroll.setPreferredSize(new Dimension(750, 500));
+            scroll.setPreferredSize(new Dimension(500, 500));
             JOptionPane.showMessageDialog(MainGUI.INSTANCE, scroll, "Changelog", JOptionPane.PLAIN_MESSAGE);
         } catch (IOException ex) {
             Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);

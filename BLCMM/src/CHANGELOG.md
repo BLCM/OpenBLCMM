@@ -90,6 +90,7 @@ OpenBLCMM Changelog
 - Username hiding in logfiles only matches at the beginning of the pathnames,
   instead of at arbitrary points, and has been expanded to include more
   instances of pathnames being logged.
+- Improved Changelog rendering
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.

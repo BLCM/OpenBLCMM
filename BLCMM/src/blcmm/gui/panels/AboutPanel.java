@@ -314,6 +314,7 @@ public final class AboutPanel extends JPanel {
                 + "<li>Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0</li>"
                 + "<li>Xerial's sqlite-jdbc, available under the Apache License v2.0</li>"
                 + "<li>Vincent Durmont's semver4j, available under the MIT License</li>"
+                + "<li>CommonMark's commonmark-java, available under the 2-clause BSD License</li>"
                 + "<li>Some icons from Dave Gandy's Font Awesome set, available under CC BY 3.0</li>"
                 + "<li>An icon from Fathema Khanom's User Interface set, available under Flaticon's Free License</li>"
                 + "<li>An icon from Smashicons' Essential Collection set, available under Flaticon's Free License</li>"

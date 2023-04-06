@@ -113,6 +113,9 @@
         <pathconvert property="sqlite-jdbc.wildcard">
             <fileset dir="dist/lib" includes="sqlite-jdbc-*.jar"/>
         </pathconvert>
+        <pathconvert property="commonmark.wildcard">
+            <fileset dir="dist/lib" includes="commonmark-*.jar"/>
+        </pathconvert>
 
         <!-- Now get to the actual packaging. -->
         <echo message="Packaging ${application.title} into a single JAR at ${store.jar}"/>
@@ -154,6 +157,14 @@
                 <zipfileset src="${sqlite-jdbc.wildcard}"/>
                 <compositemapper>
                     <globmapper from="META-INF/MANIFEST.MF" to="META-INF/sqlite-jdbc-MANIFEST.MF" />
+                    <globmapper from="*" to="*" />
+                </compositemapper>
+            </mappedresources>
+            <mappedresources>
+                <zipfileset src="${commonmark.wildcard}"/>
+                <compositemapper>
+                    <globmapper from="META-INF/MANIFEST.MF" to="META-INF/commonmark-MANIFEST.MF" />
+                    <globmapper from="META-INF/*.txt" to="META-INF/commonmark-*.txt" />
                     <globmapper from="*" to="*" />
                 </compositemapper>
             </mappedresources>
