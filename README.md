@@ -64,8 +64,6 @@ TODO
 - AoDK support (both in OpenBLCMM itself and OE)
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Needed testing:
-  - Wouldn't hurt to test out some more failure conditions in the map-merging
-    code.  Incomplete/cut-off statements, etc.
   - Do at least a bit of testing in all currently-supported Java versions
   - We decode dump data using `ISO_8859_1` -- search through the data to find
     out if there's edge cases where that'll fail.
