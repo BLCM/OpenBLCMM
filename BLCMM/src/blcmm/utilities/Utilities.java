@@ -58,7 +58,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -640,9 +639,11 @@ public class Utilities {
      * files. If this results in an empty history, we will call our detection
      * routines to attempt to populate it.
      *
-     * Migrated from BLCMMUtilities as part of the OpenBLCMM dev process
+     * Migrated from BLCMMUtilities as part of the OpenBLCMM dev process.
+     *
+     * @param curType The currently-active patch type
      */
-    public static void cleanFileHistory() {
+    public static void cleanFileHistory(PatchType curType) {
         String[] fileHistory = Options.INSTANCE.getFileHistory();
         ArrayList<String> newHistory = new ArrayList<>();
         File curFile;
@@ -654,7 +655,7 @@ public class Utilities {
         }
         if (fileHistory.length != newHistory.size()) {
             Options.INSTANCE.setFileHistory(newHistory.toArray(new String[0]));
-            populateFileHistory(true);
+            populateFileHistory(curType);
         }
     }
 
@@ -697,21 +698,37 @@ public class Utilities {
      *
      * Migrated from BLCMMUtilities as part of the OpenBLCMM dev process.
      *
-     * @param bl2First Whether to sort BL2-discovered patch files first. True
-     * for BL2, False for TPS.
+     * @param showFirst The game type whose patch files we should show first
+     * (basically just putting the current game higher in the list)
      */
-    public static void populateFileHistory(boolean bl2First) {
+    public static void populateFileHistory(PatchType showFirst) {
         if (Options.INSTANCE.getFileHistory().length == -1) {
-            String[] bl2Patches = new String[]{"patch.txt"};
-            String[] tpsPatches = new String[]{"patch.txt", "patchtps.txt"};
             final int maxDistance = 4; //arbitrary
             List<String> res = new ArrayList<>();
-            populate(bl2Patches, PatchType.BL2, maxDistance, res);
-            populate(tpsPatches, PatchType.TPS, maxDistance, res);
-            if (!bl2First) {
-                Collections.reverse(res);
+            if (showFirst != null) {
+                populate(Utilities.getDefaultPatchNames(showFirst), showFirst, maxDistance, res);
+            }
+            for (PatchType loopType : PatchType.values()) {
+                if (loopType != showFirst) {
+                    populate(Utilities.getDefaultPatchNames(loopType), loopType, maxDistance, res);
+                }
             }
             Options.INSTANCE.setFileHistory(res.toArray(new String[0]));
+        }
+    }
+
+    /**
+     * Given a PatchType, return the list of "main" patch names that we'll
+     * look for first.
+     *
+     * @param type The type to look up
+     * @return A default list of patch names to look for
+     */
+    private static String[] getDefaultPatchNames(PatchType type) {
+        if (type == PatchType.TPS) {
+            return new String[]{"patch.txt", "patchtps.txt"};
+        } else {
+            return new String[]{"patch.txt"};
         }
     }
 

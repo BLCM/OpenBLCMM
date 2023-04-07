@@ -42,6 +42,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.filechooser.FileSystemView;
 
+/**
+ * Library for various methods related to game detection, for all platforms
+ * and games.
+ *
+ * Note that the AoDK stuff in here is essentially all guesses, though I'd
+ * expect them to be not *too* far off.
+ */
 public class GameDetection {
 
     //A boolean indicating if we've already done an effort to detect game files
@@ -53,7 +60,7 @@ public class GameDetection {
     private static final HashSet<PatchType> LOGGED_INI = new HashSet<>();
 
     //For windows, this path
-    private static String bl2Path, blTPSPath;
+    private static String bl2Path, blTPSPath, blAODKPath;
 
     //For Linux, some cached attributes to let us know if we're using Proton
     private static final HashSet<PatchType> UNIX_SCANNED_PROTON = new HashSet<>();
@@ -83,12 +90,26 @@ public class GameDetection {
         GlobalLogger.log("Set TPS path manually to: " + Utilities.hideUserName(path));
     }
 
+    /**
+     * A way to set the path manually for AODK, in case game detection failed
+     *
+     * @param path
+     */
+    public static void setAODKPathManually(String path) {
+        assert run;
+        LOGGED_BIN.add(PatchType.AODK);
+        blTPSPath = path;
+        GlobalLogger.log("Set AODK path manually to: " + Utilities.hideUserName(path));
+    }
+
     public static String getPath(PatchType type) {
         switch (type) {
             case BL2:
                 return getBL2Path();
             case TPS:
                 return getTPSPath();
+            case AODK:
+                return getAODKPath();
             default:
                 return null;
         }
@@ -104,6 +125,11 @@ public class GameDetection {
         return blTPSPath;
     }
 
+    public static String getAODKPath() {
+        findGames();
+        return blAODKPath;
+    }
+
     private static void findGames() {
         if (run) {
             return;
@@ -117,6 +143,7 @@ public class GameDetection {
         GlobalLogger.log("Games folders found:");
         GlobalLogger.log("Borderlands 2:              " + Utilities.hideUserName(bl2Path));
         GlobalLogger.log("Borderlands The Pre Sequel: " + Utilities.hideUserName(blTPSPath));
+        GlobalLogger.log("Assault on Dragon Keep:     " + Utilities.hideUserName(blAODKPath));
     }
 
     private static void windowsGameDetection() {
@@ -128,28 +155,14 @@ public class GameDetection {
         regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation";
         regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation";
         blTPSPath = detectWindows(PatchType.TPS, regKey1, regKey2);
-    }
-
-    /**
-     * Convert a PatchType into an English label for the game.
-     * TODO: This should really be handled by the PatchType enum itself!!  At the
-     * moment we don't have source access to that, though.
-     * @param type The game type
-     * @return an English label to use for the game
-     */
-    private static String typeToGameName(PatchType type) {
-        switch (type) {
-            case BL2:
-                return "Borderlands 2";
-            case TPS:
-                return "Borderlands The Pre-Sequel";
-            default:
-                return null;
-        }
+        //AODK detection
+        regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840\" /v InstallLocation";
+        regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840\" /v InstallLocation";
+        blTPSPath = detectWindows(PatchType.AODK, regKey1, regKey2);
     }
 
     private static String detectWindows(PatchType type, String... regKeys) {
-        String game = typeToGameName(type);
+        String game = type.getGameName();
         String path = null;
         for (int i = 0; i < regKeys.length && path == null; i++) {
             path = GetRegField(regKeys[i]);
@@ -193,7 +206,7 @@ public class GameDetection {
     }
 
     private static String FindGamePathInLog(PatchType type) {
-        String game = typeToGameName(type);
+        String game = type.getGameName();
         final String start = "Log: Base directory: ";
         String path = null;
         fileLoop:
@@ -252,6 +265,10 @@ public class GameDetection {
         }
     }
 
+    /**
+     * Detect game installs on Linux, currently only from Steam.  The AoDK
+     * path stuff in here is mostly just guesses.
+     */
     private static void unixGameDetection() {
         String steamPath;
         ArrayList<String> libraryFolders;
@@ -297,6 +314,11 @@ public class GameDetection {
                         case "appmanifest_261640.acf":
                             blTPSPath = manifestFolder.getAbsolutePath() + "/common/BorderlandsPreSequel";
                             break;
+                        case "appmanifest_1712840.acf":
+                            // Yes, apparently the install dir is the internal codename, not the game name.
+                            // The EGS packaging is a bit more sensible.
+                            blTPSPath = manifestFolder.getAbsolutePath() + "/common/Pawpaw";
+                            break;
                     }
                 }
             } catch (NullPointerException err) {
@@ -310,6 +332,9 @@ public class GameDetection {
             if (blTPSPath != null) {
                 blTPSPath = blTPSPath + "/BorderlandsPreSequel.app/Contents";
             }
+            if (blAODKPath != null) {
+                blAODKPath = blAODKPath + "/TTAoDKOneShotAdventure.app/Contents";
+            }
         }
         if (bl2Path == null) {
             bl2Path = FindGamePathInLog(PatchType.BL2);
@@ -320,6 +345,11 @@ public class GameDetection {
             blTPSPath = FindGamePathInLog(PatchType.TPS);
         } else {
             GlobalLogger.log("Succesfully found installation of Borderlands: The Pre-Sequel");
+        }
+        if (blAODKPath == null) {
+            blAODKPath = FindGamePathInLog(PatchType.AODK);
+        } else {
+            GlobalLogger.log("Succesfully found installation of Assault on Dragon Keep");
         }
     }
 
@@ -461,6 +491,10 @@ public class GameDetection {
         return getExe(PatchType.BL2);
     }
 
+    public static File getAODKExe() {
+        return getExe(PatchType.TPS);
+    }
+
     public static File getExe(PatchType type) {
         return getExe(type, getPath(type));
     }
@@ -477,6 +511,9 @@ public class GameDetection {
                 break;
             case TPS:
                 filename = "BorderlandsPreSequel";
+                break;
+            case AODK:
+                filename = "TinyTina";
                 break;
         }
         if (testPath == null) {
@@ -593,13 +630,13 @@ public class GameDetection {
      * @return
      */
     private static String getPathToGameConfigFiles(PatchType type) {
-        String gamename = typeToGameName(type);
+        String gameDir = type.getGameDir();
         switch (OSInfo.CURRENT_OS) {
             case WINDOWS: {
                 String[] myDocuments = getWindowsMyDocumentsFolder();
                 String res = null;
                 for (String base : myDocuments) {
-                    res = String.format("%s\\My games\\%s\\", base, gamename);
+                    res = String.format("%s\\My games\\%s\\", base, gameDir);
                     if (new File(res).exists()) {
                         break;
                     }
@@ -609,7 +646,7 @@ public class GameDetection {
             }
             case MAC: {
                 String home = System.getenv("HOME");
-                return String.format("%s/Library/Application Support/%s/", home, gamename);
+                return String.format("%s/Library/Application Support/%s/", home, gameDir);
             }
             case UNIX: {
                 if (isUnixUsingProton(type)) {
@@ -621,6 +658,9 @@ public class GameDetection {
                             break;
                         case TPS:
                             gameId = "261640";
+                            break;
+                        case AODK   :
+                            gameId = "1712840";
                             break;
                         default:
                             gameId = "0";
@@ -634,7 +674,7 @@ public class GameDetection {
                                 + "../../../../../compatdata/"
                                 + gameId
                                 + "/pfx/drive_c/users/steamuser/My Documents/My Games/"
-                                + gamename).getCanonicalPath() + "/";
+                                + gameDir).getCanonicalPath() + "/";
                         return configDir;
                     } catch (IOException e) {
                         GlobalLogger.log("Attempting to find config folder failed for " + type.toString());
@@ -642,7 +682,7 @@ public class GameDetection {
                     }
                 } else {
                     String home = System.getenv("HOME");
-                    return String.format("%s/.local/share/aspyr-media/%s/", home, gamename.toLowerCase());
+                    return String.format("%s/.local/share/aspyr-media/%s/", home, gameDir.toLowerCase());
                 }
             }
             default:

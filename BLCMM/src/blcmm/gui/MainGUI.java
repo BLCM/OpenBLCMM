@@ -84,9 +84,7 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -442,7 +440,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private void initializeTree(final File toOpen) {
         this.updateTitle();
         // Figure out which "recent" file to open.
-        Utilities.cleanFileHistory();
+        Utilities.cleanFileHistory(this.dmm.getCurrentPatchType());
         String[] files = Options.INSTANCE.getFileHistory();
         //first try to open the provided file
         boolean opened = false;
@@ -1321,20 +1319,6 @@ public final class MainGUI extends ForceClosingJFrame {
         if (newpatch == null) {
             return false;
         }
-        if (f.toPath().toString().contains(newpatch.getType() == PatchType.TPS ? "Borderlands 2" : "BorderlandsPreSequel")) {
-            if (JOptionPane.showConfirmDialog(null,
-                    String.format("Looks like you opened a %1$s file in the %2$s directory?\nAre you sure you want to do this?\nClicking \"No\" will move the file to proper directory.", newpatch.getType().toString(), (newpatch.getType() == PatchType.TPS ? PatchType.BL2 : PatchType.BL2).toString()),
-                    "Wrong Game Detected", JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
-                File newFile = new File(GameDetection.getBinariesDir(newpatch.getType()) + "\\" + f.getName());
-                try {
-                    Files.move(f.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    return openPatch(newFile);
-                } catch (IOException t) {
-                    GlobalLogger.log(t.fillInStackTrace());
-                    return false;
-                }
-            }
-        }
         patch = newpatch;
         currentFile = f;
         this.disablePatchRootStatuses();
@@ -1454,20 +1438,26 @@ public final class MainGUI extends ForceClosingJFrame {
      */
     public boolean savePatch(CompletePatch patch, File file, boolean exporting) {
         if (patch != null && openedType != null) {
-            if (patch.getType().equals(PatchType.BL2) && openedType.equals(PatchType.TPS)) {
-                int choice = JOptionPane.showConfirmDialog(this, "It seems you are saving a Borderlands TPS patch as a Borderlands 2 patch.\nContinue?", "Unusual patch type selected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (choice != JOptionPane.YES_OPTION) {
-                    return false;
-                }
-            } else if (patch.getType().equals(PatchType.TPS) && openedType.equals(PatchType.BL2)) {
-                int choice = JOptionPane.showConfirmDialog(this, "It seems you are saving a Borderlands 2 patch as a Borderlands TPS patch.\nContinue?", "Unusual patch type selected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (patch.getType() != openedType) {
+                int choice = JOptionPane.showConfirmDialog(this,
+                        "It seems you are converting " + openedType.getGameNameWithArticle() + " patch to " + patch.getType().getGameNameWithArticle() + " patch.\n"
+                        + "\n"
+                        + "Continue?",
+                        "Confirm Patch Type Change",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                );
                 if (choice != JOptionPane.YES_OPTION) {
                     return false;
                 }
             }
         }
         if (file.getAbsolutePath().startsWith(AutoBackupper.getDestination())) {
-            int choice = JOptionPane.showConfirmDialog(this, "It seems you are saving to the backup directory.\nContinue?", "Saving to backup directory", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            int choice = JOptionPane.showConfirmDialog(this, "It seems you are saving to the backup directory.\n\nContinue?",
+                    "Saving to backup directory",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
             if (choice != JOptionPane.YES_OPTION) {
                 return false;
             }

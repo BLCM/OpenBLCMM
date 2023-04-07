@@ -29,7 +29,22 @@
       "pattern":"\\Qresources/Qmark.png\\E"
     }, 
     {
+      "pattern":"\\Qresources/TPS/GBX_hotfixes.blcm\\E"
+    }, 
+    {
       "pattern":"\\Qresources/TPS/Icon.png\\E"
+    }, 
+    {
+      "pattern":"\\Qresources/TPS/vanillaLevelLists.blcm\\E"
+    }, 
+    {
+      "pattern":"\\Qresources/AODK/GBX_hotfixes.blcm\\E"
+    }, 
+    {
+      "pattern":"\\Qresources/AODK/Icon.png\\E"
+    }, 
+    {
+      "pattern":"\\Qresources/AODK/vanillaLevelLists.blcm\\E"
     }, 
     {
       "pattern":"\\Qresources/donate.png\\E"

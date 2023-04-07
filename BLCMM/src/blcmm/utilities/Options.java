@@ -95,6 +95,7 @@ public class Options {
         propagateMUTNotification,
         BL2Bookmarks,
         TPSBookmarks,
+        AODKBookmarks,
         popupStatus,
         showHotfixNames,
         dragAndDroppableCode,
@@ -119,8 +120,10 @@ public class Options {
         oeSearchWillowData,
         oeDataSuccessTimestampDbBL2,
         oeDataSuccessTimestampDbTPS,
+        oeDataSuccessTimestampDbAODK,
         oeDataSuccessTimestampJarBL2,
         oeDataSuccessTimestampJarTPS,
+        oeDataSuccessTimestampJarAODK,
     }
 
     public enum OESearch {
@@ -404,6 +407,7 @@ public class Options {
         // All of our Object Explorer Bookmarks of queries / objects
         this.registerOption(new StringListOption(OptionNames.BL2Bookmarks.toString(), new String[]{}));
         this.registerOption(new StringListOption(OptionNames.TPSBookmarks.toString(), new String[]{}));
+        this.registerOption(new StringListOption(OptionNames.AODKBookmarks.toString(), new String[]{}));
 
         // The integer storing our 1-time popup messages
         this.registerOption(new IntOption(OptionNames.popupStatus.toString(), 0));
@@ -417,8 +421,10 @@ public class Options {
         // Timestamp of the datalib DB/Jar files when they was last successfully verified
         this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampDbBL2.toString(), 0));
         this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampDbTPS.toString(), 0));
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampDbAODK.toString(), 0));
         this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampJarBL2.toString(), 0));
         this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampJarTPS.toString(), 0));
+        this.registerOption(new LongOption(OptionNames.oeDataSuccessTimestampJarAODK.toString(), 0));
 
         // Finally: a bit of aggregation housekeeping
         this.updateOESearchCategories();
@@ -1211,6 +1217,14 @@ public class Options {
         this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampDbTPS, newTimestamp);
     }
 
+    public long getOEDataSuccessTimestampDbAODK() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampDbAODK);
+    }
+
+    public void setOEDataSuccessTimestampDbAODK(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampDbAODK, newTimestamp);
+    }
+
     public long getOEDataSuccessTimestampJarBL2() {
         return this.getLongOptionData(OptionNames.oeDataSuccessTimestampJarBL2);
     }
@@ -1225,6 +1239,14 @@ public class Options {
 
     public void setOEDataSuccessTimestampJarTPS(long newTimestamp) {
         this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampJarTPS, newTimestamp);
+    }
+
+    public long getOEDataSuccessTimestampJarAODK() {
+        return this.getLongOptionData(OptionNames.oeDataSuccessTimestampJarAODK);
+    }
+
+    public void setOEDataSuccessTimestampJarAODK(long newTimestamp) {
+        this.setLongOptionData(Options.OptionNames.oeDataSuccessTimestampJarAODK, newTimestamp);
     }
 
     public final void updateOESearchCategories() {

@@ -3,6 +3,7 @@ OpenBLCMM Changelog
 
 **v1.3.0** Unreleased
 - Renamed to OpenBLCMM
+- Added Tiny Tina's Assault on Dragon Keep support
 - Released under GPLv3
   - Various components rewritten from scratch as part of the FOSS process
 - Compatibility through Java 20

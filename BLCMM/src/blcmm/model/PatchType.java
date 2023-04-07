@@ -49,6 +49,8 @@ public enum PatchType {
 
     // Members
     BL2("Borderlands 2",
+        "Borderlands 2",
+        "a",
             new String[] {
                 "GD_Soldier_Streaming",
                 "GD_Siren_Streaming",
@@ -150,6 +152,8 @@ public enum PatchType {
                 new BLMap("Xmas_P", "Frost Bottom"),
             }),
     TPS("Borderlands: The Pre-Sequel",
+        "Borderlands The Pre-Sequel",
+        "a",
             new String[] {
                 "GD_Gladiator_Streaming",
                 "GD_Enforce_Streaming",
@@ -194,6 +198,28 @@ public enum PatchType {
                 new BLMap("StantonsLiver_P", "Stanton's Liver"),
                 new BLMap("Sublevel13_P", "Sub-Level 13"),
                 new BLMap("Wreck_P", "Pity's Fall"),
+            }),
+    AODK("Assault on Dragon Keep",
+         "Tiny Tina's Assault On Dragon Keep",
+         "an",
+            new String[] {
+                "GD_Soldier_Streaming",
+                "GD_Siren_Streaming",
+                "GD_Mercenary_Streaming",
+                "GD_Assassin_Streaming",
+                "GD_Tulip_Mechro_Streaming",
+                "GD_Lilac_Psycho_Streaming",
+            }, new BLMap[] {
+                new BLMap("CastleExterior_P", "Hatred's Shadow"),
+                new BLMap("CastleKeep_P", "Dragon Keep"),
+                new BLMap("Dark_Forest_P", "The Forest"),
+                new BLMap("Dead_Forest_P", "Immortal Woods"),
+                new BLMap("Docks_P", "Unassuming Docks"),
+                new BLMap("Dungeon_P", "Lair of Infinite Agony"),
+                new BLMap("DungeonRaid_P", "The Winged Storm"),
+                new BLMap("Mines_P", "Mines of Avarice"),
+                new BLMap("TempleSlaughter_P", "Murderlin's Temple"),
+                new BLMap("Village_P", "Flamerock Refuge"),
             });
 
     /**
@@ -229,14 +255,22 @@ public enum PatchType {
     // Game name
     private final String gameName;
 
+    // Directory name
+    private final String gameDir;
+
+    // Indefinite article when referring to the game (a/an)
+    private final String article;
+
     /**
      * Initialize a new PatchType.
      *
      * @param onDemands An array describing the valid OnDemand types for the game
      */
-    private PatchType(String gameName, String[] onDemands, BLMap[] levels) {
+    private PatchType(String gameName, String dirName, String article, String[] onDemands, BLMap[] levels) {
         // Set the game name and icon path
         this.gameName = gameName;
+        this.gameDir = dirName;
+        this.article = article;
         this.iconPath = "/resources/" + this.toString() + "/Icon.png";
 
         // Set OnDemand types
@@ -257,6 +291,45 @@ public enum PatchType {
      */
     public String getGameName() {
         return gameName;
+    }
+
+    /**
+     * Returns the directory name for this type, used for the save/config dir,
+     * for instance.
+     *
+     * @return The game directory
+     */
+    public String getGameDir() {
+        return gameDir;
+    }
+
+    /**
+     * Returns the indefinite article which can be used when referring to the
+     * game type ("a BL2 mod" versus "an AODK mod" for instance).
+     *
+     * @return The article to use
+     */
+    public String getArticle() {
+        return article;
+    }
+
+    /**
+     * Returns this enum name (short abbreviation) with the appropriate
+     * indefinite article in front.
+     *
+     * @return The name with article
+     */
+    public String getNameWithArticle() {
+        return this.article + " " + this.name();
+    }
+
+    /**
+     * Returns this game name with the appropriate indefinite article in front.
+     *
+     * @return The game name with article
+     */
+    public String getGameNameWithArticle() {
+        return this.article + " " + this.gameName;
     }
 
     /**
@@ -413,6 +486,8 @@ public enum PatchType {
         switch (this) {
             case TPS:
                 return Options.INSTANCE.getOEDataSuccessTimestampDbTPS();
+            case AODK:
+                return Options.INSTANCE.getOEDataSuccessTimestampDbAODK();
             case BL2:
             default:
                 return Options.INSTANCE.getOEDataSuccessTimestampDbBL2();
@@ -435,6 +510,8 @@ public enum PatchType {
         switch (this) {
             case TPS:
                 return Options.INSTANCE.getOEDataSuccessTimestampJarTPS();
+            case AODK:
+                return Options.INSTANCE.getOEDataSuccessTimestampJarAODK();
             case BL2:
             default:
                 return Options.INSTANCE.getOEDataSuccessTimestampJarBL2();
@@ -454,6 +531,9 @@ public enum PatchType {
             case TPS:
                 Options.INSTANCE.setOEDataSuccessTimestampDbTPS(attrs.lastModifiedTime().toMillis());
                 break;
+            case AODK:
+                Options.INSTANCE.setOEDataSuccessTimestampDbAODK(attrs.lastModifiedTime().toMillis());
+                break;
             case BL2:
             default:
                 Options.INSTANCE.setOEDataSuccessTimestampDbBL2(attrs.lastModifiedTime().toMillis());
@@ -472,6 +552,9 @@ public enum PatchType {
         switch (this) {
             case TPS:
                 Options.INSTANCE.setOEDataSuccessTimestampJarTPS(attrs.lastModifiedTime().toMillis());
+                break;
+            case AODK:
+                Options.INSTANCE.setOEDataSuccessTimestampJarAODK(attrs.lastModifiedTime().toMillis());
                 break;
             case BL2:
             default:

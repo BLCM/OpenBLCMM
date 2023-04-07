@@ -27,8 +27,6 @@
  */
 package blcmm.gui.components;
 
-import blcmm.Meta;
-import static blcmm.gui.MainGUI.INSTANCE;
 import blcmm.model.PatchType;
 import blcmm.utilities.Options;
 import java.awt.Component;
@@ -37,15 +35,12 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.Box;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -58,7 +53,6 @@ public class GameSelectionPanel extends JPanel {
     private final JLabel label = new JLabel();
     private final JComboBox<PatchType> box = new JComboBox<>(PatchType.values());
     private PatchType type = null;
-    private boolean enabled = false;
 
     public GameSelectionPanel() {
         box.setRenderer(new DefaultListCellRenderer() {
@@ -71,25 +65,11 @@ public class GameSelectionPanel extends JPanel {
             }
         });
         label.setHorizontalTextPosition(JLabel.LEFT);
-        label.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (!enabled && type != null) {
-                    JOptionPane.showMessageDialog(INSTANCE,
-                            "To change game types, you need to open a file which was made for that game.\n"
-                            + Meta.NAME + " shows here for which game your current file is, so you can't change it.\n"
-                            + "After all, a mod that modifies varkid spawns doesn't really make sense in TPS, right?",
-                            "Choose a different file to change games",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
         box.addItemListener(e -> type = (PatchType) box.getSelectedItem());
-        GameSelectionPanel.this.setMode(type, enabled);
+        GameSelectionPanel.this.setMode(type);
     }
 
-    public void setMode(PatchType type, boolean enabled) {
-        this.enabled = enabled;
+    public void setMode(PatchType type) {
         this.type = type;
         this.box.setSelectedItem(type);
 
@@ -100,22 +80,19 @@ public class GameSelectionPanel extends JPanel {
             label.setIcon(null);
             this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         } else {
-            if (enabled) {
-                label.setText("Game:");
-                label.setIcon(null);
-                this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-                this.add(box, new GridBagConstraints(1, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
-            } else {
-                label.setText("This is a file for " + type.toString());
-                label.setIcon(new ImageIcon(type.getIcon(8 + Options.INSTANCE.getFontsize())));
-                this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            }
+            label.setText("Game:");
+            label.setIcon(null);
+            this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            this.add(box, new GridBagConstraints(1, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
         }
         this.add(Box.createHorizontalStrut(getMaxWidth()), new GridBagConstraints(0, 1, 2, 1, 1d, 1d, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         SwingUtilities.updateComponentTreeUI(this);
     }
 
     private int getMaxWidth() {
+        // This method was more useful when the dropdown could be a text label
+        // instead, for when developer mode was off.  But whatever, we'll leave
+        // it.
         JLabel temp = new JLabel();
         temp.setText("This is a file for " + PatchType.TPS.toString());
         temp.setIcon(new ImageIcon(PatchType.TPS.getIcon(8 + Options.INSTANCE.getFontsize())));
@@ -130,14 +107,8 @@ public class GameSelectionPanel extends JPanel {
         return type;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        this.setMode(type, enabled);
-    }
-
     public void setType(PatchType type) {
-        this.setMode(type, enabled);
+        this.setMode(type);
     }
 
     public void addItemListenerToComboBox(ItemListener aListener) {

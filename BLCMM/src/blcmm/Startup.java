@@ -31,6 +31,7 @@ package blcmm;
 import blcmm.gui.MainGUI;
 import blcmm.gui.panels.IniTweaksPanel;
 import blcmm.gui.theme.ThemeManager;
+import blcmm.model.PatchType;
 import blcmm.utilities.AutoBackupper;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.OSInfo;
@@ -190,7 +191,7 @@ public class Startup {
             MainGUI.setTheme(ThemeManager.getDefaultTheme());
             Options.INSTANCE.setShowHotfixNames(false);
         } else {
-            Utilities.populateFileHistory(true);
+            Utilities.populateFileHistory(PatchType.BL2);
             MainGUI.setTheme(Options.INSTANCE.getTheme());
         }
     }

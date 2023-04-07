@@ -45,5 +45,7 @@ are requested.
   exactly where they originally came from.  These appear to be the official
   icons from the game, and used by Steam, but the highest res I can extract
   from any source of mine is 64x64, whereas the BL2+TPS versions here are
-  256x256.
+  256x256.  The AoDK version is the crummy low-res version from the EXE,
+  though I'm hoping to get permission to use [this great icon](https://www.steamgriddb.com/icon/10266)
+  instead.
 

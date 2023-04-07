@@ -758,6 +758,13 @@ public class PatchIO {
             return wrap;
         }
 
+        /**
+         * Infers the game type of the given patch, mostly by looking for
+         * hotfix targets and matching based on those.  This is only ever called
+         * for FilterTool style files, so we don't have to worry about the
+         * fact that AoDK data wouldn't be distinguishable from BL2.
+         * @param res
+         */
         private static void inferType(CompletePatch res) {
             res.setType(PatchType.BL2);
             Category root = res.getRoot();

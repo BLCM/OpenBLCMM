@@ -170,6 +170,16 @@ public class BLCMM_FileChooser extends JFileChooser {
             cs.gridy++;
         }
 
+        // AODK Binaries dir
+        tempDir = GameDetection.getBinariesDir(PatchType.AODK);
+        if (tempDir != null) {
+            panel.add(directoryShortcutButton(fc,
+                    "AODK Binaries Dir",
+                    tempDir,
+                    new ImageIcon(PatchType.AODK.getIcon(16))), cs);
+            cs.gridy++;
+        }
+
         // Last imported dir
         tempDir = Options.INSTANCE.getLastImport();
         if (tempDir != null && !tempDir.equals("")) {
