@@ -112,11 +112,19 @@ public class HotfixConverter {
     public HotfixKeyValuePair getKeyValuePair(HotfixCommand command) {
         HotfixWrapper wrapper = command.getParent();
         String hotfixPrefix = wrapper.getType().getPrefix();
-        // TODO: I actually want to *not* use hotfix names anymore in the actual key.  There's
-        // a lot of sus names out there which I'm honesly kind of surprised work.  At the very
-        // least, should strip out non-alphanumerics.
-        int hotfixNumber = this.hotfixCounts.next(wrapper.getName());
-        String key = hotfixPrefix + "-" + wrapper.getName() + Integer.toString(hotfixNumber);
+
+        // New for OpenBLCMM: We are *not* including the hotfix "name" in the
+        // hotfix key names anymore.  There's a lot of wild names in there, and
+        // I'm honestly a bit shocked that there hasn't been problems in the
+        // past.  We're now just normalizing on "BLCMM" for those.  The name is
+        // still technically kept around in the files, though I think that
+        // with OpenBLCMM, it'll probably be hidden in the GUI for everyone
+        // regardless.  Should maybe just get rid of them entirely.
+        //String hotfixName = wrapper.getName();
+        String hotfixName = "BLCMM";
+
+        int hotfixNumber = this.hotfixCounts.next(hotfixName);
+        String key = hotfixPrefix + "-" + hotfixName + Integer.toString(hotfixNumber);
         String value = command.toRawHotfixFormat();
         return new HotfixKeyValuePair(key, value);
     }

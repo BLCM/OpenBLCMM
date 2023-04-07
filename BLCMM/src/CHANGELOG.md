@@ -100,6 +100,7 @@ OpenBLCMM Changelog
 - Replaced icon resources with known-free-to-use versions, and updated the
   OpenBLCMM icon to a new one to distinguish it from the original BLCMM.
 - Added "-creator" CLI argument to launch OpenBLCMM in Creator Mode.
+- Standardized internal hotfix naming in saved files.
 
 **v1.2.0** May 22, 2020
 - Added the ability to drag-and-drop text around plenty of BLCMM's text boxes.
