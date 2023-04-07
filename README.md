@@ -63,8 +63,6 @@ TODO
 
 - AoDK support (both in OpenBLCMM itself and OE)
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
-- Needed testing:
-  - Do at least a bit of testing in all currently-supported Java versions
 
 ### Can probably wait until after the first public release
 
