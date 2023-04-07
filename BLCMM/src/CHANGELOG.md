@@ -91,6 +91,8 @@ OpenBLCMM Changelog
   instead of at arbitrary points, and has been expanded to include more
   instances of pathnames being logged.
 - Improved Changelog rendering
+- Some tightening-up of mod-name detection when the mod category and filename
+  don't exactly match.
 - Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.
