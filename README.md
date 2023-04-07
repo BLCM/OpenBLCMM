@@ -61,7 +61,7 @@ TODO
 
 ### Immediate (would like to get done before public release)
 
-- AoDK support (both in OpenBLCMM itself and OE)
+- AoDK support in INI Tweaks panel
 
 ### Can probably wait until after the first public release
 
