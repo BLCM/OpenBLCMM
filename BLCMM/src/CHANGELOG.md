@@ -5,7 +5,7 @@ OpenBLCMM Changelog
 - Renamed to OpenBLCMM
 - Released under GPLv3
   - Various components rewritten from scratch as part of the FOSS process
-- Compatibility through Java 19
+- Compatibility through Java 20
 - Windows EXE packaging updated, with optional full GUI installer.  No need
   to install Java!
 - Removed features:
