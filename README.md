@@ -64,10 +64,6 @@ TODO
 - AoDK support (both in OpenBLCMM itself and OE)
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Needed testing:
-  - BPD index/length.  Check Fragile Minecraft Blocks for an easy test.
-  - BPD number converter applet thing (surprisingly, the BPD stuff looks
-    like it might actually be correct right out the gate.  Do some more
-    thorough testing before getting rid of this line, though)
   - Wouldn't hurt to test out some more failure conditions in the map-merging
     code.  Incomplete/cut-off statements, etc.
   - Do at least a bit of testing in all currently-supported Java versions
