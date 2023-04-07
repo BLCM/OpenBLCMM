@@ -65,8 +65,6 @@ TODO
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Needed testing:
   - Do at least a bit of testing in all currently-supported Java versions
-  - We decode dump data using `ISO_8859_1` -- search through the data to find
-    out if there's edge cases where that'll fail.
 
 ### Can probably wait until after the first public release
 
