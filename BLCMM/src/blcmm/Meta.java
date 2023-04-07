@@ -44,7 +44,7 @@ public class Meta {
     /**
      * App version.
      */
-    public static final String VERSION = "1.3.0";
+    public static final String VERSION = "1.3.0-beta.1";
 
     /**
      * User data directory for storing prefs, extracted data, etc.  We could
