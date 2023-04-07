@@ -34,8 +34,8 @@ import blcmm.model.CompletePatch;
 import blcmm.model.ModelElement;
 import blcmm.model.PatchIO;
 import blcmm.model.properties.GlobalListOfProperties;
-import blcmm.utilities.ImportAnomalyLog;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.ImportAnomalyLog;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,9 +81,11 @@ public class GUI_IO_Handler {
             filenameBasedName = post.contains(" ") ? filename : pre;
         }
 
-        // If our loaded root category name was "patch" or "hotfixes", switch
-        // to using the filename-based name.
-        if (modname.equalsIgnoreCase(Category.DEFAULT_ROOT_NAME) || modname.equalsIgnoreCase("hotfixes")) {
+        // If our loaded root category name was "patch", "hotfixes", or "root",
+        // switch to using the filename-based name.
+        if (modname.equalsIgnoreCase(Category.DEFAULT_ROOT_NAME)
+                || modname.equalsIgnoreCase("hotfixes")
+                || modname.equalsIgnoreCase("patch")) {
             modname = filenameBasedName;
         }
 
