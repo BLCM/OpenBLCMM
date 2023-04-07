@@ -64,9 +64,6 @@ TODO
 - AoDK support (both in OpenBLCMM itself and OE)
 - Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 - Needed testing:
-  - Doublecheck all `*Action` functions, post-struct-and-dev-mode-removal
-  - Doublecheck file saving -- there was a lot of autoexec stuff in there
-    which got ripped out.
   - BPD index/length.  Check Fragile Minecraft Blocks for an easy test.
   - BPD number converter applet thing (surprisingly, the BPD stuff looks
     like it might actually be correct right out the gate.  Do some more
