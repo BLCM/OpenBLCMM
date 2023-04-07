@@ -62,7 +62,6 @@ TODO
 ### Immediate (would like to get done before public release)
 
 - AoDK support (both in OpenBLCMM itself and OE)
-- Don't include hotfix "name" in hotfix keys (or at least strip to alphanumeric)?
 
 ### Can probably wait until after the first public release
 
@@ -92,6 +91,7 @@ TODO
 - Maybe completely separate INI tweaks into their own little app?
 - Pass around references to stuff like our Options instance, rather than
   referring to global "instance" vars?
+- Purge hotfix "name" field from hotfixes
 
 Third-Party Content
 ===================
