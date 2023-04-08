@@ -59,12 +59,6 @@ moved to a separate wiki or documentation area in the future!
 TODO
 ====
 
-### Immediate (would like to get done before public release)
-
-- AoDK support in INI Tweaks panel
-
-### Can probably wait until after the first public release
-
 - Figure out allowing the word "set" in value text?  Understand quotes around
   the value, perhaps?
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
