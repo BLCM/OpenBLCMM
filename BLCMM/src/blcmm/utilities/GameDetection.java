@@ -317,7 +317,7 @@ public class GameDetection {
                         case "appmanifest_1712840.acf":
                             // Yes, apparently the install dir is the internal codename, not the game name.
                             // The EGS packaging is a bit more sensible.
-                            blTPSPath = manifestFolder.getAbsolutePath() + "/common/Pawpaw";
+                            blAODKPath = manifestFolder.getAbsolutePath() + "/common/Pawpaw";
                             break;
                     }
                 }

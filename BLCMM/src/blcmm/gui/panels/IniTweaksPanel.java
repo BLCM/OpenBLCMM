@@ -67,7 +67,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.BoxLayout;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -77,12 +77,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.html.HTMLDocument;
@@ -97,9 +96,13 @@ public class IniTweaksPanel extends javax.swing.JPanel {
 
     public static IniTweaksPanel INSTANCE;
 
-    private JPanel BL2Panel, TPSPanel;
+    private JPanel BL2Panel;
+    private JPanel TPSPanel;
+    private JPanel AODKPanel;
 
-    private boolean hasTPS, hasBL2;
+    private boolean hasTPS;
+    private boolean hasBL2;
+    private boolean hasAODK;
 
     /**
      * Creates new form FirstTimeActions
@@ -109,18 +112,19 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         GlobalLogger.log("Creating IniTweaksPanel");
         hasBL2 = GameDetection.iniFilePathExists(PatchType.BL2);
         hasTPS = GameDetection.iniFilePathExists(PatchType.TPS);
+        hasAODK = GameDetection.iniFilePathExists(PatchType.AODK);
         initComponents();
         initPanels();
 
         if (hasBL2) {
             initUI(PatchType.BL2);
         } else {
-            this.initININotFoundUI(BL2Panel, "BL2");
+            this.initININotFoundUI(BL2Panel, PatchType.BL2);
         }
         if (hasTPS) {
             initUI(PatchType.TPS);
         } else {
-            this.initININotFoundUI(TPSPanel, "TPS");
+            this.initININotFoundUI(TPSPanel, PatchType.TPS);
             /** Example of our previous version here, for future reference in case I want to do something like this in the Settings menu
             this.initGameInstallNotFoundUI(TPSPanel, "TPS",
                     new ManualSelectionListener(GameDetection.getTPSExe(), "BorderlandsPreSequel", "Borderlands TPS", "BorderlandsPreSequel") {
@@ -133,20 +137,44 @@ public class IniTweaksPanel extends javax.swing.JPanel {
             });
             */
         }
+        if (hasAODK) {
+            initUI(PatchType.AODK);
+        } else {
+            this.initININotFoundUI(AODKPanel, PatchType.AODK);
+        }
     }
 
     private void initPanels() {
-        masterPanel.setLayout(new BoxLayout(masterPanel, BoxLayout.LINE_AXIS));
+
+        JTabbedPane tabbed = new JTabbedPane();
+        masterPanel.setLayout(new GridBagLayout());
+        masterPanel.add(tabbed, new GridBagConstraints(
+                // x, y
+                0, 0,
+                // width, height
+                1, 1,
+                // weights (x, y)
+                1, 1,
+                // anchor
+                GridBagConstraints.NORTH,
+                // fill
+                GridBagConstraints.BOTH,
+                // insets
+                new Insets(10, 10, 10, 10),
+                // pad (x, y)
+                0, 0));
 
         BL2Panel = new JPanel();
-        TitledBorder bl2Border = new TitledBorder(new EtchedBorder(), PatchType.BL2.toString(), TitledBorder.LEFT, TitledBorder.CENTER);
-        BL2Panel.setBorder(bl2Border);
-        masterPanel.add(BL2Panel);
+        BL2Panel.setBorder(BorderFactory.createEtchedBorder());
+        tabbed.add(PatchType.BL2.getGameName(), BL2Panel);
 
         TPSPanel = new JPanel();
-        TitledBorder tpsBorder = new TitledBorder(new EtchedBorder(), PatchType.TPS.toString(), TitledBorder.LEFT, TitledBorder.CENTER);
-        TPSPanel.setBorder(tpsBorder);
-        masterPanel.add(TPSPanel);
+        TPSPanel.setBorder(BorderFactory.createEtchedBorder());
+        tabbed.add(PatchType.TPS.getGameName(), TPSPanel);
+
+        AODKPanel = new JPanel();
+        AODKPanel.setBorder(BorderFactory.createEtchedBorder());
+        tabbed.add(PatchType.AODK.getGameName(), AODKPanel);
     }
 
     /**
@@ -161,6 +189,8 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         titleLabel = new javax.swing.JLabel();
         masterPanel = new javax.swing.JPanel();
         infoLabel = new InfoLabel("Mouse over the various options to get more details on what each option does.");
+
+        setPreferredSize(new java.awt.Dimension(500, 350));
 
         titleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         titleLabel.setText("Select your desired INI file tweaks");
@@ -232,6 +262,9 @@ public class IniTweaksPanel extends javax.swing.JPanel {
             case TPS:
                 panel = TPSPanel;
                 break;
+            case AODK:
+                panel = AODKPanel;
+                break;
         }
         if (!fileIsNoneNullAndExists(getConfigFile("WillowInput.ini", type))) {
             initPanel(panel, null);
@@ -282,15 +315,16 @@ public class IniTweaksPanel extends javax.swing.JPanel {
      * INI files for a game.
      *
      * @param panel The panel to put ourselves into.
-     * @param gameLabel The game text which will be put on the button.
+     * @param patchType The game we're currently processing
      */
-    private void initININotFoundUI(JPanel panel, String gameLabel) {
+    private void initININotFoundUI(JPanel panel, PatchType patchType) {
 
         // Set up the panel layout
         panel.setLayout(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
         cs.anchor = GridBagConstraints.NORTH;
-        cs.insets = new Insets(5, 0, 5, 0);
+        cs.fill = GridBagConstraints.HORIZONTAL;
+        cs.insets = new Insets(10, 10, 10, 10);
         cs.weightx = 1;
         cs.weighty = 1;
         cs.gridx = 0;
@@ -298,15 +332,14 @@ public class IniTweaksPanel extends javax.swing.JPanel {
 
         // Would like to use "em" for the width here, but Java doesn't seem
         // to support that.  "in" should be better than "px", at least.
-        cs.gridy = 1;
-        panel.add(new JLabel("<html><body style='width: 4.5in;'>"
-                + "<b>Note:</b> " + Meta.NAME + " cannot autodetect " + gameLabel + " INI files"
+        panel.add(new JLabel("<html>"
+                + "<b>Note:</b> " + Meta.NAME + " cannot autodetect " + patchType.getGameName() + " INI files"
                 + " unless it has been run at least once.  If this is a fresh"
-                + " desktop or account, make sure to run " + gameLabel + " at least once."),
+                + " desktop or account, make sure to run " + patchType.getGameName() + " at least once."),
                 cs);
+        cs.gridy++;
 
         // Finally, a spacer so that the label stays up near the button
-        cs.gridx = 2;
         cs.weightx = cs.weighty = 100;
         panel.add(new JPanel(), cs);
 
@@ -442,10 +475,23 @@ public class IniTweaksPanel extends javax.swing.JPanel {
         });
         actions.add(quickerStartup);
 
-        INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction("Fewer cutscenes", engineINIFile, "bForceNoMovies", "FullScreenMovie", new String[]{"FALSE"}, new String[]{"TRUE"});
-        fewerCutscenes.setDescription("<html>Removes some cutscenes from the game. As a side effect, your loading screens turn black.<br/>There's also a mod that disables more cutscenes, without this side effect, by FromDarkHell");
+        INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction("Fewer cutscenes",
+                engineINIFile,
+                "bForceNoMovies",
+                "FullScreenMovie",
+                new String[]{"FALSE"},
+                new String[]{"TRUE"});
+        StringBuilder cutsceneDesc = new StringBuilder();
+        cutsceneDesc.append("<html>Removes some cutscenes from the game. As a side effect, your loading screens turn black.");
+        if (type == PatchType.BL2 || type == PatchType.TPS) {
+            // I'm actually not sure if FDH had a TPS patch for this or not, but don't quite care enough to check.
+            // There's definitely not one for AODK, though.
+            cutsceneDesc.append("<br/>There's also a mod that disables more cutscenes, without this side effect, by FromDarkHell");
+        }
+        fewerCutscenes.setDescription(cutsceneDesc.toString());
         actions.add(fewerCutscenes);
         if (type == PatchType.TPS) {
+            // This does seem to work fine in AoDK, at least with the limited testing I'd done.
             fewerCutscenes.disable("This feature soft-locks TPS while enabled, so it's not available through " + Meta.NAME + ".", false);
         }
         return actions;

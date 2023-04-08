@@ -29,7 +29,6 @@
 package blcmm;
 
 import blcmm.gui.MainGUI;
-import blcmm.gui.panels.IniTweaksPanel;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import blcmm.utilities.AutoBackupper;
@@ -251,11 +250,6 @@ public class Startup {
             JOptionPane.showMessageDialog(null, sb.toString(),
                     "Things To Note", JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-
-    public static void showIniTweaks() {
-        IniTweaksPanel panel = new IniTweaksPanel();
-        JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
     }
 
     private static boolean confirmIO() {

@@ -40,6 +40,7 @@ import blcmm.gui.components.GameSelectionPanel;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.components.TimedLabel;
 import blcmm.gui.panels.AboutPanel;
+import blcmm.gui.panels.IniTweaksPanel;
 import blcmm.gui.panels.IntegerConverter;
 import blcmm.gui.panels.MasterSettingsPanel;
 import blcmm.gui.panels.SetupGameFilesPanel;
@@ -847,7 +848,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        Startup.showIniTweaks();
+        this.showIniTweaks();
         this.requestFocus();
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
@@ -1191,6 +1192,14 @@ public final class MainGUI extends ForceClosingJFrame {
 
     boolean isDisposed() {
         return disposed;
+    }
+
+    /**
+     * Displays our INI Tweaks dialog
+     */
+    public static void showIniTweaks() {
+        IniTweaksPanel panel = new IniTweaksPanel();
+        JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
