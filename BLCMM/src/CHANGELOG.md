@@ -14,7 +14,6 @@ OpenBLCMM Changelog
   - GUI to set system memory.  The Windows EXE version doesn't really need it
     due to how the new system handles RAM.  Linux/Mac users can instead update
     the memory parameter directly in the launcher shell script.
-  - Hex Edits and Console Key (PythonSDK should be used for these, instead)
   - Plugin functionality
   - First-startup dialogs (welcome, game setup, question-mark/TINS prompt)
   - Structural Edits setting (this is now always enabled)
@@ -60,6 +59,8 @@ OpenBLCMM Changelog
     values
 - "Setup game files for mods" dialog redirects to PythonSDK
 - INI file tweaks moved to new "INI Tweaks" dialog
+- Hex Edits moved to new "Legacy Hex Edits" dialog -- note that hex editing
+  is unnecessary nowadays.  PythonSDK is the preferred method for enabling mods.
 - Added new-version notification to main application.  This can be toggled off
   in the settings if you don't want to be bothered by it!
 - Added "allow toggling individual statements" option to settings, and improved

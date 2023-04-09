@@ -40,6 +40,7 @@ import blcmm.gui.components.GameSelectionPanel;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.components.TimedLabel;
 import blcmm.gui.panels.AboutPanel;
+import blcmm.gui.panels.HexEditPanel;
 import blcmm.gui.panels.IniTweaksPanel;
 import blcmm.gui.panels.IntegerConverter;
 import blcmm.gui.panels.MasterSettingsPanel;
@@ -528,9 +529,11 @@ public final class MainGUI extends ForceClosingJFrame {
         quitMenuButton = new javax.swing.JMenuItem();
         ToolsMenu = new javax.swing.JMenu();
         setupGameFilesButton = new javax.swing.JMenuItem();
-        jMenuItem14 = new javax.swing.JMenuItem();
         objectExplorerButton = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        iniTweaksMenuItem = new javax.swing.JMenuItem();
+        hexEditsMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -732,14 +735,6 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         ToolsMenu.add(setupGameFilesButton);
 
-        jMenuItem14.setText("INI Tweaks");
-        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem14ActionPerformed(evt);
-            }
-        });
-        ToolsMenu.add(jMenuItem14);
-
         objectExplorerButton.setText("Object explorer");
         objectExplorerButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -755,6 +750,23 @@ public final class MainGUI extends ForceClosingJFrame {
             }
         });
         ToolsMenu.add(jMenuItem5);
+        ToolsMenu.add(jSeparator4);
+
+        iniTweaksMenuItem.setText("INI Tweaks");
+        iniTweaksMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                iniTweaksMenuItemActionPerformed(evt);
+            }
+        });
+        ToolsMenu.add(iniTweaksMenuItem);
+
+        hexEditsMenuItem.setText("Legacy Hex Edits");
+        hexEditsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hexEditsMenuItemActionPerformed(evt);
+            }
+        });
+        ToolsMenu.add(hexEditsMenuItem);
         ToolsMenu.add(jSeparator2);
 
         jMenu1.setText("Various tools");
@@ -847,10 +859,10 @@ public final class MainGUI extends ForceClosingJFrame {
         this.requestFocus();
     }//GEN-LAST:event_jMenuItem11ActionPerformed
 
-    private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        this.showIniTweaks();
+    private void iniTweaksMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniTweaksMenuItemActionPerformed
+        MainGUI.showIniTweaks();
         this.requestFocus();
-    }//GEN-LAST:event_jMenuItem14ActionPerformed
+    }//GEN-LAST:event_iniTweaksMenuItemActionPerformed
 
     private void objectExplorerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_objectExplorerButtonActionPerformed
         this.launchObjectExplorerWindow();
@@ -1128,11 +1140,18 @@ public final class MainGUI extends ForceClosingJFrame {
         JDialog dialog = new JDialog(this, "Setup Game Files for Mods");
         dialog.add(new SetupGameFilesPanel());
         dialog.setModal(true);
+        dialog.setMinimumSize(new Dimension(650, 400));
+        dialog.setPreferredSize(new Dimension(650, 400));
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
         this.requestFocus();
     }//GEN-LAST:event_setupGameFilesButtonActionPerformed
+
+    private void hexEditsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hexEditsMenuItemActionPerformed
+        MainGUI.showHexEdits();
+        this.requestFocus();
+    }//GEN-LAST:event_hexEditsMenuItemActionPerformed
 
     private void gameSelectionAction(ItemEvent e) {
         PatchType type = getGameSelectionPanel().getNonNullGameType();
@@ -1199,7 +1218,15 @@ public final class MainGUI extends ForceClosingJFrame {
      */
     public static void showIniTweaks() {
         IniTweaksPanel panel = new IniTweaksPanel();
-        JOptionPane.showMessageDialog(null, panel, "Select options", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, panel, "INI Tweaks", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    /**
+     * Displays our Hex Edits dialog
+     */
+    public static void showHexEdits() {
+        HexEditPanel panel = new HexEditPanel();
+        JOptionPane.showMessageDialog(null, panel, "Legacy Hex Edits", JOptionPane.PLAIN_MESSAGE);
     }
 
     /**
@@ -1566,15 +1593,16 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JLabel fontSizeLabel;
     private javax.swing.JPanel gameTypePanel;
     private javax.swing.JMenuItem getMoreModsMenuButton;
+    private javax.swing.JMenuItem hexEditsMenuItem;
     private javax.swing.JMenuItem importModFolderMenuButton;
     private javax.swing.JMenuItem importModMenuButton;
     private javax.swing.JMenuItem importModZipMenuButton;
+    private javax.swing.JMenuItem iniTweaksMenuItem;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem11;
-    private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel1;
@@ -1583,6 +1611,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuItem newFileMenuButton;

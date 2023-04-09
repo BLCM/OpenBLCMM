@@ -88,7 +88,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        masterSettingsTabbedPane = new javax.swing.JTabbedPane();
+        masterSettingsTabbedPane = new blcmm.gui.components.BoldJTabbedPane();
         generalSettingsGuiScrollPane = new javax.swing.JScrollPane();
         generalSettingsGuiPanel = new javax.swing.JPanel();
         autoupdateSettingsGuiScrollPane = new javax.swing.JScrollPane();

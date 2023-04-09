@@ -49,17 +49,51 @@ public final class SetupGameFilesPanel extends JPanel {
 
     public SetupGameFilesPanel() {
         this.setLayout(new GridBagLayout());
-        String sdkURL = "https://borderlandsmodding.com/running-mods/";
 
         JLabel topLabel = new JLabel(
                 "<html>"
-                + Meta.NAME + " is no longer needed to do hex-edits for Borderlands 2 or The Pre-Sequel.  <b>Instead, use PythonSDK<br/>"
-                + "to do the work!</b>  PythonSDK works just fine on Steam or EGS."
+                + Meta.NAME + " is no longer needed to do hex-edits for Borderlands 2 or The Pre-Sequel.  <b>Installing PythonSDK "
+                + "will enable console + modding, and provide other benefits as well!</b>  PythonSDK can be installed on both "
+                + "Steam and EGS versions."
         );
 
+        JButton sdkButton = SetupGameFilesPanel.getBLModdingDotComRedirectButton();
+
+        JLabel bottomLabel = new JLabel(
+                "<html>"
+                + "<p>"
+                + "Even though PythonSDK modding is a completely separate style of modding from BLCMM text-based mods, "
+                + "you can use the two together with no problems at all.  So, install PythonSDK to get your Borderlands "
+                + "install ready for modding, and continue using " + Meta.NAME + " for managing the content of your text-based mods. "
+                + "</p>"
+                + "<br/>"
+                + "<p>"
+                + "An additional benefit of using PythonSDK to enable mods is that you can also benefit from an ever-growing "
+                + "collection of SDK-based mods, which allow modders to do things impossible in the kinds of mods that " + Meta.NAME + " "
+                + "manages.<br/>"
+                + "</p>"
+                + "<br/>"
+                + "<p>"
+                + "The INI-file tweaks previously available on this screen have been moved to their own \"INI Tweaks\" dialog, "
+                + "and if you <b>do</b> need to use one of the legacy hex edits, those have been moved to their own \"Legacy "
+                + "Hex Edits\" dialog, too."
+                + "</p>"
+        );
+
+        JButton okButton = new JButton("OK");
+        okButton.addActionListener(e -> SwingUtilities.getWindowAncestor(SetupGameFilesPanel.this).dispose());
+
+        add(topLabel, new GridBagConstraints(0, 0, 3, 1, 1, 1, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(20, 20 / 2, 5, 20), 0, 0));
+        add(sdkButton, new GridBagConstraints(0, 1, 3, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
+        add(bottomLabel, new GridBagConstraints(0, 2, 3, 1, 1, 500, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 20 / 2, 5, 20), 0, 0));
+        add(okButton, new GridBagConstraints(0, 3, 1, 1, 500, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10, 5, 20, 20), 0, 0));
+    }
+
+    public static JButton getBLModdingDotComRedirectButton() {
+        String sdkURL = "https://borderlandsmodding.com/running-mods/";
         JButton sdkButton = new JButton();
         Color linkColor = ThemeManager.getColor(ThemeManager.ColorType.UITextLink);
-        sdkButton.setText("<html><font color=\"" + Integer.toHexString(linkColor.getRGB()).substring(2) + "\"><u>" + sdkURL + "</u></font></html>");
+        sdkButton.setText("<html><font color=\"" + Integer.toHexString(linkColor.getRGB()).substring(2) + "\"><u><nobr>Click here for PythonSDK Install Instructions</nobr></u></font></html>");
         sdkButton.setOpaque(true);
         sdkButton.setToolTipText(sdkURL);
         sdkButton.addActionListener(new ActionListener() {
@@ -72,27 +106,7 @@ public final class SetupGameFilesPanel extends JPanel {
                 }
             }
         });
-
-        JLabel bottomLabel = new JLabel(
-                "<html>"
-                + "Even though PythonSDK modding is a completely separate style of modding from BLCMM text-based mods,<br/>"
-                + "you can use the two together with no problems at all.  So, install PythonSDK to get your Borderlands<br/>"
-                + "install ready for modding, and continue using " + Meta.NAME + " for managing the content of your text-based mods.<br/>"
-                + "<br/>"
-                + "An additional benefit of using PythonSDK to enable mods is that you can also benefit from an ever-growing<br/>"
-                + "collection of SDK-based mods, which allow modders to do things impossible in the kinds of mods that " + Meta.NAME + "<br/>"
-                + "manages.<br/>"
-                + "<br/>"
-                + "The INI-file tweaks previously available on this screen have been moved to their own \"INI Tweaks\" dialog."
-        );
-
-        JButton okButton = new JButton("OK");
-        okButton.addActionListener(e -> SwingUtilities.getWindowAncestor(SetupGameFilesPanel.this).dispose());
-
-        add(topLabel, new GridBagConstraints(0, 0, 3, 1, 1, 1, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(20, 20 / 2, 5, 20), 0, 0));
-        add(sdkButton, new GridBagConstraints(0, 1, 3, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
-        add(bottomLabel, new GridBagConstraints(0, 2, 3, 1, 1, 1, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(5, 20 / 2, 5, 20), 0, 0));
-        add(okButton, new GridBagConstraints(0, 3, 1, 1, 500, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10, 5, 20, 20), 0, 0));
+        return sdkButton;
     }
 
 }
