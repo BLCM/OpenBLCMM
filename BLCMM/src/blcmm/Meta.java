@@ -44,7 +44,7 @@ public class Meta {
     /**
      * App version.
      */
-    public static final String VERSION = "1.3.0-beta.1";
+    public static final String VERSION = "1.3.0-beta.2";
 
     /**
      * User data directory for storing prefs, extracted data, etc.  We could
@@ -70,7 +70,9 @@ public class Meta {
      * derived from each other, but I didn't want these to be intrinsically
      * GitHub-specific.
      */
-    public static final String RELEASES_URL = "https://github.com/BLCM/OpenBLCMM/releases";
+    // TEMP: Testing out how users find the release-download process
+    //public static final String RELEASES_URL = "https://github.com/BLCM/OpenBLCMM/releases";
+    public static final String RELEASES_URL = "https://github.com/apocalyptech/OpenBLCMM-TestBed/releases";
 
     /**
      * URL to where to submit bugs, shown on the crash handler dialog.
@@ -87,6 +89,8 @@ public class Meta {
      * number in it, nothing more.  Note that the URL here is entirely just
      * for testing purposes; I intend to host it off of github eventually.
      */
-    public static final String UPDATE_VERSION_URL = "https://apocalyptech.com/scratchpad/openblcmm-latest.txt";
+    // More testing.  Store the version file right on the github repo, maybe?
+    //public static final String UPDATE_VERSION_URL = "https://apocalyptech.com/scratchpad/openblcmm-latest.txt";
+    public static final String UPDATE_VERSION_URL = "https://raw.githubusercontent.com/apocalyptech/OpenBLCMM-TestBed/main/openblcmm-latest.txt";
 
 }
