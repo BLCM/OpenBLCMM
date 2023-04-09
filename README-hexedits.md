@@ -2,11 +2,11 @@
 screw anything up with the copy+pasting.  Also some of these may not even
 be valid?  Anyway, don't trust fully yet...
 
-BLCMM used to include functionality to perform various hexedits on BL2
-and TPS.  This is no longer the case, and the recommended way to perform
-these edits is to just make use of PythonSDK instead.  Still, it seems
-useful to make a note of all the hexedits which BLCMM used to perform, so
-here goes:
+BLCMM/OpenBLCMM is not actually needed to enable modding in BL2/TPS/AoDK.
+The community-recommended method for doing so has been PythonSDK for some
+time now.  Still, there's other hex edits available than just mod-enabling,
+and the info about the prior hex edits might be of historical interest.
+So, here's a collection of the hex edits that our team's aware of.
 
 General Info
 ============

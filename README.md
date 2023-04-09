@@ -12,10 +12,8 @@ issues with BLCMM, and to provide a fully-opensource version of the entire
 BLCMM application.
 
 This fork is still in development but is proceeding along nicely.  It
-intentionally omits a few features from the original BLCMM app -- perhaps
-most notably, it no longer provides any hex-editing functionality, since
-[PythonSDK](https://borderlandsmodding.com/sdk-mods/) is the current
-recommended method for doing so.  OpenBLCMM feels relatively stable at the
+intentionally omits a few features from the original BLCMM app, but hopefully
+not anything anyone'll miss too much.  OpenBLCMM feels relatively stable at the
 moment, but if you *do* decide to use it to manage your mod files, you may
 want to make backups of your patch files first, just in case.  Check out
 our [short notes on its development environment](README-developing.md)
@@ -46,15 +44,16 @@ A Changelog can be found at [BLCMM/src/CHANGELOG.md](BLCMM/src/CHANGELOG.md).
 Hex Edits
 =========
 
-As mentioned above, OpenBLCMM no longer provides hex-editing functionality,
-since [PythonSDK](https://borderlandsmodding.com/sdk-mods/) is the
-community-recommended method for doing so.  We do have a document here for
-all the hex edits we were aware of:
+[PythonSDK](https://borderlandsmodding.com/sdk-mods/) is the community-recommended
+method for enabling modding in BL2/TPS/AoDK nowadays, but OpenBLCMM does still
+provide a couple of hex edits, just in case someone does end up needing them.
+We've also got a document which catalogs a bunch of hex edits that we're aware of,
+for various platforms, including a bunch which were never actually a part of
+BLCMM:
 
 * [README-hexedits.md](README-hexedits.md)
 
-Not all the edits in that doc were accessible via BLCMM.  That info might be
-moved to a separate wiki or documentation area in the future!
+That doc may get moved elsewhere eventually, perhaps to the BLCMods wiki.
 
 TODO
 ====
