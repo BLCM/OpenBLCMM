@@ -1321,7 +1321,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         + "\n"
                         + "Data packages for this version of " + Meta.NAME + " can currently be found at:\n"
                         + "\n"
-                        + "    https://drive.google.com/drive/folders/1ssqbAIGTm2xZvhQPizqnrlWsez9ba9Bw?usp=share_link\n"
+                        + "    " + Meta.DATA_DOWNLOAD_URL + " \n"
                         + "\n"
                         + "Data packages should be placed as-is into: " + Utilities.getDataPackDirectory()
                 );

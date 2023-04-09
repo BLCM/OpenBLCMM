@@ -93,4 +93,13 @@ public class Meta {
     //public static final String UPDATE_VERSION_URL = "https://apocalyptech.com/scratchpad/openblcmm-latest.txt";
     public static final String UPDATE_VERSION_URL = "https://raw.githubusercontent.com/apocalyptech/OpenBLCMM-TestBed/main/openblcmm-latest.txt";
 
+    /**
+     * URL where data pack downloads are available.
+     *
+     * Honestly not sure what the best method for distribution is, for these.
+     * At the moment I'm going to try out a separate Github releases area?
+     * We'll see how that is, usabilitywise.
+     */
+    public static final String DATA_DOWNLOAD_URL = "https://github.com/apocalyptech/OpenBLCMM-Data-TestBed/releases";
+
 }
