@@ -325,7 +325,7 @@ public class IniTweaksPanel extends GameTweaksPanel {
         File gameINIFile = getConfigFile("WillowGame.ini", type);
         File inputINIFile = getConfigFile("WillowInput.ini", type);
 
-        FileEditChoiceSetupAction consoleKey = new FileEditChoiceSetupAction("Console key", inputINIFile, "ConsoleKey", "Engine.Console", "Undefine",
+        FileEditChoiceSetupAction consoleKey = new FileEditChoiceSetupAction("Console key", this, inputINIFile, "ConsoleKey", "Engine.Console", "Undefine",
         new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "~", "None"},
         new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Tilde", "Undefine"});
         consoleKey.setDescription("<html>Select the key you wish to use to open the console<br/>"
@@ -344,33 +344,35 @@ public class IniTweaksPanel extends GameTweaksPanel {
         String[] rendererChoices = {"Default"/*                                */, "No black lines"/*                         */, "No black lines, more colors"};
         String[] rendererValues = {"WillowEngineMaterials.WillowScenePostProcess", "WillowEngineMaterials.RyanScenePostProcess", "WillowEngineMaterials.CinematicScenePostProcess"};
         FileEditChoiceSetupAction rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
+                this,
                 rendererFile, rendererVarName, "WillowGame.WillowGameEngine", rendererDefault,
                 rendererChoices, rendererValues);
         if (!EnumSet.of(SetupStatus.ACTIVE, SetupStatus.INACTIVE).contains(rendererSetupAction.getCurrentStatus())) {
             rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
+                    this,
                     rendererFile, rendererVarName, "Engine.Engine", rendererDefault,
                     rendererChoices, rendererValues);
         }
         rendererSetupAction.setDescription("Options to remove black outlines from the game, giving a massive performance boost overall");
         actions.add(rendererSetupAction);
 
-        INIFileEditSetupAction noDistortions = new INIFileEditSetupAction("Disable distortion", engineINIFile, "Distortion", "SystemSettings", "True", "False");
+        INIFileEditSetupAction noDistortions = new INIFileEditSetupAction("Disable distortion", this, engineINIFile, "Distortion", "SystemSettings", "True", "False");
         noDistortions.setDescription("Disables the distortion effect around explosions in combat, decreasing visual polution whilst increasing performance");
         actions.add(noDistortions);
 
-        INIFileEditSetupAction noGodRays = new INIFileEditSetupAction("No godrays", engineINIFile, "bAllowLightShafts", "SystemSettings", "True", "False");
+        INIFileEditSetupAction noGodRays = new INIFileEditSetupAction("No godrays", this, engineINIFile, "bAllowLightShafts", "SystemSettings", "True", "False");
         noGodRays.setDescription("No more god rays. Very noticable in Washburne refinery");
         actions.add(noGodRays);
 
-        INIFileEditSetupAction simpleShadows = new INIFileEditSetupAction("Simple shadows", engineINIFile, "DynamicShadows", "SystemSettings", "True", "False");
+        INIFileEditSetupAction simpleShadows = new INIFileEditSetupAction("Simple shadows", this, engineINIFile, "DynamicShadows", "SystemSettings", "True", "False");
         simpleShadows.setDescription("Circular shadows instead of full shadows");
         actions.add(simpleShadows);
 
-        INIFileEditSetupAction ragdollSetup1 = new INIFileEditSetupAction("", gameINIFile, "SecondsBeforeConsideringRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
-        INIFileEditSetupAction ragdollSetup2 = new INIFileEditSetupAction("", gameINIFile, "SecondsBeforeVisibleRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
+        INIFileEditSetupAction ragdollSetup1 = new INIFileEditSetupAction("", this, gameINIFile, "SecondsBeforeConsideringRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
+        INIFileEditSetupAction ragdollSetup2 = new INIFileEditSetupAction("", this, gameINIFile, "SecondsBeforeVisibleRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
         ragdollSetup1.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
         ragdollSetup2.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
-        CompoundSetupAction fewerCorpses = new CompoundSetupAction("Fewer corpses", ragdollSetup1, ragdollSetup2);
+        CompoundSetupAction fewerCorpses = new CompoundSetupAction("Fewer corpses", this, ragdollSetup1, ragdollSetup2);
         fewerCorpses.setDescription("Reduces the time it takes for corpses to decay to 30 seconds");
         actions.add(fewerCorpses);
 
@@ -385,7 +387,7 @@ public class IniTweaksPanel extends GameTweaksPanel {
                 movies2.add(";2K_Australia_Logo");
             }
         }
-        INIFileEditSetupAction quickerStartup = new INIFileEditSetupAction("Quicker startup", engineINIFile, "StartupMovies", "FullScreenMovie", movies1.toArray(new String[0]), movies2.toArray(new String[0]));
+        INIFileEditSetupAction quickerStartup = new INIFileEditSetupAction("Quicker startup", this, engineINIFile, "StartupMovies", "FullScreenMovie", movies1.toArray(new String[0]), movies2.toArray(new String[0]));
         quickerStartup.setDescription("Removes some of the startup screens, getting you to the main menu faster");
         quickerStartup.setAlternateChecker((String value) -> {
             if (value.isEmpty()) {
@@ -405,6 +407,7 @@ public class IniTweaksPanel extends GameTweaksPanel {
         actions.add(quickerStartup);
 
         INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction("Fewer cutscenes",
+                this,
                 engineINIFile,
                 "bForceNoMovies",
                 "FullScreenMovie",
@@ -432,12 +435,12 @@ public class IniTweaksPanel extends GameTweaksPanel {
         private final String[] ourValues;
         private AlternateValueChecker alternateChecker;
 
-        public INIFileEditSetupAction(String name, File file, String field, String preHeaderName, String originalValues, String ourValues) {
-            this(name, file, field, preHeaderName, new String[]{originalValues}, new String[]{ourValues});
+        public INIFileEditSetupAction(String name, IniTweaksPanel panel, File file, String field, String preHeaderName, String originalValues, String ourValues) {
+            this(name, panel, file, field, preHeaderName, new String[]{originalValues}, new String[]{ourValues});
         }
 
-        public INIFileEditSetupAction(String name, File file, String field, String preHeaderName, String[] originalValues, String[] ourValues) {
-            super(name, file, field, preHeaderName);
+        public INIFileEditSetupAction(String name, IniTweaksPanel panel, File file, String field, String preHeaderName, String[] originalValues, String[] ourValues) {
+            super(name, panel, file, field, preHeaderName);
             this.originalValues = originalValues;
             this.ourValues = ourValues;
         }

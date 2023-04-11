@@ -194,6 +194,7 @@ public abstract class GameTweaksPanel extends JPanel {
         protected final JLabel namelabel, statuslabel;
         protected final JButton button;
         protected final String name;
+        protected final GameTweaksPanel panel;
         protected boolean available = true;
         protected boolean revertOnly = false;
         private String disableReason;
@@ -202,8 +203,9 @@ public abstract class GameTweaksPanel extends JPanel {
         protected SetupStatus overrideStatus = null;
         private String revertFailMessage = null;
 
-        SetupAction(String name) {
+        SetupAction(String name, GameTweaksPanel panel) {
             this.name = name;
+            this.panel = panel;
             statuslabel = new JLabel();
             button = new JButton();
             namelabel = new JLabel(name);
@@ -350,7 +352,7 @@ public abstract class GameTweaksPanel extends JPanel {
                             try {
                                 Desktop.getDesktop().browse(e1.getURL().toURI()); // roll your own link launcher or use Desktop if J6+
                             } catch (URISyntaxException | IOException ex) {
-                                Logger.getLogger(IniTweaksPanel.class.getName()).log(Level.SEVERE, null, ex);
+                                Logger.getLogger(GameTweaksPanel.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     });
@@ -376,9 +378,9 @@ public abstract class GameTweaksPanel extends JPanel {
             button.setText("Fix");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 fix();
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
         }
 
@@ -396,9 +398,9 @@ public abstract class GameTweaksPanel extends JPanel {
             button.setText("Complete");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 apply();
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
         }
 
@@ -408,9 +410,9 @@ public abstract class GameTweaksPanel extends JPanel {
             button.setText("Apply");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 apply();
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
             if (revertOnly) {
                 components[2].setEnabled(false);
@@ -424,7 +426,7 @@ public abstract class GameTweaksPanel extends JPanel {
             button.setText("Revert");
             RemoveOldActionListeners();
             button.addActionListener((ae) -> {
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 if (!revert()) {
                     button.setText("Can't Revert");
                     button.setEnabled(false);
@@ -434,7 +436,7 @@ public abstract class GameTweaksPanel extends JPanel {
                         button.setToolTipText("There was a problem reverting to the stock Borderlands value");
                     }
                 }
-                IniTweaksPanel.INSTANCE.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                this.panel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             });
         }
 
@@ -450,8 +452,8 @@ public abstract class GameTweaksPanel extends JPanel {
 
         private final SetupAction[] actions;
 
-        public CompoundSetupAction(String name, SetupAction... actions) {
-            super(name);
+        public CompoundSetupAction(String name, GameTweaksPanel panel, SetupAction... actions) {
+            super(name, panel);
             this.actions = actions;
         }
 
@@ -530,8 +532,8 @@ public abstract class GameTweaksPanel extends JPanel {
         private StreamProvider sourceForOriginal;
         private boolean neverRevert;
 
-        SingleFileSetupAction(String name, File fileToModify, File backupOfOriginal, StreamProvider stream) {
-            super(name);
+        SingleFileSetupAction(String name, GameTweaksPanel panel, File fileToModify, File backupOfOriginal, StreamProvider stream) {
+            super(name, panel);
             this.fileToModify = fileToModify;
             this.backupOfOriginal = backupOfOriginal;
             this.streamProvider = stream;
@@ -768,8 +770,8 @@ public abstract class GameTweaksPanel extends JPanel {
         protected transient String fileContent, relevantChunk;
         private boolean revertReadOnly = false;
 
-        public AbstractFileEditSetupAction(String name, File file, String field, String preHeaderName) {
-            super(name);
+        public AbstractFileEditSetupAction(String name, GameTweaksPanel panel, File file, String field, String preHeaderName) {
+            super(name, panel);
             this.file = file;
             this.preHeaderName = preHeaderName;
             this.field = field;
@@ -827,8 +829,15 @@ public abstract class GameTweaksPanel extends JPanel {
         boolean init = false;
         private Object selchoice;
 
-        public FileEditChoiceSetupAction(String name, File file, String field, String preHeaderName, String defaultValue, String[] choices, String[] values) {
-            super(name, file, field, preHeaderName);
+        public FileEditChoiceSetupAction(String name,
+                GameTweaksPanel panel,
+                File file,
+                String field,
+                String preHeaderName,
+                String defaultValue,
+                String[] choices,
+                String[] values) {
+            super(name, panel, file, field, preHeaderName);
             this.defaultValue = defaultValue;
             this.choicesToValuesMap = new TreeMap<>();
             for (int i = 0; i < choices.length; i++) {

@@ -355,11 +355,11 @@ public class HexEditPanel extends GameTweaksPanel {
         File executable = GameDetection.getExe(patchType);
         String win32 = executable.getParent() + "/";
 
-        HexEditSetupAction hexEditSetup = new HexEditSetupAction("Unlock console (legacy)", executable, new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.ENABLE_SET_COMMANDS));
+        HexEditSetupAction hexEditSetup = new HexEditSetupAction("Unlock console (legacy)", this, executable, new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.ENABLE_SET_COMMANDS));
         hexEditSetup.setDescription("Enables the 'set' command in the game console.  Unnecessary if you use PythonSDK!");
         actions.add(hexEditSetup);
 
-        HexEditSetupAction arraySetup = new HexEditSetupAction("Remove array limit", executable, new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.DISABLE_ARRAY_LIMIT));
+        HexEditSetupAction arraySetup = new HexEditSetupAction("Remove array limit", this, executable, new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.DISABLE_ARRAY_LIMIT));
         arraySetup.setDescription("Removes the array-size limit of 100 from object dumps - only useful for mod makers");
         actions.add(arraySetup);
 
@@ -381,8 +381,8 @@ public class HexEditPanel extends GameTweaksPanel {
             return sb.toString().replaceAll("0x", "").split("[\\s,]+");
         }
 
-        public HexEditSetupAction(String name, File file, HexQuery query) {
-            super(name);
+        public HexEditSetupAction(String name, HexEditPanel panel, File file, HexQuery query) {
+            super(name, (GameTweaksPanel) panel);
             this.file = file;
             this.query = query;
         }
