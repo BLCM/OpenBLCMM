@@ -180,6 +180,7 @@ public final class AboutPanel extends JPanel {
         }
         JButton clipButton = new JButton();
         clipButton.setText("<html><b>Copy Info to Clipboard</b></html>");
+        clipButton.setToolTipText("Copy Info to Clipboard");
         clipButton.setOpaque(true);
         clipButton.addActionListener(new ActionListener() {
             @Override
@@ -200,6 +201,7 @@ public final class AboutPanel extends JPanel {
 
         JButton logButton = new JButton();
         logButton.setText("<html><b>Open Log Dir</b></html>");
+        logButton.setToolTipText("Open Log Dir");
         logButton.setOpaque(true);
         logButton.addActionListener(new ActionListener() {
             @Override
