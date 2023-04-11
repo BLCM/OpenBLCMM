@@ -528,15 +528,16 @@ public final class MainGUI extends ForceClosingJFrame {
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         quitMenuButton = new javax.swing.JMenuItem();
         ToolsMenu = new javax.swing.JMenu();
+        settingsMenuItem = new javax.swing.JMenuItem();
         setupGameFilesButton = new javax.swing.JMenuItem();
         objectExplorerButton = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
+        getDataPackMenuItem = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         iniTweaksMenuItem = new javax.swing.JMenuItem();
         hexEditsMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        bpdnumMenuItem = new javax.swing.JMenuItem();
         profileMenu = new javax.swing.JMenu();
         HelpMenu = new javax.swing.JMenu();
         jMenuItem11 = new javax.swing.JMenuItem();
@@ -703,7 +704,7 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         FileMenu.add(importModZipMenuButton);
 
-        getMoreModsMenuButton.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
+        getMoreModsMenuButton.setFont(new java.awt.Font("SansSerif", 2, 13)); // NOI18N
         getMoreModsMenuButton.setText("Get more mods");
         getMoreModsMenuButton.setToolTipText("Opens the BLCM github, the place where most mods are stored");
         getMoreModsMenuButton.addActionListener(new java.awt.event.ActionListener() {
@@ -727,6 +728,14 @@ public final class MainGUI extends ForceClosingJFrame {
 
         ToolsMenu.setText("Tools");
 
+        settingsMenuItem.setText("Settings");
+        settingsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingsMenuItemActionPerformed(evt);
+            }
+        });
+        ToolsMenu.add(settingsMenuItem);
+
         setupGameFilesButton.setText("Setup game files for mods");
         setupGameFilesButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -743,13 +752,14 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         ToolsMenu.add(objectExplorerButton);
 
-        jMenuItem5.setText("Settings");
-        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+        getDataPackMenuItem.setFont(new java.awt.Font("sansserif", 2, 13)); // NOI18N
+        getDataPackMenuItem.setText("Download OE Datapacks");
+        getDataPackMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem5ActionPerformed(evt);
+                getDataPackMenuButtonActionPerformed(evt);
             }
         });
-        ToolsMenu.add(jMenuItem5);
+        ToolsMenu.add(getDataPackMenuItem);
         ToolsMenu.add(jSeparator4);
 
         iniTweaksMenuItem.setText("INI Tweaks");
@@ -771,13 +781,13 @@ public final class MainGUI extends ForceClosingJFrame {
 
         jMenu1.setText("Various tools");
 
-        jMenuItem3.setText("Behavior Number Converter");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        bpdnumMenuItem.setText("Behavior Number Converter");
+        bpdnumMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                bpdnumMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem3);
+        jMenu1.add(bpdnumMenuItem);
 
         ToolsMenu.add(jMenu1);
 
@@ -868,7 +878,7 @@ public final class MainGUI extends ForceClosingJFrame {
         this.launchObjectExplorerWindow();
     }//GEN-LAST:event_objectExplorerButtonActionPerformed
 
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+    private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
         MasterSettingsPanel panel = new MasterSettingsPanel();
         JOptionPane.showMessageDialog(this, panel, "Settings", JOptionPane.PLAIN_MESSAGE);
 
@@ -889,7 +899,7 @@ public final class MainGUI extends ForceClosingJFrame {
             SwingUtilities.updateComponentTreeUI(this);
         }
         this.requestFocus();
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
+    }//GEN-LAST:event_settingsMenuItemActionPerformed
 
     private void quitMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitMenuButtonActionPerformed
         MainGUI.INSTANCE.dispose();
@@ -1110,13 +1120,13 @@ public final class MainGUI extends ForceClosingJFrame {
         }
     }//GEN-LAST:event_uninstallMenuItemActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void bpdnumMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bpdnumMenuItemActionPerformed
         ForceClosingJFrame jFrame = new ForceClosingJFrame("Behavior number converter");
         jFrame.add(new IntegerConverter());
         jFrame.pack();
         jFrame.setLocationRelativeTo(this);
         jFrame.setVisible(true);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_bpdnumMenuItemActionPerformed
 
     private void themeComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_themeComboBoxItemStateChanged
         if (themeComboBox.getSelectedItem() == ThemeManager.getTheme()) {
@@ -1152,6 +1162,18 @@ public final class MainGUI extends ForceClosingJFrame {
         MainGUI.showHexEdits();
         this.requestFocus();
     }//GEN-LAST:event_hexEditsMenuItemActionPerformed
+
+    private void getDataPackMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getDataPackMenuButtonActionPerformed
+        try {
+            URL faq = new URL(Meta.DATA_DOWNLOAD_URL);
+            Desktop.getDesktop().browse(faq.toURI());
+        } catch (IOException | URISyntaxException ex) {
+            GlobalLogger.log(ex);
+            JOptionPane.showMessageDialog(this,
+                    "Unable to launch browser: " + ex.getMessage(),
+                    "Error launching Browser", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_getDataPackMenuButtonActionPerformed
 
     private void gameSelectionAction(ItemEvent e) {
         PatchType type = getGameSelectionPanel().getNonNullGameType();
@@ -1590,8 +1612,10 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenu FileMenu;
     private javax.swing.JMenu HelpMenu;
     private javax.swing.JMenu ToolsMenu;
+    private javax.swing.JMenuItem bpdnumMenuItem;
     private javax.swing.JLabel fontSizeLabel;
     private javax.swing.JPanel gameTypePanel;
+    private javax.swing.JMenuItem getDataPackMenuItem;
     private javax.swing.JMenuItem getMoreModsMenuButton;
     private javax.swing.JMenuItem hexEditsMenuItem;
     private javax.swing.JMenuItem importModFolderMenuButton;
@@ -1603,8 +1627,6 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem11;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1621,6 +1643,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenuItem quitMenuButton;
     private javax.swing.JMenuItem saveMenuButton;
     private javax.swing.JMenuItem saveToFileMenuButton;
+    private javax.swing.JMenuItem settingsMenuItem;
     private javax.swing.JMenuItem setupGameFilesButton;
     private javax.swing.JComboBox<Theme> themeComboBox;
     private javax.swing.JLabel timedLabel;

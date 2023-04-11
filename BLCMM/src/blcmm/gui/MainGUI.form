@@ -90,7 +90,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="getMoreModsMenuButton">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Dialog" size="12" style="2"/>
+                  <Font name="SansSerif" size="13" style="2"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Get more mods"/>
                 <Property name="toolTipText" type="java.lang.String" value="Opens the BLCM github, the place where most mods are stored"/>
@@ -119,6 +119,14 @@
             <Property name="text" type="java.lang.String" value="Tools"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="settingsMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Settings"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="settingsMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="setupGameFilesButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Setup game files for mods"/>
@@ -135,12 +143,15 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="objectExplorerButtonActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem5">
+            <MenuItem class="javax.swing.JMenuItem" name="getDataPackMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Settings"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="sansserif" size="13" style="2"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Download OE Datapacks"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem5ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="getDataPackMenuButtonActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator4">
@@ -168,12 +179,12 @@
                 <Property name="text" type="java.lang.String" value="Various tools"/>
               </Properties>
               <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="jMenuItem3">
+                <MenuItem class="javax.swing.JMenuItem" name="bpdnumMenuItem">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Behavior Number Converter"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem3ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bpdnumMenuItemActionPerformed"/>
                   </Events>
                 </MenuItem>
               </SubComponents>
