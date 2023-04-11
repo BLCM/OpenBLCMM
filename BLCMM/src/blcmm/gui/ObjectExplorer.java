@@ -28,6 +28,7 @@
  */
 package blcmm.gui;
 
+import blcmm.Meta;
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEClass;
@@ -43,16 +44,21 @@ import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
@@ -93,6 +99,9 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         this.dm = null;
         GlobalLogger.log("Opened Object Explorer");
         initComponents();
+
+        // Setting this tooltip dynamically
+        this.downloadDataPackButton.setToolTipText(Meta.DATA_DOWNLOAD_URL);
 
         // Set up our game selection dropdown
         getGameSelectionComboBox().addItemListenerToComboBox(this::gameSelectionAction);
@@ -181,10 +190,13 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         topLevelSplitPane = new javax.swing.JSplitPane();
         leftHandPanel = new javax.swing.JPanel();
         gameTypeComboBox = new SimpleGameSelectionComboBox();
+        downloadDataPackPanel = new javax.swing.JPanel();
+        downloadDataPackButton = new javax.swing.JButton();
         leftHandSplitPlane = new javax.swing.JSplitPane();
         classBrowserPanel = new javax.swing.JPanel();
         classBrowserScrollPane = new javax.swing.JScrollPane();
@@ -198,10 +210,33 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
         topLevelSplitPane.setDividerLocation(400);
 
-        leftHandPanel.setLayout(new javax.swing.BoxLayout(leftHandPanel, javax.swing.BoxLayout.Y_AXIS));
+        leftHandPanel.setLayout(new java.awt.GridBagLayout());
 
-        gameTypeComboBox.setMinimumSize(new java.awt.Dimension(0, 24));
-        leftHandPanel.add(gameTypeComboBox);
+        gameTypeComboBox.setName(""); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        leftHandPanel.add(gameTypeComboBox, gridBagConstraints);
+
+        downloadDataPackPanel.setLayout(new javax.swing.BoxLayout(downloadDataPackPanel, javax.swing.BoxLayout.X_AXIS));
+
+        downloadDataPackButton.setText("Download Datapacks");
+        downloadDataPackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadDataPackButtonActionPerformed(evt);
+            }
+        });
+        downloadDataPackPanel.add(downloadDataPackButton);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        leftHandPanel.add(downloadDataPackPanel, gridBagConstraints);
 
         leftHandSplitPlane.setDividerLocation(355);
         leftHandSplitPlane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -265,13 +300,19 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             objectBrowserPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(objectBrowserPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(objectBrowserScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                .addComponent(objectBrowserScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         leftHandSplitPlane.setBottomComponent(objectBrowserPanel);
 
-        leftHandPanel.add(leftHandSplitPlane);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 500.0;
+        leftHandPanel.add(leftHandSplitPlane, gridBagConstraints);
 
         topLevelSplitPane.setLeftComponent(leftHandPanel);
         topLevelSplitPane.setRightComponent(oePanelTabbedPane);
@@ -337,6 +378,18 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         }
     }//GEN-LAST:event_objectBrowserTreeTreeWillExpand
 
+    private void downloadDataPackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadDataPackButtonActionPerformed
+        try {
+            URL faq = new URL(Meta.DATA_DOWNLOAD_URL);
+            Desktop.getDesktop().browse(faq.toURI());
+        } catch (IOException | URISyntaxException ex) {
+            GlobalLogger.log(ex);
+            JOptionPane.showMessageDialog(this,
+                    "Unable to launch browser: " + ex.getMessage(),
+                    "Error launching Browser", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_downloadDataPackButtonActionPerformed
+
     public JTabbedPane getObjectExplorerTabbedPane() {
         return this.oePanelTabbedPane;
     }
@@ -345,6 +398,8 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     private javax.swing.JPanel classBrowserPanel;
     private javax.swing.JScrollPane classBrowserScrollPane;
     private javax.swing.JTree classBrowserTree;
+    private javax.swing.JButton downloadDataPackButton;
+    private javax.swing.JPanel downloadDataPackPanel;
     private javax.swing.JComboBox<String> gameTypeComboBox;
     private javax.swing.JPanel leftHandPanel;
     private javax.swing.JSplitPane leftHandSplitPlane;
@@ -369,6 +424,13 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             PatchType type = getGameSelectionComboBox().getNonNullGameType();
             this.dmm.setPatchType(type);
             this.dm = this.dmm.getCurrentDataManager();
+            if (this.dm == null) {
+                this.downloadDataPackPanel.setVisible(true);
+                //this.downloadDataPackButton.setVisible(true);
+            } else {
+                this.downloadDataPackPanel.setVisible(false);
+                //this.downloadDataPackButton.setVisible(false);
+            }
             if (currentClassSelection != null) {
                 DefaultMutableTreeNode foundNode = setClassBrowserData(currentClassSelection.getName());
                 setPackageBrowserData(null);
