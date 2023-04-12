@@ -29,26 +29,28 @@ installed:
 1. [Visual Studio](https://visualstudio.microsoft.com/) and its C++ components.
 2. [Liberica NIK](https://bell-sw.com/pages/downloads/native-image-kit/#downloads).
 3. [WinRun4J](https://winrun4j.sourceforge.net), if you want to set an EXE icon
+    1. Note that you'll have to get `RCEDIT64.exe` into your `%PATH%` manually.
 4. [Inno Setup](https://jrsoftware.org/isinfo.php)
 
 Then:
 
 1. Start a "x64 Native Tools Command Prompt" shell from Visual Studio
 2. If you want, run `native-agent-new.bat` or `native-agent-merge.bat` and
-   interact with the app for awhile.  Compare the contents of `conf-dir`
-   with the `META-INF/native-image` dir in sourcecode to see if anything
-   new is required.  If so, add them and rebuild `OpenBLCMM.jar`.
-    1. `native-agent-new.bat` creates a totally fresh `conf-dir` each time,
+   interact with the app for awhile.  Compare the contents of
+   `src/META-INF/native-image/blcmm/blcmm` with the latest git HEAD,
+   to see if anything new is required.  If so, add them and rebuild
+   `OpenBLCMM.jar`.
+    1. `native-agent-new.bat` creates a totally fresh config dir each time,
        so make sure to be careful about merging in with the originals, since
        the new one might be missing functionality if you didn't do a totally
        thorough runthrough.
-    2. `native-agent-merge.bat` should *update* an existing `conf-dir` with
+    2. `native-agent-merge.bat` will *update* an existing config dir with
        new activity, which will probably make updates a little easier to
        deal with.
 3. Run `native-compile.bat` (or just `native-image -jar OpenBLCMM.jar`) to
    compile `OpenBLCMM.exe`
     1. The batch file also uses WinRun4J to set an icon on the EXE itself,
-       with `RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico`.  If you want an
+       using `RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico`.  If you want an
        icon but didn't use the batch file, be sure to do that.  The batch
        file also collects the EXE and all required DLLs into a `compiled`
        subdir.
@@ -123,6 +125,9 @@ with a `native-image.properties` file to describe the options in
 there.  (Those "build configuration" docs linked above go into all
 the detail on that.)  So, that's what we're doing -- you'll find that
 structure, and all its config, in `src/META-INF/native-image/blcmm/blcmm`.
+The bundled batch files all refer to that inner directory when
+specifying the config dir location.
+
 Since we're building the Jarfile with those contents, the commandline
 to compile gets simplified to:
 
