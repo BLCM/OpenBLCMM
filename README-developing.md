@@ -1,8 +1,6 @@
 Developing OpenBLCMM
 ====================
 
-*(this is gonna be real barebones for awhile)*
-
 OpenBLCMM was developed using NetBeans, most recently with NetBeans IDE 16.
 
 The currently-checked-in project expects a NetBeans Java platform named
@@ -15,6 +13,12 @@ the same directory as your existing Java Environment.
 Once the project's been opened up in Netbeans and the `JDK_19` platform is
 available, you should be able to just run it via the GUI -- there'll be a
 green "Play" icon in the main toolbar, or various menu options.
+
+- [Library Bundling](#library-bundling)
+- [Compiling for Windows](#compiling-for-windows)
+- [Packaging / Release Procedures](#packaging--release-procedures)
+  - [Pre-Release Checks](#prerelease-checks)
+  - [Actual Release](#actual-release)
 
 Library Bundling
 ----------------
@@ -52,4 +56,88 @@ Compiling for Windows
 See the [`windows-processing` directory](windows-processing/) for
 information on compiling the "native" EXE version (and its installer)
 for Windows.
+
+Packaging / Release Procedures
+------------------------------
+
+These are the steps that I'm currently running to get a new version
+packaged and uploaded.  This assumes that the primary development work
+is being done on Linux, and the Windows components are done inside
+a Windows VM.
+
+### Pre-Release Checks
+
+These are just some checks to be done before officially cutting a release.
+The vast majority of this is just checking out the GraalVM/Liberica native
+compilation on Windows, since that process is a bit finnicky.
+
+1. Build the project from Netbeans.  This will produce `BLCMM/store/OpenBLCMM.jar`
+   at the end.
+2. Double-check running that Jar natively (`java -jar OpenBLCMM.jar`)
+3. Depending on what's changed, doublecheck that the GraalVM/Liberica Native Image
+   configs are still sufficient:
+    1. Transfer `BLCMM/store/OpenBLCMM.jar` to a Windows VM.
+    2. Transfer The contents of `windows-processing` to the Windows VM, alongside
+       `OpenBLCMM.jar`.
+    3. Transfer the contents of `BLCMM/src/META-INF/native-image/blcmm/blcmm` to
+       the Windows VM, in a directory named `conf-dir` next to where `OpenBLCMM.jar`
+       was placed.
+    4. On the Windows VM, run `native-agent-merge.bat`, and interact with the new
+       parts of the app.
+    5. Once done, compare the contents of the files in `conf-dir` to the versions
+       in `BLCMM/src/META-INF/native-image/blcmm/blcmm`.  If there are any new
+       entries, add them in, and rebuild the project (to get a new `BLCMM/store/OpenBLCMM.jar`).
+    6. Re-transfer `BLCMM/store/OpenBLCMM.jar` to the Windows VM.
+    7. Compile to EXE using `native-compile.bat`.
+    8. Double-click the new `OpenBLCMM.exe` and interact with the new parts of the
+       app.  So long as there's no crashing, it should theoretically be good.
+
+### Actual Release
+
+Once we're sure that the compiled Windows EXE works fine, we can proceed.  Some of
+these steps are redundant if you've just gone through the full pre-release check
+section.
+
+1. Make sure that `BLCMM/src/blcmm/Meta.java` and `windows-processing/openblcmm.iss`
+   have the new version number.
+2. "Clean and Build" the project from Netbeans.  This will produce
+   `BLCMM/store/OpenBLCMM.jar` at the end.
+    1. Do one more quick spot-check that the built Jar works (`java -jar OpenBLCMM.jar`)
+3. Tag the release in git.  *(Not actually doing that for the current
+   "beta" releases)*
+    1. Push the tag with `git push --tags`
+4. Transfer to Windows VM:
+    1. The contents of `windows-processing`
+    2. `README.md` and `LICENSE.txt` from the project root (the README will end
+       up overwriting the one found in `windows-processing`
+    3. `BLCMM/store/OpenBLCMM.jar`
+5. On Windows VM, compile with `native-compile.bat`
+    1. Creates `OpenBLCMM.exe` and a number of required DLLs in the same dir, and
+       also copies those files into a `compiled` directory.
+    2. Do a quick spot-check that the compiled `OpenBLCMM.exe` launches fine
+6. On Windows VM, open `openblcmm.iss` with Inno Setup and click on "Compile"
+    1. Creates an `Output/OpenBLCMM-<version>-Installer.exe`
+    2. Double-check that the installer works properly, and that the installed
+       version launches fine.
+7. Transfer back from the Windows VM, into `BLCMM/store`:
+    1. The `compiled` directory
+    2. The `Output` directory
+8. Inside `BLCMM/store`, run `../../release-processing/finish-release.py`
+    1. This will create `OpenBLCMM-<version>-Windows.zip` and
+       `OpenBLCMM-<version>-Java.zip`
+    2. Doublecheck the contents of those two.  The "Windows" one should have the
+       EXE, ten DLLs, and a README and LICENSE file.  The "Java" one should have
+       the Jarfile, README, LICENSE, and two launcher scripts (one batch, one shell).
+9. Create a new github release and upload all three packaged releases:
+    1. `BLCMM/store/Output/OpenBLCMM-<version>-Installer.exe`
+    2. `BLCMM/store/OpenBLCMM-<version>-Windows.zip`
+    3. `BLCMM/store/OpenBLCMM-<version>-Java.zip`
+10. Update `openblcmm-latest.txt` wherever that ends up living For Real.  This is
+    what will make existing OpenBLCMM installations report that a new version is
+    available.
+
+Note that this is still a little bit in flux; I may rejigger some stuff so that the
+Windows side requires a git checkout instead, and use relative paths to pull the
+various required info.  That'd cut back on the kind of confusing amount of transferring
+which happens at the moment.
 
