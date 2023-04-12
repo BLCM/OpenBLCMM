@@ -8,38 +8,48 @@ import subprocess
 
 app_name = 'OpenBLCMM'
 
-# Check to make sure that some dirs+files exist
+# See if we're being run from a "known" location
+if os.path.exists('finish-release.py') and os.path.exists('launch_openblcmm.sh'):
+    os.chdir('../store')
+elif os.path.exists('README-developing.md') and os.path.exists('store'):
+    os.chdir('store')
+
+# Now check to make sure that some dirs+files exist
 for dirname in [
-        'Output',
         'compiled',
         ]:
     if not os.path.isdir(dirname):
         raise RuntimeError(f'No `{dirname}` directory found')
 included_files_exe = [
-        '../../README.md',
-        '../../LICENSE.txt',
+        '../README.md',
+        '../LICENSE.txt',
         ]
 included_files_jar = included_files_exe + [
         f'{app_name}.jar',
-        '../../release-processing/launch_openblcmm.bat',
-        '../../release-processing/launch_openblcmm.sh',
+        '../release-processing/launch_openblcmm.bat',
+        '../release-processing/launch_openblcmm.sh',
         ]
 for filename in included_files_jar:
     if not os.path.exists(filename):
         raise RuntimeError(f'No `{filename}` file found')
 
 # Grab version from the installer in Output
+# TODO: We should probably support seeing multiple of these and just
+# building the most recent one (and maybe support an arg to specify
+# building arbitrary versions)
 # OpenBLCMM-1.3.0-beta.3-Installer.exe
 version = None
+installer = None
 prefix = f'{app_name}-'
 suffix = '-Installer.exe'
-for filename in os.listdir('Output'):
+for filename in os.listdir('.'):
     if filename.startswith(prefix) and filename.endswith(suffix):
         if version is not None:
             raise RuntimeError('More than one installer EXE found')
         version = filename[len(prefix):-len(suffix)]
+        installer = filename
 if version is None:
-    raise RuntimeError('No installer EXE found in `Output`')
+    raise RuntimeError('No installer EXE found')
 
 # Make sure we've got our expected DLLs and EXEs in there
 exe_count = 0
@@ -81,6 +91,10 @@ subprocess.run(['zip', '-r',
 
 # Display the results
 print('')
-subprocess.run(['ls', '-l', f'{base_win_zip}.zip', f'{base_java_zip}.zip'])
+subprocess.run(['ls', '-l',
+    installer,
+    f'{base_win_zip}.zip',
+    f'{base_java_zip}.zip',
+    ])
 print('')
 

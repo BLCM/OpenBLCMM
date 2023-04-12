@@ -1,44 +1,20 @@
-#   IDEA files
-.idea/
-out/
-blcmm.iml
-
 #   Netbeans files (For some reason it doesn't work without ** in front of it?)
 **/nbproject/private
 
 #   build files
-build/
-dist/
-store/
+/build/
+/dist/
+/store/OpenBLCMM*
+/store/Output
+/store/compiled
 
-#   BLCMM files
-/BLCMM/logs/
-/BLCMM/blcmm_logs/
-/BLCMM/backups/
-/BLCMM/general.options
-/BLCMM/versions.options
-/BLCMM/hints.txt
-/BLCMM/data/
-/BLCMM/multitool/
-/BLCMM/plugins/
-/BLCMM/plugin output/
-
-# BLCMM Data
-blcmm_data_*.jar
-/BLCMM/extracted-data
-
-#BLCMM Lib distributor files
-/BLCMM Lib Distributor/other_locations.txt
-
-#Launcher files
-/BLCMM Launcher/store/
-/BLCMM Launcher/stock/
-
-#   Random other files
-/Borderlands 2/
-/FT/
-/src/testing/
-/testfiles/
-/flag files/
+# OpenBLCMM user-data files
+/blcmm_logs/
+/backups/
+/extracted-data
+/general.options
 /crash.boom
-/BLCMM Data/cj_data/BL2/BL2-all-classes.zip
+
+# OpenBLCMM Data
+blcmm_data_*.jar
+

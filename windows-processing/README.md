@@ -22,7 +22,7 @@ The Short Version
 -----------------
 
 Assuming you've already built the project via NetBeans and have an
-`OpenBLCMM.jar` from the `BLCMM/store/` directory, transfer that jar
+`OpenBLCMM.jar` from the `store/` directory, transfer that jar
 over to a Windows host and make sure you've got the following software
 installed:
 
@@ -54,7 +54,7 @@ Then:
        subdir.
 4. Open `openblcmm.iss` in Inno Setup.  Update the version number if required
    and hit "Compile."  You'll end up with an `OpenBLCMM-<version>-Installer.exe`
-   inside an `Output` dir.  That's the installer!
+   inside the `store/` dir.  That's the installer!
 
 That's it!  Details of those steps follow, divided into the three main sections
 (compiling, EXE icon, and then creating the installer).
@@ -122,9 +122,9 @@ the `OpenBLCMM.jar` file itself, under `META-INF/native-image`, along
 with a `native-image.properties` file to describe the options in
 there.  (Those "build configuration" docs linked above go into all
 the detail on that.)  So, that's what we're doing -- you'll find that
-structure, and all its config, in `BLCMM/src`.  Since we're building
-the Jarfile with those contents, the commandline to compile gets
-simplified to:
+structure, and all its config, in `src/META-INF/native-image/blcmm/blcmm`.
+Since we're building the Jarfile with those contents, the commandline
+to compile gets simplified to:
 
     native-image -jar OpenBLCMM.jar
 

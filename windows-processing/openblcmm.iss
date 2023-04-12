@@ -24,7 +24,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
-LicenseFile=LICENSE.txt
+LicenseFile=..\LICENSE.txt
 InfoBeforeFile=installer-pre-text.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
@@ -34,6 +34,7 @@ SetupIconFile=openblcmm.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+OutputDir=..\store
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -42,20 +43,20 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "awt.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "fontmanager.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "freetype.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "java.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "javaaccessbridge.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "javajpeg.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "jawt.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "jsound.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "jvm.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "lcms.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\awt.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\fontmanager.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\freetype.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\java.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\javaaccessbridge.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\javajpeg.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\jawt.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\jsound.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\jvm.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\store\lcms.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "openblcmm.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
