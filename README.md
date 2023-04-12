@@ -39,7 +39,7 @@ approaches release!
 Changelog
 =========
 
-A Changelog can be found at [BLCMM/src/CHANGELOG.md](BLCMM/src/CHANGELOG.md).
+A Changelog can be found at [src/CHANGELOG.md](src/CHANGELOG.md).
 
 Hex Edits
 =========
