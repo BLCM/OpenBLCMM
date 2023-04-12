@@ -14,6 +14,15 @@
       "pattern":"\\Qorg/sqlite/native/Windows/x86_64/sqlitejdbc.dll\\E"
     }, 
     {
+      "pattern":"\\Qresources/AODK/GBX_hotfixes.blcm\\E"
+    }, 
+    {
+      "pattern":"\\Qresources/AODK/Icon.png\\E"
+    }, 
+    {
+      "pattern":"\\Qresources/AODK/vanillaLevelLists.blcm\\E"
+    }, 
+    {
       "pattern":"\\Qresources/BL2/GBX_hotfixes.blcm\\E"
     }, 
     {
@@ -38,25 +47,16 @@
       "pattern":"\\Qresources/TPS/vanillaLevelLists.blcm\\E"
     }, 
     {
-      "pattern":"\\Qresources/AODK/GBX_hotfixes.blcm\\E"
-    }, 
-    {
-      "pattern":"\\Qresources/AODK/Icon.png\\E"
-    }, 
-    {
-      "pattern":"\\Qresources/AODK/vanillaLevelLists.blcm\\E"
-    }, 
-    {
       "pattern":"\\Qresources/donate.png\\E"
     }, 
     {
       "pattern":"\\Qresources/exec.png\\E"
     }, 
     {
-      "pattern":"\\Qresources/padlock.png\\E"
+      "pattern":"\\Qresources/folder.png\\E"
     }, 
     {
-      "pattern":"\\Qresources/folder.png\\E"
+      "pattern":"\\Qresources/padlock.png\\E"
     }, 
     {
       "pattern":"\\Qresources/speaker.png\\E"

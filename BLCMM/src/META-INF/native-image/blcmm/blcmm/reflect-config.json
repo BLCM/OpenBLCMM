@@ -27,6 +27,19 @@
   "name":"[Lsun.security.pkcs.SignerInfo;"
 },
 {
+  "name":"blcmm.gui.panels.ToolSettingsPanel",
+  "queryAllDeclaredMethods":true,
+  "methods":[
+    {"name":"checkThemeSwitchAllowed","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"setTheme","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"toggleCheckForNewVersions","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"toggleHighlightBVCErrors","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"toggleTruncateCommands","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"updateFontSizes","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"updateOESearchCategories","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }
+  ]
+},
+{
   "name":"com.sun.crypto.provider.AESCipher$General",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
@@ -55,25 +68,16 @@
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
+  "name":"com.sun.crypto.provider.HmacCore$HmacSHA256",
+  "methods":[{"name":"<init>","parameterTypes":[] }]
+},
+{
   "name":"com.sun.crypto.provider.HmacCore$HmacSHA384",
   "methods":[{"name":"<init>","parameterTypes":[] }]
 },
 {
   "name":"com.sun.crypto.provider.TlsMasterSecretGenerator",
   "methods":[{"name":"<init>","parameterTypes":[] }]
-},
-{
-  "name":"blcmm.gui.panels.ToolSettingsPanel",
-  "queryAllDeclaredMethods":true,
-  "methods":[
-    {"name":"checkThemeSwitchAllowed","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
-    {"name":"setTheme","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
-    {"name":"toggleCheckForNewVersions","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
-    {"name":"toggleHighlightBVCErrors","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
-    {"name":"toggleTruncateCommands","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
-    {"name":"updateFontSizes","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
-    {"name":"updateOESearchCategories","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }
-  ]
 },
 {
   "name":"java.awt.Image"
@@ -229,7 +233,6 @@
     {"name":"VK_MULTIPLY"}, 
     {"name":"VK_N"}, 
     {"name":"VK_NONCONVERT"}, 
-    {"name":"VK_NUM_LOCK"}, 
     {"name":"VK_NUMBER_SIGN"}, 
     {"name":"VK_NUMPAD0"}, 
     {"name":"VK_NUMPAD1"}, 
@@ -241,6 +244,7 @@
     {"name":"VK_NUMPAD7"}, 
     {"name":"VK_NUMPAD8"}, 
     {"name":"VK_NUMPAD9"}, 
+    {"name":"VK_NUM_LOCK"}, 
     {"name":"VK_O"}, 
     {"name":"VK_OPEN_BRACKET"}, 
     {"name":"VK_P"}, 
@@ -295,6 +299,15 @@
   "name":"java.lang.String"
 },
 {
+  "name":"java.net.URL"
+},
+{
+  "name":"java.nio.ByteBuffer"
+},
+{
+  "name":"java.nio.CharBuffer"
+},
+{
   "name":"java.security.AlgorithmParametersSpi"
 },
 {
@@ -311,15 +324,6 @@
 },
 {
   "name":"java.util.Date"
-},
-{
-  "name":"java.net.URL"
-},
-{
-  "name":"java.nio.ByteBuffer"
-},
-{
-  "name":"java.nio.CharBuffer"
 },
 {
   "name":"java.util.List"
