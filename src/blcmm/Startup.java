@@ -143,7 +143,6 @@ public class Startup {
         if (Utilities.isCreatorMode()) {
             GlobalLogger.log("Running in Creator Mode!");
         }
-        GlobalLogger.log("Username: " + System.getProperty("user.name"));
 
         // Total amount of free memory available to the JVM
         GlobalLogger.log("Free Memory: " + Utilities.humanReadableByteCount(
