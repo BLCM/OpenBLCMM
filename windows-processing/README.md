@@ -47,8 +47,11 @@ Then:
        deal with.
 3. Run `native-compile.bat` (or just `native-image -jar OpenBLCMM.jar`) to
    compile `OpenBLCMM.exe`
-4. If you want, use WinRun4J to set an icon on the EXE itself, with
-   `RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico`
+    1. The batch file also uses WinRun4J to set an icon on the EXE itself,
+       with `RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico`.  If you want an
+       icon but didn't use the batch file, be sure to do that.  The batch
+       file also collects the EXE and all required DLLs into a `compiled`
+       subdir.
 4. Open `openblcmm.iss` in Inno Setup.  Update the version number if required
    and hit "Compile."  You'll end up with an `OpenBLCMM-<version>-Installer.exe`
    inside an `Output` dir.  That's the installer!
