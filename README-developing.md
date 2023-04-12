@@ -1,7 +1,18 @@
 Developing OpenBLCMM
 ====================
 
-OpenBLCMM was developed using NetBeans, most recently with NetBeans IDE 16.
+- [Development Environment](#development-environment)
+- [Library Bundling](#library-bundling)
+- [Compiling for Windows](#compiling-for-windows)
+- [Packaging / Release Procedures](#packaging--release-procedures)
+  - [Pre-Release Checks](#pre-release-checks)
+  - [Actual Release](#actual-release)
+
+Development Environment
+-----------------------
+
+OpenBLCMM was developed using [NetBeans](https://netbeans.apache.org/),
+most recently with [NetBeans IDE 16](https://netbeans.apache.org/download/nb16/index.html).
 
 The currently-checked-in project expects a NetBeans Java platform named
 "`JDK_19`" -- you can get to that via NetBeans' `Tools -> Java Platforms`.
@@ -14,11 +25,10 @@ Once the project's been opened up in Netbeans and the `JDK_19` platform is
 available, you should be able to just run it via the GUI -- there'll be a
 green "Play" icon in the main toolbar, or various menu options.
 
-- [Library Bundling](#library-bundling)
-- [Compiling for Windows](#compiling-for-windows)
-- [Packaging / Release Procedures](#packaging--release-procedures)
-  - [Pre-Release Checks](#prerelease-checks)
-  - [Actual Release](#actual-release)
+At time of writing, the most recent NetBeans IDE version is 17, and the latest
+Java is 20.  Those weren't yet officially packaged up for Apocalyptech's
+distro, so we haven't yet moved to those new versions.  I intend to move to
+those versions once we can, though.
 
 Library Bundling
 ----------------
@@ -55,7 +65,8 @@ Compiling for Windows
 
 See the [`windows-processing` directory](windows-processing/) for
 information on compiling the "native" EXE version (and its installer)
-for Windows.
+for Windows.  The Packaging section below does go through many of those
+same steps, too.
 
 Packaging / Release Procedures
 ------------------------------
