@@ -47,41 +47,28 @@ public class Meta {
     public static final String VERSION = "1.3.0-beta.3";
 
     /**
-     * User data directory for storing prefs, extracted data, etc.  We could
-     * almost certainly just use NAME for this, but if the name ever gets
-     * changed to something with a space or special chars or something, it might
-     * be nice to have a "normalized" version for the dir name.
+     * User data directory for storing prefs, extracted data, etc.  If NAME
+     * ever acquires special characters or spaces or whatever, it might be nice
+     * to use a "sanitized" version here.
      */
-    public static final String APP_DATA_DIR_NAME = "OpenBLCMM";
+    public static final String APP_DATA_DIR_NAME = NAME;
 
     /**
      * URL to the project source control.
-     *
-     * We're defining a bunch of URLs here which could, at the moment, be
-     * derived from each other, but I didn't want these to be intrinsically
-     * GitHub-specific.
      */
     public static final String CODE_URL = "https://github.com/BLCM/OpenBLCMM";
 
     /**
      * URL to the project releases.
-     *
-     * We're defining a bunch of URLs here which could, at the moment, be
-     * derived from each other, but I didn't want these to be intrinsically
-     * GitHub-specific.
      */
     // TEMP: Testing out how users find the release-download process
-    //public static final String RELEASES_URL = "https://github.com/BLCM/OpenBLCMM/releases";
+    //public static final String RELEASES_URL = CODE_URL + "/releases";
     public static final String RELEASES_URL = "https://github.com/apocalyptech/OpenBLCMM-TestBed/releases";
 
     /**
      * URL to where to submit bugs, shown on the crash handler dialog.
-     *
-     * We're defining a bunch of URLs here which could, at the moment, be
-     * derived from each other, but I didn't want these to be intrinsically
-     * GitHub-specific.
      */
-    public static final String BUGREPORT_URL = "https://github.com/BLCM/OpenBLCMM/issues";
+    public static final String BUGREPORT_URL = CODE_URL + "/issues";
 
     /**
      * URL to where the app can retrieve the latest version of OpenBLCMM
@@ -90,7 +77,6 @@ public class Meta {
      * for testing purposes; I intend to host it off of github eventually.
      */
     // More testing.  Store the version file right on the github repo, maybe?
-    //public static final String UPDATE_VERSION_URL = "https://apocalyptech.com/scratchpad/openblcmm-latest.txt";
     public static final String UPDATE_VERSION_URL = "https://raw.githubusercontent.com/apocalyptech/OpenBLCMM-TestBed/main/openblcmm-latest.txt";
 
     /**
