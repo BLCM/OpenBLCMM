@@ -61,8 +61,6 @@ TODO
 - Eh, I'm thinking I probably *should* migrate some settings from original
   BLCMM, on first launch.  Would be nice to open up the patch file and have
   file-open history, etc.
-- Should probably add GraalVM/Liberica, Winrun4j, and Inno Setup into our
-  "third-party resources" lists.
 - Figure out allowing the word "set" in value text?  Understand quotes around
   the value, perhaps?
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
@@ -96,26 +94,39 @@ Third-Party Content
 
 OpenBLCMM makes use of the following third party libraries/resources:
 
-- [StidOfficial](https://github.com/StidOfficial)'s [SteamVDF library](https://github.com/StidOfficial/SteamVDF)
-  for some Steam data parsing, available under the GPLv3.
-- [Apache Commons Text](https://commons.apache.org/proper/commons-text/) and
-  [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/), available
-  under the Apache License v2.0.
-- [Xerial](https://github.com/Xerial)'s [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc),
-  available under the Apache License v2.0.
-- [Vincent Durmont](https://github.com/vdurmont)'s [semver4j](https://github.com/vdurmont/semver4j),
-  available under the MIT License.
-- [CommonMark](https://github.com/commonmark)'s [commonmark-java](https://github.com/commonmark/commonmark-java),
-  available under the 2-clause BSD License.
-- Some icons from [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
-  [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under
-  CC BY 3.0.
-- An icon from [Fathema Khanom](https://www.flaticon.com/authors/fathema-khanom)'s
-  [User Interface set](https://www.flaticon.com/packs/user-interface-2899), available
-  under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
-- An icon from [Smashicons](https://www.flaticon.com/authors/smashicons)'
-  [Essential Collection set](https://www.flaticon.com/packs/essential-collection),
-  available under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
+- **Java Libraries:**
+  - [StidOfficial](https://github.com/StidOfficial)'s [SteamVDF library](https://github.com/StidOfficial/SteamVDF)
+    for some Steam data parsing, available under the GPLv3.
+  - [Apache Commons Text](https://commons.apache.org/proper/commons-text/) and
+    [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/), available
+    under the Apache License v2.0.
+  - [Xerial](https://github.com/Xerial)'s [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc),
+    available under the Apache License v2.0.
+  - [Vincent Durmont](https://github.com/vdurmont)'s [semver4j](https://github.com/vdurmont/semver4j),
+    available under the MIT License.
+  - [CommonMark](https://github.com/commonmark)'s [commonmark-java](https://github.com/commonmark/commonmark-java),
+    available under the 2-clause BSD License.
+- **Resources**:
+  - Some icons from [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
+    [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under
+    CC BY 3.0.
+  - An icon from [Fathema Khanom](https://www.flaticon.com/authors/fathema-khanom)'s
+    [User Interface set](https://www.flaticon.com/packs/user-interface-2899), available
+    under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
+  - An icon from [Smashicons](https://www.flaticon.com/authors/smashicons)'
+    [Essential Collection set](https://www.flaticon.com/packs/essential-collection),
+    available under [Flaticon's Free License](https://www.flaticon.com/free-icons/ui).
+- **Toolset**:
+  - [Apache Netbeans](https://netbeans.apache.org/) is the development environment
+  - [GraalVM Native Image](https://www.graalvm.org/22.0/reference-manual/native-image/) /
+    [Liberica NIK](https://bell-sw.com/liberica-native-image-kit/( provides
+    Windows EXE compilation
+  - [Visual Studio](https://visualstudio.microsoft.com/) provides the C++
+    compiler for GraalVM/Liberica
+  - [Winrun4j](https://github.com/poidasmith/winrun4j) provides a utility to
+    set icons on Windows EXEs
+  - [Inno Setup](https://jrsoftware.org/isinfo.php) is used to create the
+    Windows installer
 
 License
 =======

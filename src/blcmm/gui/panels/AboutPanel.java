@@ -56,6 +56,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -164,7 +165,7 @@ public final class AboutPanel extends JPanel {
                 // anchor
                 GridBagConstraints.CENTER,
                 // fill
-                GridBagConstraints.NONE,
+                GridBagConstraints.HORIZONTAL,
                 // insets
                 new Insets(5, 10, 5, 10),
                 // pad (x, y)
@@ -179,7 +180,7 @@ public final class AboutPanel extends JPanel {
             buttons.add(this.createURLButton("Download " + Meta.NAME + " v" + newVersion, Meta.RELEASES_URL));
         }
         JButton clipButton = new JButton();
-        clipButton.setText("<html><b>Copy Info to Clipboard</b></html>");
+        clipButton.setText("<html><b><nobr>Copy Info to Clipboard</nobr></b></html>");
         clipButton.setToolTipText("Copy Info to Clipboard");
         clipButton.setOpaque(true);
         clipButton.addActionListener(new ActionListener() {
@@ -200,7 +201,7 @@ public final class AboutPanel extends JPanel {
         buttons.add(clipButton);
 
         JButton logButton = new JButton();
-        logButton.setText("<html><b>Open Log Dir</b></html>");
+        logButton.setText("<html><b><nobr>Open Log Dir</nobr></b></html>");
         logButton.setToolTipText("Open Log Dir");
         logButton.setOpaque(true);
         logButton.addActionListener(new ActionListener() {
@@ -267,7 +268,7 @@ public final class AboutPanel extends JPanel {
                 // anchor
                 GridBagConstraints.CENTER,
                 // fill
-                GridBagConstraints.VERTICAL,
+                GridBagConstraints.BOTH,
                 // insets
                 new Insets(5, 20, 5, 20),
                 // pad (x, y)
@@ -312,15 +313,28 @@ public final class AboutPanel extends JPanel {
         thirdTabPanel.setBorder(BorderFactory.createEtchedBorder());
         JLabel thirdTabLabel = new JLabel(
                 "<html>" + Meta.NAME + " makes use of the following third-party libraries/resources:<br/>"
+                + "<br/>"
+                + "<b>Java Libraries</b><br/>"
                 + "<ul>"
                 + "<li>StidOfficial's 'SteamVDF' library for some Steam data parsing, available under the GPLv3</li>"
                 + "<li>Apache Commons Text and Apache Commons Lang, available under the Apache License v2.0</li>"
                 + "<li>Xerial's sqlite-jdbc, available under the Apache License v2.0</li>"
                 + "<li>Vincent Durmont's semver4j, available under the MIT License</li>"
                 + "<li>CommonMark's commonmark-java, available under the 2-clause BSD License</li>"
+                + "</ul>"
+                + "<b>Resources</b><br/>"
+                + "<ul>"
                 + "<li>Some icons from Dave Gandy's Font Awesome set, available under CC BY 3.0</li>"
                 + "<li>An icon from Fathema Khanom's User Interface set, available under Flaticon's Free License</li>"
                 + "<li>An icon from Smashicons' Essential Collection set, available under Flaticon's Free License</li>"
+                + "</ul>"
+                + "<b>Toolset</b><br/>"
+                + "<ul>"
+                + "<li>Apache Netbeans is the development environment</li>"
+                + "<li>GraalVM Native Image / Liberica NIK provides Windows EXE compilation</li>"
+                + "<li>Visual Studio provides the C++ compiler for GraalVM/Liberica</li>"
+                + "<li>Winrun4j provides a utility to set icons on Windows EXEs</li>"
+                + "<li>Inno Setup is used to create the Windows installer</li>"
                 + "</ul>"
         );
         thirdTabPanel.add(thirdTabLabel, new GridBagConstraints(
@@ -338,7 +352,9 @@ public final class AboutPanel extends JPanel {
                 new Insets(5, 5, 5, 5),
                 // pad (x, y)
                 0, 0));
-        tabs.add("Third-Party Resources", thirdTabPanel);
+        JScrollPane thirdScroller = new JScrollPane();
+        thirdScroller.setViewportView(thirdTabPanel);
+        tabs.add("Third-Party Resources", thirdScroller);
 
         // Donate Tab
         JPanel donateTabPanel = new JPanel();
@@ -423,7 +439,7 @@ public final class AboutPanel extends JPanel {
         JButton button = new JButton();
         //Color linkColor = ThemeManager.getColor(ThemeManager.ColorType.UITextLink);
         //button.setText("<html><font color=\"" + Integer.toHexString(linkColor.getRGB()).substring(2) + "\"><u>" + linkText + "</u></font></html>");
-        button.setText("<html><b>" + linkText + "</b></html>");
+        button.setText("<html><b><nobr>" + linkText + "</nobr></b></html>");
         button.setOpaque(true);
         button.setToolTipText(remoteURL);
         button.addActionListener(new ActionListener() {
