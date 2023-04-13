@@ -23,7 +23,9 @@ OpenBLCMM Changelog
   - "Invert Mod" functionality
 - Object Explorer tweaks:
   - Combined all data into a single data package, and included dumps of all
-    classes historically omitted from the OE data set.
+    classes historically omitted from the OE data set (with the exceptions of
+    `AnimSequence`, `GBXNavMesh`, `GFxRawData`, `SwfMovie`, and `Terrain`
+    objects, which are effectively un-dumpable with our current methods).
   - OE has its own game selection dropdown, which is completely separate from
     the main window's dropdown.  This replaces the former game-notification
     icon in the main panel area in OE.
