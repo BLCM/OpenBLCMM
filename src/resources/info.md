@@ -11,9 +11,11 @@ are requested.
   bit to just say "Donate" and to make the button less wide.  (Then edited
   in Gimp to make the background transparent.)
 
-* `Icon.png` / `openblcmm_icon.xcf` - Currently just a placeholder icon for
-  BLCMM.  Constructed by apocalyptech in Gimp in a rather crude fashion.
-  I'm hoping to get a much better one in place at some point.
+* `Icon.png` - OpenBLCMM's app icon, unless someone is willing to create
+  and submit something better.  Constructed by apocalyptech in Gimp in a
+  rather crude fashion.  The source Gimp files (and a couple of gradients
+  used while playing with it) can be found in the top-level `resources/icon`
+  directory.
 
 * `Qmark.png` - Free-to-use icon from [Fathema Khanom](https://www.flaticon.com/authors/fathema-khanom)'s
   [User Interface set](https://www.flaticon.com/packs/user-interface-2899), available
