@@ -58,6 +58,10 @@ That doc may get moved elsewhere eventually, perhaps to the BLCMods wiki.
 TODO
 ====
 
+- Focus issues: for at least some people, actions like closing an edit window
+  can leave focus in a weird state where the main window isn't active, even
+  though it's brought to the front.  Users may need to click on some *other*
+  window and then back to OpenBLCMM to re-activate.
 - Figure out allowing the word "set" in value text?  Understand quotes around
   the value, perhaps?
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/
@@ -70,6 +74,11 @@ TODO
   feeling pretty rusty in Java, so having the IDE is pretty nice, but
   it'd undeniably be kind of nice to be rid of it.
 - Allow multiple OE windows?
+- Make `say` and `exec` into proper commands with selection support.  Also
+  work out a way to allow command-extension commands to have that kind of
+  support as well.  Perhaps a new metadata parameter in the "header" so that
+  imported mods add to it?  That or just another checkbox on the edit
+  screen, sort of like hotfixes do currently.
 
 ### Longer-term ideas, or stuff that I'm not super sure about
 
