@@ -283,7 +283,6 @@ public class Options extends OptionsBase {
         // doesn't really matter here.
         // Has the user seen the export warning?
         this.registerOption(new BooleanOption(this, OptionNames.hasSeenExportWarning.toString(), false));
-        this.registerOption(new BooleanOption(this, OptionNames.leafSelectionAllowed.toString(), false));
 
         // Show confirmation when checking partially checked categories?
         this.registerOption(new BooleanOption(this, OptionNames.showConfirmPartialCategory.toString(), true));
