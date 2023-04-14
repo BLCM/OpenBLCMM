@@ -29,7 +29,7 @@
 package blcmm.utilities.options;
 
 import blcmm.gui.panels.ToolSettingsPanel;
-import blcmm.utilities.Options;
+import blcmm.utilities.OptionsBase;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -49,11 +49,12 @@ public class LongOption extends Option<Long> {
      * Constructor for an integer option which will not be displayed on the
      * settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      */
-    public LongOption(String name, long defaultData) {
-        super(name, defaultData);
+    public LongOption(OptionsBase optionsObj, String name, long defaultData) {
+        super(optionsObj, name, defaultData);
         this.minValue = -1;
         this.maxValue = -1;
     }
@@ -62,6 +63,7 @@ public class LongOption extends Option<Long> {
      * Constructor for an integer option. If displayDesc is null, the option
      * will not be shown on the settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
@@ -71,7 +73,8 @@ public class LongOption extends Option<Long> {
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
      */
-    public LongOption(String name,
+    public LongOption(OptionsBase optionsObj,
+            String name,
             long defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -79,7 +82,7 @@ public class LongOption extends Option<Long> {
             long maxValue,
             String callback,
             String tooltip) {
-        super(name, defaultData, shownPanel, displayDesc, callback, tooltip);
+        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
         this.minValue = minValue;
         this.maxValue = maxValue;
     }
@@ -156,7 +159,7 @@ public class LongOption extends Option<Long> {
         spin.addChangeListener(ce -> {
             setData((long) spin.getValue());
             panel.callBack(option, spin);
-            Options.INSTANCE.save();
+            optionsObj.save();
         });
         return spin;
     }

@@ -29,6 +29,7 @@
 package blcmm.utilities.options;
 
 import blcmm.gui.panels.ToolSettingsPanel;
+import blcmm.utilities.OptionsBase;
 import javax.swing.JComponent;
 
 /**
@@ -39,7 +40,7 @@ import javax.swing.JComponent;
  * @author apocalyptech
  */
 public abstract class Option<T> {
-    
+
     // Arguably this should be in blcmm.utilities.Options instead
     public enum Shown {
         NONE,
@@ -53,7 +54,9 @@ public abstract class Option<T> {
     private T data;
 
     private T defaultData;
-    
+
+    private boolean setData;
+
     protected Shown shownPanel;
 
     private final String displayDesc;
@@ -64,20 +67,24 @@ public abstract class Option<T> {
 
     private final String setupCallback;
 
+    protected final OptionsBase optionsObj;
+
     /**
      * Constructor for an option which won't be displayed on the settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key of the option
      * @param defaultData Default data for the option
      */
-    public Option(String name, T defaultData) {
-        this(name, defaultData, Shown.NONE, null, null, null, null);
+    public Option(OptionsBase optionsObj, String name, T defaultData) {
+        this(optionsObj, name, defaultData, Shown.NONE, null, null, null, null);
     }
 
     /**
      * Constructor for an option. If displayDesc is null, the option will not be
      * shown on the settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key of the option
      * @param defaultData Default data for the option
      * @param shownPanel The panel on which to show this option
@@ -86,16 +93,18 @@ public abstract class Option<T> {
      * null to not have a callback.
      * @param tooltip Tooltip to show on the control
      */
-    public Option(String name, T defaultData,
+    public Option(OptionsBase optionsObj,
+            String name, T defaultData,
             Shown shownPanel, String displayDesc,
             String callback, String tooltip) {
-        this(name, defaultData, shownPanel, displayDesc, callback, tooltip, null);
+        this(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip, null);
     }
 
     /**
      * Constructor for an option. If displayDesc is null, the option will not be
      * shown on the settings panel.
      *
+     * @param options The Options that this Option is a part of
      * @param name Key of the option
      * @param defaultData Default data for the option
      * @param shownPanel The panel on which to show this option
@@ -106,15 +115,18 @@ public abstract class Option<T> {
      * @param setupCallback A callback function to call while setting up the
      * option. Pass null to let it be set up as usual.
      */
-    public Option(String name, T defaultData,
+    public Option(OptionsBase options,
+            String name, T defaultData,
             Shown shownPanel, String displayDesc,
             String callback, String tooltip,
             String setupCallback) {
+        this.optionsObj = options;
         this.name = name;
         this.defaultData = defaultData;
         this.shownPanel = shownPanel;
         this.displayDesc = displayDesc;
         this.data = defaultData;
+        this.setData = false;
         this.callback = callback;
         this.tooltip = tooltip;
         this.setupCallback = setupCallback;
@@ -179,6 +191,7 @@ public abstract class Option<T> {
      */
     public void setData(T newData) {
         this.data = newData;
+        this.setData = true;
     }
 
     /**
@@ -195,6 +208,19 @@ public abstract class Option<T> {
      */
     public void restoreDefault() {
         this.setData(this.defaultData);
+        this.setData = false;
+    }
+
+    /**
+     * Returns whether or not this option has been set (by something like
+     * an options file or user choice).  Note that the value might still be
+     * set to the default value, in the case that a user let the defaults
+     * get saved out to the options file.
+     *
+     * @return True if our value has been set somehow, or false otherwise.
+     */
+    public boolean hasSetData() {
+        return this.setData;
     }
 
     /**

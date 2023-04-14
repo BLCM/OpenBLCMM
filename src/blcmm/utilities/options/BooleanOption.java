@@ -29,7 +29,7 @@
 package blcmm.utilities.options;
 
 import blcmm.gui.panels.ToolSettingsPanel;
-import blcmm.utilities.Options;
+import blcmm.utilities.OptionsBase;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
@@ -45,17 +45,19 @@ public class BooleanOption extends Option<Boolean> {
      * Constructor for a boolean option which will not be displayed on the
      * settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      */
-    public BooleanOption(String name, boolean defaultData) {
-        super(name, defaultData);
+    public BooleanOption(OptionsBase optionsObj, String name, boolean defaultData) {
+        super(optionsObj, name, defaultData);
     }
 
     /**
      * Constructor for a boolean option. If displayDesc is null, the option will
      * not be shown on the settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
@@ -63,13 +65,14 @@ public class BooleanOption extends Option<Boolean> {
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
      */
-    public BooleanOption(String name,
+    public BooleanOption(OptionsBase optionsObj,
+            String name,
             boolean defaultData,
             Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip) {
-        super(name, defaultData, shownPanel, displayDesc, callback, tooltip);
+        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
     }
 
     /**
@@ -110,7 +113,7 @@ public class BooleanOption extends Option<Boolean> {
         check.addActionListener(ae -> {
             setData(check.isSelected());
             panel.callBack(option, check);
-            Options.INSTANCE.save();
+            optionsObj.save();
         });
         return check;
     }

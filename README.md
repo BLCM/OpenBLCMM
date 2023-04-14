@@ -58,9 +58,6 @@ That doc may get moved elsewhere eventually, perhaps to the BLCMods wiki.
 TODO
 ====
 
-- Eh, I'm thinking I probably *should* migrate some settings from original
-  BLCMM, on first launch.  Would be nice to open up the patch file and have
-  file-open history, etc.
 - Figure out allowing the word "set" in value text?  Understand quotes around
   the value, perhaps?
 - Options for changing object-opening behavior (ctrl/alt/shift-click, single/

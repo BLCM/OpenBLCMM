@@ -32,6 +32,7 @@ import blcmm.gui.MainGUI;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import blcmm.utilities.AutoBackupper;
+import blcmm.utilities.BLCMMImportOptions;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.OSInfo;
 import blcmm.utilities.Options;
@@ -188,6 +189,11 @@ public class Startup {
             GlobalLogger.log("First-time startup detected");
             MainGUI.setTheme(ThemeManager.getDefaultTheme());
             Options.INSTANCE.setShowHotfixNames(false);
+
+            // If we're not in creator mode, also try to import original BLCMM settings
+            if (!Utilities.isCreatorMode()) {
+                BLCMMImportOptions.transferToNewOptions(Options.INSTANCE);
+            }
         } else {
             Utilities.populateFileHistory(PatchType.BL2);
             MainGUI.setTheme(Options.INSTANCE.getTheme());

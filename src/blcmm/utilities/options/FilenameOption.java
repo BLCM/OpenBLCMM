@@ -30,7 +30,7 @@ package blcmm.utilities.options;
 
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.panels.ToolSettingsPanel;
-import blcmm.utilities.Options;
+import blcmm.utilities.OptionsBase;
 import blcmm.utilities.Utilities;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -49,17 +49,19 @@ public class FilenameOption extends Option<String> {
      * Constructor for a string option which will not be displayed on the
      * settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      */
-    public FilenameOption(String name, String defaultData) {
-        super(name, defaultData);
+    public FilenameOption(OptionsBase optionsObj, String name, String defaultData) {
+        super(optionsObj, name, defaultData);
     }
 
     /**
      * Constructor for a string option. If displayDesc is null, the option will
      * not be shown on the settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
@@ -67,13 +69,14 @@ public class FilenameOption extends Option<String> {
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
      */
-    public FilenameOption(String name,
+    public FilenameOption(OptionsBase optionsObj,
+            String name,
             String defaultData,
             Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip) {
-        super(name, defaultData, shownPanel, displayDesc, callback, tooltip);
+        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
     }
 
     /**
@@ -116,7 +119,7 @@ public class FilenameOption extends Option<String> {
                 File file = fc.getSelectedFile();
                 setData(file.getAbsolutePath());
                 panel.callBack(option, but);
-                Options.INSTANCE.save();
+                optionsObj.save();
             }
         });
         return but;

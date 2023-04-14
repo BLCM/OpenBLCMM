@@ -29,7 +29,7 @@
 package blcmm.utilities.options;
 
 import blcmm.gui.panels.ToolSettingsPanel;
-import blcmm.utilities.Options;
+import blcmm.utilities.OptionsBase;
 import blcmm.utilities.StringTable;
 import java.awt.Component;
 import java.util.Arrays;
@@ -56,6 +56,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      * Constructor for a boolean option. If displayDesc is null, the option will
      * not be shown on the settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
@@ -65,7 +66,8 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      * @param options The possible options to choose from
      * @param converter a converter to go from String to the datatype.
      */
-    public SelectionOption(String name,
+    public SelectionOption(OptionsBase optionsObj,
+            String name,
             O defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -73,13 +75,14 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             String tooltip,
             O[] options,
             OptionDataConverter<O> converter) {
-        this(name, defaultData, shownPanel, displayDesc, callback, tooltip, null, options, converter);
+        this(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip, null, options, converter);
     }
 
     /**
      * Constructor for a boolean option. If displayDesc is null, the option will
      * not be shown on the settings panel.
      *
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
@@ -91,7 +94,8 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      * @param options The possible options to choose from
      * @param converter a converter to go from String to the datatype.
      */
-    public SelectionOption(String name,
+    public SelectionOption(OptionsBase optionsObj,
+            String name,
             O defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -100,7 +104,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             String setupCallback,
             O[] options,
             OptionDataConverter<O> converter) {
-        super(name, defaultData, shownPanel, displayDesc, callback, tooltip, setupCallback);
+        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip, setupCallback);
         this.options = options;
         this.converter = converter;
     }
@@ -142,12 +146,13 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
         box.addItemListener(ie -> {
             setData((O) box.getSelectedItem());
             panel.callBack(option, box);
-            Options.INSTANCE.save();
+            optionsObj.save();
         });
         return box;
     }
 
-    public static SelectionOption createStringSelectionOption(String name,
+    public static SelectionOption createStringSelectionOption(OptionsBase optionsObj,
+            String name,
             String defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -155,7 +160,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             String tooltip,
             StringTable table) {
         StringSelectionOptionDataConverter conv = new StringSelectionOptionDataConverter(defaultData, Arrays.asList(table.keySet().toArray(new String[0])));
-        SelectionOption res = new SelectionOption(name, conv.def, shownPanel, displayDesc, callback, tooltip, conv.options.toArray(new StringSelectionOptionData[0]), conv) {
+        SelectionOption res = new SelectionOption(optionsObj, name, conv.def, shownPanel, displayDesc, callback, tooltip, conv.options.toArray(new StringSelectionOptionData[0]), conv) {
             @Override
             public JComponent getGUIComponent(ToolSettingsPanel panel) {
                 JComboBox guiComponent = (JComboBox) super.getGUIComponent(panel);
