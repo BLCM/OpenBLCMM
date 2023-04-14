@@ -119,7 +119,7 @@ OpenBLCMM makes use of the following third party libraries/resources:
 - **Toolset**:
   - [Apache Netbeans](https://netbeans.apache.org/) is the development environment
   - [GraalVM Native Image](https://www.graalvm.org/22.0/reference-manual/native-image/) /
-    [Liberica NIK](https://bell-sw.com/liberica-native-image-kit/( provides
+    [Liberica NIK](https://bell-sw.com/liberica-native-image-kit/) provides
     Windows EXE compilation
   - [Visual Studio](https://visualstudio.microsoft.com/) provides the C++
     compiler for GraalVM/Liberica
