@@ -23,6 +23,7 @@ for dirname in [
 included_files_exe = [
         '../README.md',
         '../LICENSE.txt',
+        '../src/CHANGELOG.md',
         ]
 included_files_jar = included_files_exe + [
         f'{app_name}.jar',

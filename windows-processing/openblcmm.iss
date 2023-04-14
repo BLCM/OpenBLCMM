@@ -57,6 +57,7 @@ Source: "..\store\lcms.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "openblcmm.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\src\CHANGELOG.md"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
