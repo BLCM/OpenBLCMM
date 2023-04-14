@@ -10,6 +10,10 @@ call native-image -jar OpenBLCMM.jar
 echo Setting icon on EXE
 RCEDIT64.exe /I OpenBLCMM.exe ..\windows-processing\openblcmm.ico
 
+echo Setting to Windows Subsystem (avoids cmd.exe-window spawning)
+Rem See https://github.com/oracle/graal/issues/2256
+EDITBIN /SUBSYSTEM:WINDOWS OpenBLCMM.exe
+
 echo Collecting into subdir
 rd compiled /s /q
 md compiled
