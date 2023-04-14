@@ -514,7 +514,7 @@
   "methods":[
     {"name":"handleDropMessage","parameterTypes":["java.awt.Component","int","int","int","int","long[]","long"] }, 
     {"name":"handleEnterMessage","parameterTypes":["java.awt.Component","int","int","int","int","long[]","long"] }, 
-    {"name":"handleExitMessage","parameterTypes":["java.awt.Component","long"] },
+    {"name":"handleExitMessage","parameterTypes":["java.awt.Component","long"] }, 
     {"name":"handleMotionMessage","parameterTypes":["java.awt.Component","int","int","int","int","long[]","long"] }
   ]
 },
@@ -652,6 +652,10 @@
 {
   "name":"sun.awt.windows.WGlobalCursorManager",
   "methods":[{"name":"nativeUpdateCursor","parameterTypes":["java.awt.Component"] }]
+},
+{
+  "name":"sun.awt.windows.WInputMethod",
+  "methods":[{"name":"inquireCandidatePosition","parameterTypes":[] }]
 },
 {
   "name":"sun.awt.windows.WObjectPeer",
