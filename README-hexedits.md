@@ -134,9 +134,12 @@ to the 100th entry.
 
 Search for this pattern:
 
-    8B 40 04 83 F8 64 0F ?? 7B 00 00 00 8B 8D 9C EE FF FF 83 C0 9D 50 68
+    8B 40 04 83 F8 64 ?? ?? ?? ?? ?? ?? 8B 8D 9C EE FF FF 83 C0 9D 50 68
 
-The `??` byte is ordinarily `8C` -- replace it with `85`.
+The question-marked bytes are ordinarily `0F 8C 7B 00 00 00` -- replace
+them with `EB 7F 90 90 90 90`.  (This is a better hexedit than the original
+one.  The original just replaced the `8C` with `85`, but had the downside
+that the message would be printed if the array had *exactly* 100 items.)
 
 ### Remove Message - BL2 (Mac)
 
@@ -189,7 +192,8 @@ Search for this pattern:
 
     ?? 05 B9 64 00 00 00 3B F9 0F 8D
 
-The `??` byte is ordinarily `7E` -- replace it with `75`.
+The `??` byte is ordinarily `7E` -- replace it with `EB`.  (This is a more
+proper edit than the original, which replaced it with `75` instead.)
 
 ### Remove Limit - BL2 and TPS (Mac)
 

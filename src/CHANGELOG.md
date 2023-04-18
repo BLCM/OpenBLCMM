@@ -63,6 +63,7 @@ OpenBLCMM Changelog
 - INI file tweaks moved to new "INI Tweaks" dialog
 - Hex Edits moved to new "Legacy Hex Edits" dialog -- note that hex editing
   is unnecessary nowadays.  PythonSDK is the preferred method for enabling mods.
+- Improved array-limit message removal hexedit for BL2, courtesy apple1417
 - Added new-version notification to main application.  This can be toggled off
   in the settings if you don't want to be bothered by it!
 - Added "allow toggling individual statements" option to settings, and improved

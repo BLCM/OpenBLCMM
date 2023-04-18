@@ -81,9 +81,9 @@ public class HexDictionary {
 
     //Array limit removal
     private static final HexEdit WINDOWS_BL2_ARRAYLIMIT_MESSAGE = new WildCardHexEdit(//
-            "8B 40 04 83 F8 64 0F ?? ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? 83 C0 9D 50 68",
-            "8C 7B 00 00 00 9C EE FF FF",
-            "85 7B 00 00 00 9C EE FF FF");
+            "8B 40 04 83 F8 64 ?? ?? ?? ?? ?? ?? 8B 8D ?? ?? ?? ?? 83 C0 9D 50 68",
+            "0F 8C 7B 00 00 00 9C EE FF FF",
+            "EB 7F 90 90 90 90 9C EE FF FF");
 
     private static final HexEdit WINDOWS_TPS_ARRAYLIMIT_MESSAGE = new WildCardHexEdit(//
             "8B 40 04 83 F8 64 ?? ?? 8B 8D ?? ?? ?? ?? 83 C0 9D 50 68",
@@ -94,7 +94,7 @@ public class HexDictionary {
             "05 B9 64 00 00 00 3B F9 0F 8D",
             -1,
             "7E",
-            "75");
+            "EB");
 
     private static final HexEdit MAC_TPS_ARRAYLIMIT_MESSAGE = new PatternHexEdit(//
             "80 FF FF 8B 44 08 04 83 F8 64 89 C1 BA 64 00 00 00",
