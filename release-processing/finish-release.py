@@ -6,7 +6,69 @@ import sys
 import shutil
 import subprocess
 
+# Some control vars
 app_name = 'OpenBLCMM'
+release_openblcmm = 'https://github.com/apocalyptech/OpenBLCMM-TestBed/releases'
+release_data = 'https://github.com/apocalyptech/OpenBLCMM-Data-TestBed/releases'
+supported_java = '8, 11, 17, 19, and 20'
+included_files_base = [
+        '../README.md',
+        '../LICENSE.txt',
+        '../src/CHANGELOG.md',
+        ]
+
+class PureJava:
+    """
+    Class to contain a bunch of info about "pure" Java releases.  These are
+    all handled pretty similarly, and lets us do various looping.
+    """
+
+    def __init__(self, os_name, files, launch_text,
+            do_header=True,
+            java_text='We recommend [Adoptium Temurin](https://adoptium.net/)',
+            extra_points=None,
+            ):
+        self.os_name = os_name
+        self.files = files
+        self.launch_text = launch_text
+        self.do_header = do_header
+        self.zipfile = None
+        self.java_text = java_text
+        if extra_points is None:
+            self.extra_points = []
+        else:
+            self.extra_points = extra_points
+
+# Construct a list of "pure" Java zips that we'll construct.
+pure_javas = [
+        PureJava('Windows',
+            files=included_files_base + [
+                f'{app_name}.jar',
+                '../release-processing/launch_openblcmm.bat',
+                ],
+            launch_text="Launch with `launch_openblcmm.bat` once Java is installed",
+            do_header=False,
+            ),
+        PureJava('Linux',
+            files=included_files_base + [
+                f'{app_name}.jar',
+                '../release-processing/launch_openblcmm.sh',
+                ],
+            launch_text="Launch with `launch_openblcmm.sh` one Java is installed",
+            java_text="Just install via your distro's package manager",
+            ),
+        PureJava('Mac',
+            files=included_files_base + [
+                f'{app_name}.jar',
+                '../release-processing/osx-app/__MACOSX',
+                '../release-processing/osx-app/OpenBLCMM.app',
+                ],
+            launch_text="Launch by doubleclicking on `OpenBLCMM.app`",
+            extra_points=[
+                "**Note:** This launcher is slightly experimental!  Feedback on how well it works is appreciated!",
+                ],
+            ),
+        ]
 
 # See if we're being run from a "known" location
 if os.path.exists('finish-release.py') and os.path.exists('launch_openblcmm.sh'):
@@ -20,28 +82,9 @@ for dirname in [
         ]:
     if not os.path.isdir(dirname):
         raise RuntimeError(f'No `{dirname}` directory found')
-included_files_base = [
-        '../README.md',
-        '../LICENSE.txt',
-        '../src/CHANGELOG.md',
-        ]
-included_files_win_jar = included_files_base + [
-        f'{app_name}.jar',
-        '../release-processing/launch_openblcmm.bat',
-        ]
-included_files_mac_jar = included_files_base + [
-        f'{app_name}.jar',
-        '../release-processing/osx-app/__MACOSX',
-        '../release-processing/osx-app/OpenBLCMM.app',
-        ]
-included_files_linux_jar = included_files_base + [
-        f'{app_name}.jar',
-        '../release-processing/launch_openblcmm.sh',
-        ]
-total_files = set(included_files_base) \
-        | set(included_files_win_jar) \
-        | set(included_files_mac_jar) \
-        | set(included_files_linux_jar)
+total_files = set(included_files_base)
+for pj in pure_javas:
+    total_files |= set(pj.files)
 for filename in sorted(total_files):
     if not os.path.exists(filename):
         raise RuntimeError(f'No `{filename}` file found')
@@ -87,39 +130,62 @@ to_report = [installer]
 # Zip up the non-installer EXE version
 print('Creating non-installer EXE Zip...')
 base_win_zip = f'{app_name}-{version}-Windows'
+full_win_zip = f'{base_win_zip}.zip'
 shutil.move('compiled', base_win_zip)
 for filename in included_files_base:
     shutil.copy2(filename, base_win_zip)
 subprocess.run(['zip', '-r',
-    f'{base_win_zip}.zip',
+    full_win_zip,
     base_win_zip,
     ])
 print('')
-to_report.append(f'{base_win_zip}.zip')
+to_report.append(full_win_zip)
 
 # Zip up the "native" Java Jar versions
-for os_name, files in [
-        ('Windows', included_files_win_jar),
-        ('Mac', included_files_mac_jar),
-        ('Linux', included_files_linux_jar),
-        ]:
-    print(f'Creating {os_name} Java Zip...')
-    base_java_zip = f'{app_name}-{version}-Java-{os_name}'
+for pj in pure_javas:
+    print(f'Creating {pj.os_name} Java Zip...')
+    base_java_zip = f'{app_name}-{version}-Java-{pj.os_name}'
+    pj.zipfile = f'{base_java_zip}.zip'
     os.makedirs(base_java_zip)
-    for filename in files:
+    for filename in pj.files:
         if os.path.isdir(filename):
             _, last_part = os.path.split(filename)
             shutil.copytree(filename, os.path.join(base_java_zip, last_part))
         else:
             shutil.copy2(filename, base_java_zip)
     subprocess.run(['zip', '-r',
-        f'{base_java_zip}.zip',
+        pj.zipfile,
         base_java_zip,
         ])
     print('')
-    to_report.append(f'{base_java_zip}.zip')
+    to_report.append(pj.zipfile)
+
+# Output our release text to slap in the 'releases' area
+print('Releases Link Area:')
+print('')
+print('### Windows')
+print('')
+print(f'- **Installer (Recommended!)** - [`{installer}`]({release_openblcmm}/download/v{version}/{installer})')
+print('  - This is the easiest to get going!  You\'ll also have a start menu entry, and optionally a desktop icon.')
+print(f'- **Zipfile EXE** - [`{full_win_zip}`]({release_openblcmm}/download/v{version}/{full_win_zip})')
+print('  - If you don\'t want to use an installer, this is the second-easiest.  Just unzip wherever you like and doubleclick on `OpenBLCMM.exe` to run!')
+for pj in pure_javas:
+    if pj.do_header:
+        print(f'### {pj.os_name}')
+        print('')
+    print(f'- **Pure Java** - [`{pj.zipfile}`]({release_openblcmm}/download/v{version}/{pj.zipfile})')
+    print(f'  - This version *requires* that Java is installed, and will *not* install Java for you.  {pj.java_text}.  Supported Java versions are: {supported_java}.  {pj.launch_text}.')
+    for point in pj.extra_points:
+        print(f'  - {point}')
+    print('')
+print('### Object Explorer Data Packs')
+print('')
+print(f'- **Datapack Releases**: {release_data}')
+print('  - Datapacks must now be downloaded manually.  Download the ones you want and store them in the same directory as `OpenBLCMM.exe` or `OpenBLCMM.jar`.  The app will see them on the next startup!')
+print('')
 
 # Display the results
+print('File uploads:')
 print('')
 subprocess.run(['ls', '-l', *to_report])
 print('')

@@ -136,15 +136,18 @@ section.
     1. The `store/compiled` directory
     2. `store/OpenBLCMM-<version>-Installer.exe`
 8. Back on Linux, run `release-processing/finish-release.py`
-    1. This will create `store/OpenBLCMM-<version>-Windows.zip` and
-       `store/OpenBLCMM-<version>-Java.zip`
-    2. Doublecheck the contents of those two.  The "Windows" one should have the
-       EXE, ten DLLs, and a README and LICENSE file.  The "Java" one should have
-       the Jarfile, README, LICENSE, and two launcher scripts (one batch, one shell).
-9. Create a new github release and upload all three packaged releases:
+    1. This will create `store/OpenBLCMM-<version>-Windows.zip` and a bunch of
+       `store/OpenBLCMM-<version>-Java-<OS>.zip` files
+    2. Doublecheck the contents of those.  The "Windows" one should have the
+       EXE, ten DLLs, and a README and LICENSE file.  The various "Java" ones
+       should have the Jarfile, README, LICENSE, and whatever OS-specific launch
+       scripts are necessary.
+9. Create a new github release and upload all five packaged releases:
     1. `store/OpenBLCMM-<version>-Installer.exe`
     2. `store/OpenBLCMM-<version>-Windows.zip`
-    3. `store/OpenBLCMM-<version>-Java.zip`
+    3. `store/OpenBLCMM-<version>-Java-Windows.zip`
+    4. `store/OpenBLCMM-<version>-Java-Linux.zip`
+    5. `store/OpenBLCMM-<version>-Java-Mac.zip`
 10. Update `openblcmm-latest.txt` wherever that ends up living For Real.  This is
     what will make existing OpenBLCMM installations report that a new version is
     available.
