@@ -161,19 +161,20 @@ for pj in pure_javas:
     to_report.append(pj.zipfile)
 
 # Output our release text to slap in the 'releases' area
+release_with_version = f'{release_openblcmm}/download/v{version}'
 print('Releases Link Area:')
 print('')
 print('### Windows')
 print('')
-print(f'- **Installer (Recommended!)** - [`{installer}`]({release_openblcmm}/download/v{version}/{installer})')
+print(f'- **Installer (Recommended!)** - [`{installer}`]({release_with_version}/{installer})')
 print('  - This is the easiest to get going!  You\'ll also have a start menu entry, and optionally a desktop icon.')
-print(f'- **Zipfile EXE** - [`{full_win_zip}`]({release_openblcmm}/download/v{version}/{full_win_zip})')
+print(f'- **Zipfile EXE** - [`{full_win_zip}`]({release_with_version}/{full_win_zip})')
 print('  - If you don\'t want to use an installer, this is the second-easiest.  Just unzip wherever you like and doubleclick on `OpenBLCMM.exe` to run!')
 for pj in pure_javas:
     if pj.do_header:
         print(f'### {pj.os_name}')
         print('')
-    print(f'- **Pure Java** - [`{pj.zipfile}`]({release_openblcmm}/download/v{version}/{pj.zipfile})')
+    print(f'- **Pure Java** - [`{pj.zipfile}`]({release_with_version}/{pj.zipfile})')
     print(f'  - This version *requires* that Java is installed, and will *not* install Java for you.  {pj.java_text}.  Supported Java versions are: {supported_java}.  {pj.launch_text}.')
     for point in pj.extra_points:
         print(f'  - {point}')
