@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenBLCMM"
-#define MyAppVersion "1.3.0-beta.3"
+#define MyAppVersion "1.3.0-beta.4"
 #define MyAppPublisher "BLCM"
 #define MyAppURL "https://github.com/BLCM/OpenBLCMM/"
 #define MyAppExeName "OpenBLCMM.exe"
