@@ -58,9 +58,6 @@ That doc may get moved elsewhere eventually, perhaps to the BLCMods wiki.
 TODO
 ====
 
-- Getting "object not found" in OE overwrites the current tab rather than
-  adding a new history element; side-effect of getting rid of the popup.
-  For instance: runtime partlist of `GD_Anemone_Weapons.A_Weapons.AR_Bandit_3_Rare_Alien_Green`
 - Focus issues: for at least some people, actions like closing an edit window
   can leave focus in a weird state where the main window isn't active, even
   though it's brought to the front.  Users may need to click on some *other*

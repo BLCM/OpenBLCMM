@@ -792,6 +792,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         if (dump.ueObject == null) {
             textElement.setText(text);
             currentDump = null;
+            HistoryEntry newHistory = setQueryAndText(options.objectToDump, text);
+            updateBookmarkButton(newHistory);
             return false;
         } else {
             if (collapseArraysToggleButton.isSelected()) {
