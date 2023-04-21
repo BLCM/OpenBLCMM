@@ -20,17 +20,29 @@ for dirname in [
         ]:
     if not os.path.isdir(dirname):
         raise RuntimeError(f'No `{dirname}` directory found')
-included_files_exe = [
+included_files_base = [
         '../README.md',
         '../LICENSE.txt',
         '../src/CHANGELOG.md',
         ]
-included_files_jar = included_files_exe + [
+included_files_win_jar = included_files_base + [
         f'{app_name}.jar',
         '../release-processing/launch_openblcmm.bat',
+        ]
+included_files_mac_jar = included_files_base + [
+        f'{app_name}.jar',
+        '../release-processing/osx-app/__MACOSX',
+        '../release-processing/osx-app/OpenBLCMM.app',
+        ]
+included_files_linux_jar = included_files_base + [
+        f'{app_name}.jar',
         '../release-processing/launch_openblcmm.sh',
         ]
-for filename in included_files_jar:
+total_files = set(included_files_base) \
+        | set(included_files_win_jar) \
+        | set(included_files_mac_jar) \
+        | set(included_files_linux_jar)
+for filename in sorted(total_files):
     if not os.path.exists(filename):
         raise RuntimeError(f'No `{filename}` file found')
 
@@ -70,32 +82,45 @@ if dll_count != 10:
 if other_count != 0:
     raise RuntimeError(f'Invalid other count in `compiled`: {other_count}')
 
+to_report = [installer]
+
 # Zip up the non-installer EXE version
+print('Creating non-installer EXE Zip...')
 base_win_zip = f'{app_name}-{version}-Windows'
 shutil.move('compiled', base_win_zip)
-for filename in included_files_exe:
+for filename in included_files_base:
     shutil.copy2(filename, base_win_zip)
 subprocess.run(['zip', '-r',
     f'{base_win_zip}.zip',
     base_win_zip,
     ])
+print('')
+to_report.append(f'{base_win_zip}.zip')
 
-# Zip up the "native" Java Jar version
-base_java_zip = f'{app_name}-{version}-Java'
-os.makedirs(base_java_zip)
-for filename in included_files_jar:
-    shutil.copy2(filename, base_java_zip)
-subprocess.run(['zip', '-r',
-    f'{base_java_zip}.zip',
-    base_java_zip,
-    ])
+# Zip up the "native" Java Jar versions
+for os_name, files in [
+        ('Windows', included_files_win_jar),
+        ('Mac', included_files_mac_jar),
+        ('Linux', included_files_linux_jar),
+        ]:
+    print(f'Creating {os_name} Java Zip...')
+    base_java_zip = f'{app_name}-{version}-Java-{os_name}'
+    os.makedirs(base_java_zip)
+    for filename in files:
+        if os.path.isdir(filename):
+            _, last_part = os.path.split(filename)
+            shutil.copytree(filename, os.path.join(base_java_zip, last_part))
+        else:
+            shutil.copy2(filename, base_java_zip)
+    subprocess.run(['zip', '-r',
+        f'{base_java_zip}.zip',
+        base_java_zip,
+        ])
+    print('')
+    to_report.append(f'{base_java_zip}.zip')
 
 # Display the results
 print('')
-subprocess.run(['ls', '-l',
-    installer,
-    f'{base_win_zip}.zip',
-    f'{base_java_zip}.zip',
-    ])
+subprocess.run(['ls', '-l', *to_report])
 print('')
 

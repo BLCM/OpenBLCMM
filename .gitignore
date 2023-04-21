@@ -19,3 +19,7 @@
 # OpenBLCMM Data
 blcmm_data_*.jar
 
+# OSX Packaging -- don't want to commit this just yet in case it ends up
+# changing a bunch before we're ready for release.
+/release-processing/osx-app
+
