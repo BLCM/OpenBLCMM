@@ -88,6 +88,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -387,7 +388,11 @@ public final class MainGUI extends ForceClosingJFrame {
     }
 
     /**
-     * Starts up a new thread to check for a new version in the background
+     * Starts up a new thread to check for a new version in the background.
+     * There are plenty of opportunities here for an incorrectly-formatted
+     * version file to break the detection, but we've got the whole thing
+     * wrapped around a very general catch statement, so the worst that should
+     * happen is folks just don't see the new-version notification.
      *
      * @return null
      */
@@ -407,7 +412,33 @@ public final class MainGUI extends ForceClosingJFrame {
                     URLConnection conn = url.openConnection();
                     InputStream stream = conn.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-                    String remoteVersionStr = br.readLine().trim();
+                    String remoteVersionStr = null;
+                    Semver remoteVersion = null;
+                    HashMap <PatchType, DateVersion> dataVersions = new HashMap<>();
+                    String line = br.readLine();
+                    while (line != null) {
+                        line = line.trim();
+                        if (line.isEmpty()) {
+                            continue;
+                        }
+                        String[] parts = line.split(": ", 2);
+                        if (parts.length != 2) {
+                            continue;
+                        }
+                        // This stanza's pretty dumb, but whatever.  Should really be
+                        // looping through PatchType to match on the strings.
+                        if (parts[0].equalsIgnoreCase(Meta.NAME)) {
+                            remoteVersionStr = parts[1];
+                            remoteVersion = new Semver(remoteVersionStr);
+                        } else if (parts[0].equalsIgnoreCase("BL2Data")) {
+                            dataVersions.put(PatchType.BL2, new DateVersion(parts[1]));
+                        } else if (parts[0].equalsIgnoreCase("TPSData")) {
+                            dataVersions.put(PatchType.TPS, new DateVersion(parts[1]));
+                        } else if (parts[0].equalsIgnoreCase("AODKData")) {
+                            dataVersions.put(PatchType.AODK, new DateVersion(parts[1]));
+                        }
+                        line = br.readLine();
+                    }
                     br.close();
                     stream.close();
                     if (MainGUI.INSTANCE.disposed) {
@@ -415,16 +446,32 @@ public final class MainGUI extends ForceClosingJFrame {
                     }
 
                     // Check the versions
-                    Semver thisVersion = new Semver(Meta.VERSION);
-                    Semver remoteVersion = new Semver(remoteVersionStr);
-                    if (remoteVersion.isGreaterThan(thisVersion)) {
-                        GlobalLogger.log("New version detected: " + remoteVersionStr);
-                        ((TimedLabel) timedLabel).putString("version",
-                                Meta.NAME + " v" + remoteVersionStr + " is available!  Check Help > About",
-                                3);
-                        newVersion = remoteVersionStr;
-                    } else {
-                        GlobalLogger.log("No new " + Meta.NAME + " version detected");
+                    if (remoteVersion != null) {
+                        Semver thisVersion = new Semver(Meta.VERSION);
+                        if (remoteVersion.isGreaterThan(thisVersion)) {
+                            GlobalLogger.log("New " + Meta.NAME + " version detected: " + remoteVersionStr);
+                            ((TimedLabel) timedLabel).putString("version",
+                                    Meta.NAME + " v" + remoteVersionStr + " is available!  Check Help > About",
+                                    3);
+                            newVersion = remoteVersionStr;
+                        } else {
+                            GlobalLogger.log("No new " + Meta.NAME + " version detected");
+                        }
+                    }
+                    DataManager dm;
+                    for (PatchType pt : PatchType.values()) {
+                        dm = dmm.getDataManager(pt);
+                        if (dm != null && dataVersions.containsKey(pt) && dataVersions.get(pt) != null) {
+                            DateVersion newVersion = dataVersions.get(pt);
+                            if (newVersion.isGreaterThan(new DateVersion(dm.getDumpVersion()))) {
+                                GlobalLogger.log("New " + pt.name() + " Data version detected: " + newVersion.toString());
+                                ((TimedLabel) timedLabel).putString(pt.name().toLowerCase() + "version",
+                                        pt.name() + " data v" + newVersion.toString() + " is available @ Tools > Download OE Datapacks",
+                                        3);
+                            } else {
+                                GlobalLogger.log("No new " + pt.name() + " Data version detected");
+                            }
+                        }
                     }
 
                 } catch (Exception e) {

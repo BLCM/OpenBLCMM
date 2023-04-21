@@ -165,6 +165,20 @@ public class DataManagerManager {
     }
 
     /**
+     * Returns the specified DataManager (which might be null).
+     *
+     * @param pt The PatchType to retrieve
+     * @return The DataManager, or null
+     */
+    public DataManager getDataManager(PatchType pt) {
+        if (this.dataManagers.containsKey(pt)) {
+            return this.dataManagers.get(pt);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Sets the current PatchType (ie: swap over to using different data)
      *
      * @param newPatchType The new PatchType to get data for
