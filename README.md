@@ -95,6 +95,18 @@ TODO
   referring to global "instance" vars?
 - Purge hotfix "name" field from hotfixes
 
+Contributions
+=============
+
+The Borderlands Community Mod Manager was developed by LightChaosman, and
+the majority of the code in this project remains his!  Many thanks to him
+for opensourcing the core BLCMM code in 2022.  Apocalyptech's taken the recent
+lead in 2023 of building up the OpenBLCMM fork.  Other contributors to both
+BLCMM and OpenBLCMM throughout the years have included: apocalyptech, apple1417,
+Bugworm, c0dycode, FromDarkHell, and ZetaDæmon.  Thanks, too, to the countless
+members of the community who have contributed by testing, providing support,
+and spreading the word.  Apologies to anyone we've missed!
+
 Third-Party Content
 ===================
 

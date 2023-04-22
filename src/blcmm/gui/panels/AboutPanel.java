@@ -286,6 +286,7 @@ public final class AboutPanel extends JPanel {
                 + "<br/>"
                 + "OpenBLCMM is a fully-opensourced version of BLCMM maintained by the BLCMods community (with<br/>"
                 + "apocalyptech as the current lead).  Thanks to LightChaosman for opensourcing the BLCMM core!<br/>"
+                + "Other OpenBLCMM contributions have come from ZetaDæmon and apple1417.  Many thanks!<br/>"
                 + "<br/>"
                 + "Special thanks to everyone who's contributed to the development process, and thanks to the entire<br/>"
                 + "Borderlands modding community for feedback.<br/>"
