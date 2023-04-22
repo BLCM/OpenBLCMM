@@ -91,6 +91,18 @@ public class DataManagerManager {
                 dataStatusNotifier.event("Error initializing: " + e.getMessage(), false);
                 GlobalLogger.log("Error initializing " + type.toString() + " Data Manager: " + e.toString());
                 this.dataManagerStatus.put(type, "Not loaded: " + e.getMessage());
+            } catch (Exception e) {
+                // So someone testing OpenBLCMM on Mac reported an NPE on startup which indicated that
+                // MainGUI's `dmm` was null.  I'm not super sure how that could happen -- I'd have throught
+                // that we'd get an exception in *here*, but perhaps because we're initializing this inside
+                // a SwingWorker, it'd "hide" uncaught Exceptions?  Anyway, if that *is* the case, maybe
+                // this will at least let the app start up, though it would mean that those folks wouldn't
+                // have access to the datalib.  We'll see.
+                this.dataManagers.put(type, null);
+                dataStatusNotifier.event("Error initializing: " + e.getMessage(), false);
+                GlobalLogger.log("Error initializing " + type.toString() + " Data Manager: " + e.toString());
+                GlobalLogger.log(e);
+                this.dataManagerStatus.put(type, "Not loaded: " + e.getMessage());
             }
         }
         this.updateDataManagersSelectedClasses();
