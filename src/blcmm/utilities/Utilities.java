@@ -80,6 +80,12 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 public class Utilities {
 
     private static boolean creatorMode = false;
+    private static String userDir = null;
+    private static String installDirOverride = null;
+
+    static {
+        Utilities.setUserDir(System.getProperty("user.dir"));
+    }
 
     /**
      * Returns true if we're in Creator Mode.  This can be triggered by two
@@ -109,6 +115,43 @@ public class Utilities {
      */
     public static void setCreatorMode() {
         Utilities.creatorMode = true;
+        GlobalLogger.resetLogFolder();
+    }
+
+    /**
+     * Sets our user directory to the specified dir.  Basically just used for
+     * the bundled Mac app, so we don't try to write into the .app dir, or
+     * look for datapacks inside it.  The default user dir is the directory
+     * that Java was launched from (available via the property "user.dir").
+     *
+     * @param newDir The directory to use as a "user" dir.
+     */
+    public static void setUserDir(String newDir) {
+        Utilities.userDir = new File(newDir).getAbsolutePath();
+    }
+
+    /**
+     * Returns our current userDir.  Affects a few things, including some
+     * button shortcuts on the various file dialogs.  Is also used pretty
+     * heavily when in Creator Mode, to know where to write our prefs, logs,
+     * etc.
+     *
+     * @return The current user dir
+     */
+    public static String getUserDir() {
+        return Utilities.userDir;
+    }
+
+    /**
+     * Sets our install-dir override, mostly used for the Mac bundle where
+     * we want to report up a dir from where we'd usually report, since
+     * otherwise we'd be pointing folks inside the .app folder.  The primary
+     * effect of this is allowing OE datapacks to be found outside that dir.
+     *
+     * @param newDir
+     */
+    public static void setInstallDirOverride(String newDir) {
+        Utilities.installDirOverride = new File(newDir).getAbsolutePath();
     }
 
     /**
@@ -675,7 +718,7 @@ public class Utilities {
     public static String getBLCMMDataDir() {
         if (Utilities.isCreatorMode()) {
             // In creator mode, we always store stuff in the CWD
-            return System.getProperty("user.dir");
+            return Utilities.userDir;
         } else {
             // In regular mode, we should be going into an appdir, if we can.
             String detectedDir = Utilities.getAppDataDir(Meta.APP_DATA_DIR_NAME);
@@ -685,7 +728,7 @@ public class Utilities {
                 // exists.  To remain compatible with the way the app has always
                 // worked when run without a launcher, we're going to NOT add
                 // appDirName here.
-                return System.getProperty("user.dir");
+                return Utilities.userDir;
             } else {
                 return detectedDir;
             }
@@ -1030,11 +1073,16 @@ public class Utilities {
 
     /**
      * Returns the main install dir where OpenBLCMM.jar/.exe currently lives,
-     * or null if we can't.
+     * or null if we can't.  Could potentially have been overriden with CLI
+     * args, mostly for use in the Mac app bundle.
      *
      * @return The directory containing our "installation"
      */
     public static File getMainInstallDir() {
+        if (Utilities.installDirOverride != null) {
+            // This will already be an absolute location
+            return new File(Utilities.installDirOverride);
+        }
         File jarFile = Utilities.getMainJarFile();
         if (jarFile == null) {
             return null;
@@ -1063,11 +1111,11 @@ public class Utilities {
      */
     public static File getDefaultOpenLocation() {
         if (Utilities.isCreatorMode()) {
-            return new File("").getAbsoluteFile();
+            return new File(Utilities.userDir).getAbsoluteFile();
         } else {
             File mainJarDir = Utilities.getMainInstallDir();
             if (mainJarDir == null) {
-                return new File("").getAbsoluteFile();
+                return new File(Utilities.userDir).getAbsoluteFile();
             } else {
                 return mainJarDir;
             }
@@ -1083,7 +1131,7 @@ public class Utilities {
      */
     public static File getDataPackDirectory() {
         if (Utilities.isCreatorMode()) {
-            return new File(System.getProperty("user.dir"));
+            return new File(Utilities.userDir);
         } else {
             return Utilities.getMainInstallDir();
         }

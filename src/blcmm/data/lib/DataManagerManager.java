@@ -63,7 +63,6 @@ public class DataManagerManager {
     private HashMap <PatchType, String> dataManagerStatus;
     private PatchType currentPatchType;
     private DataManager currentDataManager;
-    private DataStatusNotifier dataStatus;
 
     /**
      * Default constructor, most likely called by MainGUI, which initializes a

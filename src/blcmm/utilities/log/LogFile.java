@@ -49,16 +49,32 @@ import java.nio.file.Paths;
  * this target supports marking a logfile as permanent right at instantiation,
  * to support that.
  *
+ * Note that the file isn't actually opened for writing until we actually
+ * receive a log line.  This is so that we can set up our logging info in
+ * the static context but redirect the log directory based on CLI args,
+ * without having something opened up for writing in a location we don't
+ * intend to.  If the file is explicitly closed, or encounters an error while
+ * writing, it'll be closed and rewrites will not be attempted unless we
+ * receive another update to our base log dir, in which case the next log
+ * attempt will try to re-open the file for writing.
+ *
  * @author apocalyptech
  */
 
 public class LogFile implements LogTarget {
+
+    private enum LogState {
+        NEW,
+        WRITING,
+        CLOSED
+    };
 
     private final String filenameBase;
     private File logFile = null;
     private BufferedWriter writer = null;
     private boolean persistent;
     private static String NEWLINE = System.lineSeparator();
+    private LogState state;
 
     public LogFile(String filenameBase) {
         this(filenameBase, false);
@@ -67,6 +83,7 @@ public class LogFile implements LogTarget {
     public LogFile(String filenameBase, boolean persistent) {
         this.filenameBase = filenameBase;
         this.persistent = persistent;
+        this.state = LogState.NEW;
     }
 
     /**
@@ -98,15 +115,34 @@ public class LogFile implements LogTarget {
      *
      * @param newLogFolder The folder to use.
      */
-   @Override
+    @Override
     public void setLogFolder(String newLogFolder) {
         this.close();
+        this.state = LogState.NEW;
         Path curLogFilePath = Paths.get(newLogFolder, this.filenameBase);
         this.logFile = curLogFilePath.toFile();
+    }
+
+    /**
+     * Open ourself for writing; returns True if we're now open, or False
+     * otherwise.  Will refuse to do anything if we've been explicitly
+     * closed.  This is basically used so that we don't actually try opening
+     * the file for writing until a log entry is attempted.
+     *
+     * @return True if we're now open, false otherwise.
+     */
+    private boolean startWriting() {
+        if (this.state == LogState.CLOSED) {
+            return false;
+        }
         try {
             this.writer = new BufferedWriter(new FileWriter(this.logFile));
+            this.state = LogState.WRITING;
+            return true;
         } catch (IOException e) {
             this.handleLoggingException("Error opening logfile", e);
+            this.state = LogState.CLOSED;
+            return false;
         }
     }
 
@@ -117,6 +153,11 @@ public class LogFile implements LogTarget {
      */
     @Override
     public void singleLine(String line) {
+        if (this.state == LogState.NEW) {
+            if (!this.startWriting()) {
+                return;
+            }
+        }
         if (writer != null) {
             try {
                 writer.write(line + NEWLINE);
@@ -153,6 +194,7 @@ public class LogFile implements LogTarget {
             }
         }
         writer = null;
+        this.state = LogState.CLOSED;
     }
 
     /**

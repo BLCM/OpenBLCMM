@@ -41,6 +41,67 @@ Changelog
 
 A Changelog can be found at [src/CHANGELOG.md](src/CHANGELOG.md).
 
+Commandline Arguments
+=====================
+
+This section won't be of interest to most users, so feel free to ignore it.
+There are a few commandline arguments which can be used with OpenBLCMM.  These
+can be specified from `cmd.exe` or your usual shell, or added to GUI shortcuts.
+
+### Creator Mode
+
+Creator Mode is mostly just intended for people actively developing OpenBLCMM,
+and is enabled by default when run via the Netbeans IDE.  It can be toggled on
+with the `-creator` argument, such as:
+
+    java -jar OpenBLCMM.jar -creator
+
+The effects of Creator Mode are:
+
+- Will use the current directory to store preferences, logfiles, backup files,
+  etc (instead of using `%LOCALAPPDATA%` or `~/.local/share`, for instance)
+- Does not do new-version checks while starting
+- Will not attempt to import original BLCMM settings on first startup
+
+### Setting User/Install Directory
+
+These settings are similar in nature, and mostly just put into the app to
+support some peculiarities of the Mac `.app` bundle.  They're technically
+available for anyone else as well, though.  the `-userdir=<foo>` argument
+will set the current "user directory," which is ordinarily only really used to
+provide shortcut buttons in the File dialogs.  If you have Creator Mode active,
+this will also determine where the app's prefs/logfiles/backups are stored.
+It can be enabled like so:
+
+    java -jar OpenBLCMM.jar -userdir=dirname
+
+The `-installdir=<foo>` argument overrides the app's understanding of where
+its Jarfile is, and is mostly just used to figure out where to look for Object
+Explorer Datapacks.  It can be enabled like so:
+
+    java -jar OpenBLCMM.jar -installdir=dirname
+
+The Mac `.app` bundle makes use of both of these arguments, since the Jarfile
+lives inside a directory which is ordinarily hidden from Mac users.  So, the
+Mac bundle ends up launching OpenBLCMM like so:
+
+    java -jar OpenBLCMM.jar -userdir=.. -installdir=..
+
+### Opening Mod Files
+
+You can also specify a filename at the end of the argument list to have
+OpenBLCMM open up that file initially.  This *should* allow you to drag mod
+files on top of the app icon, too, when interacting via a GUI.
+
+    java -jar OpenBLCMM.jar patch.txt
+
+If you want to open a mod file whose filename starts with a dash, you'll have
+to do the usual UNIX/Linux convention of first putting a double-dash in front
+of the filename.  Any argument after that double-dash will be interpreted as
+a filename, not another argument:
+
+    java -jar OpenBLCMM.jar -- -a_mod_file_with_a_dash.blcm
+
 Hex Edits
 =========
 

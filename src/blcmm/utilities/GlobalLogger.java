@@ -70,6 +70,16 @@ public class GlobalLogger {
             new LogFile("log-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd-HHmmss")) + ".log"),
             new LogFile("log-latest.log", true),
         };
+        resetLogFolder();
+    }
+
+    /**
+     * Resets our log folder.  This is abstracted primarily so that it can be done
+     * both at instantiation time and also when processing our args, to convert
+     * over to Creator Mode, since the path we want to log to would change in that
+     * case.
+     */
+    public final static void resetLogFolder() {
         setLogFolder(Paths.get(Utilities.getBLCMMDataDir(), "blcmm_logs").toString());
     }
 

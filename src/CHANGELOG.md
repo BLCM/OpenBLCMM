@@ -109,6 +109,8 @@ OpenBLCMM Changelog
 - Replaced icon resources with known-free-to-use versions, and updated the
   OpenBLCMM icon to a new one to distinguish it from the original BLCMM.
 - Added "-creator" CLI argument to launch OpenBLCMM in Creator Mode.
+- Added "-userdir" and "-installdir" CLI arguments to support some peculiarities
+  with the Mac `.app` bundling.
 - Standardized internal hotfix naming in saved files.
 
 **v1.2.0** May 22, 2020

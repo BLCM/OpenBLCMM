@@ -194,7 +194,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         // if it differs from our install dir (which, in at least some
         // cases, it will).
         File installFile = Utilities.getMainInstallDir();
-        String curDir = System.getProperty("user.dir");
+        String curDir = Utilities.getUserDir();
         File curFile = new File(curDir);
         if (installFile == null || !installFile.equals(curFile)) {
             panel.add(directoryShortcutButton(fc,
@@ -224,7 +224,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         }
         // 2023-02-11 -- I've taken out Plugin functionality, but leaving this in place anyway,
         // in case there's someone out there with plugin output they still want to get to.
-        tempDir = System.getProperty("user.dir") + "/plugin_output";
+        tempDir = Utilities.getUserDir() + "/plugin_output";
         if (new File(tempDir).exists()) {
             panel.add(directoryShortcutButton(fc,
                     "Plugin Output",

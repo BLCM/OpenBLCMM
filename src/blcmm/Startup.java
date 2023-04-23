@@ -116,12 +116,30 @@ public class Startup {
         // that we should be using here, but I guess this'll do for now.
         file = null;
         boolean seenDoubleDash = false;
+        // Our args might change where we attempt to log, so save log output
+        // until the end.
+        ArrayList<String> argparseLogOutput = new ArrayList<>();
         for (String arg: args) {
             // Set Creator Mode if we've been told to.  (Note that Creator Mode is
             // also set automatically if Java assertions are active, which is the
             // default behavior when running this project via Netbeans.)
             if (!seenDoubleDash && arg.equalsIgnoreCase("-creator")) {
                 Utilities.setCreatorMode();
+            } else if (!seenDoubleDash && arg.toLowerCase().startsWith("-workdir=")) {
+                String[] parts = arg.split("=", 2);
+                if (parts.length == 2 && parts[1].length() > 0) {
+                    Utilities.setUserDir(parts[1]);
+                    GlobalLogger.resetLogFolder();
+                } else {
+                    argparseLogOutput.add("Invalid workdir argument: " + arg);
+                }
+            } else if (!seenDoubleDash && arg.toLowerCase().startsWith("-installdir=")) {
+                String[] parts = arg.split("=", 2);
+                if (parts.length == 2 && parts[1].length() > 0) {
+                    Utilities.setInstallDirOverride(parts[1]);
+                } else {
+                    argparseLogOutput.add("Invalid installdir argument: " + arg);
+                }
             } else {
                 if (seenDoubleDash) {
                     file = new File(arg);
@@ -129,7 +147,7 @@ public class Startup {
                 } else if (arg.equals("--")) {
                     seenDoubleDash = true;
                 } else if (arg.startsWith("-")) {
-                    GlobalLogger.log("Invalid argument detected: " + arg);
+                    argparseLogOutput.add("Invalid argument detected: " + arg);
                 } else {
                     file = new File(arg);
                     break;
@@ -138,8 +156,12 @@ public class Startup {
         }
 
         GlobalLogger.log("Running " + Meta.NAME + " version " + Meta.VERSION);
+        GlobalLogger.log("Detected OS: " + OSInfo.CURRENT_OS.toString());
         GlobalLogger.log("Running Java version " + System.getProperty("java.version"));
         GlobalLogger.log("Using Java VM: " + System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version"));
+        for (String logLine : argparseLogOutput) {
+            GlobalLogger.log(logLine);
+        }
         GlobalLogger.log("Arguments provided; VM arguments: " + Arrays.toString(vmArguments.toArray()) + " - Runtime arguments: " + Arrays.toString(args));
         if (Utilities.isCreatorMode()) {
             GlobalLogger.log("Running in Creator Mode!");
@@ -176,7 +198,8 @@ public class Startup {
         // Report on some various vars
         GlobalLogger.log(Meta.NAME + " is installed at: " + Utilities.hideUserName(Utilities.getMainInstallDir().toString()));
         GlobalLogger.log("Your user data directory is: " + Utilities.hideUserName(Utilities.getBLCMMDataDir()));
-        GlobalLogger.log("Working directory: " + Utilities.hideUserName(System.getProperty("user.dir")));
+        GlobalLogger.log("Datapacks will be searched for at: " + Utilities.hideUserName(Utilities.getDataPackDirectory().toString()));
+        GlobalLogger.log("Working directory: " + Utilities.hideUserName(Utilities.getUserDir()));
         GlobalLogger.log("Default file-open location: " + Utilities.hideUserName(Utilities.getDefaultOpenLocation().toString()));
 
         java.awt.EventQueue.invokeLater(() -> {

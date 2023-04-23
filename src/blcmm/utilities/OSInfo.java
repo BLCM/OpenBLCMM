@@ -63,7 +63,6 @@ public class OSInfo {
         } else {
             CURRENT_OS = OS.UNKNOWN;
         }
-        GlobalLogger.log("Detected OS: " + CURRENT_OS.toString());
     }
 
 }
