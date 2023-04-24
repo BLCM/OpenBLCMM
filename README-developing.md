@@ -40,6 +40,11 @@ datapacks while running the Netbeans version, simply store them inside the
 main project checkout directory, and the app should find them when you next
 startup.
 
+The data used for OpenBLCMM is extracted and processed by [the DataDumper
+PythonSDK project](https://github.com/BLCM/DataDumper).  Head over there if
+you want to package up your own data, or feel like making some changes to
+the datalib component of OpenBLCMM.
+
 Library Bundling
 ----------------
 
