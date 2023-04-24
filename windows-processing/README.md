@@ -16,7 +16,6 @@ easier for native Windows users, feel free to send in a PR!
   * [Vanilla GraalVM](#vanilla-graalvm)
 * [Setting an EXE Icon](#setting-an-exe-icon)
 * [Building the Installer](#building-the-installer)
-* [Distribution](#distribution)
 
 The Short Version
 -----------------
@@ -171,12 +170,6 @@ on Windows.
 At that point you're good to go - make sure to run the various commands
 from inside that Visual Studio-wrapped prompt.
 
-Note that at the moment, Liberica/GraalVM doesn't seem to support setting a
-custom EXE icon on the resulting file.  There are utilities available to
-set that, but I didn't see anything that was also opensource, and since
-the installer sets up shortcuts which *do* have icons, I'm just leaving it
-with the default boring icon for now.
-
 ### Vanilla GraalVM
 
 Once "vanilla" GraalVM supports compiling Swing/AWT apps properly on
@@ -224,34 +217,18 @@ Building the Installer
 
 We're using the well-known [Inno Setup](https://jrsoftware.org/isinfo.php) to
 create an installer for Windows.  At time of writing, we're using v6.2.2.
-There's not really a lot to say about this step.  It's pretty straightforward
-and we've not deviated much from the Inno Setup defaults (as populated by the
-initial Wizard).
+There's not really a lot to say about this step.
 
-The config file is `openblcmm.iss`.  To build an installer, just open that
-file in Inno Setup (you should be able to double-click on it) and hit Compile
-or Build or whatever it is.  Once the process is done, there'll be an `Output`
-directory containing your fresh installer.  When building up a new version,
-make sure to update the version string in there as well.
+The `openblcmm.iss` config file has been getting tweaked over time from the
+defaults.  It's currently set up to be run "in place" from a git checkout of
+the project -- the various file paths in the file are all relative links which
+point to a few places in the repo.  It will output the installer into the main
+`store` directory, which is also where it expects to find the compiled
+`OpenBLCMM.exe`.
 
-Some custom changes inside `openblcmm.iss` that we've made:
-
-* Removed the full paths that the wizard puts on all file paths, so it
-  just uses files in the same dir as `openblcmm.iss`.
-* Added the app version number to the output filename, plus the text `Installer`.
-* Pre-install info text was taken from the "Credits" tab on our About dialog.
-* Associated `.blcm` file extension with OpenBLCMM.
-* Included an icon in the app install directory.
-* Associated that icon with both the start menu and desktop shortcuts.
-
-That's honestly about it!
-
-Distribution
-------------
-
-The plan, at the moment, is to distribute *both* the installer EXE, and
-also a zipfile of the app EXE+DLLs, though we'll see if that's too confusing
-for users.  So we do still need to establish a process to zip up the
-installerless components (in addition to zipping up the "raw" Java Jar
-for folks who aren't using the Windows EXE version at all).
+To build an installer, just open `openblcmm.iss` in Inno Setup (you should be
+able to double-click on it), make sure that the version number stored in there
+is appropriate, and hit the "compile" button.  Once the process is done, there
+should be a new installer inside the `store` directory, alongside the original
+`OpenBLCMM.exe`.
 
