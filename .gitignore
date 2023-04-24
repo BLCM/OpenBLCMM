@@ -1,7 +1,7 @@
-#   Netbeans files (For some reason it doesn't work without ** in front of it?)
-**/nbproject/private
+# Netbeans files
+/nbproject/private
 
-#   build files
+# Build files
 /build/
 /dist/
 /store/OpenBLCMM*
