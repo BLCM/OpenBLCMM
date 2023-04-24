@@ -35,9 +35,9 @@ A Changelog can be found at [src/CHANGELOG.md](src/CHANGELOG.md).
 Commandline Arguments
 =====================
 
-This section won't be of interest to most users, so feel free to ignore it.
-There are a few commandline arguments which can be used with OpenBLCMM.  These
-can be specified from `cmd.exe` or your usual shell, or added to GUI shortcuts.
+There are a few commandline arguments which can be used with OpenBLCMM.  Most
+users can safely ignore these.  These args can be specified from `cmd.exe`
+or your usual shell, or added to GUI shortcuts.
 
 ### Creator Mode
 
