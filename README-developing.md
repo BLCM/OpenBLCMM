@@ -2,6 +2,7 @@ Developing OpenBLCMM
 ====================
 
 - [Development Environment](#development-environment)
+  - [OE Datapacks](#oe-datapacks)
 - [Library Bundling](#library-bundling)
 - [Compiling for Windows](#compiling-for-windows)
 - [Packaging / Release Procedures](#packaging--release-procedures)
@@ -29,6 +30,15 @@ At time of writing, the most recent NetBeans IDE version is 17, and the latest
 Java is 20.  Those weren't yet officially packaged up for Apocalyptech's
 distro, so we haven't yet moved to those new versions.  I intend to move to
 those versions once we can, though.
+
+### OE Datapacks
+
+Ordinarily you'd install datapacks by putting them next to `OpenBLCMM.jar`
+(or whatever compiled/packaged version is appropriate), but Netbeans doesn't
+actually run from a built Jar.  Instead, to use the Object Explorer
+datapacks while running the Netbeans version, simply store them inside the
+main project checkout directory, and the app should find them when you next
+startup.
 
 Library Bundling
 ----------------

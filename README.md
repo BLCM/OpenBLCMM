@@ -11,30 +11,21 @@ In 2023, OpenBLCMM development was started to fix up some longstanding
 issues with BLCMM, and to provide a fully-opensource version of the entire
 BLCMM application.
 
-This fork is still in development but is proceeding along nicely.  It
-intentionally omits a few features from the original BLCMM app, but hopefully
-not anything anyone'll miss too much.  OpenBLCMM feels relatively stable at the
-moment, but if you *do* decide to use it to manage your mod files, you may
-want to make backups of your patch files first, just in case.  Check out
-our [short notes on its development environment](README-developing.md)
-if you'd like to help out with development.
+Download / Install
+==================
 
-**NOTE:** This branch is *not* compatible with the original BLCMM game data
-packages.  New prepackaged data files are available for now at [this Github
-link](https://github.com/apocalyptech/OpenBLCMM-Data-TestBed/releases)
-(that is not the final location of the datafiles -- once we're closer to
-a public release, they'll be put somewhere more official).  To use those data
-packages while running inside Netbeans, download them and save them inside the
-checked-out `BLCMM` directory.  To use them on a built/compiled version, just
-save them in the same dir as `OpenBLCMM.jar`/`OpenBLCMM.exe`.  The app should
-see them on startup and extract the sqlite database to an `extracted-data`
-directory in the user data dir (where preferences and logfiles are stored,
-etc).
+OpenBLCMM hasn't been officially publicly released yet, but once it is,
+downloads can be found here:
 
-The generation scripts for the new data can be found in the [DataDumper
-PythonSDK mod](https://github.com/BLCM/DataDumper).  Note that the data
-format may change without warning for awhile yet, as the new version
-approaches release!
+- **OpenBLCMM Releases:** https://github.com/BLCM/OpenBLCMM/releases
+- **Object Explorer Datapacks:** *tbd - Temporarily at [this Github
+  link](https://github.com/apocalyptech/OpenBLCMM-Data-TestBed/releases)*
+
+**NOTE:** OpenBLCMM is *not* compatible with the original BLCMM game data
+packages.  New prepackaged data files are available at the link above.  To
+use those datapacks, download and save them inside the same directory as
+`OpenBLCMM.exe`/`OpenBLCMM.jar`/`OpenBLCMM.app`.  OpenBLCMM should see the
+data on the next startup and have them available for use.
 
 Changelog
 =========
@@ -102,19 +93,12 @@ a filename, not another argument:
 
     java -jar OpenBLCMM.jar -- -a_mod_file_with_a_dash.blcm
 
-Hex Edits
-=========
+Development
+===========
 
-[PythonSDK](https://borderlandsmodding.com/sdk-mods/) is the community-recommended
-method for enabling modding in BL2/TPS/AoDK nowadays, but OpenBLCMM does still
-provide a couple of hex edits, just in case someone does end up needing them.
-We've also got a document which catalogs a bunch of hex edits that we're aware of,
-for various platforms, including a bunch which were never actually a part of
-BLCMM:
-
-* [README-hexedits.md](README-hexedits.md)
-
-That doc may get moved elsewhere eventually, perhaps to the BLCMods wiki.
+We've got a [document with notes about developing OpenBLCMM](README-developing.md)
+if you'd like to help out, want to build it yourself, or are just curious.
+Enjoy!
 
 TODO
 ====
