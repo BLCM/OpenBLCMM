@@ -51,6 +51,7 @@ OpenBLCMM Changelog
     didn't introduce new inconsistent behavior...)
   - "getall" queries will correctly report the top-level class of the returned
     objects
+  - Increased tab width to help cut down on accidental tab closures.
 - Autocomplete changes:
   - Object autocomplete will correctly handle `:` separators in addition to
     periods.

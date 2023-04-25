@@ -67,7 +67,7 @@ public abstract class VariableTabsTabbedPane<P extends JPanel> extends JTabbedPa
     public VariableTabsTabbedPane() {
         super();
         super.add("", getDefaultNewComponent());
-        JLabel label = new JLabel("Tab 1");
+        JLabel label = new JLabel("  Tab 1  ");
         usedIndices.add(1);
         int height = new ButtonTabComponent(VariableTabsTabbedPane.this).getPreferredSize().height;
         label.setPreferredSize(new Dimension(label.getPreferredSize().width, height));
@@ -179,7 +179,7 @@ public abstract class VariableTabsTabbedPane<P extends JPanel> extends JTabbedPa
             if (getSelectedIndex() == getTabCount() - 1 && init && !finishingdrop) {
                 int index2 = getTabCount();
                 int newTabIndex = usedIndices.last() + 1;
-                setTitleAt(index2 - 1, "Tab " + newTabIndex);
+                setTitleAt(index2 - 1, "  Tab " + newTabIndex + "  ");
                 P newComponent = getDefaultNewComponent();
                 setComponentAt(index2 - 1, newComponent);
                 Component toFocus = getDefaultComponentToFocus(newComponent);
