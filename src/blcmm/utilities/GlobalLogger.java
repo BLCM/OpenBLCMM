@@ -187,7 +187,12 @@ public class GlobalLogger {
                 before = element;
                 break;
             }
-            if (element.getFileName().equals("GlobalLogger.java") && element.getMethodName().equals("log")) {
+            if (element != null
+                    && element.getFileName() != null
+                    && element.getFileName().equals("GlobalLogger.java")
+                    && element.getMethodName() != null
+                    && element.getMethodName().equals("log")
+                    ) {
                 found_log = true;
             }
         }
