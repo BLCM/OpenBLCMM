@@ -281,6 +281,10 @@ public class Startup {
     }
 
     private static boolean confirmIO() {
+        File dataDir = new File(Utilities.getBLCMMDataDir());
+        if (!dataDir.exists()) {
+            dataDir.mkdirs();
+        }
         File f = Paths.get(Utilities.getBLCMMDataDir(), "io.temp").toFile();
         boolean b = true;
         try {
