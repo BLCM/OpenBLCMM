@@ -32,6 +32,23 @@ Changelog
 
 A Changelog can be found at [src/CHANGELOG.md](src/CHANGELOG.md).
 
+User Data Location
+==================
+
+OpenBLCMM needs to store some information on the filesystem as it runs.  This
+includes things like application preferences, logfiles, patch file backups,
+and extracted Object Explorer data.  You can access the log directory using
+the "Open Log Dir" button on the `Help -> About` dialog, and the patch
+backups can be accessed via a button on the various file dialogs.  If
+you want to know the location in general, though, here they are:
+
+- **Windows:** `%LOCALAPPDATA%\OpenBLCMM` *(Most likely something like
+  `C:\Users\[username]\AppData\Local\OpenBLCMM`, though some systems might
+  also include `OneDrive` in the path there.)*
+- **Linux:** `~/.local/share/OpenBLCMM` *(This should honor the `$XDG_DATA_HOME`
+  environment var, as well.)*
+- **Mac:** `~/Library/Application Support/OpenBLCMM`
+
 Commandline Arguments
 =====================
 
