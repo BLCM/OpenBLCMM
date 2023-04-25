@@ -27,6 +27,7 @@ class PureJava:
             do_header=True,
             java_text='We recommend [Adoptium Temurin](https://adoptium.net/)',
             extra_points=None,
+            redirect_files=None,
             ):
         self.os_name = os_name
         self.files = files
@@ -38,6 +39,10 @@ class PureJava:
             self.extra_points = []
         else:
             self.extra_points = extra_points
+        if redirect_files is None:
+            self.redirect_files = {}
+        else:
+            self.redirect_files = redirect_files
 
 # Construct a list of "pure" Java zips that we'll construct.
 pure_javas = [
@@ -59,10 +64,13 @@ pure_javas = [
             ),
         PureJava('Mac',
             files=included_files_base + [
-                f'{app_name}.jar',
                 '../release-processing/osx-app/__MACOSX',
                 '../release-processing/osx-app/OpenBLCMM.app',
                 ],
+            redirect_files={
+                # Current app bundling wants the jarfile *inside* the .app bundle
+                f'{app_name}.jar': 'OpenBLCMM.app',
+                },
             launch_text="Launch by doubleclicking on `OpenBLCMM.app`",
             extra_points=[
                 "**Note:** This launcher is slightly experimental!  Feedback on how well it works is appreciated!",
@@ -153,6 +161,8 @@ for pj in pure_javas:
             shutil.copytree(filename, os.path.join(base_java_zip, last_part))
         else:
             shutil.copy2(filename, base_java_zip)
+    for orig_filename, new_location in pj.redirect_files.items():
+        shutil.copy2(orig_filename, os.path.join(base_java_zip, new_location))
     subprocess.run(['zip', '-r',
         pj.zipfile,
         base_java_zip,
