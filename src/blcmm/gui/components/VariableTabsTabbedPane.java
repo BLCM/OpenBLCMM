@@ -227,7 +227,7 @@ public abstract class VariableTabsTabbedPane<P extends JPanel> extends JTabbedPa
             }
         }
         if (l != null) {
-            String t = l.getText();
+            String t = l.getText().substring(2, l.getText().length()-2);
             int n = Integer.parseInt(t.substring(t.lastIndexOf(" ") + 1));
             usedIndices.remove(n);
         }
