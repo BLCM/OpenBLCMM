@@ -127,7 +127,11 @@ public class Utilities {
      * @param newDir The directory to use as a "user" dir.
      */
     public static void setUserDir(String newDir) {
-        Utilities.userDir = new File(newDir).getAbsolutePath();
+        try {
+            Utilities.userDir = new File(newDir).getCanonicalPath();
+        } catch (IOException e) {
+            Utilities.userDir = new File(newDir).getAbsolutePath();
+        }
     }
 
     /**
@@ -151,7 +155,11 @@ public class Utilities {
      * @param newDir
      */
     public static void setInstallDirOverride(String newDir) {
-        Utilities.installDirOverride = new File(newDir).getAbsolutePath();
+        try {
+            Utilities.installDirOverride = new File(newDir).getCanonicalPath();
+        } catch (IOException e) {
+            Utilities.installDirOverride = new File(newDir).getAbsolutePath();
+        }
     }
 
     /**
