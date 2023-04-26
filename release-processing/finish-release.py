@@ -64,7 +64,6 @@ pure_javas = [
             ),
         PureJava('Mac',
             files=included_files_base + [
-                '../release-processing/osx-app/__MACOSX',
                 '../release-processing/osx-app/OpenBLCMM.app',
                 ],
             redirect_files={
