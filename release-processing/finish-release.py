@@ -10,7 +10,7 @@ import subprocess
 app_name = 'OpenBLCMM'
 release_openblcmm = 'https://github.com/apocalyptech/OpenBLCMM-TestBed/releases'
 release_data = 'https://github.com/apocalyptech/OpenBLCMM-Data-TestBed/releases'
-supported_java = '8, 11, 17, 19, and 20'
+supported_java = '8, 11, 17, and 20'
 included_files_base = [
         '../README.md',
         '../LICENSE.txt',

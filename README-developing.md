@@ -16,20 +16,19 @@ OpenBLCMM was developed using [NetBeans](https://netbeans.apache.org/),
 most recently with [NetBeans IDE 16](https://netbeans.apache.org/download/nb16/index.html).
 
 The currently-checked-in project expects a NetBeans Java platform named
-"`JDK_19`" -- you can get to that via NetBeans' `Tools -> Java Platforms`.
-If you've already got a JDK 19 installed under a different name, you could
+"`JDK_20`" -- you can get to that via NetBeans' `Tools -> Java Platforms`.
+If you've already got a JDK 20 installed under a different name, you could
 try renaming it, or alter the configured Java environment to suit.
 Alternatively, you could create a new environment and just point it at
 the same directory as your existing Java Environment.
 
-Once the project's been opened up in Netbeans and the `JDK_19` platform is
+Once the project's been opened up in Netbeans and the `JDK_20` platform is
 available, you should be able to just run it via the GUI -- there'll be a
 green "Play" icon in the main toolbar, or various menu options.
 
-At time of writing, the most recent NetBeans IDE version is 17, and the latest
-Java is 20.  Those weren't yet officially packaged up for Apocalyptech's
-distro, so we haven't yet moved to those new versions.  I intend to move to
-those versions once we can, though.
+At time of writing, the most recent NetBeans IDE version is 17.  That
+hasn't been packaged up for Apocalyptech's distro yet, so we haven't moved
+to that new version.  NetBeans 16 is still available from its site, though.
 
 ### OE Datapacks
 
