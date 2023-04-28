@@ -425,17 +425,34 @@ public final class MainGUI extends ForceClosingJFrame {
                         if (parts.length != 2) {
                             continue;
                         }
-                        // This stanza's pretty dumb, but whatever.  Should really be
-                        // looping through PatchType to match on the strings.
                         if (parts[0].equalsIgnoreCase(Meta.NAME)) {
                             remoteVersionStr = parts[1];
                             remoteVersion = new Semver(remoteVersionStr);
-                        } else if (parts[0].equalsIgnoreCase("BL2Data")) {
-                            dataVersions.put(PatchType.BL2, new DateVersion(parts[1]));
-                        } else if (parts[0].equalsIgnoreCase("TPSData")) {
-                            dataVersions.put(PatchType.TPS, new DateVersion(parts[1]));
-                        } else if (parts[0].equalsIgnoreCase("AODKData")) {
-                            dataVersions.put(PatchType.AODK, new DateVersion(parts[1]));
+                        } else {
+                            for (PatchType type : PatchType.values()) {
+                                if (parts[0].equalsIgnoreCase(type.name() + "Data")) {
+                                    String[] dataParts = parts[1].split(",", 2);
+                                    if (dataParts.length == 2) {
+                                        try {
+                                            int schemaVersion = Integer.parseInt(dataParts[0]);
+                                            if (schemaVersion < DataManager.MIN_SCHEMA_SUPPORTED) {
+                                                GlobalLogger.log(type.name() + " new version schema (" + schemaVersion +
+                                                        ") is older than minimum supported (" + DataManager.MIN_SCHEMA_SUPPORTED + ")");
+                                            } else if (schemaVersion > DataManager.MAX_SCHEMA_SUPPORTED) {
+                                                GlobalLogger.log(type.name() + " new version schema (" + schemaVersion +
+                                                        ") is newer than maximum supported (" + DataManager.MAX_SCHEMA_SUPPORTED + ")");
+                                            } else {
+                                                dataVersions.put(type, new DateVersion(dataParts[1]));
+                                            }
+                                        } catch (NumberFormatException e) {
+                                            GlobalLogger.log(type.name() + " new version not understood: " + parts[1]);
+                                        }
+                                    } else {
+                                        GlobalLogger.log(type.name() + " new version not understood: " + parts[1]);
+                                    }
+                                    break;
+                                }
+                            }
                         }
                         line = br.readLine();
                     }

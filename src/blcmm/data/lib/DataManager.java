@@ -119,8 +119,8 @@ public class DataManager {
     private String jarDumpVersion;
 
     // Supported database versions, and other metadata
-    private final int minDatabaseSupported = 1;
-    private final int maxDatabaseSupported = 1;
+    public static final int MIN_SCHEMA_SUPPORTED = 1;
+    public static final int MAX_SCHEMA_SUPPORTED = 1;
     private int databaseVersion;
     private String dumpVersion;
     private Date dataCompiled;
@@ -528,12 +528,12 @@ public class DataManager {
         ResultSet rs = stmt.executeQuery("select * from metadata");
         rs.next();
         this.databaseVersion = rs.getInt("db_version");
-        if (this.databaseVersion < this.minDatabaseSupported) {
+        if (this.databaseVersion < DataManager.MIN_SCHEMA_SUPPORTED) {
             throw new NoDataException("Database is version " + this.databaseVersion
-                    + ", but we require at least version " + this.minDatabaseSupported);
-        } else if (this.databaseVersion > this.maxDatabaseSupported) {
+                    + ", but we require at least version " + DataManager.MIN_SCHEMA_SUPPORTED);
+        } else if (this.databaseVersion > DataManager.MAX_SCHEMA_SUPPORTED) {
             throw new NoDataException("Database is version " + this.databaseVersion
-                    + ", but we only support up to version " + this.maxDatabaseSupported);
+                    + ", but we only support up to version " + DataManager.MAX_SCHEMA_SUPPORTED);
         }
         this.dumpVersion = rs.getString("dump_version");
         this.dataCompiled = rs.getDate("compiled");
