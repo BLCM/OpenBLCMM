@@ -18,8 +18,7 @@ OpenBLCMM hasn't been officially publicly released yet, but once it is,
 downloads can be found here:
 
 - **OpenBLCMM Releases:** https://github.com/BLCM/OpenBLCMM/releases
-- **Object Explorer Datapacks:** *tbd - Temporarily at [this Github
-  link](https://github.com/apocalyptech/OpenBLCMM-Data-TestBed/releases)*
+- **Object Explorer Datapacks:** https://github.com/BLCM/OpenBLCMM-Data/releases
 
 **NOTE:** OpenBLCMM is *not* compatible with the original BLCMM game data
 packages.  New prepackaged data files are available at the link above.  To
