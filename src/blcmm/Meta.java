@@ -44,7 +44,7 @@ public class Meta {
     /**
      * App version.  Should follow https://semver.org/ conventions.
      */
-    public static final String VERSION = "1.3.0-beta.6";
+    public static final String VERSION = "1.3.0-beta.7";
 
     /**
      * User data directory for storing prefs, extracted data, etc.  If NAME
@@ -61,7 +61,6 @@ public class Meta {
     /**
      * URL to the project releases.
      */
-    // TEMP: Testing out how users find the release-download process
     //public static final String RELEASES_URL = CODE_URL + "/releases";
     public static final String RELEASES_URL = "https://github.com/apocalyptech/OpenBLCMM-TestBed/releases";
 
@@ -71,21 +70,20 @@ public class Meta {
     public static final String BUGREPORT_URL = CODE_URL + "/issues";
 
     /**
-     * URL to where the app can retrieve the latest version of OpenBLCMM
-     * available.  This should just be a plain text file with only a version
-     * number in it, nothing more.  Note that the URL here is entirely just
-     * for testing purposes; I intend to host it off of github eventually.
+     * URL to where the app can retrieve the latest version of OpenBLCMM (and
+     * its datapacks) available.  Has a colon-suffixed "key" to indicate the
+     * component whose version is being reported (valid vlaues: OpenBLCMM,
+     * BL2Data, TPSData, or AODKData), and the data to the right of the colon
+     * is the version string.  The *Data versions have two values separated
+     * by a comma; the first is the database (schema) version, the second being
+     * the data version.
      */
-    // More testing.  Store the version file right on the github repo, maybe?
+    //public static final String UPDATE_VERSION_URL = "https://raw.githubusercontent.com/BLCM/OpenBLCMM/main/openblcmm-latest.txt";
     public static final String UPDATE_VERSION_URL = "https://raw.githubusercontent.com/apocalyptech/OpenBLCMM-TestBed/main/openblcmm-latest.txt";
 
     /**
      * URL where data pack downloads are available.
-     *
-     * Honestly not sure what the best method for distribution is, for these.
-     * At the moment I'm going to try out a separate Github releases area?
-     * We'll see how that is, usabilitywise.
      */
-    public static final String DATA_DOWNLOAD_URL = "https://github.com/apocalyptech/OpenBLCMM-Data-TestBed/releases";
+    public static final String DATA_DOWNLOAD_URL = "https://github.com/BLCM/OpenBLCMM-Data/releases";
 
 }
