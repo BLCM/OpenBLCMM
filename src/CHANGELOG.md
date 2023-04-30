@@ -19,7 +19,6 @@ OpenBLCMM Changelog
   - Plugin functionality
   - First-startup dialogs (welcome, game setup, question-mark/TINS prompt)
   - Structural Edits setting (this is now always enabled)
-  - Developer Mode setting (this is now always enabled)
   - Game launch button
   - Hex Multitool launch
   - "Invert Mod" functionality

@@ -225,7 +225,7 @@ public final class MainGUI extends ForceClosingJFrame {
         this.setVisible(true);
         Runnable runnable = () -> {
             initializeTree(this.argToOpen);
-            setChangePatchTypeEnabled(patch != null);
+            setChangePatchTypeEnabled(Options.INSTANCE.isInDeveloperMode() && patch != null);
             backupThread = startupBackupThread();
             versionCheckThread = null;
             if (Options.INSTANCE.getCheckForNewVersions() && !Utilities.isCreatorMode()) {
@@ -1479,7 +1479,12 @@ public final class MainGUI extends ForceClosingJFrame {
         importModZipMenuButton.setEnabled(true);
         saveMenuButton.setEnabled(true);
         saveToFileMenuButton.setEnabled(true);
-        getGameSelectionPanel().setEnabled(true);
+        getGameSelectionPanel().setEnabled(Options.INSTANCE.isInDeveloperMode());
+    }
+
+    public void toggleDeveloperMode(boolean active) {
+        this.setChangePatchTypeEnabled(active);
+        this.updateComponentTreeUI();
     }
 
     void SetUIModel(CompletePatch patch) {

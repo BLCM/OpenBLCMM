@@ -198,10 +198,12 @@ class CheckBoxTreeCellRenderer extends DefaultTreeCellRenderer {
                     case Warning:
                     case SyntaxError:
                         // Special case for empty-category check
-                        if (property instanceof GlobalListOfProperties.EmptyCategoryChecker) {
-                            if (property.checkProperty(el)) {
-                                infoMessages.add(property.getPropertyDescription());
-                                break;
+                        if (Options.INSTANCE.isInDeveloperMode()) {
+                            if (property instanceof GlobalListOfProperties.EmptyCategoryChecker) {
+                                if (property.checkProperty(el)) {
+                                    infoMessages.add(property.getPropertyDescription());
+                                    break;
+                                }
                             }
                         }
                         hasErrors = true;
@@ -243,7 +245,8 @@ class CheckBoxTreeCellRenderer extends DefaultTreeCellRenderer {
 
         } else {
             for (PropertyChecker property : transientData.getProperties()) {
-                if (property.getPropertyDescriptionType() == PropertyChecker.DescType.Informational) {
+                if (Options.INSTANCE.isInDeveloperMode()
+                        || property.getPropertyDescriptionType() == PropertyChecker.DescType.Informational) {
                     String s = property.getPropertyDescription();
                     if (s != null && !s.isEmpty()) {
                         sb.append(sb.length() > 0 ? ", " : "").append(s);

@@ -86,6 +86,7 @@ public abstract class OptionsBase {
         truncateCommands2,
         truncateCommandLength,
         highlightBVCErrors,
+        developerMode,
         leafSelectionAllowed,
         preferFullObjInOE,
         hasSeenExportWarning,

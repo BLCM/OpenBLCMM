@@ -33,9 +33,10 @@
     {"name":"checkThemeSwitchAllowed","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
     {"name":"setTheme","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
     {"name":"toggleCheckForNewVersions","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
-    {"name":"toggleHighlightBVCErrors","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"toggleDeveloperMode","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
     {"name":"toggleTruncateCommands","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
     {"name":"updateFontSizes","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
+    {"name":"updateMainGUITreeHighlights","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }, 
     {"name":"updateOESearchCategories","parameterTypes":["blcmm.utilities.options.Option","javax.swing.JComponent"] }
   ]
 },

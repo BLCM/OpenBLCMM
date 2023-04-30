@@ -41,6 +41,7 @@ import java.awt.Insets;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -282,7 +283,12 @@ public class ToolSettingsPanel extends JPanel {
         needsTreeResize = true;
     }
 
-    private void toggleHighlightBVCErrors(Option option, JComponent component) {
+    private void toggleDeveloperMode(Option option, JComponent comp) {
+        JCheckBox box = (JCheckBox) comp;
+        MainGUI.INSTANCE.toggleDeveloperMode(box.isSelected());
+    }
+
+    private void updateMainGUITreeHighlights(Option option, JComponent component) {
         MainGUI.INSTANCE.updateComponentTreeUI();
     }
 

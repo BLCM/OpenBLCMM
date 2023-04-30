@@ -105,7 +105,6 @@ public class Options extends OptionsBase {
             "contentEdits",
             "truncateCommands",
             "structuralEdits",
-            "developerMode",
 
             // Old from during OpenBLCMM development.  Possibly not worth
             // having in here, but it'll clean out my own configs, so sure.
@@ -165,9 +164,17 @@ public class Options extends OptionsBase {
 
         this.registerOption(new BooleanOption(
                 this,
+                OptionNames.developerMode.toString(), false,
+                Option.Shown.SETTINGS, "Enable developer mode",
+                "toggleDeveloperMode",
+                "Enables/Disables changing actual mod code, and authoring "
+                + "mods inside " + Meta.NAME + "."));
+
+        this.registerOption(new BooleanOption(
+                this,
                 OptionNames.highlightBVCErrors.toString(), true,
                 Option.Shown.SETTINGS, "Highlight Incomplete BVC Statements",
-                "toggleHighlightBVCErrors",
+                "updateMainGUITreeHighlights",
                 "Toggles highlighting of Incomplete BVC/ID/BVA/BVSC "
                 + "tuples.  This is technically valid syntax, but discouraged "
                 + "for style reasons."));
@@ -419,6 +426,14 @@ public class Options extends OptionsBase {
 
     public int getTruncateCommandLength() {
         return this.getIntOptionData(OptionNames.truncateCommandLength);
+    }
+
+    public boolean isInDeveloperMode() {
+        return this.getBooleanOptionData(OptionNames.developerMode);
+    }
+
+    public void setDeveloperMode(boolean selected) {
+        this.setBooleanOptionData(OptionNames.developerMode, selected);
     }
 
     public void setTruncateCommandLength(int truncateCommandLength) {

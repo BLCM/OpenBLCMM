@@ -49,7 +49,7 @@ public class PasteAction extends RightMouseButtonAction {
     private DefaultMutableTreeNode parentNode;
 
     public PasteAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Paste", hotkey, ctrl, new Requirements(true, false));
+        super(tree, "Paste", hotkey, ctrl, new Requirements(false, true, false));
     }
 
     @Override

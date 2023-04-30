@@ -74,6 +74,8 @@ public class BLCMMImportOptions extends OptionsBase {
      * Boolean options we're copying over
      */
     private final OptionsBase.OptionNames [] booleanOptions = new OptionsBase.OptionNames[] {
+        // Developer Mode
+        OptionsBase.OptionNames.developerMode,
         // Truncate commands in tree
         OptionsBase.OptionNames.truncateCommands2,
         // Highlight incomplete BVCs
@@ -253,7 +255,7 @@ public class BLCMMImportOptions extends OptionsBase {
             // Don't bother reporting to the user except for in the logfile
             GlobalLogger.log("Error while trying to import old BLCMM settings:");
             GlobalLogger.log(e);
-            
+
         }
 
     }

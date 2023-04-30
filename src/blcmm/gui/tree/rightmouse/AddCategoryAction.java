@@ -31,7 +31,6 @@ import blcmm.gui.MainGUI;
 import blcmm.gui.tree.CheckBoxTree;
 import blcmm.model.Category;
 import blcmm.model.ModelElement;
-import blcmm.utilities.Options;
 import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -45,7 +44,7 @@ import javax.swing.tree.TreePath;
 public class AddCategoryAction extends RightMouseButtonAction {
 
     public AddCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Create new empty category", hotkey, ctrl, new Requirements(true, false));
+        super(tree, "Create new empty category", hotkey, ctrl, new Requirements(false, true, false));
     }
 
     /**

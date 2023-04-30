@@ -179,7 +179,9 @@ public abstract class RightMouseButtonAction {
     }
 
     public final boolean isEnabled(Requirements requirementsToIgnore) {
-        if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
+        if (!Options.INSTANCE.isInDeveloperMode() && (reqs.devmode && !requirementsToIgnore.devmode)) {
+            return false;
+        } else if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
             return false;
         }
 
@@ -200,7 +202,9 @@ public abstract class RightMouseButtonAction {
     }
 
     public final String getDisabledTooltip(Requirements requirementsToIgnore) {
-        if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
+        if (!Options.INSTANCE.isInDeveloperMode() && (reqs.devmode && !requirementsToIgnore.devmode)) {
+            return "Enable developer mode to access this button";
+        } else if (windowAlreadyOpen != null && reqs.window && !requirementsToIgnore.window) {
             return "The edit window is already open";
         }
 
@@ -425,11 +429,12 @@ public abstract class RightMouseButtonAction {
 
     public static class Requirements {
 
-        public static final Requirements NO_REQUIREMENTS = new Requirements(false, false);
+        public static final Requirements NO_REQUIREMENTS = new Requirements(false, false, false);
 
-        private final boolean unlocked, window;
+        private final boolean devmode, unlocked, window;
 
-        public Requirements(boolean unlocked, boolean window) {
+        public Requirements(boolean devmode, boolean unlocked, boolean window) {
+            this.devmode = devmode;
             this.unlocked = unlocked;
             this.window = window;
         }

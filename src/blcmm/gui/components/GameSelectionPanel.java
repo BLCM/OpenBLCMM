@@ -53,6 +53,7 @@ public class GameSelectionPanel extends JPanel {
     private final JLabel label = new JLabel();
     private final JComboBox<PatchType> box = new JComboBox<>(PatchType.values());
     private PatchType type = null;
+    private boolean enabled = false;
 
     public GameSelectionPanel() {
         box.setRenderer(new DefaultListCellRenderer() {
@@ -64,12 +65,13 @@ public class GameSelectionPanel extends JPanel {
                 return l;
             }
         });
-        label.setHorizontalTextPosition(JLabel.LEFT);
-        box.addItemListener(e -> type = (PatchType) box.getSelectedItem());
-        GameSelectionPanel.this.setMode(type);
+        label.setHorizontalTextPosition(JLabel.RIGHT);
+        box.addItemListener(e -> this.type = (PatchType) box.getSelectedItem());
+        GameSelectionPanel.this.setMode(this.type, this.enabled);
     }
 
-    public void setMode(PatchType type) {
+    public void setMode(PatchType type, boolean enabled) {
+        this.enabled = enabled;
         this.type = type;
         this.box.setSelectedItem(type);
 
@@ -80,21 +82,24 @@ public class GameSelectionPanel extends JPanel {
             label.setIcon(null);
             this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
         } else {
-            label.setText("Game:");
-            label.setIcon(null);
-            this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
-            this.add(box, new GridBagConstraints(1, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
+            if (enabled) {
+                label.setText("Game:");
+                label.setIcon(null);
+                this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+                this.add(box, new GridBagConstraints(1, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 5, 0, 0), 0, 0));
+            } else {
+                label.setIcon(new ImageIcon(type.getIcon(8 + Options.INSTANCE.getFontsize())));
+                label.setText(type.getGameName() + " Mod File");
+                this.add(label, new GridBagConstraints(0, 0, 1, 1, 1d, 1d, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+            }
         }
         this.add(Box.createHorizontalStrut(getMaxWidth()), new GridBagConstraints(0, 1, 2, 1, 1d, 1d, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
         SwingUtilities.updateComponentTreeUI(this);
     }
 
     private int getMaxWidth() {
-        // This method was more useful when the dropdown could be a text label
-        // instead, for when developer mode was off.  But whatever, we'll leave
-        // it.
         JLabel temp = new JLabel();
-        temp.setText("This is a file for " + PatchType.TPS.toString());
+        temp.setText(PatchType.TPS.getGameName());
         temp.setIcon(new ImageIcon(PatchType.TPS.getIcon(8 + Options.INSTANCE.getFontsize())));
         return temp.getPreferredSize().width;
     }
@@ -108,8 +113,15 @@ public class GameSelectionPanel extends JPanel {
     }
 
     public void setType(PatchType type) {
-        this.setMode(type);
+        this.setMode(type, this.enabled);
     }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        this.setMode(type, enabled);
+    }
+
 
     public void addItemListenerToComboBox(ItemListener aListener) {
         box.addItemListener(aListener);

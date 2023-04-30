@@ -45,7 +45,7 @@ import javax.swing.tree.TreePath;
 public class InsertAction extends RightMouseButtonAction {
 
     public InsertAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
-        super(tree, "Insert", hotkey, ctrl, new Requirements(true, true));
+        super(tree, "Insert", hotkey, ctrl, new Requirements(true, true, true));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class InsertAction extends RightMouseButtonAction {
             return false;
         }
 
-        return true;
+        return Options.INSTANCE.isInDeveloperMode();
 
     }
 

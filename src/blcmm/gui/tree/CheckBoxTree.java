@@ -37,6 +37,9 @@ import blcmm.utilities.OSInfo;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
@@ -62,6 +65,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.EventListenerList;
@@ -723,8 +727,37 @@ public final class CheckBoxTree extends JTree {
             if (mouseEvent.getClickCount() >= 2) {
                 if (editAction.isEnabled()) {
                     editAction.action();
-                } else if (editAction.isEnabled(new RightMouseButtonAction.Requirements(false, true))) {
+                } else if (editAction.isEnabled(new RightMouseButtonAction.Requirements(false, false, true))) {
                     RightMouseButtonAction.bringEditWindowToFront();
+                } else {
+                    if (!(userObject instanceof Category) && (userObject instanceof ModelElement) && !Options.INSTANCE.isInDeveloperMode()) {
+                        JLabel label = new JLabel(
+                                "<html>You can't edit code until you enable developer mode.<br/>"
+                                + "Doing so will let you insert, edit, and delete the<br/>"
+                                + "actual mod code, and will enable various syntax checks<br/>"
+                                + "on the code.  Click the checkbox now, to enable it, or<br/>"
+                                + "do so via the Settings dialog.<br/>"
+                        );
+                        JPanel panel = new JPanel();
+                        JCheckBox box = new JCheckBox("Enable now");
+                        box.setHorizontalTextPosition(SwingConstants.LEFT);
+
+                        panel.setLayout(new GridBagLayout());
+                        GridBagConstraints c = new GridBagConstraints();
+                        c.gridx = c.gridy = 0;
+                        c.gridheight = c.gridwidth = 1;
+                        c.insets = new Insets(0, 0, 0, 0);
+                        c.anchor = GridBagConstraints.EAST;
+                        panel.add(label, c);
+                        c.gridy = 1;
+                        c.insets.top = 10;
+                        panel.add(box, c);
+                        JOptionPane.showMessageDialog(null, panel, "Enable developer mode first", JOptionPane.INFORMATION_MESSAGE);
+                        if (box.isSelected()) {
+                            Options.INSTANCE.setDeveloperMode(true);
+                            MainGUI.INSTANCE.toggleDeveloperMode(true);
+                        }
+                    }
                 }
                 orig.mouseClicked(mouseEvent);
                 MainGUI.INSTANCE.requestFocus();
@@ -739,7 +772,9 @@ public final class CheckBoxTree extends JTree {
             //Don't allow checking of leafs by default
             if ((tp == tpfield)) {
                 boolean cancelbecauseLeaf = false;
-                if (((DefaultMutableTreeNode) tp.getLastPathComponent()).isLeaf() && !Options.INSTANCE.getLeafSelectionAllowed()) {
+                if (((DefaultMutableTreeNode) tp.getLastPathComponent()).isLeaf()
+                        && !Options.INSTANCE.getLeafSelectionAllowed()
+                        && Options.INSTANCE.isInDeveloperMode()) {
                     int allow = JOptionPane.showConfirmDialog(tree,
                             Meta.NAME + " usually disallows toggling individual statements.\nEnable that functionality anyway?",
                             "Allow toggling individual statements?",
