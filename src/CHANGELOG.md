@@ -96,6 +96,10 @@ OpenBLCMM Changelog
   file in OpenBLCMM, when installed via the installer.
 - When run for the first time, OpenBLCMM will attempt to import most of your
   settings from an original BLCMM application install, if possible.
+- "Copy" action is available regardless of developer mode ("Cut" had already
+  been accessible)
+- Make sure that "Insert" option appears in right-click menu regardless of
+  if developer mode is on (will be greyed out if dev mode is *not* on)
 - Fixed up some bugs when attempting to import very old mod files.
 - Username hiding in logfiles only matches at the beginning of the pathnames,
   instead of at arbitrary points, and has been expanded to include more

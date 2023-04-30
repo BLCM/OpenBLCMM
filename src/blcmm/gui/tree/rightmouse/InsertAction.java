@@ -31,7 +31,6 @@ import blcmm.gui.MainGUI;
 import blcmm.gui.panels.EditPanel;
 import blcmm.gui.tree.CheckBoxTree;
 import blcmm.model.Category;
-import blcmm.utilities.Options;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,7 +62,7 @@ public class InsertAction extends RightMouseButtonAction {
             return false;
         }
 
-        return Options.INSTANCE.isInDeveloperMode();
+        return true;
 
     }
 
