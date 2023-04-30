@@ -1,4 +1,4 @@
-The Borderlands Community Mod Manager was developed by LightChaosman, with assistance from apocalyptech, Bugworm, c0dycode, and FromDarkHell.
+﻿The Borderlands Community Mod Manager was developed by LightChaosman, with assistance from apocalyptech, Bugworm, c0dycode, and FromDarkHell.
 
 OpenBLCMM is a fully-opensourced version of BLCMM maintained by the BLCMods community (with apocalyptech as the current lead).  Thanks to LightChaosman for opensourcing the BLCMM core!  Other OpenBLCMM contributions have come from apple1417 and ZetaDæmon.
 
