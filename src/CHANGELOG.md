@@ -9,8 +9,6 @@ OpenBLCMM Changelog
 - Compatibility through Java 20
 - Windows EXE packaging updated, with optional full GUI installer.  No need
   to install Java!
-- Mac packaging features a bundled Automator app for easier launching,
-  courtesy ZetaDæmon
 - Removed features:
   - GUI Launcher / Autoupdates
   - GUI to set system memory.  The Windows EXE version doesn't really need it
