@@ -3,6 +3,7 @@
 
 import os
 import sys
+import enum
 import shutil
 import subprocess
 
@@ -17,19 +18,27 @@ included_files_base = [
         '../src/CHANGELOG.md',
         ]
 
+# Pure-Java Archive Types
+class ArchiveType(enum.Enum):
+    ZIP = enum.auto()
+    TAR = enum.auto()
+
 class PureJava:
     """
     Class to contain a bunch of info about "pure" Java releases.  These are
     all handled pretty similarly, and lets us do various looping.
     """
 
-    def __init__(self, os_name, files, launch_text,
+    def __init__(self, os_name, archive_type,
+            files,
+            launch_text,
             do_header=True,
             java_text='We recommend [Adoptium Temurin](https://adoptium.net/)',
             extra_points=None,
             redirect_files=None,
             ):
         self.os_name = os_name
+        self.archive_type = archive_type
         self.files = files
         self.launch_text = launch_text
         self.do_header = do_header
@@ -47,6 +56,7 @@ class PureJava:
 # Construct a list of "pure" Java zips that we'll construct.
 pure_javas = [
         PureJava('Windows',
+            ArchiveType.ZIP,
             files=included_files_base + [
                 f'{app_name}.jar',
                 '../release-processing/launch_openblcmm.bat',
@@ -55,6 +65,7 @@ pure_javas = [
             do_header=False,
             ),
         PureJava('Linux',
+            ArchiveType.TAR,
             files=included_files_base + [
                 f'{app_name}.jar',
                 '../release-processing/launch_openblcmm.sh',
@@ -63,18 +74,27 @@ pure_javas = [
             java_text="Just install via your distro's package manager",
             ),
         PureJava('Mac',
+            ArchiveType.TAR,
             files=included_files_base + [
-                '../release-processing/osx-app/__MACOSX',
-                '../release-processing/osx-app/OpenBLCMM.app',
+                f'{app_name}.jar',
+                '../release-processing/launch_openblcmm.command',
                 ],
-            redirect_files={
-                # Current app bundling wants the jarfile *inside* the .app bundle
-                f'{app_name}.jar': 'OpenBLCMM.app',
-                },
-            launch_text="Launch by doubleclicking on `OpenBLCMM.app`",
-            extra_points=[
-                "**Note:** This launcher is slightly experimental!  Feedback on how well it works is appreciated!",
-                ],
+            launch_text="Launch by doubleclicking on `launch_openblcmm.command`",
+
+            # "Old" parameters from trying to figure out Automator-wrapped .app
+            # distribution.  This seems rather finnicky, so at the *moment*
+            # we're not doing that.
+            #files=included_files_base + [
+            #    '../release-processing/osx-app/__MACOSX',
+            #    '../release-processing/osx-app/OpenBLCMM.app',
+            #    ],
+            #redirect_files={
+            #    # Current app bundling wants the jarfile *inside* the .app bundle
+            #    f'{app_name}.jar': 'OpenBLCMM.app',
+            #    },
+            #extra_points=[
+            #    "**Note:** This launcher is slightly experimental!  Feedback on how well it works is appreciated!",
+            #    ],
             ),
         ]
 
@@ -151,9 +171,21 @@ to_report.append(full_win_zip)
 
 # Zip up the "native" Java Jar versions
 for pj in pure_javas:
-    print(f'Creating {pj.os_name} Java Zip...')
+    match pj.archive_type:
+        case ArchiveType.ZIP:
+            label = 'Zip'
+            ext = 'zip'
+            command = ['zip', '-r']
+        case ArchiveType.TAR:
+            label = 'TGZ'
+            ext = 'tgz'
+            command = ['tar', '-zcvf']
+        case _:
+            raise RuntimeError(f'Unknown archive type: {pj.archive_type}')
+
+    print(f'Creating {pj.os_name} Java {label}...')
     base_java_zip = f'{app_name}-{version}-Java-{pj.os_name}'
-    pj.zipfile = f'{base_java_zip}.zip'
+    pj.zipfile = f'{base_java_zip}.{ext}'
     os.makedirs(base_java_zip)
     for filename in pj.files:
         if os.path.isdir(filename):
@@ -163,7 +195,7 @@ for pj in pure_javas:
             shutil.copy2(filename, base_java_zip)
     for orig_filename, new_location in pj.redirect_files.items():
         shutil.copy2(orig_filename, os.path.join(base_java_zip, new_location))
-    subprocess.run(['zip', '-r',
+    subprocess.run([*command,
         pj.zipfile,
         base_java_zip,
         ])
