@@ -14,8 +14,7 @@ BLCMM application.
 Download / Install
 ==================
 
-OpenBLCMM hasn't been officially publicly released yet, but once it is,
-downloads can be found here:
+Downloads can be found here:
 
 - **OpenBLCMM Releases:** https://github.com/BLCM/OpenBLCMM/releases
 - **Object Explorer Datapacks:** https://github.com/BLCM/OpenBLCMM-Data/releases
@@ -23,7 +22,7 @@ downloads can be found here:
 **NOTE:** OpenBLCMM is *not* compatible with the original BLCMM game data
 packages.  New prepackaged data files are available at the link above.  To
 use those datapacks, download and save them inside the same directory as
-`OpenBLCMM.exe`/`OpenBLCMM.jar`/`OpenBLCMM.app`.  OpenBLCMM should see the
+`OpenBLCMM.exe`/`OpenBLCMM.jar`.  OpenBLCMM should see the
 data on the next startup and have them available for use.
 
 Changelog
