@@ -9,7 +9,8 @@ import subprocess
 
 # Some control vars
 app_name = 'OpenBLCMM'
-release_openblcmm = 'https://github.com/BLCM/OpenBLCMM/releases'
+base_openblcmm = 'https://github.com/BLCM/OpenBLCMM'
+release_openblcmm = f'{base_openblcmm}/releases'
 release_data = 'https://github.com/BLCM/OpenBLCMM-Data/releases'
 supported_java = '8, 11, 17, and 20'
 included_files_base = [
@@ -204,7 +205,8 @@ for pj in pure_javas:
 
 # Output our release text to slap in the 'releases' area
 release_with_version = f'{release_openblcmm}/download/v{version}'
-print('Releases Link Area:')
+print('Release Files')
+print('-------------')
 print('')
 print('### Windows')
 print('')
@@ -225,6 +227,11 @@ print('### Object Explorer Data Packs')
 print('')
 print(f'- **Datapack Releases**: {release_data}')
 print('  - Datapacks must now be downloaded manually.  Download the ones you want and store them in the same directory as `OpenBLCMM.exe` or `OpenBLCMM.jar`.  The app will see them on the next startup!')
+print('')
+print('Changelog')
+print('---------')
+print('')
+print(f'[v{version} Full Changelog]({base_openblcmm}/blob/v{version}/src/CHANGELOG.md)')
 print('')
 
 # Display the results
