@@ -309,6 +309,16 @@
   "name":"java.nio.CharBuffer"
 },
 {
+  "name":"java.rmi.MarshalledObject",
+  "methods":[
+    {"name":"<init>","parameterTypes":["java.lang.Object"] }, 
+    {"name":"get","parameterTypes":[] }
+  ]
+},
+{
+  "name":"java.rmi.Remote"
+},
+{
   "name":"java.security.AlgorithmParametersSpi"
 },
 {
@@ -466,7 +476,15 @@
   "name":"javax.swing.JViewport"
 },
 {
+  "name":"javax.swing.plaf.basic.BasicButtonListener",
+  "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
+},
+{
   "name":"javax.swing.plaf.basic.BasicComboBoxUI",
+  "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
+},
+{
+  "name":"javax.swing.plaf.basic.BasicListUI",
   "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
 },
 {
