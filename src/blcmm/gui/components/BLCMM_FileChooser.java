@@ -46,7 +46,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.filechooser.FileFilter;
 
 /**
  *
@@ -71,23 +70,29 @@ public class BLCMM_FileChooser extends JFileChooser {
         this.appendBlcmExtension = appendBlcmExtension;
         super.setPreferredSize(new Dimension(750, 400));
         super.setSelectedFile(new File(currentFileName));
+        /*
         if (saveAs) {
             super.addChoosableFileFilter(new FilterToolFileFilter());
             super.addChoosableFileFilter(new StructurelessFileFilter());
         }
+        */
     }
 
     public PatchIO.SaveFormat getFormat() {
+        /*
         if (this.getFileFilter() instanceof StructurelessFileFilter) {
             return PatchIO.SaveFormat.STRUCTURELESS;
         } else if (this.getFileFilter() instanceof FilterToolFileFilter) {
             return PatchIO.SaveFormat.FT;
         }
+        */
         return PatchIO.SaveFormat.BLCMM;
     }
 
     @Override
     public void approveSelection() {
+
+        /*
         if (getFormat() == PatchIO.SaveFormat.STRUCTURELESS) {
             if (!Options.INSTANCE.getHasSeenExportWarning()) {
                 Options.INSTANCE.setHasSeenExportWarning(true);
@@ -97,6 +102,8 @@ public class BLCMM_FileChooser extends JFileChooser {
                 );
             }
         }
+        */
+
         if (getDialogType() == SAVE_DIALOG) {
             File f = getSelectedFile();
 
@@ -261,6 +268,8 @@ public class BLCMM_FileChooser extends JFileChooser {
         return button;
     }
 
+    /*
+
     public final static class FilterToolFileFilter extends FileFilter {
 
         @Override
@@ -286,4 +295,6 @@ public class BLCMM_FileChooser extends JFileChooser {
             return "Structureless File - saves only checked codes and hotfixes (All Files)";
         }
     }
+    
+    */
 }

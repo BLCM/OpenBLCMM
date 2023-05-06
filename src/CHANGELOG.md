@@ -20,6 +20,7 @@ OpenBLCMM Changelog
   - Game launch button
   - Hex Multitool launch
   - "Invert Mod" functionality
+  - Saving to FilterTool-formatted and structureless files
 - Object Explorer tweaks:
   - Combined all data into a single data package, and included dumps of all
     classes historically omitted from the OE data set (with the exceptions of
@@ -105,7 +106,6 @@ OpenBLCMM Changelog
 - Improved Changelog rendering
 - Some tightening-up of mod-name detection when the mod category and filename
   don't exactly match.
-- Removed hidden ability to save in legacy FilterTool mod format
 - Changed behavior when encountering invalid strings in map/level merge
   statements -- should possibly be more accepting now.
 - Replaced icon resources with known-free-to-use versions, and updated the
