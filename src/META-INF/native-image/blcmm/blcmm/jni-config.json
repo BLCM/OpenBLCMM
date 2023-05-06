@@ -648,6 +648,7 @@
 },
 {
   "name":"sun.awt.windows.WFramePeer",
+  "fields":[{"name":"keepOnMinimize"}],
   "methods":[{"name":"getExtendedState","parameterTypes":[] }]
 },
 {
