@@ -110,6 +110,7 @@ the compilation with:
         -H:ReflectionConfigurationFiles=conf-dir/reflect-config.json
         -H:ResourceConfigurationFiles=conf-dir/resource-config.json
         -H:JNIConfigurationFiles=conf-dir/jni-config.json
+        -H:SerializationConfigurationFiles=conf-dir/serialization-config.json
         -jar OpenBLCMM.jar
 
 Note that there's an alternate version of the tracing agent call which
