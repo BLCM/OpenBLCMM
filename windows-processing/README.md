@@ -144,6 +144,11 @@ Once the compilation process is done, you should have an `OpenBLCMM.exe`
 and a collection of DLL files (ten of them, currently).  These can be
 zipped up and distributed!
 
+**Note:** The compilation process will currently complain about a
+`sun.java2d.d3d.D3DRenderQueue.flushNow` method not being found, but that
+*is* required to be in the native-image config files, otherwise selecting
+the main folder dropdown in file dialogs will crash the EXE.
+
 ### Installing/Using Those Components
 
 This is pretty straightforward.  Note that GraalVM/Liberica Native Image

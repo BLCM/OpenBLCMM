@@ -782,7 +782,8 @@
   "methods":[{"name":"run","parameterTypes":[] }]
 },
 {
-  "name":"sun.java2d.d3d.D3DRenderQueue"
+  "name":"sun.java2d.d3d.D3DRenderQueue",
+  "methods":[{"name":"flushNow","parameterTypes":["int"] }]
 },
 {
   "name":"sun.java2d.d3d.D3DRenderQueue$1",
