@@ -82,7 +82,8 @@
   "fields":[
     {"name":"height"}, 
     {"name":"width"}
-  ]
+  ],
+  "methods":[{"name":"<init>","parameterTypes":["int","int"] }]
 },
 {
   "name":"java.awt.Event",
