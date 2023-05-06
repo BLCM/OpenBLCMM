@@ -8,6 +8,7 @@
 /store/Output
 /store/compiled
 /store/*.dll
+/store/archive
 
 # OpenBLCMM user-data files
 /blcmm_logs/
