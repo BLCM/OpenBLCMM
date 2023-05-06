@@ -486,6 +486,10 @@
   "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
 },
 {
+  "name":"javax.swing.plaf.basic.BasicTableUI",
+  "methods":[{"name":"loadActionMap","parameterTypes":["javax.swing.plaf.basic.LazyActionMap"] }]
+},
+{
   "name":"javax.swing.plaf.nimbus.ArrowButtonPainter",
   "methods":[{"name":"<init>","parameterTypes":["javax.swing.plaf.nimbus.AbstractRegionPainter$PaintContext","int"] }]
 },

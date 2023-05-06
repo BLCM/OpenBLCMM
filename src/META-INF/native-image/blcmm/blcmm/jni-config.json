@@ -781,6 +781,9 @@
   "methods":[{"name":"run","parameterTypes":[] }]
 },
 {
+  "name":"sun.java2d.d3d.D3DRenderQueue"
+},
+{
   "name":"sun.java2d.d3d.D3DRenderQueue$1",
   "methods":[{"name":"run","parameterTypes":[] }]
 },
@@ -954,6 +957,10 @@
     {"name":"numXbands"}, 
     {"name":"region"}
   ]
+},
+{
+  "name":"sun.java2d.pipe.RenderQueue",
+  "methods":[{"name":"flushNow","parameterTypes":["int"] }]
 },
 {
   "name":"sun.java2d.pipe.ShapeSpanIterator",
