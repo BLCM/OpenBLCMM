@@ -14,7 +14,10 @@ easier for native Windows users, feel free to send in a PR!
 * [Compiling for Windows](#compiling-for-windows)
   * [Installing/Using Those Components](#installingusing-those-components)
   * [Vanilla GraalVM](#vanilla-graalvm)
-* [Setting an EXE Icon](#setting-an-exe-icon)
+* [Post-Compile Processing](#post-compile-processing)
+  * [Setting an EXE Icon](#setting-an-exe-icon)
+  * [Hiding cmd Window](#hiding-cmd-window)
+  * [High-DPI Displays](#high-dpi-displays)
 * [Building the Installer](#building-the-installer)
 
 The Short Version
@@ -188,8 +191,13 @@ to install the `native-image` component:
 Visual Studio would still be required, though, and you'd need to kick
 off the processes via that "x64 Native Tools Command Prompt."
 
-Setting an EXE Icon
--------------------
+Post-Compile Processing
+-----------------------
+
+There's a few things which we do to the application after it's been
+compiled, to fix up a few oddities of the plain EXE.
+
+### Setting an EXE Icon
 
 GraalVM/Liberica Native Image doesn't support setting a custom icon on the
 compiled EXE, and it'd be nice to have.  When installing from an installer
@@ -211,6 +219,51 @@ the compiled EXE available, run:
     RCEDIT64.EXE /I OpenBLCMM.exe openblcmm.ico
 
 That's it!
+
+### Hiding cmd Window
+
+By default, AWT/Swing apps compiled with GraalVM launch a `cmd.exe`-like
+terminal window when you launch the app, in addition to the main window
+itself.  This is arguably useful because it gives the user a console output,
+so you can see log entries as they get printed.  It's a bit messy from a
+UI perspective, though, and most users would prefer without.  Fortunately,
+the Windows command `EDITBIN` can be used to switch the EXE to the "Windows"
+subsystem, which ends up preventing that window from opening.
+
+[This Issue at GraalVM's github page](https://github.com/oracle/graal/issues/2256)
+implies that someone had a problem where the app remained resident in memory
+after closing, after having set that subsystem, but I haven't found that to
+be the case with OpenBLCMM, at least.  So, we're going ahead and doing it,
+which can be done like so:
+
+    EDITBIN /SUBSYSTEM:WINDOWS OpenBLCMM.exe
+
+### High-DPI Displays
+
+If you run OpenBLCMM (or, presumably, any other Liberica NIK compiled AWT/Swing
+app) on a display which has been scaled up (something common with 4k+ monitors,
+for instance), you'll soon notice that the text is rather blurry.  That's because
+the application hasn't been set as advertising itself as High-DPI capable, and
+so Windows is doing some pretty basic scaling instead.  Java itself *is* quite
+capable of high-DPI displays, though, so we just need to tell the EXE that.
+
+That's done via [application manifests](https://learn.microsoft.com/en-us/windows/win32/sbscs/application-manifests),
+and Microsoft even [has a page specifically about high-DPI settings](https://learn.microsoft.com/en-us/windows/win32/hidpi/setting-the-default-dpi-awareness-for-a-process).
+It *is* possible to just distribute the compiled EXE along with an appropriate
+`.manifest` file, but it's better to just bake the manifest into the EXE itself.
+That can be done with Visual Studio's `MT.EXE`.  See, for instance, [this page
+about doing so](https://www.ni.com/docs/en-US/bundle/labview/page/lvhowto/editing_app_manifests.html).
+
+I put together an appropriate manifest for OpenBLCMM based on [a handy
+StackOverflow thread](https://stackoverflow.com/questions/23551112/how-can-i-set-the-dpiaware-property-in-a-windows-application-manifest-to-per-mo)
+and am using that.  It seems to work great!  Check out `OpenBLCMM.exe.manifest`
+for the details, but it can be merged into the EXE with the following:
+
+    MT.exe -manifest OpenBLCMM.exe.manifest -outputresource:OpenBLCMM.exe;#1
+
+Note the extra `#1` after the semicolon at the end of the EXE name.  An EXE can
+have more than one manifest -- that's telling `MT.exe` that this should be the
+*first* manifest in the EXE.
 
 Building the Installer
 ----------------------
