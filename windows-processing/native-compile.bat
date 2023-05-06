@@ -23,6 +23,12 @@ Rem See https://github.com/oracle/graal/issues/2256
 EDITBIN /SUBSYSTEM:WINDOWS OpenBLCMM.exe
 echo.
 
+echo Setting the app as High-DPI Capable
+echo -----------------------------------
+echo.
+MT.exe -manifest ..\windows-processing\OpenBLCMM.exe.manifest -outputresource:OpenBLCMM.exe;#1
+echo.
+
 echo Collecting into subdir
 echo ----------------------
 echo.

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
+    <!-- 
+        Application Manifest for OpenBLCMM
+        https://learn.microsoft.com/en-us/windows/win32/sbscs/application-manifests
+
+        This is needed for the compiled EXE version of OpenBLCMM.  Without it, users
+        with desktop scaling (common with, for instance, 4k+ monitors) will end up
+        with very blurry text.  We need to tell Windows that the app is aware of
+        high DPI settings.
+
+        It's recommended to bake this into the EXE itself, after compiling, rather
+        than distributing side-by-side.  This can be done with Visual Studio's
+        MT.EXE, with the command:
+
+            mt -manifest OpenBLCMM.exe.manifest -outputresource:OpenBLCMM.exe;#1
+
+        Some other info:
+
+        https://learn.microsoft.com/en-us/windows/win32/hidpi/setting-the-default-dpi-awareness-for-a-process
+        https://stackoverflow.com/questions/23551112/how-can-i-set-the-dpiaware-property-in-a-windows-application-manifest-to-per-mo
+        https://learn.microsoft.com/en-us/windows/win32/sbscs/installing-side-by-side-assemblies
+        https://www.ni.com/docs/en-US/bundle/labview/page/lvhowto/editing_app_manifests.html
+    -->
+    <asmv3:application>
+        <asmv3:windowsSettings>
+            <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware> <!-- fallback for Windows 7 and 8 -->
+            <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor, system</dpiAwareness> <!-- Windows 10 v1607 and up -->
+        </asmv3:windowsSettings>
+    </asmv3:application>
+</assembly>
+
