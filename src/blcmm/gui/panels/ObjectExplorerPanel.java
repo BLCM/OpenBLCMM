@@ -1221,7 +1221,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                             if (match) {
                                 objectCount++;
                                 output.append(current);
-                                if (!curAttr.isEmpty()) {
+                                if (curAttr.length() > 0) {
                                     output.append(" ");
                                     output.append(curAttr);
                                     if (isArray) {
@@ -1258,7 +1258,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                                 if (normalizedProperty == null) {
                                     normalizedProperty = line.substring(0, startPatternLen-1);
                                 }
-                                if (curAttr.isEmpty()) {
+                                if (curAttr.length() == 0) {
                                     curAttr.append(normalizedProperty);
                                     curAttr.append(": ");
                                     if (isArray) {
@@ -1275,7 +1275,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     if (match) {
                         objectCount++;
                         output.append(current);
-                        if (!curAttr.isEmpty()) {
+                        if (curAttr.length() > 0) {
                             output.append(" ");
                             output.append(curAttr);
                             if (isArray) {
