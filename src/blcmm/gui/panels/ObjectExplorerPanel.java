@@ -1184,6 +1184,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         // an event we could hook into which would trigger once the thing's
         // done with its work, but I don't care enough to dig more, at the
         // moment.
+        //
+        // (Coming back to this later with more experience, I'm sure that the
+        // trick would be to do the work in a SwingWorker so that the GUI had
+        // an opportunity to update -- basically what we do for the search/refs
+        // stuff.  Refactoring this would probably be nice.
+        //
         //ObjectExplorer.INSTANCE.cursorWait();
 
         String startPatternStandard = property.toLowerCase() + "=";
@@ -1206,6 +1212,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     boolean match = false;
                     boolean found = false;
                     boolean isArray = false;
+                    boolean arrayIsFinished = false;
                     int dataIndex;
 
                     String line = br.readLine();
@@ -1228,10 +1235,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                             match = true;
                             found = false;
                             isArray = false;
+                            arrayIsFinished = false;
                             current = this.objectNameFromDumpHeader(line);
                             curAttr = new StringBuilder();
                         }
-                        if ((!found || isArray) && line.length() >= startPatternLen) {
+                        if ((!found || (isArray && !arrayIsFinished)) && line.length() >= startPatternLen) {
                             dataIndex = 0;
                             toMatch = line.substring(0, startPatternLen).toLowerCase();
                             if (toMatch.startsWith(startPatternStandard)) {
@@ -1241,8 +1249,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                                 found = true;
                                 isArray = true;
                                 dataIndex = line.indexOf(")") + 2;
+                            } else if (isArray) {
+                                // If we get here, we had previously detected an array but we're
+                                // on to a new prop.
+                                arrayIsFinished = true;
                             }
-                            if (found) {
+                            if (found && !arrayIsFinished) {
                                 if (normalizedProperty == null) {
                                     normalizedProperty = line.substring(0, startPatternLen-1);
                                 }
