@@ -55,7 +55,8 @@ public class ImportAnomalyLog implements Iterable<ImportAnomalyLog.importAnomaly
         DifferentType(false),
         RARfile(true),
         NoCommands(true),
-        IncorrectType(true);
+        IncorrectType(true),
+        PythonFile(true);
 
         public final boolean error;
 

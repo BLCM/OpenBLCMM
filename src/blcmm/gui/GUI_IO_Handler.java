@@ -385,9 +385,17 @@ public class GUI_IO_Handler {
                 count += addModsLoop(f.listFiles(), patch, newLocation, newLocation.sizeIncludingHotfixes(), deselectAll);
             } else {
                 String name = f.getName();
-                if (!name.endsWith(".rar") && !name.endsWith(".jar") && !name.endsWith(".exe") && !name.endsWith(".pdf")) {
-                    int newCount = addSingleMod(f, patch, parentOfMods, insertIndex, deselectAll);
-                    count += newCount;
+                if (name.endsWith(".py")) {
+                    ImportAnomalyLog.INSTANCE.add(new ImportAnomalyLog.importAnomaly(name,
+                            ImportAnomalyLog.ImportAnomalyType.PythonFile,
+                            name + " is a Python script (possibly an SDK mod), and not managed via BLCMM",
+                            null
+                    ));
+                } else {
+                    if (!name.endsWith(".rar") && !name.endsWith(".jar") && !name.endsWith(".exe") && !name.endsWith(".pdf")) {
+                        int newCount = addSingleMod(f, patch, parentOfMods, insertIndex, deselectAll);
+                        count += newCount;
+                    }
                 }
             }
         }

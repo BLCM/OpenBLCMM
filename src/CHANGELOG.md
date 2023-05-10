@@ -67,6 +67,7 @@ OpenBLCMM Changelog
 - Improved array-limit message removal hexedit for BL2, courtesy apple1417
 - Added new-version notification to main application.  This can be toggled off
   in the settings if you don't want to be bothered by it!
+- Will refuse to import Python scripts, since they are likely PythonSDK mods.
 - Added "allow toggling individual statements" option to settings, and improved
   dynamically setting the option from the main OpenBLCMM window.
 - Added a "log-latest.log" logfile which never gets removed, and updated the
