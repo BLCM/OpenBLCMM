@@ -71,9 +71,8 @@ The effects of Creator Mode are:
 
 ### Setting User/Install Directory
 
-These settings are similar in nature, and mostly just put into the app to
-support some peculiarities of the Mac `.app` bundle.  They're technically
-available for anyone else as well, though.  the `-userdir=<foo>` argument
+These settings are similar in nature, and were put in place while investigating
+some options for Mac app bundling.  The `-userdir=<foo>` argument
 will set the current "user directory," which is ordinarily only really used to
 provide shortcut buttons in the File dialogs.  If you have Creator Mode active,
 this will also determine where the app's prefs/logfiles/backups are stored.
@@ -86,12 +85,6 @@ its Jarfile is, and is mostly just used to figure out where to look for Object
 Explorer Datapacks.  It can be enabled like so:
 
     java -jar OpenBLCMM.jar -installdir=dirname
-
-The Mac `.app` bundle makes use of both of these arguments, since the Jarfile
-lives inside a directory which is ordinarily hidden from Mac users.  So, the
-Mac bundle ends up launching OpenBLCMM like so:
-
-    java -jar OpenBLCMM.jar -userdir=.. -installdir=..
 
 ### Opening Mod Files
 
