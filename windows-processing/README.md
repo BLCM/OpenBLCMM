@@ -19,7 +19,7 @@ easier for native Windows users, feel free to send in a PR!
   * [Hiding cmd Window](#hiding-cmd-window)
   * [High-DPI Displays](#high-dpi-displays)
 * [Building the Installer](#building-the-installer)
-  * [Visual C++ Redistributable](#visual-c---redistributable)
+  * [Visual C++ Redistributable](#visual-c-redistributable)
 
 The Short Version
 -----------------
