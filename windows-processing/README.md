@@ -19,6 +19,7 @@ easier for native Windows users, feel free to send in a PR!
   * [Hiding cmd Window](#hiding-cmd-window)
   * [High-DPI Displays](#high-dpi-displays)
 * [Building the Installer](#building-the-installer)
+  * [Visual C++ Redistributable](#visual-c---redistributable)
 
 The Short Version
 -----------------
@@ -290,4 +291,13 @@ able to double-click on it), make sure that the version number stored in there
 is appropriate, and hit the "compile" button.  Once the process is done, there
 should be a new installer inside the `store` directory, alongside the original
 `OpenBLCMM.exe`.
+
+### Visual C++ Redistributable
+
+Note that the GraalVM-compiled EXE requires [Microsoft's Visual C++
+Redistributable](https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist)
+to be installed.  The Inno Setup script expects there to be a `VC_redist.x64.exe`
+in this directory, so you'll need to download it.  The version I've been using
+is [the 2015-2022 bundle](https://aka.ms/vs/17/release/vc_redist.x64.exe).  So,
+make sure you've downloaded that before actually building the installer.
 

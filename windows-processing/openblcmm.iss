@@ -35,6 +35,7 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 OutputDir=..\store
+;SetupLogging=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -58,6 +59,7 @@ Source: "openblcmm.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\src\CHANGELOG.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "VC_redist.x64.exe"; DestDir: "{tmp}"; Flags: dontcopy
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
@@ -79,3 +81,65 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilen
 ;[Run]
 ;Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
+[Run]
+; Install VC Redist package if need be
+Filename: "{tmp}\VC_redist.x64.exe"; \
+  StatusMsg: "Installing VC++ redistributables..."; \
+  Parameters: "/quiet"; \
+  Check: VC2022RedistNeedsInstall; \
+  Flags: waituntilterminated
+
+[Code]
+function VC2022RedistNeedsInstall: Boolean;
+var 
+  instVersionStrRaw, instVersionStr, reqVersionStr: String;
+  instVersion, reqVersion: Int64;
+begin
+  Result := False;
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE,
+       'SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64', 'Version',
+       instVersionStrRaw) then
+  begin
+    reqVersionStr := '14.34.31938.00';
+    instVersionStr := Copy(instVersionStrRaw, 2, length(instVersionStrRaw)-1);
+    Log('VC Redist Version Check : Installed Version: ' + instVersionStr);
+    Log('VC Redist Version Check : Required Version: ' + reqVersionStr);
+    if (StrToVersion(reqVersionStr, reqVersion)) then
+    begin
+      if (StrToVersion(instVersionStr, instVersion)) then
+      begin
+        if (ComparePackedVersion(instVersion, reqVersion) >= 0) then
+        begin
+          Log('VC Redist Version Check : Redist is already new enough');
+          Result := False;
+        end
+        else
+        begin
+          Log('VC Redist Version Check : Redist is too old');
+          Result := True;
+        end
+      end
+      else
+      begin
+        Log('VC Redist Version Check : Could not parse installed version');
+        Result := True;
+      end
+    end
+    else
+    begin
+      Log('VC Redist Version Check : Could not parse required version');
+      Result := True;
+    end
+  end
+  else 
+  begin
+    // Not even an old version installed
+    Log('VC Redist Version Check : No installed vcredist found');
+    Result := True;
+  end;
+  if (Result) then
+  begin
+    Log('VC Redist Version Check : Extracting VC Redist package');
+    ExtractTemporaryFile('VC_redist.x64.exe');
+  end;
+end;

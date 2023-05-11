@@ -24,3 +24,6 @@ blcmm_data_*.jar
 # changing a bunch before we're ready for release.
 /release-processing/osx-app
 
+# Windows Packaging -- we're including the VC++ Redist
+/windows-processing/VC_redist.x64.exe
+
