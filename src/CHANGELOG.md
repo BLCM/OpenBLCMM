@@ -1,7 +1,7 @@
 OpenBLCMM Changelog
 ===================
 
-**v1.3.0** Unreleased
+**v1.3.0** May 12, 2023
 - Renamed to OpenBLCMM
 - Added Tiny Tina's Assault on Dragon Keep support
 - Released under GPLv3
