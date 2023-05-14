@@ -156,7 +156,7 @@ public enum PatchType {
         "a",
             new String[] {
                 "GD_Gladiator_Streaming",
-                "GD_Enforce_Streaming",
+                "GD_Enforcer_Streaming",
                 "GD_Lawbringer_Streaming",
                 "GD_Prototype_Streaming",
                 "Quince_Doppel_Streaming",

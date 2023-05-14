@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenBLCMM"
-#define MyAppVersion "1.3.0"
+#define MyAppVersion "1.3.1"
 #define MyAppPublisher "BLCM"
 #define MyAppURL "https://github.com/BLCM/OpenBLCMM/"
 #define MyAppExeName "OpenBLCMM.exe"
@@ -91,7 +91,7 @@ Filename: "{tmp}\VC_redist.x64.exe"; \
 
 [Code]
 function VC2022RedistNeedsInstall: Boolean;
-var 
+var
   instVersionStrRaw, instVersionStr, reqVersionStr: String;
   instVersion, reqVersion: Int64;
 begin
@@ -131,7 +131,7 @@ begin
       Result := True;
     end
   end
-  else 
+  else
   begin
     // Not even an old version installed
     Log('VC Redist Version Check : No installed vcredist found');

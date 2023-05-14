@@ -1,6 +1,9 @@
 OpenBLCMM Changelog
 ===================
 
+**v1.3.1** May 14, 2023
+- Fixed Wilhelm string (`GD_Enforcer_Streaming`) in hotfix editing dialog
+
 **v1.3.0** May 12, 2023
 - Renamed to OpenBLCMM
 - Added Tiny Tina's Assault on Dragon Keep support
