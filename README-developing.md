@@ -3,6 +3,7 @@ Developing OpenBLCMM
 
 - [Development Environment](#development-environment)
   - [OE Datapacks](#oe-datapacks)
+  - [Git Branch](#git-branch)
 - [Library Bundling](#library-bundling)
 - [Compiling for Windows](#compiling-for-windows)
 - [Packaging / Release Procedures](#packaging--release-procedures)
@@ -43,6 +44,13 @@ The data used for OpenBLCMM is extracted and processed by [the DataDumper
 PythonSDK project](https://github.com/BLCM/DataDumper).  Head over there if
 you want to package up your own data, or feel like making some changes to
 the datalib component of OpenBLCMM.
+
+### Git Branch
+
+Work on minor bugfix updates are likely to happen out in the main branch,
+but development for future [major/minor updates](https://semver.org/) will
+more likely happen on the `next` branch.  Flip over there if you want to
+see what's being worked on (if anything).
 
 Library Bundling
 ----------------
