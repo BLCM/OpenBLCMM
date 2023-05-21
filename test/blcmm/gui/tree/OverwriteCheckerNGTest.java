@@ -25,9 +25,9 @@ import org.testng.annotations.Test;
  * @author apocalyptech
  */
 public class OverwriteCheckerNGTest {
-    
+
     private SetCommand[] storedCommands;
-    
+
     public OverwriteCheckerNGTest() throws Exception {
         Options.loadOptions();
     }
@@ -47,20 +47,20 @@ public class OverwriteCheckerNGTest {
     @AfterMethod
     public void tearDownMethod() throws Exception {
     }
-    
+
     /**
      * Sets up a category with the specified commands setup in a freshly-created
      * master Category.  Hotfixes can be specified with a custom format string
      * like so:
-     * 
+     *
      *   patch set foo bar baz
      *   level none set foo bar baz
      *   ondemand none set foo bar baz
-     * 
+     *
      * This method will additionally populate our storedCommands array for
      * easy access during testing, and call reset() on OverwriteChecker, to
      * initialize its internal data structures.
-     * 
+     *
      * @param commands Commands to add to the root category
      * @return The created Category
      */
@@ -104,7 +104,7 @@ public class OverwriteCheckerNGTest {
         storedCommands = toStore.toArray(new SetCommand[toStore.size()]);
         return cat;
     }
-    
+
     /**
      * Test data class.  This base class is basically intended to be used
      * for any test data *after* the first element.  Our TestDataF class is
@@ -134,7 +134,7 @@ public class OverwriteCheckerNGTest {
             return toReturn;
         }
     }
-    
+
     /**
      * TestData intended to be used as the first in a series, so we know
      * to reset the counter.  This is all a bit silly, but in the end I don't
@@ -145,12 +145,12 @@ public class OverwriteCheckerNGTest {
             super(true, results);
         }
     }
-    
+
     /**
      * Data provider for our tests.  As per TestNG requirements, it's an array
      * of arrays, though the internal array is effectively a tuple.  The
      * "tuple" elements should be:
-     * 
+     *
      *  1) A string label, just used during test reporting so it's obvious what
      *     data's being tested.
      *  2) The commands to populate our test patch with.  Uses our custom little
@@ -159,8 +159,8 @@ public class OverwriteCheckerNGTest {
      *  4) Complete Overwrittens test data
      *  5) Partial Overwriters test data
      *  6) Partial Overwrittens test data
-     * 
-     * @return 
+     *
+     * @return
      */
     @DataProvider
     public Object[][] getOverwriteData() {
@@ -277,7 +277,7 @@ public class OverwriteCheckerNGTest {
             },
             { "Simple set_cmp", // For now we're not trying to process set_cmp intelligently,
                                 // so any set_cmp will trigger, even if maybe it wouldn't in-game.
-              new String[] {"set foo bar baz", "set_cmp foo bar frotz nitfol"},
+              new String[] {"set foo bar baz", "level none set_cmp foo bar frotz nitfol"},
               new TestData[] {
                     new TestDataF(1),
                     new TestData(),
@@ -951,5 +951,5 @@ public class OverwriteCheckerNGTest {
         fail("The test case is a prototype.");
     }
 
-    
+
 }
