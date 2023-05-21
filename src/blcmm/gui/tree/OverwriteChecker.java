@@ -48,6 +48,16 @@ import java.util.TreeSet;
  * Class to handle looking for overwritten statements in our tree, and colorize
  * them appropriately.
  *
+ * TODO:  This class does not currently handle the following case in TPS
+ * (assuming both statements are hotfixes):
+ *
+ *     set foo bar +(baz)
+ *     set foo bar (frotz)
+ *
+ * The array-add syntax from TPS is basically completely ignored, since we
+ * discard all instances of it while constructing.
+ * https://github.com/BLCM/OpenBLCMM/issues/20
+ *
  * @author LightChaosman
  */
 public class OverwriteChecker {
@@ -82,11 +92,23 @@ public class OverwriteChecker {
                         INSTANCE.overwriteMap,
                         subPrefixUseful ? Helpers.getHotfixFreeStart(command) : start);
         SetCommandPlus thisCommand = null;
-        for (SetCommandPlus s : elementsWithPrefix.get(start)) {
-            if (s.command == command) {
-                thisCommand = s;//This could be done with a hashmap or so, but since this loop will usually only be a very small number of elements, this is fine.
-                break;
+        if (elementsWithPrefix.containsKey(start)) {
+            // AFAIK, this should never *not* be reached in ordinary operation.  We're doing the containsKey
+            // check basically entirely for the benefit of our unit tests, because we'll end up calling this
+            // with TPS-style +(array) additions, which won't be in our structures.
+            for (SetCommandPlus s : elementsWithPrefix.get(start)) {
+                if (s.command == command) {
+                    thisCommand = s;//This could be done with a hashmap or so, but since this loop will usually only be a very small number of elements, this is fine.
+                    break;
+                }
             }
+        }
+        if (thisCommand == null) {
+            // AFAIK, this should never be reached in ordinary operation, 'cause the GUI won't even give
+            // the user an option to get in here.  However, our unit tests for this stuff will end up
+            // calling in here with TPS-style +(array) additions, which won't be anywhere in overwriteMap,
+            // so just handle it regardless.
+            return new ArrayList<>();
         }
         for (String prefix : elementsWithPrefix.keySet()) {
             if (1 == 0) { //Two ways of doing the same thing... I think, the 'false' branch is more effiecient about it.

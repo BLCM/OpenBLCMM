@@ -814,7 +814,7 @@ public class OverwriteCheckerNGTest {
               }
             },
             { "TPS-specific add-to-array syntax (should be no overwrite)",
-              new String[] {"set foo bar baz", "set foo bar +baz"},
+              new String[] {"level none set foo bar (baz)", "level none set foo bar +(baz)"},
               new TestData[] {
                   new TestDataF(),
                   new TestData(),
@@ -833,7 +833,7 @@ public class OverwriteCheckerNGTest {
               }
             },
             { "Partial after TPS-specific add-to-array syntax (should be no overwrite?)",
-              new String[] {"set foo bar +baz", "set foo bar[0] baz"},
+              new String[] {"level none set foo bar +(baz)", "level none set foo bar[0] baz"},
               new TestData[] {
                   new TestDataF(),
                   new TestData(),
@@ -851,8 +851,8 @@ public class OverwriteCheckerNGTest {
                   new TestData(),
               }
             },
-            { "Full after TPS-specific add-to-array syntax (should full overwrite)",
-              new String[] {"set foo bar +baz", "set foo bar baz"},
+            { "Full after TPS-specific add-to-array syntax (expected test failure -- should full overwrite)",
+              new String[] {"level none set foo bar +(baz)", "level none set foo bar baz"},
               new TestData[] {
                   new TestDataF(1),
                   new TestData(),
@@ -880,7 +880,7 @@ public class OverwriteCheckerNGTest {
     public void testGetCompleteOverwriters(String label, String[] commands,
             TestData[] completeOverwriterDataSet, TestData[] completeOverwrittenDataSet,
             TestData[] partialOverwriterDataSet, TestData[] partialOverwrittenDataSet) {
-        System.out.println("getCompleteOverwriters");
+        //System.out.println("getCompleteOverwriters: " + label);
         testCategory(commands);
         for (TestData data : completeOverwriterDataSet) {
             List<SetCommand> expResult = data.getResultSet(storedCommands);
@@ -896,7 +896,7 @@ public class OverwriteCheckerNGTest {
     public void testGetCompleteOverwrittens(String label, String[] commands,
             TestData[] completeOverwriterDataSet, TestData[] completeOverwrittenDataSet,
             TestData[] partialOverwriterDataSet, TestData[] partialOverwrittenDataSet) {
-        System.out.println("getCompleteOverwrittens");
+        //System.out.println("getCompleteOverwrittens: " + label);
         testCategory(commands);
         for (TestData data : completeOverwrittenDataSet) {
             List<SetCommand> expResult = data.getResultSet(storedCommands);
@@ -912,7 +912,7 @@ public class OverwriteCheckerNGTest {
     public void testGetPartialOverwriters(String label, String[] commands,
             TestData[] completeOverwriterDataSet, TestData[] completeOverwrittenDataSet,
             TestData[] partialOverwriterDataSet, TestData[] partialOverwrittenDataSet) {
-        System.out.println("getPartialOverwriters");
+        //System.out.println("getPartialOverwriters: " + label);
         testCategory(commands);
         for (TestData data : partialOverwriterDataSet) {
             List<SetCommand> expResult = data.getResultSet(storedCommands);
@@ -928,7 +928,7 @@ public class OverwriteCheckerNGTest {
     public void testGetPartialOverwrittens(String label, String[] commands,
             TestData[] completeOverwriterDataSet, TestData[] completeOverwrittenDataSet,
             TestData[] partialOverwriterDataSet, TestData[] partialOverwrittenDataSet) {
-        System.out.println("getPartialOverwrittens");
+        //System.out.println("getPartialOverwrittens: " + label);
         testCategory(commands);
         for (TestData data : partialOverwrittenDataSet) {
             List<SetCommand> expResult = data.getResultSet(storedCommands);
