@@ -624,12 +624,19 @@ public class GlobalListOfProperties {
             }
             HotfixCommand s = (HotfixCommand) el;
             String object = s.getObject();
-            DataManager dm = MainGUI.INSTANCE.getDMM().getCurrentDataManager();
-            if (dm == null) {
+            if (MainGUI.INSTANCE == null) {
+                // I don't believe this can ever be the case under "normal" operation,
+                // but some of our unit tests end up in here because we've not started
+                // the main GUI.
                 return false;
             } else {
-                UEClass ueClass = dm.getClassByName(object);
-                return ueClass != null;
+                DataManager dm = MainGUI.INSTANCE.getDMM().getCurrentDataManager();
+                if (dm == null) {
+                    return false;
+                } else {
+                    UEClass ueClass = dm.getClassByName(object);
+                    return ueClass != null;
+                }
             }
         }
 
@@ -849,12 +856,19 @@ public class GlobalListOfProperties {
             }
             SetCommand s = (SetCommand) element;
             String object = s.getObject();
-            DataManager dm = MainGUI.INSTANCE.getDMM().getCurrentDataManager();
-            if (dm == null) {
+            if (MainGUI.INSTANCE == null) {
+                // I don't believe this can ever be the case under "normal" operation,
+                // but some of our unit tests end up in here because we've not started
+                // the main GUI.
                 return false;
             } else {
-                UEClass ueClass = dm.getClassByName(object);
-                return ueClass != null;
+                DataManager dm = MainGUI.INSTANCE.getDMM().getCurrentDataManager();
+                if (dm == null) {
+                    return false;
+                } else {
+                    UEClass ueClass = dm.getClassByName(object);
+                    return ueClass != null;
+                }
             }
         }
 
