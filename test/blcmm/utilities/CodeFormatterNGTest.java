@@ -184,6 +184,12 @@ public class CodeFormatterNGTest {
                         "set foo bar (attr=foo,attr2=bar)"
                 ),
             },
+            { "One fancier multiline statement with extra spaces",
+                "set foo bar\n (\n   attr=foo,\n    attr2=bar\n)\n\n",
+                Arrays.asList(
+                        "set foo bar (attr=foo,attr2=bar)"
+                ),
+            },
             { "Two statements, one fancy",
                 "set foo bar (attr=foo,attr2=bar)\nset foo bar baz\n",
                 Arrays.asList(
