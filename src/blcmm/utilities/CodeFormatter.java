@@ -460,9 +460,13 @@ public class CodeFormatter {
             if (part.startsWith("set")) {
                 int split = part.indexOf("\n");
                 if (split != -1) {
-                    String head = part.substring(0, split);
-                    String tail = part.substring(split + 1);
-                    part = head.trim() + " " + CodeFormatter.deFormatCode(tail).trim();
+                    if (split < part.length()-1) {
+                        String head = part.substring(0, split);
+                        String tail = part.substring(split + 1);
+                        part = head.trim() + " " + CodeFormatter.deFormatCode(tail).trim();
+                    } else {
+                        part = part.substring(0, split).trim();
+                    }
                 }
             }
             parts.set(i, part);

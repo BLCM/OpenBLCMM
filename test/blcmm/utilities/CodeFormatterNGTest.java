@@ -112,6 +112,18 @@ public class CodeFormatterNGTest {
                 "set foo bar (\nattr=foo,\nattr2=bar\n)\n\n",
                 "set foo bar\n(\n    attr = foo,\n    attr2 = bar\n)",
             },
+            { "Multi-nested statement",
+                "set foo bar (attr=foo,attr2=(3,4),attr3=(one=two))",
+                "set foo bar\n"
+                + "(\n"
+                + "    attr = foo,\n"
+                + "    attr2 = (3,4),\n"
+                + "    attr3 =\n"
+                + "    (\n"
+                + "        one = two\n"
+                + "    )\n"
+                + ")"
+            },
             { "Two statements, one fancy",
                 "set foo bar (attr=foo,attr2=bar)\nset foo bar baz\n",
                 "set foo bar\n(\n    attr = foo,\n    attr2 = bar\n)\n\nset foo bar baz",
@@ -171,10 +183,7 @@ public class CodeFormatterNGTest {
             { "Two sets",
                 "set foo bar baz\nset one two three\n",
                 Arrays.asList(
-                        // Honestly a bit of an implementation detail; non-final
-                        // statements which end in a newline will end up with
-                        // a space at the end.  Whatever, just test for it.
-                        "set foo bar baz ",
+                        "set foo bar baz",
                         "set one two three"
                 ),
             },
@@ -197,6 +206,20 @@ public class CodeFormatterNGTest {
                         "set foo bar baz"
                 ),
             },
+            { "Multi-nested statement",
+                "set foo bar\n"
+                + "(\n"
+                + "    attr = foo,\n"
+                + "    attr2 = (3,4),\n"
+                + "    attr3 =\n"
+                + "    (\n"
+                + "        one = two\n"
+                + "    )\n"
+                + ")",
+                Arrays.asList(
+                        "set foo bar (attr=foo,attr2=(3,4),attr3=(one=two))"
+                ),
+            },
             { "Random text (possibly command extensions, etc)",
                 "blarg bloog blurg\nblip blam blop\n",
                 Arrays.asList(
@@ -217,6 +240,21 @@ public class CodeFormatterNGTest {
                 "set foo bar baz\nblarg bloog blurg\nblip blam blop\n",
                 Arrays.asList(
                         "set foo bar baz blarg bloog blurg blip blam blop"
+                ),
+            },
+            { "Comment with a set",
+                "# This is a comment\nset foo bar baz",
+                Arrays.asList(
+                        "# This is a comment",
+                        "set foo bar baz"
+                ),
+            },
+            { "Comment with a set and then another comment",
+                "# This is a comment\nset foo bar baz\n# One more comment",
+                Arrays.asList(
+                        "# This is a comment",
+                        "set foo bar baz",
+                        "# One more comment"
                 ),
             },
         };
