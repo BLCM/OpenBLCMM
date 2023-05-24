@@ -34,6 +34,7 @@ import blcmm.model.attrparser.LevelDepParser;
 import blcmm.model.attrparser.LevelDepString;
 import blcmm.model.attrparser.LevelDepStruct;
 import blcmm.model.properties.GlobalListOfProperties;
+import blcmm.utilities.CodeFormatter;
 import blcmm.utilities.GameDetection;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.ImportAnomalyLog;
@@ -1481,7 +1482,7 @@ public class PatchIO {
             GlobalLogger.log(e);
             String reportCommand = "";
             if (currentCommand != null) {
-                reportCommand = "<br/>" + Utilities.CodeFormatter.deFormatCodeForUserDialog(currentCommand.getCode());
+                reportCommand = "<br/>" + CodeFormatter.deFormatCodeForUserDialog(currentCommand.getCode());
             }
             res.add("<Html>"
                     + "The following map merging statement is in unexpected format.<br/>"

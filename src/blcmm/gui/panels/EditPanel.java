@@ -51,6 +51,7 @@ import blcmm.model.TransientModelData;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.model.properties.PropertyChecker;
 import blcmm.utilities.CancelConfirmer;
+import blcmm.utilities.CodeFormatter;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.InputValidator;
 import blcmm.utilities.Options;
@@ -68,7 +69,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -432,7 +432,8 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
 
     private void formatButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formatButtonActionPerformed
         GlobalLogger.log("Pressed format");
-        String ntext = Utilities.CodeFormatter.formatCode(textElement.getText().replaceAll("\n", " ").replaceAll("[ ]+", " "));
+        //String ntext = CodeFormatter.formatCode(textElement.getText().replaceAll("\n", " ").replaceAll("[ ]+", " "));
+        String ntext = CodeFormatter.formatCode(textElement.getText());
         setTextRetainCursor(textElement, ntext);
     }//GEN-LAST:event_formatButtonActionPerformed
 
@@ -465,7 +466,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
 
     private void deformatButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deformatButtonActionPerformed
         GlobalLogger.log("Pressed deformat");
-        String ntext = Utilities.CodeFormatter.deFormatCodeInnerNBrackets(textElement.getText(), (Integer) deformatSpinner.getValue());
+        String ntext = CodeFormatter.deFormatCodeInnerNBrackets(textElement.getText(), (Integer) deformatSpinner.getValue());
         setTextRetainCursor(textElement, ntext);
     }//GEN-LAST:event_deformatButtonActionPerformed
 
@@ -529,7 +530,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
             if (el instanceof Comment) {
                 sb.append(((Comment) el).getComment());
             } else if (el instanceof SetCommand) {
-                String formattedCode = Utilities.CodeFormatter.formatCode(((SetCommand) el).getCode());
+                String formattedCode = CodeFormatter.formatCode(((SetCommand) el).getCode());
                 sb.append(formattedCode);
                 if (!show && ((SetCommand) el).getCode().split(" ").length <= 3) {
                     show = true;
@@ -583,7 +584,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         }
 
         try {
-            List<String> parts = splitIntoParts();
+            List<String> parts = CodeFormatter.splitIntoParts(textElement.getText());
             for (String part : parts) {
                 SetCommand.validateCommand(part, true);
             }
@@ -766,36 +767,8 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
      * @return
      */
     public List<ModelElement> getElements() {
-        List<String> parts = splitIntoParts();
-        List<ModelElement> list = new ArrayList<>();
-
-        for (String s : parts) {
-            final ModelElement com;
-            if (SetCommand.isValidCommand(s)) {
-                if (s.startsWith("set_cmp")) {
-                    com = new SetCMPCommand(s);
-                } else {
-                    com = new SetCommand(s);
-                }
-            } else if (s.startsWith("set_cmp") && s.length() > 7 && Character.isWhitespace(s.charAt(7))) {
-                String[] split = s.split("\\s+");
-                if (split.length < 3) {
-                    com = new Comment(s);
-                } else {
-                    com = new SetCMPCommand(split[1], split[2], split.length > 3 ? split[3] : "", "");
-                }
-            } else if (s.startsWith("set") && s.length() > 3 && Character.isWhitespace(s.charAt(3))) {
-                String[] split = s.split("\\s+");
-                if (split.length < 3) {
-                    com = new Comment(s);
-                } else {
-                    com = new SetCommand(split[1], split[2], "");
-                }
-            } else {
-                com = new Comment(s);
-            }
-            list.add(com);
-        }
+        List<ModelElement> list = CodeFormatter.convertModCodeToModels(textElement.getText());
+        
         if (isEditingHotfixes()) {
             List<HotfixCommand> scs = new ArrayList<>();
             for (ModelElement el : list) {
@@ -827,38 +800,4 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         return list;
     }
 
-    private List<String> splitIntoParts() {
-        if (!textElement.getText().toLowerCase().trim().startsWith("set")) {
-            return Arrays.asList(textElement.getText().split("\n"));
-        }
-        String formatted = Utilities.CodeFormatter.formatCode(textElement.getText());
-        List<String> parts = new ArrayList<>();
-        String[] lines = formatted.split("\n");
-        StringBuilder sb = new StringBuilder();
-        sb.append(lines[0]);
-        for (int i = 1; i < lines.length; i++) {
-            String line = lines[i].trim();
-            if (!line.startsWith("#") && !line.startsWith("set")) {
-                sb.append("\n").append(line);
-            } else {
-                parts.add(sb.toString());
-                sb = new StringBuilder();
-                sb.append(line);
-            }
-        }
-        parts.add(sb.toString());
-        for (int i = 0; i < parts.size(); i++) {
-            String part = parts.get(i);
-            if (part.startsWith("set")) {
-                int split = part.indexOf("\n");
-                if (split != -1) {
-                    String head = part.substring(0, split);
-                    String tail = part.substring(split + 1);
-                    part = head.trim() + " " + Utilities.CodeFormatter.deFormatCode(tail).trim();
-                }
-            }
-            parts.set(i, part);
-        }
-        return parts;
-    }
 }

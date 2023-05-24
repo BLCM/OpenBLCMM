@@ -39,6 +39,7 @@ import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
 import blcmm.gui.text.HighlightedTextArea;
 import blcmm.gui.theme.ThemeManager;
+import blcmm.utilities.CodeFormatter;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
@@ -590,7 +591,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 depth--;
                 if (depth == 0) {
                     currentBracket.append(c);
-                    String s2 = Utilities.CodeFormatter.deFormatCodeInnerNBrackets(currentBracket.toString(), n).trim();
+                    String s2 = CodeFormatter.deFormatCodeInnerNBrackets(currentBracket.toString(), n).trim();
                     if (sb.length() != 0 && sb.charAt(sb.length() - 1) == '\n') {
                         sb.setLength(sb.length() - 1);
                     }
