@@ -1,6 +1,9 @@
 OpenBLCMM Changelog
 ===================
 
+**v1.3.2** Unreleased
+ - Fixed TPS Game Detection on Windows
+
 **v1.3.1** May 14, 2023
 - Fixed Wilhelm string (`GD_Enforcer_Streaming`) in hotfix editing dialog
 
