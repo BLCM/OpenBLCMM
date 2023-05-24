@@ -33,9 +33,9 @@ import blcmm.model.Category;
 import blcmm.model.ModelElement;
 import blcmm.model.SetCommand;
 import blcmm.model.properties.GlobalListOfProperties;
+import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.ImportAnomalyLog;
 import blcmm.utilities.Options;
-import blcmm.utilities.GlobalLogger;
 import java.awt.EventQueue;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -335,6 +335,9 @@ abstract class TreeTransferHandler extends TransferHandler {
                 DefaultMutableTreeNode parent = (DefaultMutableTreeNode) dest.getLastPathComponent();
                 Category parentCategory = (Category) parent.getUserObject();
                 final File[] mods = fileList.toArray(new File[0]);
+                if (mods.length > 0) {
+                    Options.INSTANCE.setLastImport(mods[mods.length-1]);
+                }
                 EventQueue.invokeLater(() -> {
                     ImportAnomalyLog.INSTANCE.clear();
                     int number = GUI_IO_Handler.addMods(mods, tree.getPatch(), parentCategory, index, unselectSource);
