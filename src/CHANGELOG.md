@@ -1,7 +1,7 @@
 OpenBLCMM Changelog
 ===================
 
-**v1.3.2** Unreleased
+**v1.3.2** May 24, 2023
  - Fixed TPS Game Detection on Windows
  - Importing mods via drag-and-drop will correctly update OpenBLCMM's "last
    imported" internal variable.
