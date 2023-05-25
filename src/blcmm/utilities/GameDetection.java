@@ -98,7 +98,7 @@ public class GameDetection {
     public static void setAODKPathManually(String path) {
         assert run;
         LOGGED_BIN.add(PatchType.AODK);
-        blTPSPath = path;
+        blAODKPath = path;
         GlobalLogger.log("Set AODK path manually to: " + Utilities.hideUserName(path));
     }
 
@@ -158,7 +158,7 @@ public class GameDetection {
         //AODK detection
         regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840\" /v InstallLocation";
         regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840\" /v InstallLocation";
-        blTPSPath = detectWindows(PatchType.AODK, regKey1, regKey2);
+        blAODKPath = detectWindows(PatchType.AODK, regKey1, regKey2);
     }
 
     private static String detectWindows(PatchType type, String... regKeys) {

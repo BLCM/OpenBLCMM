@@ -7,6 +7,11 @@ OpenBLCMM Changelog
 - Tweaked the application icon slightly and introduced a generation script
   for it
 
+**v1.3.2** May 24, 2023
+ - Fixed TPS Game Detection on Windows
+ - Importing mods via drag-and-drop will correctly update OpenBLCMM's "last
+   imported" internal variable.
+
 **v1.3.1** May 14, 2023
 - Fixed Wilhelm string (`GD_Enforcer_Streaming`) in hotfix editing dialog
 
