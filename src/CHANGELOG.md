@@ -1,6 +1,10 @@
 OpenBLCMM Changelog
 ===================
 
+**v1.3.3** May 26, 2023
+ - Fixed a startup crash issue for Windows users whose system username has a
+   @domain suffix which isn't present in their homedir.
+
 **v1.3.2** May 24, 2023
  - Fixed TPS Game Detection on Windows
  - Importing mods via drag-and-drop will correctly update OpenBLCMM's "last

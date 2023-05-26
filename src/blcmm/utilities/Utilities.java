@@ -184,8 +184,26 @@ public class Utilities {
                 return text.replace(userHome, "~");
             } else {
                 String userName = System.getProperty("user.name");
-                String replaced = userHome.substring(0, userHome.length() - userName.length()) + "[user]";
-                return text.replace(userHome, replaced);
+                //GlobalLogger.log("user.home: '" + userHome + "'");
+                //GlobalLogger.log("user.name: '" + userName + "'");
+                if (!userHome.endsWith(userName) && userName.contains("@")) {
+                    // Sometimes a user might have "@outlook" as part of their username
+                    // which isn't included in the homedir.  There's probably a better
+                    // way to be checking for this.
+                    String[] parts = userName.split("@", 2);
+                    userName = parts[0];
+                }
+                // This is sort of a double check of the same values in most cases,
+                // but whatever.
+                if (userHome.endsWith(userName)) {
+                    String replaced = userHome.substring(0, userHome.length() - userName.length()) + "[user]";
+                    return text.replace(userHome, replaced);
+                } else {
+                    // Username wasn't found in the homedir, so just give up
+                    // (this logging would be a bit noisy; not bothering with it)
+                    //GlobalLogger.log("Could not figure out how to hide username in homedir!");
+                    return text;
+                }
             }
         }
         return text;
