@@ -584,7 +584,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         }
 
         try {
-            List<String> parts = CodeFormatter.splitIntoParts(textElement.getText());
+            List<String> parts = CodeFormatter.splitIntoDeformattedParts(textElement.getText());
             for (String part : parts) {
                 SetCommand.validateCommand(part, true);
             }

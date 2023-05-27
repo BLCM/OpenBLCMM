@@ -242,6 +242,26 @@ public class CodeFormatterNGTest {
                         "set foo bar baz blarg bloog blurg blip blam blop"
                 ),
             },
+            { "Known Command Extensions example -- two set_early",
+                "set_early foo bar (\n    baz\n)\nset_early one two three",
+                Arrays.asList(
+                        "set_early foo bar (baz)",
+                        "set_early one two three"
+                ),
+            },
+            { "Known Command Extensions example -- more complex set_early",
+                "set_early foo bar (\n"
+                + "  (\n"
+                + "    baz = foo\n"
+                + "  ),\n"
+                + "  (\n"
+                + "    baz = bar\n"
+                + "  )\n"
+                + ")",
+                Arrays.asList(
+                        "set_early foo bar ((baz=foo),(baz=bar))"
+                ),
+            },
             { "Comment with a set",
                 "# This is a comment\nset foo bar baz",
                 Arrays.asList(
@@ -271,7 +291,7 @@ public class CodeFormatterNGTest {
     public void testSplitIntoParts(String label,
             String input,
             List<String> expectedOutput) {
-        List<String> realOutput = CodeFormatter.splitIntoParts(input);
+        List<String> realOutput = CodeFormatter.splitIntoDeformattedParts(input);
         //System.out.println(expectedOutput.toString());
         //System.out.println(realOutput.toString());
         assertEquals(realOutput, expectedOutput);

@@ -66,6 +66,102 @@ public class CodeFormatter {
     }
 
     /**
+     * Splits freeform user-generated mod code into discrete "parts", ideally
+     * separating out statements from each other, keeping comments separate,
+     * etc.  This is used in a couple of different places in the processing
+     * path, when parsing user code.
+     *
+     * @param modCode User-generated freeform mod code.
+     * @return A list of Strings, each one of which is theoretically a discrete
+     *    part of the mod code -- either a single statement, or a single comment
+     *    line.
+     */
+    private static List<String> splitIntoParts(String modCode) {
+        List<List<String>> statements = new ArrayList<>();
+        for (String line : modCode.split("\n")) {
+            StringTokenizer st = new StringTokenizer(line);
+            if (st.hasMoreTokens()) {
+                // Asssuming here that commands are case-insensitive, though I'd be
+                // surprised if there were any cases of non-lowercase commands.  Also
+                // checking for the presence of `#` as a start character (which is
+                // not *required* for comments, but it's used with a bit of regularity),
+                // and a `set` prefix (not as a full token).  That last is mostly for
+                // backwards compatibility purposes with how BLCMM's always behaved,
+                // but also having `set_` prefixes in Command Extension commands isn't
+                // uncommon, so it's probably legitimately useful in many circumstances.
+                String token = st.nextToken().toLowerCase();
+                if (CodeFormatter.COMMANDS.contains(token)
+                        || token.startsWith("#")
+                        || token.startsWith("set")) {
+                    statements.add(new ArrayList<>());
+                }
+            }
+            if (statements.isEmpty()) {
+                statements.add(new ArrayList<>());
+            }
+            statements.get(statements.size()-1).add(line);
+        }
+        List<String> toReturn = new ArrayList<> ();
+        for (List<String> lines : statements) {
+            toReturn.add(String.join("\n", lines));
+        }
+        return toReturn;
+    }
+
+    /**
+     * Splits the edit panel textarea into discrete "parts," ideally separating
+     * separate commands into their own strings, and deformats the output to
+     * have each statement on a single line (with spurious whitespace stripped,
+     * etc).  If the first token in the string doesn't start with `set`, the
+     * discrete parts will be taken to just be the individual contents of each
+     * line.
+     *
+     * This method is the main entrypoint into CodeFormatter from the EditPanel
+     * method to commit user code changes.  (Some checks are performed first,
+     * but when the app gets to the point of actually translating user code
+     * text into ModelElements, this is the first thing that gets hit.)
+     *
+     * @param modCode The mod code to split into parts
+     * @return A list of strings, each one theoretically containing a single
+     *     command.  The commands shouldn't contain any newlines.
+     */
+    public static List<String> splitIntoDeformattedParts(String modCode) {
+
+        // If the block doesn't start with `set`, just split on lines and be
+        // done with it.
+        if (!modCode.toLowerCase().trim().startsWith("set")) {
+            return Arrays.asList(modCode.split("\n"));
+        }
+
+        // Format the code to normalize things, which should hopefully make
+        // the later processing a little more reliable
+        String formatted = CodeFormatter.formatCode(modCode);
+
+        // Now split into discrete parts
+        List<String> parts = CodeFormatter.splitIntoParts(formatted);
+
+        // Looping through parts, perform deformatting if possible to get the
+        // statement all on a single line.
+        for (int i = 0; i < parts.size(); i++) {
+            String part = parts.get(i);
+            if (part.startsWith("set")) {
+                int split = part.indexOf("\n");
+                if (split != -1) {
+                    if (split < part.length()-1) {
+                        String head = part.substring(0, split);
+                        String tail = part.substring(split + 1);
+                        part = head.trim() + " " + CodeFormatter.deFormatCode(tail).trim();
+                    } else {
+                        part = part.substring(0, split).trim();
+                    }
+                }
+            }
+            parts.set(i, part);
+        }
+        return parts;
+    }
+
+    /**
      * Takes user-entered mod code, which may include multi-line
      * statements and the like, and may contain multiple statements, and
      * format to a more normalized string -- whitespace will be normalized
@@ -90,41 +186,20 @@ public class CodeFormatter {
         // newlines once it detects that a paren clause has been fully closed).
         // The drawback there is that a token `set` inside a statement value
         // ends up getting broken 'cause it assumed it was a new command.  So,
-        // this wrapper now loops through the code line-by-line and constructs
-        // a separate ArrayList based on the *first* token in each line.  So
-        // long as a multiline statement doesn't have one of set/set_cmp/say/exec
-        // as its first token, it should Do The Right Thing.
-        //
-        // Really the whole processing here should probably get overhauled, but
-        // I really don't feel like taking the time to Do It Right.  So: more
-        // jank on top of the existing stuff!
-        //
-        // TODO: Once again I'm betraying my Python background by joining arrays
-        // of strings instead of making use of StringBuilder.  Ah, well.
-        ArrayList<ArrayList<String>> statements = new ArrayList<>();
-        for (String line : original.split("\n")) {
-            StringTokenizer st = new StringTokenizer(line);
-            if (st.hasMoreTokens()) {
-                // I assume commands are technically case-insensitive
-                if (CodeFormatter.COMMANDS.contains(st.nextToken().toLowerCase())) {
-                    statements.add(new ArrayList<>());
-                }
-            }
-            if (statements.isEmpty()) {
-                statements.add(new ArrayList<>());
-            }
-            statements.get(statements.size()-1).add(line);
-        }
-        ArrayList<String> results = new ArrayList<>();
-        for (ArrayList<String> statement : statements) {
-            String result = CodeFormatter.formatCodeSingleStatement(String.join(" ", statement).replaceAll("[ ]+", " "));
+        // this wrapper now splits the code into parts first and then formats
+        // each part.  So long as a multiline statement doesn't have one of
+        // set/set_cmp/say/exec as its first token, it should Do The Right
+        // Thing.
+        List<String> statements = CodeFormatter.splitIntoParts(original);
+        for (int i=0; i<statements.size(); i++){
+            String result = CodeFormatter.formatCodeSingleStatement(statements.get(i).replaceAll("\n", " ").replaceAll("[ ]+", " "));
             if (result.length() >= 2 && result.substring(result.length()-2).equals("\n\n")) {
-                results.add(result.substring(0, result.length()-2));
+                statements.set(i, result.substring(0, result.length()-2));
             } else {
-                results.add(result);
+                statements.set(i, result);
             }
         }
-        return String.join("\n\n", results);
+        return String.join("\n\n", statements);
     }
 
     /**
@@ -422,56 +497,6 @@ public class CodeFormatter {
         }
         sb.append("</pre>");
         return sb.toString();
-    }
-
-    /**
-     * Splits the edit panel textarea into discrete "parts," ideally separating
-     * separate commands into their own strings.  If the first token in the
-     * string doesn't start with `set`, the discrete parts will be taken to
-     * just be the individual contents of each line.
-     *
-     * @param modCode The mod code to split into parts
-     * @return A list of strings, each one theoretically containing a single
-     *     command.  The commands shouldn't contain any newlines.
-     */
-    public static List<String> splitIntoParts(String modCode) {
-
-        if (!modCode.toLowerCase().trim().startsWith("set")) {
-            return Arrays.asList(modCode.split("\n"));
-        }
-        String formatted = CodeFormatter.formatCode(modCode);
-        List<String> parts = new ArrayList<>();
-        String[] lines = formatted.split("\n");
-        StringBuilder sb = new StringBuilder();
-        sb.append(lines[0]);
-        for (int i = 1; i < lines.length; i++) {
-            String line = lines[i].trim();
-            if (!line.startsWith("#") && !line.startsWith("set")) {
-                sb.append("\n").append(line);
-            } else {
-                parts.add(sb.toString());
-                sb = new StringBuilder();
-                sb.append(line);
-            }
-        }
-        parts.add(sb.toString());
-        for (int i = 0; i < parts.size(); i++) {
-            String part = parts.get(i);
-            if (part.startsWith("set")) {
-                int split = part.indexOf("\n");
-                if (split != -1) {
-                    if (split < part.length()-1) {
-                        String head = part.substring(0, split);
-                        String tail = part.substring(split + 1);
-                        part = head.trim() + " " + CodeFormatter.deFormatCode(tail).trim();
-                    } else {
-                        part = part.substring(0, split).trim();
-                    }
-                }
-            }
-            parts.set(i, part);
-        }
-        return parts;
     }
 
     /**
