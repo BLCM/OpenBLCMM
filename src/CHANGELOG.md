@@ -4,6 +4,8 @@ OpenBLCMM Changelog
 **v1.4.0** Unreleased
 - Allow the word `set` to appear inside statement values.  (This was always
   a problem for Ezeith's Red Text Explainer mod.)
+  - Code formatting backend got a little bit of an overhaul at the same time.
+    Let us know if there's any strange behavior with code processing now!
 - Tweaked the application icon slightly and introduced a generation script
   for it
 
