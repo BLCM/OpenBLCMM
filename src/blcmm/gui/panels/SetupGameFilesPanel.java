@@ -38,6 +38,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.JButton;
@@ -100,7 +101,7 @@ public final class SetupGameFilesPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
-                    URL sdkToBrowse = new URL(sdkURL);
+                    URL sdkToBrowse = new URI(sdkURL).toURL();
                     Desktop.getDesktop().browse(sdkToBrowse.toURI());
                 } catch (URISyntaxException | IOException ex) {
                 }

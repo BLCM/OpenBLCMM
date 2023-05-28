@@ -83,6 +83,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -410,7 +411,7 @@ public final class MainGUI extends ForceClosingJFrame {
                     }
 
                     // Now do the check
-                    URL url = new URL(Meta.UPDATE_VERSION_URL);
+                    URL url = new URI(Meta.UPDATE_VERSION_URL).toURL();
                     URLConnection conn = url.openConnection();
                     InputStream stream = conn.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(stream));
@@ -1116,7 +1117,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void getMoreModsMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getMoreModsMenuButtonActionPerformed
         try {
-            URL faq = new URL("https://github.com/BLCM/ModCabinet/wiki");
+            URL faq = new URI("https://github.com/BLCM/ModCabinet/wiki").toURL();
             Desktop.getDesktop().browse(faq.toURI());
         } catch (IOException | URISyntaxException ex) {
             GlobalLogger.log(ex);
@@ -1223,7 +1224,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void getDataPackMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getDataPackMenuButtonActionPerformed
         try {
-            URL faq = new URL(Meta.DATA_DOWNLOAD_URL);
+            URL faq = new URI(Meta.DATA_DOWNLOAD_URL).toURL();
             Desktop.getDesktop().browse(faq.toURI());
         } catch (IOException | URISyntaxException ex) {
             GlobalLogger.log(ex);

@@ -46,6 +46,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -384,7 +385,7 @@ public final class AboutPanel extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    URL faq = new URL("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US");
+                    URL faq = new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US").toURL();
                     Desktop.getDesktop().browse(faq.toURI());
                 } catch (URISyntaxException | IOException ex) {
                     GlobalLogger.log(ex);
@@ -447,7 +448,7 @@ public final class AboutPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
-                    URL sdkToBrowse = new URL(remoteURL);
+                    URL sdkToBrowse = new URI(remoteURL).toURL();
                     Desktop.getDesktop().browse(sdkToBrowse.toURI());
                 } catch (URISyntaxException | IOException ex) {
                     GlobalLogger.log(ex);

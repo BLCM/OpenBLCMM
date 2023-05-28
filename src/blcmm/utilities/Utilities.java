@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -408,7 +409,13 @@ public class Utilities {
      */
     private static String downloadFile(String fileURL, OutputStream outputStream)
             throws IOException {
-        URL url = new URL(fileURL);
+        URL url;
+        try {
+            url = new URI(fileURL).toURL();
+        } catch (URISyntaxException e) {
+            System.out.println("Could not parse URL: " + e.getMessage());
+            return null;
+        }
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
         int responseCode = httpConn.getResponseCode();
         String res = null;

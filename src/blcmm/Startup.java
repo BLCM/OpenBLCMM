@@ -49,6 +49,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -536,7 +537,7 @@ public class Startup {
                 });
                 openBugReportURL.addActionListener((ActionEvent ae) -> {
                     try {
-                        URL urlToBrowse = new URL(Meta.BUGREPORT_URL);
+                        URL urlToBrowse = new URI(Meta.BUGREPORT_URL).toURL();
                         Desktop.getDesktop().browse(urlToBrowse.toURI());
                     } catch (URISyntaxException | IOException ex) {
                         Logger.getLogger(Startup.class.getName()).log(Level.SEVERE, null, ex);

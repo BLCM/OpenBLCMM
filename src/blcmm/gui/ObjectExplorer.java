@@ -50,6 +50,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -380,7 +381,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
     private void downloadDataPackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadDataPackButtonActionPerformed
         try {
-            URL faq = new URL(Meta.DATA_DOWNLOAD_URL);
+            URL faq = new URI(Meta.DATA_DOWNLOAD_URL).toURL();
             Desktop.getDesktop().browse(faq.toURI());
         } catch (IOException | URISyntaxException ex) {
             GlobalLogger.log(ex);

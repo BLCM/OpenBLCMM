@@ -30,6 +30,7 @@ package blcmm.gui.tree;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -82,7 +83,7 @@ public class EasterEggs {
         if (keyPressCompletedCode) {
             try {
                 // SkiFree bitches.
-                URL skiFree = new URL("https://basicallydan.github.io/skifree.js/");
+                URL skiFree = new URI("https://basicallydan.github.io/skifree.js/").toURL();
                 Desktop.getDesktop().browse(skiFree.toURI());
             } catch (URISyntaxException | IOException ex) {
             }
