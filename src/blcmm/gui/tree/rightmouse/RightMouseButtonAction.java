@@ -149,7 +149,7 @@ public abstract class RightMouseButtonAction {
         this.hotkey = hotkey;
         this.ctrl = ctrl;
         if (hotkey != -1) {
-            button.setAccelerator(javax.swing.KeyStroke.getKeyStroke(hotkey, ctrl ? java.awt.event.InputEvent.CTRL_MASK : 0));
+            button.setAccelerator(javax.swing.KeyStroke.getKeyStroke(hotkey, ctrl ? java.awt.event.InputEvent.CTRL_DOWN_MASK : 0));
         }
         this.reqs = reqs;
     }

@@ -261,9 +261,18 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
      *
      * @param ctrlEnterAction The action to call
      */
+    @SuppressWarnings("deprecation")
     public void setCtrlEnterAction(final ActionListener ctrlEnterAction) {
         if (this.allowEdit) {
             KeyAdapter keyAdap = new KeyAdapter() {
+                // So Toolkit.getMenuShortcutKeyMask() and InputEvent.getModifiers()
+                // are deprecated in favor of the versions which have "Ex" at the end.
+                // Unfortunately, we still want to support Java 8, at the moment, and
+                // Toolkit.getMenuShortcutKeyMaskEx() wasn't introduced until Java 10.
+                // So, we're just letting it be.  When we drop Java 8 support, we
+                // should be able to just hop over to the 'Ex' versions in here.
+                //
+                // See: https://github.com/BLCM/OpenBLCMM/issues/21
                 private final int ctrlShortcutMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
                 @Override
@@ -768,7 +777,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
      */
     public List<ModelElement> getElements() {
         List<ModelElement> list = CodeFormatter.convertModCodeToModels(textElement.getText());
-        
+
         if (isEditingHotfixes()) {
             List<HotfixCommand> scs = new ArrayList<>();
             for (ModelElement el : list) {

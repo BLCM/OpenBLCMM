@@ -71,6 +71,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -308,7 +309,11 @@ public final class MainGUI extends ForceClosingJFrame {
                     String st = searchField.getText();
                     if (st.length() > 2) {
                         CheckBoxTree tree = getTree();
-                        int[] res = tree.search(st, e.getModifiers() > 0);// idx 0 = current, idx 1 = total
+                        int modifiers = e.getModifiersEx();
+                        int[] res = tree.search(st, (
+                                ((modifiers & InputEvent.CTRL_DOWN_MASK) == InputEvent.CTRL_DOWN_MASK)
+                                || ((modifiers & InputEvent.SHIFT_DOWN_MASK) == InputEvent.SHIFT_DOWN_MASK)
+                        )); // idx 0 = current, idx 1 = total
                         getTimedLabel().showTemporary("result " + res[0] + " of " + res[1]);
                     }
                 }

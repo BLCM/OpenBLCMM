@@ -146,7 +146,16 @@ public final class CheckBoxTree extends JTree {
         this.addKeyListener(new KeyAdapter() {
             EasterEggs easterEggs = new EasterEggs();
 
+            // So Toolkit.getMenuShortcutKeyMask() and InputEvent.getModifiers()
+            // are deprecated in favor of the versions which have "Ex" at the end.
+            // Unfortunately, we still want to support Java 8, at the moment, and
+            // Toolkit.getMenuShortcutKeyMaskEx() wasn't introduced until Java 10.
+            // So, we're just letting it be.  When we drop Java 8 support, we
+            // should be able to just hop over to the 'Ex' versions in here.
+            //
+            // See: https://github.com/BLCM/OpenBLCMM/issues/21
             @Override
+            @SuppressWarnings("deprecation")
             public void keyPressed(KeyEvent e) {
                 easterEggs.checkAllCodes(e.getKeyCode());
                 for (RightMouseButtonAction action : adapter.actions) {

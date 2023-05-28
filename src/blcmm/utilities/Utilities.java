@@ -58,7 +58,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -485,17 +484,48 @@ public class Utilities {
         });
     }
 
-    public static void changeCTRLMasks(Collection<JComponent> components) {
-        for (JComponent component : components) {
-            changeCTRLMasks(component);
-        }
-    }
-
+    /**
+     * Updates the input masks for the given component to translate "Ctrl"
+     * modifier to the default Toolkit's "menu shortcut key."  For mos OSes,
+     * this is effectively a NOOP -- converting Ctrl to Ctrl -- but on Mac,
+     * this will end up converting any Ctrl shortcut to a "Command" shortcut
+     * instead.
+     *
+     * Long-term I would actually like to get rid of this (and changeMasks)
+     * altogether.  When input shortcuts are set up, they should just be
+     * grabbing the default toolkit and using its menu shortcut.  However,
+     * we still want to support Java 8, and Toolkit.getMenuShortcutKeyMask()
+     * is deprecated as of Java 10, in favor of a new
+     * Toolkit.getMenuShortcutKeyMaskEx(), which does not exist in Java 8.
+     * If we ever do decide to drop Java 8 support (or if we *need* do, in case
+     * a future Java version ever gets rid of the deprecated methods) then
+     * we should get rid of these two methods altogether and use the "Ex"
+     * method in Toolkit when setting shortcuts.  Until then, consolidating
+     * them all in here lets us have as few methods as possible with suppressed
+     * deprecation warnings.
+     *
+     * See: https://github.com/BLCM/OpenBLCMM/issues/21
+     *
+     * @param component The component whose input masks needs updating
+     */
+    @SuppressWarnings("deprecation")
     public static void changeCTRLMasks(JComponent component) {
         changeMasks(component, java.awt.event.InputEvent.CTRL_DOWN_MASK | java.awt.event.InputEvent.CTRL_MASK,
                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
     }
 
+    /**
+     * This is the workhorse method which actually changes the input masks
+     * on a JComponent.  Pass it the old and the new, and it'll update the
+     * masks if possible.
+     *
+     * As mentioned above, I'd like to remove this entirely, though doing so
+     * will probably have to wait until we decide to stop supporting Java 8.
+     *
+     * @param component The component whose input masks need updating
+     * @param oldmask The old mask that we'll get rid of
+     * @param replacingMask The new mask that we'll replace it with
+     */
     private static void changeMasks(JComponent component, final int oldmask, final int replacingMask) {
         if (component instanceof JMenuBar) {
             for (int i = 0; i < ((JMenuBar) component).getMenuCount(); i++) {
@@ -528,6 +558,14 @@ public class Utilities {
         }
     }
 
+    /**
+     * Another inner mask-changing function which I'd like to get rid of.
+     * Different somehow to the previous one, I'm sure.
+     * 
+     * @param component
+     * @param oldmask
+     * @param replacingMask
+     */
     private static void changeMasksOfInputMap(JComponent component, final int oldmask, final int replacingMask) {
         InputMap inputMap = component.getInputMap();
         if (inputMap == null || inputMap.allKeys() == null) {

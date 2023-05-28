@@ -29,7 +29,6 @@ package blcmm.gui.text;
 
 import blcmm.utilities.Options;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
@@ -52,7 +51,6 @@ public abstract class AutoCompleteAttacher {
     private final JTextComponent component;
     private final KeyAdapter keyAdapter;
     private boolean enter = false;
-    private final int ctrlShortcutMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     public AutoCompleteAttacher(JTextComponent component) {
         this(component, false);
