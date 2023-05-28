@@ -67,6 +67,22 @@ public class GameDetection {
     private static final HashMap<PatchType, Boolean> UNIX_USING_PROTON = new HashMap<>();
 
     /**
+     * Silly little class to help streamline registry lookups.  Takes in a
+     * path and then a name of a key at that path.
+     */
+    private static class RegKeyLookup {
+
+        public String path;
+        public String name;
+
+        public RegKeyLookup(String path, String name) {
+            this.path = path;
+            this.name = name;
+        }
+
+    }
+
+    /**
      * A way to set the path manually for BL2, in case game detection failed
      *
      * @param path
@@ -148,16 +164,16 @@ public class GameDetection {
 
     private static void windowsGameDetection() {
         //BL2 detection
-        String regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 49520\" /v InstallLocation";
-        String regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 49520\" /v InstallLocation";
+        String regKey1 = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 49520";
+        String regKey2 = "HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 49520";
         bl2Path = detectWindows(PatchType.BL2, regKey1, regKey2);
         //BLTPS detection
-        regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation";
-        regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation";
+        regKey1 = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640";
+        regKey2 = "HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640";
         blTPSPath = detectWindows(PatchType.TPS, regKey1, regKey2);
         //AODK detection
-        regKey1 = "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840\" /v InstallLocation";
-        regKey2 = "reg query \"HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840\" /v InstallLocation";
+        regKey1 = "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840";
+        regKey2 = "HKLM\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 1712840";
         blAODKPath = detectWindows(PatchType.AODK, regKey1, regKey2);
     }
 
@@ -165,7 +181,7 @@ public class GameDetection {
         String game = type.getGameName();
         String path = null;
         for (int i = 0; i < regKeys.length && path == null; i++) {
-            path = GetRegField(regKeys[i]);
+            path = GetRegField(new RegKeyLookup(regKeys[i], "InstallLocation"));
         }
         if (path == null) {
             GlobalLogger.log("Can't find " + game + " Steam installation on registry.");
@@ -183,10 +199,14 @@ public class GameDetection {
     }
 
     ///String example: "reg query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Steam App 261640\" /v InstallLocation"
-    static String GetRegField(String regKey) {
+    static String GetRegField(RegKeyLookup regKey) {
         String reg = null;
         try {
-            Process p = Runtime.getRuntime().exec(regKey);
+            Process p = Runtime.getRuntime().exec(new String[] {
+                "reg", "query",
+                regKey.path,
+                "/v", regKey.name
+            });
             p.waitFor();
 
             InputStream in = p.getInputStream();
@@ -691,7 +711,7 @@ public class GameDetection {
     }
 
     private static String[] getWindowsMyDocumentsFolder() {
-        String myDocuments = GetRegField("reg query \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders\" /v personal");
+        String myDocuments = GetRegField(new RegKeyLookup("HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "personal"));
         if (myDocuments != null) {
 
             //Sometimes, the key we're looking for simply doesn't exist: https://i.imgur.com/aEcfEAj.png
