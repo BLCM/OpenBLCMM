@@ -159,6 +159,13 @@ public abstract class AutoCompleteAttacher {
 
     protected abstract AutoCompleteRequirements getAutoCompleteRequirements(boolean advanced) throws BadLocationException;
 
+    // JTextComponent.modelToView() was renamed to JTextComponent.modelToView2D()
+    // in Java 9, but that name just doesn't exist in Java 8.  We can't properly
+    // clean up the deprecation warning until we decide to drop support for
+    // Java 8.
+    //
+    // See: https://github.com/BLCM/OpenBLCMM/issues/21
+    @SuppressWarnings("deprecation")
     private void show(Collection<String> words, int from, int to) throws BadLocationException {
         if (words != null && words.size() >= 0) {
             DefaultListModel<String> model = new DefaultListModel<>();

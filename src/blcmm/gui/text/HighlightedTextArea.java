@@ -460,7 +460,15 @@ public final class HighlightedTextArea extends JTextPane {
             //Trying to prevent them from executing with a flag set in the
             //MousePressed event preceding said mouseReleased event does not
             //solve the problem for some reason.
+            //
+            // Also: JTextComponent.viewToModel() was renamed to JTextComponent.viewToModel2D()
+            // in Java 9, but that name just doesn't exist in Java 8.  We can't properly
+            // clean up the deprecation warning until we decide to drop support for
+            // Java 8.
+            //
+            // See: https://github.com/BLCM/OpenBLCMM/issues/21
             @Override
+            @SuppressWarnings("deprecation")
             public void mouseMoved(MouseEvent e) {
                 myStylizedDocument doc = (myStylizedDocument) getDocument();
                 int offset = viewToModel(e.getPoint());
