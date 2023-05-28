@@ -259,11 +259,13 @@ public final class MainGUI extends ForceClosingJFrame {
             @Override
             public void componentResized(ComponentEvent e) {
                 layer2.setBounds(jLayeredPane1.getBounds());
+                layer2.revalidate();
             }
 
             @Override
             public void componentMoved(ComponentEvent e) {
                 layer2.setBounds(jLayeredPane1.getBounds());
+                layer2.revalidate();
             }
         });
         jScrollPane1.getViewport().addChangeListener((ChangeEvent e) -> {
