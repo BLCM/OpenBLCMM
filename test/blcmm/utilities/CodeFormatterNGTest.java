@@ -128,12 +128,29 @@ public class CodeFormatterNGTest {
                 "set foo bar (attr=foo,attr2=bar)\nset foo bar baz\n",
                 "set foo bar\n(\n    attr = foo,\n    attr2 = bar\n)\n\nset foo bar baz",
             },
+            { "All currently-valid commands",
+                "set foo bar baz\n"
+                + "set_cmp foo bar baz frotz\n"
+                + "exec patch.txt\n"
+                + "say Some text which could crash the game\n",
+                // We expect it to put some extra space between statements
+                "set foo bar baz\n\n"
+                + "set_cmp foo bar baz frotz\n\n"
+                + "exec patch.txt\n\n"
+                + "say Some text which could crash the game",
+            },
             { "Random text (possibly command extensions, etc)",
                 // Honestly I sort of wish this one behaved slightly differently; it's
                 // fine in the edit window because splitIntoParts happens first, though
                 // it *will* concat like this if you hit "auto format"
                 "blarg bloog blurg\nblip blam blop\n",
                 "blarg bloog blurg blip blam blop",
+            },
+            { "Comments with whitespace",
+                // Will cut out excess whitespace.  Possibly not the best, but the moral
+                // is "don't hit 'auto-format' on comments"
+                "# some  whitespace  in  comments",
+                "# some whitespace in comments",
             }
         };
     }
@@ -220,6 +237,30 @@ public class CodeFormatterNGTest {
                         "set foo bar (attr=foo,attr2=(3,4),attr3=(one=two))"
                 ),
             },
+            { "All currently-valid commands",
+                "set foo bar baz\n"
+                + "set_cmp foo bar baz frotz\n"
+                + "exec patch.txt\n"
+                + "say Some text which could crash the game\n",
+                Arrays.asList(
+                        "set foo bar baz",
+                        "set_cmp foo bar baz frotz",
+                        "exec patch.txt",
+                        "say Some text which could crash the game"
+                ),
+            },
+            { "All currently-valid commands with extra newlines",
+                "set foo bar baz\n\n"
+                + "set_cmp foo bar baz frotz\n\n"
+                + "exec patch.txt\n\n"
+                + "say Some text which could crash the game\n\n",
+                Arrays.asList(
+                        "set foo bar baz",
+                        "set_cmp foo bar baz frotz",
+                        "exec patch.txt",
+                        "say Some text which could crash the game"
+                ),
+            },
             { "Random text (possibly command extensions, etc)",
                 "blarg bloog blurg\nblip blam blop\n",
                 Arrays.asList(
@@ -277,6 +318,12 @@ public class CodeFormatterNGTest {
                         "# One more comment"
                 ),
             },
+            { "Comment with whitespace",
+                "# comments  with  some  whitespace",
+                Arrays.asList(
+                        "# comments  with  some  whitespace"
+                ),
+            }
         };
     }
 

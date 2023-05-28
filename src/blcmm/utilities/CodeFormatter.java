@@ -102,8 +102,14 @@ public class CodeFormatter {
             statements.get(statements.size()-1).add(line);
         }
         List<String> toReturn = new ArrayList<> ();
+        String statement;
         for (List<String> lines : statements) {
-            toReturn.add(String.join("\n", lines));
+            statement = String.join("\n", lines);
+            if (statement.length() > 0 && statement.substring(statement.length()-1).equals("\n")) {
+                toReturn.add(statement.substring(0, statement.length()-1));
+            } else {
+                toReturn.add(statement);
+            }
         }
         return toReturn;
     }
