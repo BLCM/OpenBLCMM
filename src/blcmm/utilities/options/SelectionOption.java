@@ -34,7 +34,7 @@ import blcmm.utilities.StringTable;
 import java.awt.Component;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -151,6 +151,22 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
         return box;
     }
 
+    /**
+     * Creates a string-based selection option, based on entries from a
+     * StringTable.  This was used in the original BLCMM to create a dropdown
+     * for the launcher's splash screen, but isn't actually currently used
+     * anywhere.
+     *
+     * @param optionsObj The Options object we live in
+     * @param name The name of the option
+     * @param defaultData The default string
+     * @param shownPanel Which panel to show ourselves in
+     * @param displayDesc The description to the left of the control
+     * @param callback A callback for when the dropdown value changes
+     * @param tooltip Tooltip text for both the label and the control
+     * @param table The StringTable containing the dropdown data
+     * @return The newly-created SelectionOption
+     */
     public static SelectionOption createStringSelectionOption(OptionsBase optionsObj,
             String name,
             String defaultData,
@@ -174,10 +190,64 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
                 });
                 return guiComponent;
             }
-
         };
         return res;
+    }
 
+    /**
+     * Creates an Enum-backed selection option, where the Enum is expected to
+     * implement the OptionEnum interface.  I am extremely conflicted as to
+     * whether or not this is the "right" way to do this.  Our Theme selection
+     * dropdown just has the Theme class implement SelectionOptionData, and
+     * the Options class calls SelectionOption() directly with Theme objects,
+     * and that seems a hell of a lot more straightforward than what I'm
+     * doing here.  But I wanted to be able to have a friendlier "label" on
+     * the dropdown itself, and it seemed like doing so really needed some
+     * extra support?  Maybe actually subclassing SelectionOption would have
+     * been the cleaner way?  But I had the createStringSelectionOption()
+     * method above to copy from, so I went with this.
+     *
+     * Anyway, as I say, this could very well be overcomplicating things by
+     * a lot, but at least it does seem to work, though getting data out of
+     * it seems a million times more verbose than I'd like.  Anyway, at the
+     * moment this is just used to define link-click mouse actions in the
+     * new "Input" settings tab.
+     *
+     * @param optionsObj The Options object we live in
+     * @param name The name of the option
+     * @param defaultData The default string
+     * @param shownPanel Which panel to show ourselves in
+     * @param displayDesc The description to the left of the control
+     * @param callback A callback for when the dropdown value changes
+     * @param tooltip Tooltip text for both the label and the control
+     * @param options The enum options which are valid
+     * @return The newly-created SelectionOption
+     */
+    public static SelectionOption createEnumSelectionOption(OptionsBase optionsObj,
+            String name,
+            OptionEnum defaultData,
+            Option.Shown shownPanel,
+            String displayDesc,
+            String callback,
+            String tooltip,
+            OptionEnum[] options) {
+        EnumSelectionOptionDataConverter conv = new EnumSelectionOptionDataConverter(defaultData, Arrays.asList(options));
+        SelectionOption res = new SelectionOption(optionsObj, name, conv.def, shownPanel, displayDesc, callback, tooltip, conv.options.toArray(new EnumSelectionOptionData[0]), conv) {
+            @Override
+            public JComponent getGUIComponent(ToolSettingsPanel panel) {
+                JComboBox guiComponent = (JComboBox) super.getGUIComponent(panel);
+                guiComponent.setRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public Component getListCellRendererComponent(JList<?> jlist, Object o, int i, boolean bln, boolean bln1) {
+                        JLabel l = (JLabel) super.getListCellRendererComponent(jlist, ((EnumSelectionOptionData)o).value.getDescription(), i, bln, bln1);
+                        //l.setToolTipText(table.get(o.toString(), "tooltip"));
+                        return l;
+                    }
+                });
+                return guiComponent;
+            }
+        };
+        return res;
     }
 
     private static class StringSelectionOptionData implements SelectionOptionData {
@@ -198,6 +268,11 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             return value;
         }
 
+        @Override
+        public String getRawData() {
+            return value;
+        }
+
     }
 
     private static class StringSelectionOptionDataConverter implements OptionDataConverter<StringSelectionOptionData> {
@@ -207,7 +282,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
 
         StringSelectionOptionDataConverter(String def, Collection<String> options) {
             this.def = new StringSelectionOptionData(def);
-            this.options = new HashSet<>();
+            this.options = new LinkedHashSet<>();
             for (String s : options) {
                 this.options.add(new StringSelectionOptionData(s));
             }
@@ -223,6 +298,74 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             return def;
         }
 
+    }
+
+    /**
+     * A data class to be able to use OptionEnum enums in SelectionOption
+     * dropdowns.  See my notes in createEnumSelectionOption() for my
+     * reservations about doing it this way, though it does seem to work just
+     * fine, at least.
+     */
+    private static class EnumSelectionOptionData implements SelectionOptionData {
+
+        private final OptionEnum value;
+
+        EnumSelectionOptionData(OptionEnum value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toSaveString() {
+            return value.name();
+        }
+
+        @Override
+        public String toString() {
+            return value.toString();
+        }
+
+        @Override
+        public OptionEnum getRawData() {
+            return this.value;
+        }
+    }
+
+     /**
+     * A data converter for OptionEnum enums.  See my notes in
+     * createEnumSelectionOption() for my reservations about doing it this way,
+     * though it does seem to work just fine, at least.
+     */
+   private static class EnumSelectionOptionDataConverter implements OptionDataConverter<EnumSelectionOptionData> {
+
+        private final EnumSelectionOptionData def;
+        private final Collection<EnumSelectionOptionData> options;
+
+        EnumSelectionOptionDataConverter(OptionEnum def, Collection<OptionEnum> options) {
+            EnumSelectionOptionData foundDef = null;
+            this.options = new LinkedHashSet<>();
+            for (OptionEnum o : options) {
+                EnumSelectionOptionData wrapper = new EnumSelectionOptionData(o);
+                if (foundDef == null && o == def) {
+                    foundDef = wrapper;
+                }
+                this.options.add(wrapper);
+            }
+            if (foundDef == null) {
+                this.def = new EnumSelectionOptionData(def);
+            } else {
+                this.def = foundDef;
+            }
+        }
+
+        @Override
+        public EnumSelectionOptionData convert(String s) {
+            for (EnumSelectionOptionData option : options) {
+                if (option.value.name().equalsIgnoreCase(s)) {
+                    return option;
+                }
+            }
+            return def;
+        }
     }
 
 }

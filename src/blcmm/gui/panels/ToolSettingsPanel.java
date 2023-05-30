@@ -110,34 +110,48 @@ public class ToolSettingsPanel extends JPanel {
 
         for (Option o : settings.getDisplayedOptionList(this.shownPanel)) {
             constr.gridy = y;
-            JLabel label1 = new JLabel(o.getDisplayDesc());
 
             constr.gridx = 0;
             constr.weightx = 100;
             constr.insets.right = 0;
             constr.insets.left = BORDER;
             constr.insets.top = y == 0 ? BORDER : 0;
-            constr.anchor = GridBagConstraints.WEST;
-            this.add(label1, constr);
 
             JComponent comp = o.getGUIComponent(this);
 
-            constr.gridx = 1;
-            constr.weightx = 1;
-            constr.anchor = GridBagConstraints.EAST;
-            constr.insets.right = BORDER;
-            constr.insets.left = SPACING;
-            constr.ipady = new JButton("dummy").getMinimumSize().height - comp.getMinimumSize().height;//Makes every row the same height
-            this.add(comp, constr);
+            if (o.isOnlyVisual()) {
 
-            String tooltipString = o.getTooltip();
-            if (tooltipString != null) {
-                label1.setToolTipText(tooltipString);
-                comp.setToolTipText(o.getTooltip());
+                constr.gridwidth = 2;
+                constr.insets.right = BORDER;
+                constr.anchor = GridBagConstraints.CENTER;
+                //constr.ipady = new JButton("dummy").getMinimumSize().height - comp.getMinimumSize().height;//Makes every row the same height
+                this.add(comp, constr);
+                constr.gridwidth = 1;
+
+            } else {
+
+                constr.anchor = GridBagConstraints.WEST;
+                JLabel label1 = new JLabel(o.getDisplayDesc());
+                this.add(label1, constr);
+
+                constr.gridx = 1;
+                constr.weightx = 1;
+                constr.anchor = GridBagConstraints.EAST;
+                constr.insets.right = BORDER;
+                constr.insets.left = SPACING;
+                constr.ipady = new JButton("dummy").getMinimumSize().height - comp.getMinimumSize().height;//Makes every row the same height
+                this.add(comp, constr);
+
+                String tooltipString = o.getTooltip();
+                if (tooltipString != null) {
+                    label1.setToolTipText(tooltipString);
+                    comp.setToolTipText(o.getTooltip());
+                }
+
+                // If we need to do something custom with the component setup, do so.
+                this.tryCallBack(o.getSetupCallback(), o, comp);
+
             }
-
-            // If we need to do something custom with the component setup, do so.
-            this.tryCallBack(o.getSetupCallback(), o, comp);
 
             y++;
         }

@@ -45,11 +45,14 @@ public abstract class Option<T> {
     public enum Shown {
         NONE,
         SETTINGS,
+        INPUT,
         OE,
         DANGEROUS
     }
 
     private final String name;
+
+    private final boolean onlyVisual;
 
     private T data;
 
@@ -77,7 +80,19 @@ public abstract class Option<T> {
      * @param defaultData Default data for the option
      */
     public Option(OptionsBase optionsObj, String name, T defaultData) {
-        this(optionsObj, name, defaultData, Shown.NONE, null, null, null, null);
+        this(optionsObj, name, defaultData, Shown.NONE, false, null, null, null, null);
+    }
+
+    /**
+     * Constructor for an "option" which is actually only a visual UI element,
+     * and not an actual real option.
+     *
+     * @param optionsObj The Options that this Option is a part of
+     * @param name The name of the option
+     * @param shownPanel The panel on which we'll be shown.
+     */
+    public Option(OptionsBase optionsObj, String name, Shown shownPanel) {
+        this(optionsObj, name, null, shownPanel, true, null, null, null, null);
     }
 
     /**
@@ -95,16 +110,17 @@ public abstract class Option<T> {
      */
     public Option(OptionsBase optionsObj,
             String name, T defaultData,
-            Shown shownPanel, String displayDesc,
+            Shown shownPanel,
+            String displayDesc,
             String callback, String tooltip) {
-        this(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip, null);
+        this(optionsObj, name, defaultData, shownPanel, false, displayDesc, callback, tooltip, null);
     }
 
     /**
      * Constructor for an option. If displayDesc is null, the option will not be
      * shown on the settings panel.
      *
-     * @param options The Options that this Option is a part of
+     * @param optionsObj The Options that this Option is a part of
      * @param name Key of the option
      * @param defaultData Default data for the option
      * @param shownPanel The panel on which to show this option
@@ -115,15 +131,43 @@ public abstract class Option<T> {
      * @param setupCallback A callback function to call while setting up the
      * option. Pass null to let it be set up as usual.
      */
+    public Option(OptionsBase optionsObj,
+            String name, T defaultData,
+            Shown shownPanel,
+            String displayDesc,
+            String callback, String tooltip,
+            String setupCallback) {
+        this(optionsObj, name, defaultData, shownPanel, false, displayDesc, callback, tooltip, null);
+    }
+
+    /**
+     * Constructor for an option. If displayDesc is null, the option will not be
+     * shown on the settings panel.
+     *
+     * @param options The Options that this Option is a part of
+     * @param name Key of the option
+     * @param defaultData Default data for the option
+     * @param shownPanel The panel on which to show this option
+     * @param onlyVisual True if this element is purely visual, or false if it's
+     * a regular option.
+     * @param displayDesc Display description on the settings panel.
+     * @param callback A callback function to call when the option changes. Pass
+     * null to not have a callback.
+     * @param tooltip Tooltip to show on the control
+     * @param setupCallback A callback function to call while setting up the
+     * option. Pass null to let it be set up as usual.
+     */
     public Option(OptionsBase options,
             String name, T defaultData,
-            Shown shownPanel, String displayDesc,
+            Shown shownPanel, boolean onlyVisual,
+            String displayDesc,
             String callback, String tooltip,
             String setupCallback) {
         this.optionsObj = options;
         this.name = name;
         this.defaultData = defaultData;
         this.shownPanel = shownPanel;
+        this.onlyVisual = onlyVisual;
         this.displayDesc = displayDesc;
         this.data = defaultData;
         this.setData = false;
@@ -140,11 +184,21 @@ public abstract class Option<T> {
     }
 
     /**
+     * Returns true if this "option" is a visual UI element only, or false if
+     * it's a real option.
+     *
+     * @return True if only visual, false if real option
+     */
+    public boolean isOnlyVisual() {
+        return this.onlyVisual;
+    }
+
+    /**
      * @param shownPanel The panel we're rendering
      * @return Whether to show the option on this Panel
      */
     public boolean isDisplayOnPanel(Shown shownPanel) {
-        return (this.shownPanel == shownPanel && this.displayDesc != null);
+        return (this.shownPanel == shownPanel && (this.onlyVisual || this.displayDesc != null));
     }
 
     /**

@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2018-2020  LightChaosman
+ * Copyright (C) 2023 Christopher J. Kucera
+ * <cj@apocalyptech.com>
+ * <https://apocalyptech.com/contact.php>
  *
  * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,29 +30,28 @@
 package blcmm.utilities.options;
 
 /**
- * Simple interface for any data type used in a SelectionOption.
+ * Interface to be used for Enums which will be used inside SelectionOption
+ * options.
  *
  * @author apocalyptech
  */
-public interface SelectionOptionData {
+public interface OptionEnum {
 
     /**
-     * Returns a string suitable for saving this object into a text-based
-     * preference file. Needed because .toString() might be something sent to
-     * the user.
+     * The "description" for the enum value which will be rendered onto the
+     * dropdown.
      *
-     * @return A string identifying this option
+     * @return The user-facing description of the enum.
      */
-    public String toSaveString();
+    String getDescription();
 
     /**
-     * Returns the "raw" data for this option.  This was added while adding
-     * support for Enum-backed SelectionOptions, and I remain rather unsure if
-     * this was a good way to support it or not.  It feels way overcomplicated.
-     * Still, it works well enough, so I'm keeping it for now.
+     * Returns the name of the enum value (should not need to be manually
+     * implemented -- merely implementing this interface on an enum class will
+     * provide this method).
      *
-     * @return The raw object in the SelectionOption
+     * @return The name of the enum value
      */
-    public Object getRawData();
+    String name();
 
 }

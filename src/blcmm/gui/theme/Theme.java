@@ -75,6 +75,11 @@ public class Theme implements SelectionOptionData {
         return this.name;
     }
 
+    @Override
+    public Theme getRawData() {
+        return this;
+    }
+
     public Color get(ThemeManager.ColorType colortype) {
         return colorMap.get(colortype);
     }

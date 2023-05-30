@@ -138,6 +138,20 @@ public abstract class OptionsBase {
         oeDataSuccessTimestampJarBL2,
         oeDataSuccessTimestampJarTPS,
         oeDataSuccessTimestampJarAODK,
+        inputMouseLinkPrimaryButton,
+        inputMouseLinkPrimaryClicks,
+        inputMouseLinkPrimaryBase,
+        inputMouseLinkPrimaryCtrl,
+        inputMouseLinkPrimaryShift,
+        inputMouseLinkPrimaryAlt,
+        inputMouseLinkPrimaryMeta,
+        inputMouseLinkSecondaryButton,
+        inputMouseLinkSecondaryClicks,
+        inputMouseLinkSecondaryBase,
+        inputMouseLinkSecondaryCtrl,
+        inputMouseLinkSecondaryShift,
+        inputMouseLinkSecondaryAlt,
+        inputMouseLinkSecondaryMeta,
     }
 
     /**
@@ -380,7 +394,9 @@ public abstract class OptionsBase {
         StringBuilder sb = new StringBuilder();
         sb.append("key,value\n");
         for (Option o : OPTION_MAP.values()) {
-            sb.append(String.format("%s,%s\n", o.getName(), o.dataToString()));
+            if (!o.isOnlyVisual()) {
+                sb.append(String.format("%s,%s\n", o.getName(), o.dataToString()));
+            }
         }
         for (Map.Entry<String, String> e : UNKNOWN_OPTIONS.entrySet()) {
             sb.append(String.format("%s,%s\n", e.getKey(), e.getValue()));

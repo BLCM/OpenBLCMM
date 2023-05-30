@@ -34,6 +34,7 @@ import blcmm.gui.MainGUI;
 import blcmm.gui.ObjectExplorer;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
+import blcmm.utilities.Options.MouseLinkAction;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -49,7 +50,6 @@ import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.text.BadLocationException;
@@ -424,18 +424,38 @@ public final class HighlightedTextArea extends JTextPane {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (search != null && e.getClickCount() == 2) {
-                    MainGUI.INSTANCE.launchObjectExplorerWindow(true);
-                    boolean newTab = SwingUtilities.isMiddleMouseButton(e) || e.isControlDown() || e.isMetaDown();
-                    GlobalLogger.log("Dumping " + search + " after clicking link. newTab = " + newTab);
-                    ObjectExplorer.DumpOptions options = new ObjectExplorer.DumpOptions(search, true, newTab, false);
-                    ObjectExplorer.INSTANCE.dump(options);
-                    mouseMoved(e);
-                } else {//use original mouselisteners
-                    //For some reason the original mouselistners transfer the current attribute when linking.
-                    for (MouseListener l : ls) {
-                        l.mousePressed(e);
+                if (search != null) {
+                    MouseLinkAction a = Options.INSTANCE.processMouseLinkClick(e);
+                    if (a != null) {
+                        boolean launch = true;
+                        boolean newTab = false;
+                        switch (a) {
+                            case New:
+                                newTab = true;
+                                break;
+                            case Current:
+                                newTab = false;
+                                break;
+                            case None:
+                            default:
+                                launch = false;
+                                break;
+                        }
+                        if (launch) {
+                            MainGUI.INSTANCE.launchObjectExplorerWindow(true);
+                            GlobalLogger.log("Dumping " + search + " after clicking link. newTab = " + newTab);
+                            ObjectExplorer.DumpOptions options = new ObjectExplorer.DumpOptions(search, true, newTab, false);
+                            ObjectExplorer.INSTANCE.dump(options);
+                            mouseMoved(e);
+                        }
+                        return;
                     }
+                }
+
+                //use original mouselisteners
+                //For some reason the original mouselistners transfer the current attribute when linking.
+                for (MouseListener l : ls) {
+                    l.mousePressed(e);
                 }
             }
 

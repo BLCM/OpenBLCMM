@@ -40,6 +40,7 @@ import javax.swing.BoxLayout;
 public class MasterSettingsPanel extends javax.swing.JPanel {
 
     private final ToolSettingsPanel toolSettingsPanel;
+    private final ToolSettingsPanel inputSettingsPanel;
     private final ToolSettingsPanel oeSettingsPanel;
     private final ToolSettingsPanel dangerousSettingsPanel;
 
@@ -50,11 +51,25 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         GlobalLogger.log("Opened Master settings Panel");
         initComponents();
 
+        // General Settings
         toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, masterSettingsTabbedPane);
         toolSettingsPanel.setSize(generalSettingsGuiPanel.getSize());
         generalSettingsGuiPanel.setLayout(new BoxLayout(generalSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         generalSettingsGuiPanel.add(toolSettingsPanel);
 
+        // Input Settings
+        inputSettingsPanel = new ToolSettingsPanel(Option.Shown.INPUT, masterSettingsTabbedPane,
+                "Choose the mouse clicks used to open object name links in<br/>"
+                + "Object Explorer, into the current tab or into a new tab.<br/>"
+                + "Using the same button for both primary and secondary will<br/>"
+                + "result in inconsistent behavior.  Set the click count to 0<br/>"
+                + "to disable a button entirely."
+        );
+        inputSettingsPanel.setSize(inputSettingsGuiPanel.getSize());
+        inputSettingsGuiPanel.setLayout(new BoxLayout(inputSettingsGuiPanel, BoxLayout.PAGE_AXIS));
+        inputSettingsGuiPanel.add(inputSettingsPanel);
+
+        // Object Explorer Data
         oeSettingsPanel = new ToolSettingsPanel(Option.Shown.OE, masterSettingsTabbedPane,
                 "Choose which package categories will be included in the<br/>"
                 + "fulltext and 'refs' searches.  More packages will make<br/>"
@@ -64,6 +79,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         oeSettingsGuiPanel.setLayout(new BoxLayout(oeSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         oeSettingsGuiPanel.add(oeSettingsPanel);
 
+        // Dangerous Settings
         dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, masterSettingsTabbedPane,
                 "The settings on this screen should be left alone unless you know<br/>"
                 + "exactly what they do, and have a strong need to do so."
@@ -91,6 +107,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         masterSettingsTabbedPane = new blcmm.gui.components.BoldJTabbedPane();
         generalSettingsGuiScrollPane = new javax.swing.JScrollPane();
         generalSettingsGuiPanel = new javax.swing.JPanel();
+        inputSettingsGuiScrollPane = new javax.swing.JScrollPane();
+        inputSettingsGuiPanel = new javax.swing.JPanel();
         autoupdateSettingsGuiScrollPane = new javax.swing.JScrollPane();
         oeSettingsGuiPanel = new javax.swing.JPanel();
         dangerousSettingsGuiScrollPane = new javax.swing.JScrollPane();
@@ -104,26 +122,41 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         generalSettingsGuiPanel.setLayout(generalSettingsGuiPanelLayout);
         generalSettingsGuiPanelLayout.setHorizontalGroup(
             generalSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 507, Short.MAX_VALUE)
+            .addGap(0, 523, Short.MAX_VALUE)
         );
         generalSettingsGuiPanelLayout.setVerticalGroup(
             generalSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 314, Short.MAX_VALUE)
+            .addGap(0, 403, Short.MAX_VALUE)
         );
 
         generalSettingsGuiScrollPane.setViewportView(generalSettingsGuiPanel);
 
-        masterSettingsTabbedPane.addTab("General settings", generalSettingsGuiScrollPane);
+        masterSettingsTabbedPane.addTab("General", generalSettingsGuiScrollPane);
+
+        javax.swing.GroupLayout inputSettingsGuiPanelLayout = new javax.swing.GroupLayout(inputSettingsGuiPanel);
+        inputSettingsGuiPanel.setLayout(inputSettingsGuiPanelLayout);
+        inputSettingsGuiPanelLayout.setHorizontalGroup(
+            inputSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 523, Short.MAX_VALUE)
+        );
+        inputSettingsGuiPanelLayout.setVerticalGroup(
+            inputSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 403, Short.MAX_VALUE)
+        );
+
+        inputSettingsGuiScrollPane.setViewportView(inputSettingsGuiPanel);
+
+        masterSettingsTabbedPane.addTab("Input", inputSettingsGuiScrollPane);
 
         javax.swing.GroupLayout oeSettingsGuiPanelLayout = new javax.swing.GroupLayout(oeSettingsGuiPanel);
         oeSettingsGuiPanel.setLayout(oeSettingsGuiPanelLayout);
         oeSettingsGuiPanelLayout.setHorizontalGroup(
             oeSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 507, Short.MAX_VALUE)
+            .addGap(0, 523, Short.MAX_VALUE)
         );
         oeSettingsGuiPanelLayout.setVerticalGroup(
             oeSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 314, Short.MAX_VALUE)
+            .addGap(0, 403, Short.MAX_VALUE)
         );
 
         autoupdateSettingsGuiScrollPane.setViewportView(oeSettingsGuiPanel);
@@ -138,12 +171,12 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         );
         dangerousSettingsGuiPanelLayout.setVerticalGroup(
             dangerousSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 307, Short.MAX_VALUE)
+            .addGap(0, 403, Short.MAX_VALUE)
         );
 
         dangerousSettingsGuiScrollPane.setViewportView(dangerousSettingsGuiPanel);
 
-        masterSettingsTabbedPane.addTab("Dangerous settings", dangerousSettingsGuiScrollPane);
+        masterSettingsTabbedPane.addTab("Dangerous Settings", dangerousSettingsGuiScrollPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -155,6 +188,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(masterSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
         );
+
+        masterSettingsTabbedPane.getAccessibleContext().setAccessibleName("Settings");
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -163,18 +198,22 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane dangerousSettingsGuiScrollPane;
     private javax.swing.JPanel generalSettingsGuiPanel;
     private javax.swing.JScrollPane generalSettingsGuiScrollPane;
+    private javax.swing.JPanel inputSettingsGuiPanel;
+    private javax.swing.JScrollPane inputSettingsGuiScrollPane;
     private javax.swing.JTabbedPane masterSettingsTabbedPane;
     private javax.swing.JPanel oeSettingsGuiPanel;
     // End of variables declaration//GEN-END:variables
 
     public boolean needsToolReset() {
         return toolSettingsPanel.needsToolReset()
+                || inputSettingsPanel.needsToolReset()
                 || oeSettingsPanel.needsToolReset()
                 || dangerousSettingsPanel.needsToolReset();
     }
 
     public boolean needsTreeResize() {
         return toolSettingsPanel.needsTreeResize()
+                || inputSettingsPanel.needsTreeResize()
                 || oeSettingsPanel.needsTreeResize()
                 || dangerousSettingsPanel.needsTreeResize();
     }

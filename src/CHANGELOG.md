@@ -2,6 +2,8 @@ OpenBLCMM Changelog
 ===================
 
 **v1.4.0** Unreleased
+- Added a new "Input" settings tab which allows users to define the behavior
+  of clicking on object name links, in Edit panels and in Object Explorer.
 - Allow the word `set` to appear inside statement values.  (This was always
   a problem for Ezeith's Red Text Explainer mod.)
   - Code formatting backend got a little bit of an overhaul at the same time.
