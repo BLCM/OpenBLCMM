@@ -173,13 +173,13 @@ public class Options extends OptionsBase {
 
             options.registerOption(new SectionHeaderOption(options, section, header));
 
-            options.registerOption(new IntOption(
+            options.registerOption(new MouseButtonOption(
                     options,
                     this.fieldNameButton, defaultButton,
                     section, "Mouse Button",
-                    1, 12,
                     null,
-                    "Mouse button for clicking on object links"
+                    "<html>Mouse button for clicking on object links.  Click to change<br/>"
+                    + "the value to the button you used to do the clicking!"
             ));
 
             options.registerOption(new IntOption(
@@ -291,7 +291,7 @@ public class Options extends OptionsBase {
          * @return True if we should handle this event, false otherwise
          */
         private boolean matches(MouseEvent e) {
-            return (e.getButton() == this.options.getIntOptionData(this.fieldNameButton)
+            return (e.getButton() == this.options.getMouseButtonOptionData(this.fieldNameButton)
                     && e.getClickCount() == this.options.getIntOptionData(this.fieldNameClicks)
                     );
         }

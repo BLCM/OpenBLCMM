@@ -32,6 +32,7 @@ import blcmm.utilities.options.BooleanOption;
 import blcmm.utilities.options.FilenameOption;
 import blcmm.utilities.options.IntOption;
 import blcmm.utilities.options.LongOption;
+import blcmm.utilities.options.MouseButtonOption;
 import blcmm.utilities.options.Option;
 import blcmm.utilities.options.SelectionOption;
 import blcmm.utilities.options.SelectionOptionData;
@@ -572,6 +573,27 @@ public abstract class OptionsBase {
      */
     public void setIntOptionData(String optionName, int optionValue) {
         ((IntOption) this.getOption(optionName)).setData(optionValue);
+        this.save();
+    }
+
+    /**
+     * Convenience function to get mouse button option by name.
+     *
+     * @param optionName The option to retrieve
+     * @return The current option data
+     */
+    public int getMouseButtonOptionData(String optionName) {
+        return ((MouseButtonOption) this.getOption(optionName)).getData();
+    }
+
+    /**
+     * Convenience function to set a mouse button option by name.
+     *
+     * @param optionName The option whose value to set
+     * @param optionValue The new option data.
+     */
+    public void setMouseButtonOptionData(String optionName, int optionValue) {
+        ((MouseButtonOption) this.getOption(optionName)).setData(optionValue);
         this.save();
     }
 
