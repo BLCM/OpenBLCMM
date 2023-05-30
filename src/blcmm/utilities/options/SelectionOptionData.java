@@ -44,13 +44,11 @@ public interface SelectionOptionData {
     public String toSaveString();
 
     /**
-     * Returns the "raw" data for this option.  This was added while adding
-     * support for Enum-backed SelectionOptions, and I remain rather unsure if
-     * this was a good way to support it or not.  It feels way overcomplicated.
-     * Still, it works well enough, so I'm keeping it for now.
+     * Returns a string suitable for showing in the user-facing dropdown
+     * entry.
      *
-     * @return The raw object in the SelectionOption
+     * @return A human-suitable string representing the data
      */
-    public Object getRawData();
+    public String toDropdownLabel();
 
 }

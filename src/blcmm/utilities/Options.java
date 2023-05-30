@@ -92,11 +92,8 @@ public class Options extends OptionsBase {
      * An enum describing the actions which can be taken when processing a
      * mouse click on an object link (in an edit panel or OE panel).  The
      * valid options are: No action, Open in Current Tab, or Open in New Tab.
-     *
-     * The implemented interface list here is a bit wonky; I can't help but
-     * thinking I'm way overcomplicating this feature.
      */
-    public enum MouseLinkAction implements OptionEnum, SelectionOptionData {
+    public enum MouseLinkAction implements SelectionOptionData {
         None("No Action"),
         Current("Current Tab"),
         New("New Tab");
@@ -108,18 +105,13 @@ public class Options extends OptionsBase {
         }
 
         @Override
-        public String getDescription() {
+        public String toDropdownLabel() {
             return this.description;
         }
 
         @Override
         public String toSaveString() {
             return this.name();
-        }
-
-        @Override
-        public MouseLinkAction getRawData() {
-            return this;
         }
 
     }
@@ -133,7 +125,14 @@ public class Options extends OptionsBase {
     public class MouseLinkSection {
 
         private final Options options;
-        private final String identifier;
+
+        private final String fieldNameButton;
+        private final String fieldNameClicks;
+        private final String fieldNameBase;
+        private final String fieldNameCtrl;
+        private final String fieldNameMeta;
+        private final String fieldNameShift;
+        private final String fieldNameAlt;
 
         /**
          * A new section to configure mouse-object-name-link behavior.
@@ -164,13 +163,19 @@ public class Options extends OptionsBase {
                 MouseLinkAction defaultAlt
                 ) {
             this.options = options;
-            this.identifier = identifier;
+            this.fieldNameButton = "inputMouseLink" + identifier + "Button";
+            this.fieldNameClicks = "inputMouseLink" + identifier + "Clicks";
+            this.fieldNameBase = "inputMouseLink" + identifier + "Base";
+            this.fieldNameCtrl = "inputMouseLink" + identifier + "Ctrl";
+            this.fieldNameMeta = "inputMouseLink" + identifier + "Meta";
+            this.fieldNameShift = "inputMouseLink" + identifier + "Shift";
+            this.fieldNameAlt = "inputMouseLink" + identifier + "Alt";
 
             options.registerOption(new SectionHeaderOption(options, section, header));
 
             options.registerOption(new IntOption(
                     options,
-                    "inputMouseLink" + identifier + "Button", defaultButton,
+                    this.fieldNameButton, defaultButton,
                     section, "Mouse Button",
                     1, 12,
                     null,
@@ -179,56 +184,101 @@ public class Options extends OptionsBase {
 
             options.registerOption(new IntOption(
                     options,
-                    "inputMouseLink" + identifier + "Clicks", defaultNumClicks,
+                    this.fieldNameClicks, defaultNumClicks,
                     section, "      Number of Clicks",
                     0, 4,
                     null,
                     "Number of clicks to require to load an object link with this button"
             ));
 
-            options.registerOption(SelectionOption.createEnumSelectionOption(options,
-                    "inputMouseLink" + identifier + "Base", defaultBase,
+            options.registerOption(new SelectionOption<>(
+                    options,
+                    this.fieldNameBase, defaultBase,
                     section,
                     "      Base Action",
                     null,
                     "Base action to take when clicked without any keyboard modifiers",
-                    MouseLinkAction.values()
+                    null,
+                    MouseLinkAction.values(),
+                    s -> {
+                        try {
+                            return MouseLinkAction.valueOf(s);
+                        } catch (Exception e) {
+                            return defaultBase;
+                        }
+                    }
             ));
 
-            options.registerOption(SelectionOption.createEnumSelectionOption(options,
-                    "inputMouseLink" + identifier + "Ctrl", defaultCtrl,
+            options.registerOption(new SelectionOption<>(
+                    options,
+                    this.fieldNameCtrl, defaultCtrl,
                     section,
                     "        ...with Ctrl",
                     null,
                     "Action to take when clicked with Ctrl held down",
-                    MouseLinkAction.values()
+                    null,
+                    MouseLinkAction.values(),
+                    s -> {
+                        try {
+                            return MouseLinkAction.valueOf(s);
+                        } catch (Exception e) {
+                            return defaultCtrl;
+                        }
+                    }
             ));
 
-            options.registerOption(SelectionOption.createEnumSelectionOption(options,
-                    "inputMouseLink" + identifier + "Meta", defaultMeta,
+            options.registerOption(new SelectionOption<>(
+                    options,
+                    this.fieldNameMeta, defaultMeta,
                     section,
                     "        ...with Meta/⌘",
                     null,
-                    "Action to take when clicked with Meta/⌘     held down",
-                    MouseLinkAction.values()
+                    "Action to take when clicked with Meta/⌘ held down",
+                    null,
+                    MouseLinkAction.values(),
+                    s -> {
+                        try {
+                            return MouseLinkAction.valueOf(s);
+                        } catch (Exception e) {
+                            return defaultMeta;
+                        }
+                    }
             ));
 
-            options.registerOption(SelectionOption.createEnumSelectionOption(options,
-                    "inputMouseLink" + identifier + "Shift", defaultShift,
+            options.registerOption(new SelectionOption<>(
+                    options,
+                    this.fieldNameShift, defaultShift,
                     section,
                     "        ...with Shift",
                     null,
                     "Action to take when clicked with Shift held down",
-                    MouseLinkAction.values()
+                    null,
+                    MouseLinkAction.values(),
+                    s -> {
+                        try {
+                            return MouseLinkAction.valueOf(s);
+                        } catch (Exception e) {
+                            return defaultShift;
+                        }
+                    }
             ));
 
-            options.registerOption(SelectionOption.createEnumSelectionOption(options,
-                    "inputMouseLink" + identifier + "Alt", defaultAlt,
+            options.registerOption(new SelectionOption<>(
+                    options,
+                    this.fieldNameAlt, defaultAlt,
                     section,
                     "        ...with Alt",
                     null,
                     "Action to take when clicked with Alt held down",
-                    MouseLinkAction.values()
+                    null,
+                    MouseLinkAction.values(),
+                    s -> {
+                        try {
+                            return MouseLinkAction.valueOf(s);
+                        } catch (Exception e) {
+                            return defaultAlt;
+                        }
+                    }
             ));
 
         }
@@ -241,8 +291,8 @@ public class Options extends OptionsBase {
          * @return True if we should handle this event, false otherwise
          */
         private boolean matches(MouseEvent e) {
-            return (e.getButton() == this.options.getIntOptionData("inputMouseLink" + this.identifier + "Button")
-                    && e.getClickCount() == this.options.getIntOptionData("inputMouseLink" + this.identifier + "Clicks")
+            return (e.getButton() == this.options.getIntOptionData(this.fieldNameButton)
+                    && e.getClickCount() == this.options.getIntOptionData(this.fieldNameClicks)
                     );
         }
 
@@ -254,20 +304,17 @@ public class Options extends OptionsBase {
          * @return A MouseLinkAction to take, or null.
          */
         public MouseLinkAction getAction(MouseEvent e) {
-            // The data-retrieval syntax here is absurd.  There's gotta be a much
-            // cleaner way of doing this.  I suspect that my whole OptionEnum
-            // stuff is way overthinking things.
             if (this.matches(e)) {
                 if (e.isControlDown()) {
-                    return (MouseLinkAction)((SelectionOptionData)this.options.getSelectionOptionData("inputMouseLink" + this.identifier + "Ctrl", MouseLinkAction.class)).getRawData();
+                    return this.options.getSelectionOptionData(this.fieldNameCtrl, MouseLinkAction.class);
                 } else if (e.isMetaDown()) {
-                    return (MouseLinkAction)((SelectionOptionData)this.options.getSelectionOptionData("inputMouseLink" + this.identifier + "Meta", MouseLinkAction.class)).getRawData();
+                    return this.options.getSelectionOptionData(this.fieldNameMeta, MouseLinkAction.class);
                 } else if (e.isShiftDown()) {
-                    return (MouseLinkAction)((SelectionOptionData)this.options.getSelectionOptionData("inputMouseLink" + this.identifier + "Shift", MouseLinkAction.class)).getRawData();
+                    return this.options.getSelectionOptionData(this.fieldNameShift, MouseLinkAction.class);
                 } else if (e.isAltDown()) {
-                    return (MouseLinkAction)((SelectionOptionData)this.options.getSelectionOptionData("inputMouseLink" + this.identifier + "Alt", MouseLinkAction.class)).getRawData();
+                    return this.options.getSelectionOptionData(this.fieldNameAlt, MouseLinkAction.class);
                 } else {
-                    return (MouseLinkAction)((SelectionOptionData)this.options.getSelectionOptionData("inputMouseLink" + this.identifier + "Base", MouseLinkAction.class)).getRawData();
+                    return this.options.getSelectionOptionData(this.fieldNameBase, MouseLinkAction.class);
                 }
             } else {
                 return null;

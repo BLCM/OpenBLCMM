@@ -76,8 +76,8 @@ public class Theme implements SelectionOptionData {
     }
 
     @Override
-    public Theme getRawData() {
-        return this;
+    public String toDropdownLabel() {
+        return this.name;
     }
 
     public Color get(ThemeManager.ColorType colortype) {
