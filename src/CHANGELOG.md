@@ -10,6 +10,8 @@ OpenBLCMM Changelog
     Let us know if there's any strange behavior with code processing now!
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
+- INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
+  of just the text labels
 - Tweaked the application icon slightly and introduced a generation script
   for it
 

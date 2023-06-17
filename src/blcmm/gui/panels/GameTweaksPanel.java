@@ -249,6 +249,7 @@ public abstract class GameTweaksPanel extends JPanel {
         public void setDescription(String s) {
             if (s != null && !s.isEmpty()) {
                 namelabel.setToolTipText(s);
+                this.setWidgetDescription(s);
             }
         }
 
@@ -257,6 +258,17 @@ public abstract class GameTweaksPanel extends JPanel {
         public abstract boolean revert();
 
         public abstract void fix();
+
+        /**
+         * Sets a tooltip on the actual interactive widget.  This can/should
+         * be overridden by implementing classes if need be (for instance,
+         * for our selection dropdowns which don't actually use the JButton).
+         *
+         * @param s The widget description to set
+         */
+        protected void setWidgetDescription(String s) {
+            this.button.setToolTipText(s);
+        }
 
         public void overrideStatus(SetupStatus newStatus) {
             overrideStatus = newStatus;
@@ -894,6 +906,17 @@ public abstract class GameTweaksPanel extends JPanel {
                 }
             });
             components[2] = combobox;
+        }
+
+        /**
+         * Sets the tooltip text for our combo box (used when initializing
+         * the INI tweak, to use the same tooltip as the label).
+         *
+         * @param s The tooltip text to set
+         */
+        @Override
+        protected void setWidgetDescription(String s) {
+            this.combobox.setToolTipText(s);
         }
 
         @Override
