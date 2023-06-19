@@ -17,6 +17,7 @@ OpenBLCMM Changelog
   form, so it can at least be opened manually.
 - Tweaked the application icon slightly and introduced a generation script
   for it
+- Updated sqlite-jdbc version to 3.42.0.0
 
 **v1.3.3** May 26, 2023
  - Fixed a startup crash issue for Windows users whose system username has a
