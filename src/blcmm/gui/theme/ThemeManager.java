@@ -288,6 +288,18 @@ public class ThemeManager {
     }
 
     /**
+     * Returns an RGB hex string representation of the color used in the current
+     * theme, for a specific color type, *without* the alpha channel, and with
+     * a # prefix.  Intended to be used inside HTML color tags, for instance.
+     *
+     * @param colorType The color to look up
+     * @return The hex string, usable in HTML color tags, for instance.
+     */
+    public static String getColorHexStringRGB(ColorType colorType) {
+        return "#" + Integer.toHexString(curTheme.get(colorType).getRGB()).substring(2);
+    }
+
+    /**
      * Routine to initialize our TREE_ICON_MAP. We can't do this in the initial
      * static routine because it relies on MainGUI.INSTANCE existing, and we get
      * called far too early otherwise.

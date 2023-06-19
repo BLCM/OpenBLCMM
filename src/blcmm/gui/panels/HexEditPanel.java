@@ -143,7 +143,7 @@ public class HexEditPanel extends GameTweaksPanel {
                 // pad (x, y)
                 0, 0));
 
-        JButton sdkButton = SetupGameFilesPanel.getBLModdingDotComRedirectButton();
+        JButton sdkButton = SetupGameFilesPanel.getBLModdingDotComRedirectButton(this);
         masterPanel.add(sdkButton, new GridBagConstraints(
                 // x, y
                 0, 1,

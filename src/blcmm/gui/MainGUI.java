@@ -61,7 +61,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -85,7 +84,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Paths;
@@ -208,6 +206,13 @@ public final class MainGUI extends ForceClosingJFrame {
 
         themeComboBox.setSelectedItem(Options.INSTANCE.getTheme());
         jSpinner1.setValue(Options.INSTANCE.getFontsize());
+
+        /* To test out changes to our exception handler, this is something that
+         * could be uncommented...
+        if (1 == 1) {
+            throw new RuntimeException("omg");
+        }
+        /* */
 
         setIconImages(Arrays.asList(
                 new Image[]{
@@ -1121,15 +1126,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void getMoreModsMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getMoreModsMenuButtonActionPerformed
-        try {
-            URL faq = new URI("https://github.com/BLCM/ModCabinet/wiki").toURL();
-            Desktop.getDesktop().browse(faq.toURI());
-        } catch (IOException | URISyntaxException ex) {
-            GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(this,
-                    "Unable to launch browser: " + ex.getMessage(),
-                    "Error launching Browser", JOptionPane.WARNING_MESSAGE);
-        }
+        Utilities.launchBrowser("https://github.com/BLCM/ModCabinet/wiki", this);
     }//GEN-LAST:event_getMoreModsMenuButtonActionPerformed
 
     private void uninstallMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uninstallMenuItemActionPerformed
@@ -1228,15 +1225,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_hexEditsMenuItemActionPerformed
 
     private void getDataPackMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getDataPackMenuButtonActionPerformed
-        try {
-            URL faq = new URI(Meta.DATA_DOWNLOAD_URL).toURL();
-            Desktop.getDesktop().browse(faq.toURI());
-        } catch (IOException | URISyntaxException ex) {
-            GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(this,
-                    "Unable to launch browser: " + ex.getMessage(),
-                    "Error launching Browser", JOptionPane.WARNING_MESSAGE);
-        }
+        Utilities.launchBrowser(Meta.DATA_DOWNLOAD_URL, this);
     }//GEN-LAST:event_getDataPackMenuButtonActionPerformed
 
     private void gameSelectionAction(ItemEvent e) {

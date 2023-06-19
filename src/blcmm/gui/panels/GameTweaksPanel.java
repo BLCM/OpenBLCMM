@@ -37,7 +37,6 @@ import blcmm.utilities.Utilities;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,15 +46,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -361,10 +358,13 @@ public abstract class GameTweaksPanel extends JPanel {
                     // handle link events
                     ep.addHyperlinkListener(e1 -> {
                         if (e1.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                            try {
-                                Desktop.getDesktop().browse(e1.getURL().toURI()); // roll your own link launcher or use Desktop if J6+
-                            } catch (URISyntaxException | IOException ex) {
-                                Logger.getLogger(GameTweaksPanel.class.getName()).log(Level.SEVERE, null, ex);
+                            // This is pretty silly, but we want all our error handling to be
+                            // normalized in Utilities.launchBrowser()
+                            URL url = e1.getURL();
+                            if (url == null) {
+                                Utilities.launchBrowser(e1.getDescription(), ep);
+                            } else {
+                                Utilities.launchBrowser(url.toString(), ep);
                             }
                         }
                     });

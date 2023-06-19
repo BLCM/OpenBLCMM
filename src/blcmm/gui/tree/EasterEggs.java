@@ -82,10 +82,12 @@ public class EasterEggs {
         boolean keyPressCompletedCode = CheatCode.KONAMI.keyPressCompletedCode(keyPressed);
         if (keyPressCompletedCode) {
             try {
-                // SkiFree bitches.
+                // SkiFree bitches.  (Not using Utilities.launchBrowser() here
+                // because it'd be ridiculous to throw a modal dialog in the
+                // event of error, for something like this.
                 URL skiFree = new URI("https://basicallydan.github.io/skifree.js/").toURL();
                 Desktop.getDesktop().browse(skiFree.toURI());
-            } catch (URISyntaxException | IOException ex) {
+            } catch (URISyntaxException | IOException | UnsupportedOperationException ex) {
             }
         }
     }

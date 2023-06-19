@@ -44,22 +44,16 @@ import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
@@ -380,15 +374,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }//GEN-LAST:event_objectBrowserTreeTreeWillExpand
 
     private void downloadDataPackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadDataPackButtonActionPerformed
-        try {
-            URL faq = new URI(Meta.DATA_DOWNLOAD_URL).toURL();
-            Desktop.getDesktop().browse(faq.toURI());
-        } catch (IOException | URISyntaxException ex) {
-            GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(this,
-                    "Unable to launch browser: " + ex.getMessage(),
-                    "Error launching Browser", JOptionPane.WARNING_MESSAGE);
-        }
+        Utilities.launchBrowser(Meta.DATA_DOWNLOAD_URL, this);
     }//GEN-LAST:event_downloadDataPackButtonActionPerformed
 
     public JTabbedPane getObjectExplorerTabbedPane() {

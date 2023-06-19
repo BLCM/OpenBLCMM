@@ -46,9 +46,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -381,15 +378,11 @@ public final class AboutPanel extends JPanel {
         // Not using IconManager here since that only returns square images
         JLabel donateButton = new JLabel(new ImageIcon(AboutPanel.class.getClassLoader().getResource("resources/donate.png")));
         donateButton.setToolTipText("Donate with PayPal");
+        AboutPanel buttonRef = this;
         donateButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                try {
-                    URL faq = new URI("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US").toURL();
-                    Desktop.getDesktop().browse(faq.toURI());
-                } catch (URISyntaxException | IOException ex) {
-                    GlobalLogger.log(ex);
-                }
+                Utilities.launchBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US", buttonRef);
             }
         });
         donateTabPanel.add(donateButton, new GridBagConstraints(
@@ -444,15 +437,11 @@ public final class AboutPanel extends JPanel {
         button.setText("<html><b><nobr>" + linkText + "</nobr></b></html>");
         button.setOpaque(true);
         button.setToolTipText(remoteURL);
+        AboutPanel buttonRef = this;
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                try {
-                    URL sdkToBrowse = new URI(remoteURL).toURL();
-                    Desktop.getDesktop().browse(sdkToBrowse.toURI());
-                } catch (URISyntaxException | IOException ex) {
-                    GlobalLogger.log(ex);
-                }
+                Utilities.launchBrowser(remoteURL, buttonRef);
             }
         });
         return button;

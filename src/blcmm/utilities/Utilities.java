@@ -29,12 +29,21 @@
 package blcmm.utilities;
 
 import blcmm.Meta;
+import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dialog;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedOutputStream;
@@ -64,10 +73,15 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -561,7 +575,7 @@ public class Utilities {
     /**
      * Another inner mask-changing function which I'd like to get rid of.
      * Different somehow to the previous one, I'm sure.
-     * 
+     *
      * @param component
      * @param oldmask
      * @param replacingMask
@@ -938,6 +952,81 @@ public class Utilities {
         int exp = (int) (Math.log(bytes) / Math.log(1000));
         String prefix = "kMGTPE".charAt(exp - 1) + "";
         return String.format("%.1f %sB", bytes / Math.pow(1000, exp), prefix);
+    }
+
+    /**
+     * Launches a browser on the user's desktop with the given URL.  The
+     * `parent` Component given is used if an error needs to be displayed.
+     * This will be the component for which the error should be modal.
+     *
+     * @param urlString The URL to open
+     * @param parent The parent Component which generated the launch request
+     * @return True if the launch was (apparenty) successful, false otherwise.
+     */
+    public static boolean launchBrowser(String urlString, Component parent) {
+        try {
+            URI uri = new URI(urlString);
+            Desktop.getDesktop().browse(uri);
+            return true;
+        } catch (IOException | URISyntaxException | UnsupportedOperationException ex) {
+            GlobalLogger.log(ex);
+
+            //"Unable to launch browser: " + ex.getMessage(),
+            JPanel panel = new JPanel();
+            panel.setLayout(new GridBagLayout());
+            GridBagConstraints cs = new GridBagConstraints();
+            cs.gridx = 0;
+            cs.gridy = 0;
+            cs.gridheight = 1;
+            cs.gridwidth = 2;
+            cs.weightx = 1;
+            cs.weighty = 1;
+            cs.ipady = 4;
+            cs.fill = GridBagConstraints.HORIZONTAL;
+
+            cs.anchor = GridBagConstraints.CENTER;
+            panel.add(new JLabel("<html><b><font size=+1>Unable to launch browser</font></b>"), cs);
+
+            cs.gridy++;
+            cs.anchor = GridBagConstraints.WEST;
+            panel.add(new JLabel("<html><font color=\""
+                    + ThemeManager.getColorHexStringRGB(ThemeManager.ColorType.UINimbusRed)
+                    + "\">" + ex.getMessage() + "</font>"), cs);
+
+            cs.gridy++;
+            cs.insets = new Insets(10, 0, 0, 0);
+            panel.add(new JLabel("<html>You can copy the URL here to open in your browser manually:"), cs);
+
+            cs.gridy++;
+            cs.gridwidth = 1;
+            cs.weightx = 100;
+            cs.insets = new Insets(0, 10, 0, 0);
+            JTextField field = new JTextField(urlString);
+            field.setEditable(false);
+            field.setCaretPosition(0);
+            field.moveCaretPosition(urlString.length());
+            field.getCaret().setSelectionVisible(true);
+            panel.add(field, cs);
+
+            cs.gridx = 1;
+            cs.weightx = 1;
+            cs.insets = new Insets(0, 0, 0, 10);
+            JButton button = new JButton("Copy to Clipboard");
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent evt) {
+                     StringSelection stringSelection = new StringSelection(urlString);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(stringSelection, null);
+                }
+            });
+            panel.add(button, cs);
+
+            JOptionPane.showMessageDialog(parent, panel,
+                    "Error launching Browser",
+                    JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
     }
 
 }

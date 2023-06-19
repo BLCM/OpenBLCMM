@@ -12,6 +12,9 @@ OpenBLCMM Changelog
   (thanks, ernimril from Libera's #java!)
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
   of just the text labels
+- Better handling of URL links, when Java doesn't know how to open a browser
+  on the running system.  Will present a dialog with the URL in a copyable
+  form, so it can at least be opened manually.
 - Tweaked the application icon slightly and introduced a generation script
   for it
 

@@ -30,17 +30,14 @@ package blcmm.gui.panels;
 
 import blcmm.Meta;
 import blcmm.gui.theme.ThemeManager;
+import blcmm.utilities.Utilities;
 import java.awt.Color;
-import java.awt.Desktop;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -58,7 +55,7 @@ public final class SetupGameFilesPanel extends JPanel {
                 + "Steam and EGS versions."
         );
 
-        JButton sdkButton = SetupGameFilesPanel.getBLModdingDotComRedirectButton();
+        JButton sdkButton = SetupGameFilesPanel.getBLModdingDotComRedirectButton(this);
 
         JLabel bottomLabel = new JLabel(
                 "<html>"
@@ -90,7 +87,7 @@ public final class SetupGameFilesPanel extends JPanel {
         add(okButton, new GridBagConstraints(0, 3, 1, 1, 500, 1, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(10, 5, 20, 20), 0, 0));
     }
 
-    public static JButton getBLModdingDotComRedirectButton() {
+    public static JButton getBLModdingDotComRedirectButton(Component parentComponent) {
         String sdkURL = "https://borderlandsmodding.com/running-mods/";
         JButton sdkButton = new JButton();
         Color linkColor = ThemeManager.getColor(ThemeManager.ColorType.UITextLink);
@@ -100,11 +97,7 @@ public final class SetupGameFilesPanel extends JPanel {
         sdkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                try {
-                    URL sdkToBrowse = new URI(sdkURL).toURL();
-                    Desktop.getDesktop().browse(sdkToBrowse.toURI());
-                } catch (URISyntaxException | IOException ex) {
-                }
+                Utilities.launchBrowser(sdkURL, parentComponent);
             }
         });
         return sdkButton;
