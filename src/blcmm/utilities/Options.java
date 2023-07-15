@@ -562,6 +562,12 @@ public class Options extends OptionsBase {
                 null,
                 "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));
 
+        this.registerOption(new IntOption(this, OptionNames.accountDataNumber.toString(), 1,
+                Option.Shown.DANGEROUS, "AccountData number for 'Offline'-saved Hotfixes",
+                0, 99,
+                null,
+                "When saving patchfiles in 'Offline' mode, which GearboxAccountData number should be used?"));
+
         // Next: options which don't show up on the settings panel.  Order
         // doesn't really matter here.
         // Has the user seen the export warning?
@@ -944,6 +950,14 @@ public class Options extends OptionsBase {
 
     public void setOnlineServiceNumber(int serviceNumber) {
         this.setIntOptionData(Options.OptionNames.onlineServiceNumber, serviceNumber);
+    }
+
+    public int getAccountDataNumber() {
+        return this.getIntOptionData(OptionNames.accountDataNumber);
+    }
+
+    public void setAccountDataNumber(int accountDataNumber) {
+        this.setIntOptionData(Options.OptionNames.accountDataNumber, accountDataNumber);
     }
 
     public long getOEDataSuccessTimestampDbBL2() {

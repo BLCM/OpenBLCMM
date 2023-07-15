@@ -15,8 +15,10 @@ OpenBLCMM Changelog
 - Better handling of URL links, when Java doesn't know how to open a browser
   on the running system.  Will present a dialog with the URL in a copyable
   form, so it can at least be opened manually.
+- Added a new "Dangerous Settings" option to set the GearboxAccountData
+  index used in offline-saved files.
 - Tweaked the application icon slightly and introduced a generation script
-  for it
+  for it.
 - Updated sqlite-jdbc version to 3.42.0.0
 
 **v1.3.3** May 26, 2023

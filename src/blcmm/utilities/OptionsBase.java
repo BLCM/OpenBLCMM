@@ -117,6 +117,7 @@ public abstract class OptionsBase {
         showDeleteConfirmation,
         saveAsOffline,
         onlineServiceNumber,
+        accountDataNumber,
         checkForNewVersions,
         oeSearchActions,
         oeSearchAI,

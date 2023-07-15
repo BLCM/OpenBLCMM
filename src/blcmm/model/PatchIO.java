@@ -610,7 +610,13 @@ public class PatchIO {
             fixes = new String[2];
             fixes2 = new SetCommand[2];
             HashSet<SetCommand> offlineCodes = new HashSet<>();
-            List<String> offlines = Arrays.asList(new String[]{PatchType.OFFLINE1, PatchType.OFFLINE2, PatchType.OFFLINE3});
+            List<String> offlines = Arrays.asList(new String[]{
+                PatchType.OFFLINE1,
+                PatchType.OFFLINE2,
+                // FT Files are actually quite unlikely to have anything but "1" in here, but
+                // we'll go ahead and use our Dangerous Setting anyway.
+                PatchType.OFFLINE3_A + Options.INSTANCE.getAccountDataNumber() + PatchType.OFFLINE3_B,
+            });
             for (ModelElement code : c.getElements()) {
                 if (code instanceof SetCommand && offlines.contains(code.toString())) {
                     offlineCodes.add((SetCommand) code);

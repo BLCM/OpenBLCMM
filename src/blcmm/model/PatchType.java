@@ -240,7 +240,8 @@ public enum PatchType {
     // Offline strings
     public static String OFFLINE1 = "set Transient.SparkServiceConfiguration_0 ServiceName Micropatch";
     public static String OFFLINE2 = "set Transient.SparkServiceConfiguration_0 ConfigurationGroup Default";
-    public static String OFFLINE3 = "set Transient.GearboxAccountData_1 Services (Transient.SparkServiceConfiguration_0)";
+    public static String OFFLINE3_A = "set Transient.GearboxAccountData_";
+    public static String OFFLINE3_B = " Services (Transient.SparkServiceConfiguration_0)";
 
     // This is a bit stupid but it's sometimes useful to have it as a set,
     // and others as a list
@@ -424,7 +425,7 @@ public enum PatchType {
         if (offline) {
             serviceNumber = 0;
         } else {
-            serviceNumber = Options.INSTANCE.getIntOptionData(Options.OptionNames.onlineServiceNumber);
+            serviceNumber = Options.INSTANCE.getOnlineServiceNumber();
         }
         lines.add(")");
         lines.add("set Transient.SparkServiceConfiguration_" + serviceNumber + " Values (");
@@ -444,7 +445,7 @@ public enum PatchType {
         lines.add(")");
         lines.add("");
         if (offline) {
-            lines.add(OFFLINE3);
+            lines.add(OFFLINE3_A + Options.INSTANCE.getAccountDataNumber() + OFFLINE3_B);
             lines.add("");
         }
         lines.add("");
