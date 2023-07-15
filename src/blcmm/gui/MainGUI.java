@@ -368,7 +368,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }
 
     private SwingWorker startupBackupThread() {
-        AutoBackupper.cleanOldBackups();
+        AutoBackupper.cleanOldBackupSessions();
         SwingWorker thread = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
