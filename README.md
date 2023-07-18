@@ -144,6 +144,9 @@ OpenBLCMM makes use of the following third party libraries/resources:
     available under the MIT License.
   - [CommonMark](https://github.com/commonmark)'s [commonmark-java](https://github.com/commonmark/commonmark-java),
     available under the 2-clause BSD License.
+  - [Rob Camick](https://tips4java.wordpress.com/about/)'s
+    [ScrollablePanel.java](https://tips4java.wordpress.com/2009/12/20/scrollable-panel/),
+    available without restriction.
 - **Resources**:
   - Some icons from [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
     [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under

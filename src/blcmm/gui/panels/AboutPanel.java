@@ -30,6 +30,7 @@ package blcmm.gui.panels;
 
 import blcmm.Meta;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.ScrollablePanel;
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.IconManager;
@@ -56,6 +57,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import org.apache.commons.text.WordUtils;
@@ -119,7 +121,10 @@ public final class AboutPanel extends JPanel {
         //sysInfoPanel.setBorder(BorderFactory.createEtchedBorder());
         int sysinfo_cur_y = 0;
         for (Entry entry : sysInfo.entrySet()) {
-            sysInfoPanel.add(new JLabel("<html><b>" + entry.getKey() + ":</b>"), new GridBagConstraints(
+            JLabel keyLabel = new JLabel("<html><b>" + entry.getKey() + ":</b></html>");
+            //GlobalLogger.log("Label font: " + keyLabel.getFont().toString());
+            //keyLabel.setFont(new Font(DEFAULT_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()));
+            sysInfoPanel.add(keyLabel, new GridBagConstraints(
                     // x, y
                     0, sysinfo_cur_y,
                     // width, height
@@ -134,7 +139,7 @@ public final class AboutPanel extends JPanel {
                     new Insets(1, 3, 1, 3),
                     // pad (x, y)
                     0, 0));
-            sysInfoPanel.add(new JLabel("<html>" + WordUtils.wrap((String)entry.getValue(), 65, "<br>", true)), new GridBagConstraints(
+            sysInfoPanel.add(new JLabel("<html>" + WordUtils.wrap((String)entry.getValue(), 65, "<br>", true) + "</html>"), new GridBagConstraints(
                     // x, y
                     1, sysinfo_cur_y,
                     // width, height
@@ -273,21 +278,23 @@ public final class AboutPanel extends JPanel {
                 0, 0));
 
         // General About Tab
-        JPanel aboutTabPanel = new JPanel();
+        ScrollablePanel aboutTabPanel = new ScrollablePanel();
+        aboutTabPanel.setScrollableWidth(ScrollablePanel.ScrollableSizeHint.FIT);
+        aboutTabPanel.setScrollableHeight(ScrollablePanel.ScrollableSizeHint.STRETCH);
         aboutTabPanel.setLayout(new GridBagLayout());
         aboutTabPanel.setBorder(BorderFactory.createEtchedBorder());
         // Intentionally *not* using Meta.NAME here since this is more a
         // historical record than a current-state.
         JLabel aboutTabLabel = new JLabel(
-                "<html>The Borderlands Community Mod Manager was developed by LightChaosman, with<br/>"
-                + "assistance from apocalyptech, Bugworm, c0dycode, and FromDarkHell.<br/>"
+                "<html>The Borderlands Community Mod Manager was developed by LightChaosman, with"
+                + " assistance from apocalyptech, Bugworm, c0dycode, and FromDarkHell.<br/>"
                 + "<br/>"
-                + "OpenBLCMM is a fully-opensourced version of BLCMM maintained by the BLCMods community (with<br/>"
-                + "apocalyptech as the current lead).  Thanks to LightChaosman for opensourcing the BLCMM core!<br/>"
-                + "Other OpenBLCMM contributions have come from apple1417 and ZetaDæmon.<br/>"
+                + "OpenBLCMM is a fully-opensourced version of BLCMM maintained by the BLCMods community (with"
+                + " apocalyptech as the current lead).  Thanks to LightChaosman for opensourcing the BLCMM core!"
+                + " Other OpenBLCMM contributions have come from apple1417 and ZetaDæmon.<br/>"
                 + "<br/>"
-                + "Thanks, too, to the countless members of the community who have contributed by testing,<br/>"
-                + "providing support, and spreading the word.  Apologies to anyone we've missed!<br/>"
+                + "Thanks, too, to the countless members of the community who have contributed by testing,"
+                + " providing support, and spreading the word.  Apologies to anyone we've missed!<br/>"
         );
         aboutTabPanel.add(aboutTabLabel, new GridBagConstraints(
                 // x, y
@@ -304,7 +311,10 @@ public final class AboutPanel extends JPanel {
                 new Insets(5, 5, 5, 5),
                 // pad (x, y)
                 0, 0));
-        tabs.add("About/Credits", aboutTabPanel);
+        JScrollPane aboutScroller = new JScrollPane();
+        aboutScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        aboutScroller.setViewportView(aboutTabPanel);
+        tabs.add("About/Credits", aboutScroller);
 
         // Third-party resources tab
         JPanel thirdTabPanel = new JPanel();
@@ -320,6 +330,7 @@ public final class AboutPanel extends JPanel {
                 + "<li>Xerial's sqlite-jdbc, available under the Apache License v2.0</li>"
                 + "<li>Vincent Durmont's semver4j, available under the MIT License</li>"
                 + "<li>CommonMark's commonmark-java, available under the 2-clause BSD License</li>"
+                + "<li>Rob Camick's ScrollablePanel.java, available without restriction</li>"
                 + "</ul>"
                 + "<b>Resources</b><br/>"
                 + "<ul>"
@@ -400,7 +411,9 @@ public final class AboutPanel extends JPanel {
                 new Insets(5, 5, 5, 5),
                 // pad (x, y)
                 0, 0));
-        tabs.add("Donate", donateTabPanel);
+        JScrollPane donateScroller = new JScrollPane();
+        donateScroller.setViewportView(donateTabPanel);
+        tabs.add("Donate", donateScroller);
 
         // "OK" Button
         JButton okButton = new JButton("OK");

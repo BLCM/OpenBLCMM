@@ -91,6 +91,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -109,12 +110,14 @@ import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.basic.BasicTreeUI;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import org.commonmark.node.Node;
@@ -130,6 +133,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     public static final String DEFAULT_FONT_NAME = "Dialog", CODE_FONT_NAME = "Monospaced";
     public static MainGUI INSTANCE;
+    private static NimbusLookAndFeel lookAndFeel;
 
     private final String titlePostfix;
     private File currentFile;
@@ -165,6 +169,26 @@ public final class MainGUI extends ForceClosingJFrame {
         GUI_IO_Handler.MASTER_UI = INSTANCE;
         this.argToOpen = toOpen;
         this.titlePostfix = titlePostfix;
+
+        // Load our Nimbus Look-and-Feel early.  We probably don't *have* to do
+        // it this early, but it doesn't hurt.
+        MainGUI.lookAndFeel = new NimbusLookAndFeel();
+        try {
+            UIManager.setLookAndFeel(MainGUI.lookAndFeel);
+        } catch (UnsupportedLookAndFeelException ex) {
+            // Honestly this will *probably* result in crashes later down the line.
+            // Our code relies on some SynthUI stuff which doesn't work under Metal,
+            // etc.
+            GlobalLogger.log("Could not install Nimbus Look-and-Feel: " + ex.toString());
+        }
+
+        // Also set our currently-set font size right here.  This actually does
+        // a pretty good job of normalizing the sizes, so long as the user
+        // doesn't change the font later.  If the user *does* change the font,
+        // then various things (like About/Settings/etc) need to have fonts
+        // explicitly set in order to render properly (though they'd be fine
+        // after a full restart).
+        this.updateFontSizes(false);
 
         // Load our data in the background.  It's possible (probable?) we could
         // do this later on instead, but I don't want to worry about whether
@@ -1630,19 +1654,28 @@ public final class MainGUI extends ForceClosingJFrame {
         // First assign all our colors via the theme class
         ThemeManager.setTheme(theme);
 
-        // Now propagate those changes through the UI in various ways
+        // Reset our Look-and-Feel.  I actually don't see why this would be
+        // necessary, but if we don't do it, flipping between light/dark leaves
+        // various GUI components on the wrong one.
+        MainGUI.lookAndFeel = new NimbusLookAndFeel();
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
+            UIManager.setLookAndFeel(MainGUI.lookAndFeel);
+        } catch (UnsupportedLookAndFeelException ex) {
+            // Honestly this will *probably* result in crashes later down the line.
+            // Our code relies on some SynthUI stuff which doesn't work under Metal,
+            // etc.
+            GlobalLogger.log("Could not install Nimbus Look-and-Feel: " + ex.toString());
         }
+
         EventQueue.invokeLater(() -> {
             if (INSTANCE != null) {
+                // If we don't do this, some font size parameters get reset to
+                // Nimbus defaults.  (This alone isn't enough for things to
+                // be Actually Good, though -- still need to hardcode font
+                // sizes in dialogs, etc, if the user's flipping this.)
+                INSTANCE.updateFontSizes(false);
+
+                // Everything else BLCMM's historically done here
                 INSTANCE.themeComboBox.setSelectedItem(ThemeManager.getTheme());
                 SwingUtilities.updateComponentTreeUI(INSTANCE);
                 SwingUtilities.updateComponentTreeUI(INSTANCE.jMenuBar1);
@@ -1828,13 +1861,39 @@ public final class MainGUI extends ForceClosingJFrame {
         return patch;
     }
 
+    /**
+     * Updates our font size based on our current preferences.  Will perform a
+     * full font update, which will also loop through widgets to ensure that
+     * a new font size is applied to all already-existing Components.
+     */
     public void updateFontSizes() {
-        setUIFont(new javax.swing.plaf.FontUIResource(new Font(DEFAULT_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize())));
-        updateFontsizes(this);
-        ((CheckBoxTree) jTree1).updateFontSizes();
-        ((BasicTreeUI) jTree1.getUI()).setLeftChildIndent(15);//Since our icons do not change with font size
+        this.updateFontSizes(true);
     }
 
+    /**
+     * Updates our font size based on our current preferences.  If the
+     * `fullUpdate` boolean is `true`, this will also loop through widgets
+     * to ensure that the new size is applied to all already-existing
+     * Components.  Otherwise, the size will only be applied to the UIManager,
+     * setting attributes on the active Look-and-Feel.
+     *
+     * @param fullUpdate Whether or not to do a full font-size update
+     */
+    public void updateFontSizes(boolean fullUpdate) {
+        setUIFont(new javax.swing.plaf.FontUIResource(new Font(DEFAULT_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize())));
+        if (fullUpdate) {
+            updateFontsizes(this);
+            ((CheckBoxTree) jTree1).updateFontSizes();
+            ((BasicTreeUI) jTree1.getUI()).setLeftChildIndent(15);//Since our icons do not change with font size
+        }
+    }
+
+    /**
+     * Loops through Components contained by `main` to update their font sizes
+     * to the currently-selected font size.
+     *
+     * @param main The Container to update
+     */
     private void updateFontsizes(Container main) {
         for (Component c : main.getComponents()) {
             c.setFont(c.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
@@ -1855,7 +1914,37 @@ public final class MainGUI extends ForceClosingJFrame {
         SwingUtilities.updateComponentTreeUI(main);
     }
 
+    /**
+     * Updates the UIManager's font settings to match the font described by `f`.
+     * Note that this works pretty well when run before any widgets have been
+     * created, but doesn't work so hot when run in an already-existing app.
+     * This is possibly a Nimbus-specific issue, and I've tried quite a few
+     * options to try and get it to work properly, without much success.  In
+     * the end, the most thorough workaround I found was setting fonts
+     * explicitly.  BLCMM was already doing that for MainGUI widgets (see the
+     * looping behavior in updateFontsizes), but other dialogs like the
+     * About dialog, or Settings, need to have sizes explicitly defined in order
+     * to render properly after a dynamic font-size change.
+     *
+     * Some reading about all that:
+     *    https://stackoverflow.com/questions/8004658/
+     *    https://stackoverflow.com/questions/949353/
+     *
+     * @param f The font to use
+     */
     private static void setUIFont(javax.swing.plaf.FontUIResource f) {
+
+        UIDefaults defaults = MainGUI.lookAndFeel.getDefaults();
+        defaults.put("defaultFont", f);
+        for (Entry entry : defaults.entrySet()) {
+            if (entry.getValue() != null && entry.getValue() instanceof Font) {
+                //GlobalLogger.log("Setting: " + entry.getKey().toString());
+                defaults.put(entry.getKey(), f);
+            }
+        }
+
+        /* Original code here; leaving in for now but there's probably no reason
+         * to keep it around...
         java.util.Enumeration keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
@@ -1864,6 +1953,7 @@ public final class MainGUI extends ForceClosingJFrame {
                 UIManager.put(key, f);
             }
         }
+        */
     }
 
     public void setChangePatchTypeEnabled(boolean selected) {

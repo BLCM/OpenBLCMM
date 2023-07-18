@@ -8,6 +8,8 @@ OpenBLCMM Changelog
   a problem for Ezeith's Red Text Explainer mod.)
   - Code formatting backend got a little bit of an overhaul at the same time.
     Let us know if there's any strange behavior with code processing now!
+- Fixed various font scaling issues with non-default font sizes **(Work in
+  progress!  Plenty of things are still janky.)**
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
 - Fixed a crash which could occur when unexpected files/directories were found
@@ -21,6 +23,7 @@ OpenBLCMM Changelog
   index used in offline-saved files.
 - Tweaked the application icon slightly and introduced a generation script
   for it.
+- Tightened up About dialog display a bit.
 - Updated sqlite-jdbc version to 3.42.0.0
 
 **v1.3.3** May 26, 2023
