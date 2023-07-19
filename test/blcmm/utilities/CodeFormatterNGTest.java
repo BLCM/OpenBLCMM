@@ -237,6 +237,24 @@ public class CodeFormatterNGTest {
                         "set foo bar (attr=foo,attr2=(3,4),attr3=(one=two))"
                 ),
             },
+            { "More nested statements",
+                "set foo bar\n"
+                + "(\n"
+                + "    (\n"
+                + "        SlotName = \"WeaponAccuracyImpulse\",\n"
+                + "        GradeIncrease = -10,\n"
+                + "        bActivateSlot = True\n"
+                + "    ),\n"
+                + "    (\n"
+                + "        SlotName = \"AccuracyMax\",\n"
+                + "        GradeIncrease = -10,\n"
+                + "        bActivateSlot = True\n"
+                + "    )\n"
+                + ")",
+                Arrays.asList(
+                        "set foo bar ((SlotName=\"WeaponAccuracyImpulse\",GradeIncrease=-10,bActivateSlot=True),(SlotName=\"AccuracyMax\",GradeIncrease=-10,bActivateSlot=True))"
+                ),
+            },
             { "All currently-valid commands",
                 "set foo bar baz\n"
                 + "set_cmp foo bar baz frotz\n"

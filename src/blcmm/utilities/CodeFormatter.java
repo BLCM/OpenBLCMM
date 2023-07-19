@@ -515,7 +515,7 @@ public class CodeFormatter {
      * @return A list of ModelElements derived from the mod code.
      */
     public static List<ModelElement> convertModCodeToModels(String modCode) {
-        return CodeFormatter.convertPartsToModels(CodeFormatter.splitIntoParts(modCode));
+        return CodeFormatter.convertPartsToModels(CodeFormatter.splitIntoDeformattedParts(modCode));
     }
 
     /**
