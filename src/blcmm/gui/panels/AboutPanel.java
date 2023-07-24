@@ -29,6 +29,7 @@
 package blcmm.gui.panels;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.ScrollablePanel;
 import blcmm.model.PatchType;
@@ -36,6 +37,7 @@ import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.IconManager;
 import blcmm.utilities.Utilities;
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -63,21 +65,34 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.text.WordUtils;
 
 /**
+ * An "About" panel for OpenBLCMM.
  *
- * @author LightChaosman
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
+ *
+ * @author LightChaosman, apocalyptech
  */
 public final class AboutPanel extends JPanel {
 
-    public AboutPanel(boolean showDonate) {
+    private final Font currentFont;
+
+    public AboutPanel(FontInfo fontInfo) {
         this.setLayout(new GridBagLayout());
+        this.currentFont = fontInfo.getFont();
 
         int cur_y = 0;
 
         // Main header
-        JLabel headerLabel = new JLabel("<html><b><nobr><font size=\"+2\">" + Meta.NAME + " v" + Meta.VERSION + "</font></nobr></b></html>",
+        JLabel headerLabel = new JLabel("<html><b><nobr>" + Meta.NAME + " v" + Meta.VERSION + "</nobr></b></html>",
                 new ImageIcon(IconManager.getBLCMMIcon(64)),
                 SwingConstants.CENTER
         );
+        // I have *no* idea why the hell I need to increase the font size so much here?
+        // I was previously just doing <font size="+2"> in the label HTML, and it looked
+        // great, but I seemingly need +20 when doing it this way?  Weird.
+        headerLabel.setFont(currentFont.deriveFont(currentFont.getSize2D()+20f));
         headerLabel.setIconTextGap(20);
         this.add(headerLabel, new GridBagConstraints(
                 // x, y
@@ -119,11 +134,12 @@ public final class AboutPanel extends JPanel {
         JPanel sysInfoPanel = new JPanel();
         sysInfoPanel.setLayout(new GridBagLayout());
         //sysInfoPanel.setBorder(BorderFactory.createEtchedBorder());
+        JLabel keyLabel;
+        JLabel valueLabel;
         int sysinfo_cur_y = 0;
         for (Entry entry : sysInfo.entrySet()) {
-            JLabel keyLabel = new JLabel("<html><b>" + entry.getKey() + ":</b></html>");
-            //GlobalLogger.log("Label font: " + keyLabel.getFont().toString());
-            //keyLabel.setFont(new Font(DEFAULT_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()));
+            keyLabel = new JLabel("<html><b>" + entry.getKey() + ":</b></html>");
+            keyLabel.setFont(currentFont);
             sysInfoPanel.add(keyLabel, new GridBagConstraints(
                     // x, y
                     0, sysinfo_cur_y,
@@ -139,7 +155,9 @@ public final class AboutPanel extends JPanel {
                     new Insets(1, 3, 1, 3),
                     // pad (x, y)
                     0, 0));
-            sysInfoPanel.add(new JLabel("<html>" + WordUtils.wrap((String)entry.getValue(), 65, "<br>", true) + "</html>"), new GridBagConstraints(
+            valueLabel = new JLabel("<html>" + WordUtils.wrap((String)entry.getValue(), 65, "<br>", true) + "</html>");
+            valueLabel.setFont(currentFont);
+            sysInfoPanel.add(valueLabel, new GridBagConstraints(
                     // x, y
                     1, sysinfo_cur_y,
                     // width, height
@@ -184,6 +202,7 @@ public final class AboutPanel extends JPanel {
         }
         JButton clipButton = new JButton();
         clipButton.setText("<html><b><nobr>Copy Info to Clipboard</nobr></b></html>");
+        clipButton.setFont(currentFont);
         clipButton.setToolTipText("Copy Info to Clipboard");
         clipButton.setOpaque(true);
         clipButton.addActionListener(new ActionListener() {
@@ -205,6 +224,7 @@ public final class AboutPanel extends JPanel {
 
         JButton logButton = new JButton();
         logButton.setText("<html><b><nobr>Open Log Dir</nobr></b></html>");
+        logButton.setFont(currentFont);
         logButton.setToolTipText("Open Log Dir");
         logButton.setOpaque(true);
         logButton.addActionListener(new ActionListener() {
@@ -261,6 +281,7 @@ public final class AboutPanel extends JPanel {
 
         // And now a JTabbedPane for other various info
         JTabbedPane tabs = new JTabbedPane();
+        tabs.setFont(currentFont);
         this.add(tabs, new GridBagConstraints(
                 // x, y
                 0, cur_y++,
@@ -296,6 +317,7 @@ public final class AboutPanel extends JPanel {
                 + "Thanks, too, to the countless members of the community who have contributed by testing,"
                 + " providing support, and spreading the word.  Apologies to anyone we've missed!<br/>"
         );
+        aboutTabLabel.setFont(currentFont);
         aboutTabPanel.add(aboutTabLabel, new GridBagConstraints(
                 // x, y
                 0, 0,
@@ -347,6 +369,7 @@ public final class AboutPanel extends JPanel {
                 + "<li>Inno Setup is used to create the Windows installer</li>"
                 + "</ul>"
         );
+        thirdTabLabel.setFont(currentFont);
         thirdTabPanel.add(thirdTabLabel, new GridBagConstraints(
                 // x, y
                 0, 0,
@@ -371,6 +394,7 @@ public final class AboutPanel extends JPanel {
         donateTabPanel.setLayout(new GridBagLayout());
         donateTabPanel.setBorder(BorderFactory.createEtchedBorder());
         JLabel donateLabel = new JLabel("Donations will go to LightChaosman, the original author of BLCMM.");
+        donateLabel.setFont(currentFont);
         donateTabPanel.add(donateLabel, new GridBagConstraints(
                 // x, y
                 0, 0,
@@ -417,6 +441,7 @@ public final class AboutPanel extends JPanel {
 
         // "OK" Button
         JButton okButton = new JButton("OK");
+        okButton.setFont(currentFont);
         okButton.addActionListener(e -> SwingUtilities.getWindowAncestor(AboutPanel.this).dispose());
         this.add(okButton, new GridBagConstraints(
                 // x, y
@@ -448,6 +473,7 @@ public final class AboutPanel extends JPanel {
         //Color linkColor = ThemeManager.getColor(ThemeManager.ColorType.UITextLink);
         //button.setText("<html><font color=\"" + Integer.toHexString(linkColor.getRGB()).substring(2) + "\"><u>" + linkText + "</u></font></html>");
         button.setText("<html><b><nobr>" + linkText + "</nobr></b></html>");
+        button.setFont(this.currentFont);
         button.setOpaque(true);
         button.setToolTipText(remoteURL);
         AboutPanel buttonRef = this;

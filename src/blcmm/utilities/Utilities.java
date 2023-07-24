@@ -29,15 +29,19 @@
 package blcmm.utilities;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
@@ -1026,6 +1030,136 @@ public class Utilities {
                     "Error launching Browser",
                     JOptionPane.WARNING_MESSAGE);
             return false;
+        }
+    }
+
+    /**
+     * Returns the maximum Dimensions that we'd want a newly-created dialog to
+     * consume on the screen where the Component `c` lives.  This will be 90% of
+     * the total "usable" area of the current screen (ie: minus OS taskbars and
+     * the like).
+     *
+     * Note that in general it doesn't really make sense to try and cache any
+     * of this.  In multi-screen setups, the user could move their windows
+     * around at any point, so the proper values here could change at just
+     * about any point.
+     *
+     * @param c The Component which will do the comparison (can be the launching
+     *     component or the newly-created one -- doesn't really matter).
+     * @return Maximum dimensions for a new dialog
+     */
+    public static Dimension maxDialogSize(Component c) {
+        return Utilities.maxDialogSize(c, 0.9f);
+    }
+
+    /**
+     * Returns the maximum Dimensions that we'd want a newly-created dialog to
+     * consume on the screen where the Component `c` lives, based on a percentage
+     * of the screen that we'll be permitted to consume.  The point of the
+     * percentage it we typically don't want status dialogs, etc, to take up
+     * literally all screen real estate, even if its contents might be able to
+     * make use of it.  The "usable area" of the screen is everything minus
+     * stuff like OS taskbars and the like.
+     *
+     * Note that in general it doesn't really make sense to try and cache any
+     * of this.  In multi-screen setups, the user could move their windows
+     * around at any point, so the proper values here could change at just
+     * about any point.
+     *
+     * @param c The Component which will do the comparison (can be the launching
+     *     Component or the newly-created one -- doesn't really matter).
+     * @param percent The percentage off the "usable" screen area that we'll
+     *     be allowed to consume.
+     * @return Maximum dimensions for a new dialog
+     */
+    public static Dimension maxDialogSize(Component c, float percent) {
+        GraphicsConfiguration gc = c.getGraphicsConfiguration();
+        Insets insets = c.getToolkit().getScreenInsets(gc);
+        Rectangle bounds = gc.getBounds();
+        return new Dimension(
+                (int)((bounds.width-insets.left-insets.right)*percent),
+                (int)((bounds.height-insets.top-insets.bottom)*percent)
+        );
+    }
+
+    /**
+     * Given a proposed new dialog size, which will be rendered into the same
+     * GraphicsConfiguration in which the Component `c` belongs, return the
+     * actual size of the dialog that we'd want to use, constrained by the
+     * available area inside that GraphicsConfiguration.
+     *
+     * If the clamping results in a shortened width, this will make the dialog
+     * taller to compensate, if possible.  That compensation may need some
+     * tweaking in the future -- it's probably compenating too much at the
+     * moment.
+     *
+     * @param proposedSize The proposed size of the new dialog.
+     * @param c The Component from which the new dialog will be created, or the
+     *     dialog itself.
+     * @return The dimensions of the dialog that we'll *actually* use.
+     */
+    public static Dimension clampProposedDialogSize(Dimension proposedSize, Component c) {
+        Dimension maxSize = Utilities.maxDialogSize(c);
+        int newWidth = Math.min(maxSize.width, proposedSize.width);
+        int newHeight = Math.min(maxSize.height, proposedSize.height);
+        float widthDiff = (float)newWidth/(float)proposedSize.width;
+        if (widthDiff < 1) {
+            newHeight = Math.min(maxSize.height, (int)(newHeight/widthDiff));
+        }
+        return new Dimension(newWidth, newHeight);
+    }
+
+    /**
+     * Given a proposed new dialog size, using the user-selected font state
+     * `fontInfo`, which will be rendered into the same GraphicsConfiguration
+     * in which the Component `c` belongs, return the actual size of the dialog
+     * we'd want to use, scaled appropriately for the font, and constrained by
+     * the available area inside that GraphicsConfiguration.
+     *
+     * If the clamping results in a shortened width, this will make the dialog
+     * taller to compensate, if possible.  That compensation may need some
+     * tweaking in the future -- it's probably compenating too much at the
+     * moment.
+     *
+     * @param proposedSize The proposed size of the new dialog.
+     * @param fontInfo The FontInfo object describing the current font selection
+     * @param c The Component from which the new dialog will be created, or the
+     *     dialog itself.
+     * @return The dimensions of the dialog that we'll *actually* use.
+     */
+    public static Dimension scaleAndClampDialogSize(Dimension proposedSize, FontInfo fontInfo, Component c) {
+        Dimension scaledSize = new Dimension(
+            (int)(proposedSize.width*fontInfo.getScaleWidth()),
+            (int)(proposedSize.height*fontInfo.getScaleHeight())
+        );
+        Dimension dialogSize = Utilities.clampProposedDialogSize(scaledSize, c);
+        /*
+        if (dialogSize.equals(scaledSize)) {
+            GlobalLogger.log("Dimensions are equal: " + scaledSize.toString());
+        } else {
+            GlobalLogger.log("Dimensions got clamped:");
+            GlobalLogger.log("  Proposed: " + scaledSize.toString());
+            GlobalLogger.log("  Clamped: " + dialogSize.toString());
+        }
+        /**/
+        return dialogSize;
+    }
+
+    /**
+     * Given a Component `c`, find the top-level Window which contains the
+     * component.  If no Window is found, will fall back to JOptionPane's
+     * "root frame," whatever that is.
+     *
+     * @param c The component whose Window you want to find
+     * @return The Window containing the component
+     */
+    public static Window findWindow(Component c) {
+        if (c == null) {
+            return JOptionPane.getRootFrame();
+        } else if (c instanceof Window) {
+            return (Window) c;
+        } else {
+            return findWindow(c.getParent());
         }
     }
 

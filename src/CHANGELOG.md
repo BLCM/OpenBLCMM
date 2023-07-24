@@ -8,8 +8,10 @@ OpenBLCMM Changelog
   a problem for Ezeith's Red Text Explainer mod.)
   - Code formatting backend got a little bit of an overhaul at the same time.
     Let us know if there's any strange behavior with code processing now!
-- Fixed various font scaling issues with non-default font sizes **(Work in
-  progress!  Plenty of things are still janky.)**
+- Fixed various font scaling issues with non-default font sizes, and when
+  changing the font size in the app.  Note that some dialog buttons might
+  not scale properly until you restart OpenBLCMM, after changing the font
+  size. **(Work in progress!  Plenty of things are still janky.)**
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
 - Fixed a crash which could occur when unexpected files/directories were found

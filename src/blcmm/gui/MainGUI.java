@@ -32,6 +32,7 @@ import blcmm.Meta;
 import blcmm.Startup;
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManagerManager;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.DefaultTextTextField;
 import blcmm.gui.components.ForceClosingJFrame;
@@ -134,6 +135,13 @@ public final class MainGUI extends ForceClosingJFrame {
     public static final String DEFAULT_FONT_NAME = "Dialog", CODE_FONT_NAME = "Monospaced";
     public static MainGUI INSTANCE;
     private static NimbusLookAndFeel lookAndFeel;
+    private static final FontInfo fontInfo = new FontInfo(
+            // So it's tempting to pull the default font size from its Option,
+            // but the dialog sizes we specify in the code specifically target
+            // a 12-point font size, since that's what apoc uses.  So that's
+            // hardcoded here.
+            new Font(DEFAULT_FONT_NAME, Font.PLAIN, 12)
+    );
 
     private final String titlePostfix;
     private File currentFile;
@@ -902,7 +910,7 @@ public final class MainGUI extends ForceClosingJFrame {
         jMenuItem11.setText("About");
         jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem11ActionPerformed(evt);
+                aboutMenuItemActionPerformed(evt);
             }
         });
         HelpMenu.add(jMenuItem11);
@@ -910,7 +918,7 @@ public final class MainGUI extends ForceClosingJFrame {
         jMenuItem1.setText("View changelog");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                changelogMenuItemActionPerformed(evt);
             }
         });
         HelpMenu.add(jMenuItem1);
@@ -949,18 +957,18 @@ public final class MainGUI extends ForceClosingJFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
         JDialog jDialog = new JDialog(this, "About | " + Meta.NAME + " version " + Meta.VERSION);
-        jDialog.add(new AboutPanel(true));
+        jDialog.add(new AboutPanel(MainGUI.fontInfo));
         jDialog.setModal(true);
-        Dimension aboutSize = new Dimension(650, 630);
+        Dimension aboutSize = Utilities.scaleAndClampDialogSize(new Dimension(650, 630), MainGUI.fontInfo, this);
         jDialog.setMinimumSize(aboutSize);
         jDialog.setPreferredSize(aboutSize);
         jDialog.pack();
         jDialog.setLocationRelativeTo(this);
         jDialog.setVisible(true);
         this.requestFocus();
-    }//GEN-LAST:event_jMenuItem11ActionPerformed
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void iniTweaksMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_iniTweaksMenuItemActionPerformed
         MainGUI.showIniTweaks();
@@ -1118,9 +1126,10 @@ public final class MainGUI extends ForceClosingJFrame {
         }
     }//GEN-LAST:event_newFileMenuButtonActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void changelogMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changelogMenuItemActionPerformed
         try {
             JTextPane area = new JTextPane();
+            area.setFont(MainGUI.fontInfo.getFont());
             area.setContentType("text/html");
             InputStream resourceAsStream = ClassLoader.getSystemClassLoader().getResourceAsStream("CHANGELOG.md");
             BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream));
@@ -1140,14 +1149,17 @@ public final class MainGUI extends ForceClosingJFrame {
             area.setText(renderer.render(document));
             area.setEditable(false);
             area.setCaretPosition(0);
-            //area.setFont(new java.awt.Font(CODE_FONT_NAME, 0, Options.INSTANCE.getFontsize()));
             JScrollPane scroll = new JScrollPane(area);
-            scroll.setPreferredSize(new Dimension(500, 500));
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, scroll, "Changelog", JOptionPane.PLAIN_MESSAGE);
+            AdHocDialog.run(this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.NONE,
+                    "Changelog",
+                    scroll,
+                    new Dimension(510, 510));
         } catch (IOException ex) {
             Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_changelogMenuItemActionPerformed
 
     private void getMoreModsMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getMoreModsMenuButtonActionPerformed
         Utilities.launchBrowser("https://github.com/BLCM/ModCabinet/wiki", this);
@@ -1159,22 +1171,28 @@ public final class MainGUI extends ForceClosingJFrame {
                 && System.getProperty("java.vm.version").startsWith("GraalVM")
                 && uninstallFile.exists()
                 ) {
-            int choice = JOptionPane.showConfirmDialog(this,
-                    "This will remove the " + Meta.NAME + " application from your system.\n"
-                    + "Data packs, logfiles, and configuration will remain on disk and\n"
-                    + "must be cleaned out manually if you wish to remove them.\n"
-                    + "\n"
-                    + "If you have data packs, they will be installed at:\n"
-                    + "    " + Utilities.getMainInstallDir().getAbsolutePath() + "\n"
-                    + "\n"
-                    + "Logfiles and configuration files can be found at:\n"
-                    + "    " + Utilities.getBLCMMDataDir() + "\n"
-                    + "\n"
-                    + "Proceed?",
+
+            AdHocDialog.Button choice = AdHocDialog.run(
+                    this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.WARNING,
                     "Proceed with uninstall?",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE);
-            if (choice != JOptionPane.YES_OPTION) {
+                    "<html>"
+                        + "This will remove the " + Meta.NAME + " application from your system."
+                        + " Data packs, logfiles, and configuration will remain on disk and"
+                        + " must be cleaned out manually if you wish to remove them.<br/>"
+                        + "<br/>"
+                        + "If you have data packs, they will be installed at:<br/>"
+                        + "<blockquote><tt>" + Utilities.getMainInstallDir().getAbsolutePath() + "</tt></blockquote>"
+                        + "<br/>"
+                        + "Logfiles and configuration files can be found at:<br/>"
+                        + "<blockquote><tt>" + Utilities.getBLCMMDataDir() + "</tt></blockquote>"
+                        + "<br/>"
+                        + "Proceed?",
+                    AdHocDialog.ButtonSet.YES_NO,
+                    new Dimension(650, 250));
+
+            if (choice != AdHocDialog.Button.YES) {
                 return;
             }
             try {
@@ -1183,25 +1201,34 @@ public final class MainGUI extends ForceClosingJFrame {
                 this.dispose();
             } catch (IOException ex) {
                 GlobalLogger.log(ex);
-                JOptionPane.showMessageDialog(null,
-                        "Something went wrong when preparing for uninstalling " + Meta.NAME + ".",
+                AdHocDialog.run(
+                        this,
+                        MainGUI.fontInfo,
+                        AdHocDialog.IconType.ERROR,
                         "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                        "<html>Something went wrong when preparing for uninstalling " + Meta.NAME + ":<br/>"
+                        + "<br/>"
+                        + ex.getMessage()
+                );
             }
         } else {
-            JOptionPane.showMessageDialog(this,
-                    Meta.NAME + " only has a built-in uninstallation procedure when it was\n"
-                    + "installed via the official installer on Windows systems.  For other\n"
-                    + "platforms, you should just remove the directory in which you unzipped\n"
-                    + "the application.\n"
-                    + "\n"
-                    + "It looks like you can find that directory here:\n"
-                    + "    " + Utilities.getMainInstallDir().getAbsolutePath() + "\n"
-                    + "\n"
-                    + "Logfiles and configuration files can be found at:\n"
-                    + "    " + Utilities.getBLCMMDataDir() + "\n",
+            AdHocDialog.run(
+                    this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.INFORMATION,
                     "Uninstallation Information",
-                    JOptionPane.OK_OPTION);
+                    "<html>"
+                    + Meta.NAME + " only has a built-in uninstallation procedure when it was"
+                    + " installed via the official installer on Windows systems.  For other"
+                    + " platforms, you should just remove the directory in which you unzipped"
+                    + " the application.<br/>"
+                    + "<br/>"
+                    + "It looks like you can find that directory here:<br/>"
+                    + "<blockquote><tt>" + Utilities.getMainInstallDir().getAbsolutePath() + "</tt></blockquote>"
+                    + "<br/>"
+                    + "Logfiles and configuration files can be found at:<br/>"
+                    + "<blockquote><tt>" + Utilities.getBLCMMDataDir() + "</tt></blockquote>",
+                    new Dimension(700, 250));
         }
     }//GEN-LAST:event_uninstallMenuItemActionPerformed
 
@@ -1880,7 +1907,8 @@ public final class MainGUI extends ForceClosingJFrame {
      * @param fullUpdate Whether or not to do a full font-size update
      */
     public void updateFontSizes(boolean fullUpdate) {
-        setUIFont(new javax.swing.plaf.FontUIResource(new Font(DEFAULT_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize())));
+        MainGUI.fontInfo.setFont(new Font(DEFAULT_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()), this);
+        setUIFont(new javax.swing.plaf.FontUIResource(MainGUI.fontInfo.getFont()));
         if (fullUpdate) {
             updateFontsizes(this);
             ((CheckBoxTree) jTree1).updateFontSizes();
