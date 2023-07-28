@@ -80,6 +80,11 @@ import javax.swing.text.html.StyleSheet;
  * for instance.  For now I'm just leaving it at all the shared action handlers,
  * though.
  *
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
+ *
  * @author LightChaosman
  */
 public abstract class GameTweaksPanel extends JPanel {
@@ -175,8 +180,9 @@ public abstract class GameTweaksPanel extends JPanel {
 
         private final Component seperator;
 
-        SeparatorComponentProvider(String title) {
+        SeparatorComponentProvider(String title, FontInfo fontInfo) {
             JLabel label = new JLabel(title);
+            label.setFont(fontInfo.getFont());
             label.setBorder(new EmptyBorder(5, 0, 2, 0));
             label.setHorizontalAlignment(SwingConstants.CENTER);
             label.setFont(label.getFont().deriveFont(Font.BOLD));
@@ -206,12 +212,15 @@ public abstract class GameTweaksPanel extends JPanel {
         protected SetupStatus overrideStatus = null;
         private String revertFailMessage = null;
 
-        SetupAction(String name, GameTweaksPanel panel) {
+        SetupAction(String name, GameTweaksPanel panel, FontInfo fontInfo) {
             this.name = name;
             this.panel = panel;
             statuslabel = new JLabel();
+            statuslabel.setFont(fontInfo.getFont());
             button = new JButton();
+            button.setFont(fontInfo.getFont());
             namelabel = new JLabel(name);
+            namelabel.setFont(fontInfo.getFont());
             components = new JComponent[]{namelabel, statuslabel, button};
         }
 
@@ -470,8 +479,11 @@ public abstract class GameTweaksPanel extends JPanel {
 
         private final SetupAction[] actions;
 
-        public CompoundSetupAction(String name, GameTweaksPanel panel, SetupAction... actions) {
-            super(name, panel);
+        public CompoundSetupAction(String name,
+                GameTweaksPanel panel,
+                FontInfo fontInfo,
+                SetupAction... actions) {
+            super(name, panel, fontInfo);
             this.actions = actions;
         }
 
@@ -550,8 +562,13 @@ public abstract class GameTweaksPanel extends JPanel {
         private StreamProvider sourceForOriginal;
         private boolean neverRevert;
 
-        SingleFileSetupAction(String name, GameTweaksPanel panel, File fileToModify, File backupOfOriginal, StreamProvider stream) {
-            super(name, panel);
+        SingleFileSetupAction(String name,
+                GameTweaksPanel panel,
+                FontInfo fontInfo,
+                File fileToModify,
+                File backupOfOriginal,
+                StreamProvider stream) {
+            super(name, panel, fontInfo);
             this.fileToModify = fileToModify;
             this.backupOfOriginal = backupOfOriginal;
             this.streamProvider = stream;
@@ -788,8 +805,13 @@ public abstract class GameTweaksPanel extends JPanel {
         protected transient String fileContent, relevantChunk;
         private boolean revertReadOnly = false;
 
-        public AbstractFileEditSetupAction(String name, GameTweaksPanel panel, File file, String field, String preHeaderName) {
-            super(name, panel);
+        public AbstractFileEditSetupAction(String name,
+                GameTweaksPanel panel,
+                FontInfo fontInfo,
+                File file,
+                String field,
+                String preHeaderName) {
+            super(name, panel, fontInfo);
             this.file = file;
             this.preHeaderName = preHeaderName;
             this.field = field;
@@ -849,19 +871,21 @@ public abstract class GameTweaksPanel extends JPanel {
 
         public FileEditChoiceSetupAction(String name,
                 GameTweaksPanel panel,
+                FontInfo fontInfo,
                 File file,
                 String field,
                 String preHeaderName,
                 String defaultValue,
                 String[] choices,
                 String[] values) {
-            super(name, panel, file, field, preHeaderName);
+            super(name, panel, fontInfo, file, field, preHeaderName);
             this.defaultValue = defaultValue;
             this.choicesToValuesMap = new TreeMap<>();
             for (int i = 0; i < choices.length; i++) {
                 choicesToValuesMap.put(choices[i], values[i]);
             }
             combobox = new JComboBox(choices);
+            combobox.setFont(fontInfo.getFont());
 
             ((JLabel) combobox.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
             combobox.addItemListener(new ItemListener() {

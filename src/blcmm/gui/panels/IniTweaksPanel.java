@@ -29,6 +29,7 @@
 package blcmm.gui.panels;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.components.BoldJTabbedPane;
 import blcmm.gui.components.InfoLabel;
 import blcmm.model.PatchType;
@@ -53,6 +54,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
+ * Dialog to provide INI tweaks.
+ *
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
  *
  * @author LightChaosman
  */
@@ -69,17 +76,23 @@ public class IniTweaksPanel extends GameTweaksPanel {
     private boolean hasBL2;
     private boolean hasAODK;
 
+    private FontInfo fontInfo;
+
     /**
      * Creates new form FirstTimeActions
      */
-    public IniTweaksPanel() {
+    public IniTweaksPanel(FontInfo fontInfo) {
         INSTANCE = this;
+        this.fontInfo = fontInfo;
         GlobalLogger.log("Creating IniTweaksPanel");
         hasBL2 = GameDetection.iniFilePathExists(PatchType.BL2);
         hasTPS = GameDetection.iniFilePathExists(PatchType.TPS);
         hasAODK = GameDetection.iniFilePathExists(PatchType.AODK);
         initComponents();
         initPanels();
+
+        // Fix title font
+        titleLabel.setFont(fontInfo.getFont());
 
         if (hasBL2) {
             initUI(PatchType.BL2);
@@ -112,6 +125,7 @@ public class IniTweaksPanel extends GameTweaksPanel {
     private void initPanels() {
 
         BoldJTabbedPane tabbed = new BoldJTabbedPane();
+        tabbed.setFont(this.fontInfo.getFont());
         masterPanel.setLayout(new GridBagLayout());
         masterPanel.add(tabbed, new GridBagConstraints(
                 // x, y
@@ -237,7 +251,15 @@ public class IniTweaksPanel extends GameTweaksPanel {
             JLabel label = new JLabel("<html><body style='width: 5in;'>"
                     + "<center><b>Note:<b><br/>" + Meta.NAME + " found an executable for " + gameLabel + ", but no configuration files.<br/>"
                     + "Please run " + gameLabel + " once, then restart " + Meta.NAME + ".");
-            panel.add(label, new GridBagConstraints(0, 1000, 3, 1, 1d, 50000d, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL, new Insets(0, 0, 0, 0), 0, 0));
+            label.setFont(this.fontInfo.getFont());
+            panel.add(label, new GridBagConstraints(
+                    0, 1000,
+                    3, 1,
+                    1d, 50000d,
+                    GridBagConstraints.NORTH,
+                    GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 0, 0, 0),
+                    0, 0));
         } else {
             initPanel(panel, getActions(type));
         }
@@ -297,11 +319,12 @@ public class IniTweaksPanel extends GameTweaksPanel {
 
         // Would like to use "em" for the width here, but Java doesn't seem
         // to support that.  "in" should be better than "px", at least.
-        panel.add(new JLabel("<html>"
+        JLabel autodetectLabel = new JLabel("<html>"
                 + "<b>Note:</b> " + Meta.NAME + " cannot autodetect " + patchType.getGameName() + " INI files"
                 + " unless it has been run at least once.  If this is a fresh"
-                + " desktop or account, make sure to run " + patchType.getGameName() + " at least once."),
-                cs);
+                + " desktop or account, make sure to run " + patchType.getGameName() + " at least once.");
+        autodetectLabel.setFont(this.fontInfo.getFont());
+        panel.add(autodetectLabel, cs);
         cs.gridy++;
 
         // Finally, a spacer so that the label stays up near the button
@@ -325,9 +348,17 @@ public class IniTweaksPanel extends GameTweaksPanel {
         File gameINIFile = getConfigFile("WillowGame.ini", type);
         File inputINIFile = getConfigFile("WillowInput.ini", type);
 
-        FileEditChoiceSetupAction consoleKey = new FileEditChoiceSetupAction("Console key", this, inputINIFile, "ConsoleKey", "Engine.Console", "Undefine",
-        new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "~", "None"},
-        new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Tilde", "Undefine"});
+        FileEditChoiceSetupAction consoleKey = new FileEditChoiceSetupAction(
+                "Console key",
+                this,
+                this.fontInfo,
+                inputINIFile,
+                "ConsoleKey",
+                "Engine.Console",
+                "Undefine",
+                new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "~", "None"},
+                new String[]{"F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12", "Tilde", "Undefine"}
+        );
         consoleKey.setDescription("<html>Select the key you wish to use to open the console<br/>"
                 + "<em>(Unnecessary if PythonSDK's default of Tilde/~ is all right with you)</em>"
         );
@@ -343,36 +374,87 @@ public class IniTweaksPanel extends GameTweaksPanel {
         String rendererDefault = "WillowEngineMaterials.WillowScenePostProcess";
         String[] rendererChoices = {"Default"/*                                */, "No black lines"/*                         */, "No black lines, more colors"};
         String[] rendererValues = {"WillowEngineMaterials.WillowScenePostProcess", "WillowEngineMaterials.RyanScenePostProcess", "WillowEngineMaterials.CinematicScenePostProcess"};
-        FileEditChoiceSetupAction rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
+        FileEditChoiceSetupAction rendererSetupAction = new FileEditChoiceSetupAction(
+                "Renderer",
                 this,
+                this.fontInfo,
                 rendererFile, rendererVarName, "WillowGame.WillowGameEngine", rendererDefault,
-                rendererChoices, rendererValues);
+                rendererChoices, rendererValues
+        );
         if (!EnumSet.of(SetupStatus.ACTIVE, SetupStatus.INACTIVE).contains(rendererSetupAction.getCurrentStatus())) {
-            rendererSetupAction = new FileEditChoiceSetupAction("Renderer",
+            rendererSetupAction = new FileEditChoiceSetupAction(
+                    "Renderer",
                     this,
+                    this.fontInfo,
                     rendererFile, rendererVarName, "Engine.Engine", rendererDefault,
                     rendererChoices, rendererValues);
         }
         rendererSetupAction.setDescription("Options to remove black outlines from the game, giving a massive performance boost overall");
         actions.add(rendererSetupAction);
 
-        INIFileEditSetupAction noDistortions = new INIFileEditSetupAction("Disable distortion", this, engineINIFile, "Distortion", "SystemSettings", "True", "False");
+        INIFileEditSetupAction noDistortions = new INIFileEditSetupAction(
+                "Disable distortion",
+                this,
+                this.fontInfo,
+                engineINIFile,
+                "Distortion",
+                "SystemSettings",
+                "True", "False"
+        );
         noDistortions.setDescription("Disables the distortion effect around explosions in combat, decreasing visual polution whilst increasing performance");
         actions.add(noDistortions);
 
-        INIFileEditSetupAction noGodRays = new INIFileEditSetupAction("No godrays", this, engineINIFile, "bAllowLightShafts", "SystemSettings", "True", "False");
+        INIFileEditSetupAction noGodRays = new INIFileEditSetupAction(
+                "No godrays",
+                this,
+                this.fontInfo,
+                engineINIFile,
+                "bAllowLightShafts",
+                "SystemSettings",
+                "True", "False"
+        );
         noGodRays.setDescription("No more god rays. Very noticable in Washburne refinery");
         actions.add(noGodRays);
 
-        INIFileEditSetupAction simpleShadows = new INIFileEditSetupAction("Simple shadows", this, engineINIFile, "DynamicShadows", "SystemSettings", "True", "False");
+        INIFileEditSetupAction simpleShadows = new INIFileEditSetupAction(
+                "Simple shadows",
+                this,
+                this.fontInfo,
+                engineINIFile,
+                "DynamicShadows",
+                "SystemSettings",
+                "True", "False"
+        );
         simpleShadows.setDescription("Circular shadows instead of full shadows");
         actions.add(simpleShadows);
 
-        INIFileEditSetupAction ragdollSetup1 = new INIFileEditSetupAction("", this, gameINIFile, "SecondsBeforeConsideringRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
-        INIFileEditSetupAction ragdollSetup2 = new INIFileEditSetupAction("", this, gameINIFile, "SecondsBeforeVisibleRagdollRemoval", "WillowGame.WillowPawn", "600", "30");
+        INIFileEditSetupAction ragdollSetup1 = new INIFileEditSetupAction(
+                "",
+                this,
+                this.fontInfo,
+                gameINIFile,
+                "SecondsBeforeConsideringRagdollRemoval",
+                "WillowGame.WillowPawn",
+                "600", "30"
+        );
+        INIFileEditSetupAction ragdollSetup2 = new INIFileEditSetupAction(
+                "",
+                this,
+                this.fontInfo,
+                gameINIFile,
+                "SecondsBeforeVisibleRagdollRemoval",
+                "WillowGame.WillowPawn",
+                "600", "30"
+        );
         ragdollSetup1.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
         ragdollSetup2.setAlternateChecker(new INIFileEditSetupAction.AlternateValueChecker.NumberValueChecker(0, 30));
-        CompoundSetupAction fewerCorpses = new CompoundSetupAction("Fewer corpses", this, ragdollSetup1, ragdollSetup2);
+        CompoundSetupAction fewerCorpses = new CompoundSetupAction(
+                "Fewer corpses",
+                this,
+                this.fontInfo,
+                ragdollSetup1,
+                ragdollSetup2
+        );
         fewerCorpses.setDescription("Reduces the time it takes for corpses to decay to 30 seconds");
         actions.add(fewerCorpses);
 
@@ -387,7 +469,16 @@ public class IniTweaksPanel extends GameTweaksPanel {
                 movies2.add(";2K_Australia_Logo");
             }
         }
-        INIFileEditSetupAction quickerStartup = new INIFileEditSetupAction("Quicker startup", this, engineINIFile, "StartupMovies", "FullScreenMovie", movies1.toArray(new String[0]), movies2.toArray(new String[0]));
+        INIFileEditSetupAction quickerStartup = new INIFileEditSetupAction(
+                "Quicker startup",
+                this,
+                this.fontInfo,
+                engineINIFile,
+                "StartupMovies",
+                "FullScreenMovie",
+                movies1.toArray(new String[0]),
+                movies2.toArray(new String[0])
+        );
         quickerStartup.setDescription("Removes some of the startup screens, getting you to the main menu faster");
         quickerStartup.setAlternateChecker((String value) -> {
             if (value.isEmpty()) {
@@ -406,13 +497,16 @@ public class IniTweaksPanel extends GameTweaksPanel {
         });
         actions.add(quickerStartup);
 
-        INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction("Fewer cutscenes",
+        INIFileEditSetupAction fewerCutscenes = new INIFileEditSetupAction(
+                "Fewer cutscenes",
                 this,
+                this.fontInfo,
                 engineINIFile,
                 "bForceNoMovies",
                 "FullScreenMovie",
                 new String[]{"FALSE"},
-                new String[]{"TRUE"});
+                new String[]{"TRUE"}
+        );
         StringBuilder cutsceneDesc = new StringBuilder();
         cutsceneDesc.append("<html>Removes some cutscenes from the game. As a side effect, your loading screens turn black.");
         if (type == PatchType.BL2 || type == PatchType.TPS) {
@@ -435,12 +529,26 @@ public class IniTweaksPanel extends GameTweaksPanel {
         private final String[] ourValues;
         private AlternateValueChecker alternateChecker;
 
-        public INIFileEditSetupAction(String name, IniTweaksPanel panel, File file, String field, String preHeaderName, String originalValues, String ourValues) {
-            this(name, panel, file, field, preHeaderName, new String[]{originalValues}, new String[]{ourValues});
+        public INIFileEditSetupAction(String name,
+                IniTweaksPanel panel,
+                FontInfo fontInfo,
+                File file,
+                String field,
+                String preHeaderName,
+                String originalValues,
+                String ourValues) {
+            this(name, panel, fontInfo, file, field, preHeaderName, new String[]{originalValues}, new String[]{ourValues});
         }
 
-        public INIFileEditSetupAction(String name, IniTweaksPanel panel, File file, String field, String preHeaderName, String[] originalValues, String[] ourValues) {
-            super(name, panel, file, field, preHeaderName);
+        public INIFileEditSetupAction(String name,
+                IniTweaksPanel panel,
+                FontInfo fontInfo,
+                File file,
+                String field,
+                String preHeaderName,
+                String[] originalValues,
+                String[] ourValues) {
+            super(name, panel, fontInfo, file, field, preHeaderName);
             this.originalValues = originalValues;
             this.ourValues = ourValues;
         }

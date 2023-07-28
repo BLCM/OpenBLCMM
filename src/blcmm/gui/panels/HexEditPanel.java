@@ -29,6 +29,7 @@
 package blcmm.gui.panels;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.components.BoldJTabbedPane;
 import blcmm.gui.components.InfoLabel;
 import blcmm.model.PatchType;
@@ -56,8 +57,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
+ * Panel to handle legacy Hex Edits.
  *
- * @author LightChaosman
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
+ *
+ * @author LightChaosman, apocalyptech
  */
 @SuppressWarnings("serial")
 public class HexEditPanel extends GameTweaksPanel {
@@ -72,11 +79,14 @@ public class HexEditPanel extends GameTweaksPanel {
     private final boolean hasBL2;
     private final boolean hasAODK;
 
+    private FontInfo fontInfo;
+
     /**
      * Creates new form FirstTimeActions
      */
-    public HexEditPanel() {
+    public HexEditPanel(FontInfo fontInfo) {
         INSTANCE = this;
+        this.fontInfo = fontInfo;
         GlobalLogger.log("Creating HexEditPanel");
         hasBL2 = GameDetection.getBL2Path() != null && GameDetection.getBL2Exe() != null;
         hasTPS = GameDetection.getTPSPath() != null && GameDetection.getTPSExe() != null;
@@ -85,6 +95,9 @@ public class HexEditPanel extends GameTweaksPanel {
         hasAODK = false;
         initComponents();
         initPanels();
+
+        // Fix title font
+        titleLabel.setFont(fontInfo.getFont());
 
         if (hasBL2) {
             initUI(PatchType.BL2);
@@ -127,6 +140,7 @@ public class HexEditPanel extends GameTweaksPanel {
                 + "<b>Installing PythonSDK will enable console + modding, and provide other benefits "
                 + "as well!</b>  PythonSDK can be installed on both Steam and EGS versions."
         );
+        topLabel.setFont(this.fontInfo.getFont());
         masterPanel.add(topLabel, new GridBagConstraints(
                 // x, y
                 0, 0,
@@ -143,7 +157,7 @@ public class HexEditPanel extends GameTweaksPanel {
                 // pad (x, y)
                 0, 0));
 
-        JButton sdkButton = SetupGameFilesPanel.getBLModdingDotComRedirectButton(this);
+        JButton sdkButton = SetupGameFilesPanel.getBLModdingDotComRedirectButton(this, fontInfo);
         masterPanel.add(sdkButton, new GridBagConstraints(
                 // x, y
                 0, 1,
@@ -161,6 +175,7 @@ public class HexEditPanel extends GameTweaksPanel {
                 0, 0));
 
         BoldJTabbedPane tabbed = new BoldJTabbedPane();
+        tabbed.setFont(this.fontInfo.getFont());
         masterPanel.add(tabbed, new GridBagConstraints(
                 // x, y
                 0, 2,
@@ -324,14 +339,15 @@ public class HexEditPanel extends GameTweaksPanel {
 
         // Would like to use "em" for the width here, but Java doesn't seem
         // to support that.  "in" should be better than "px", at least.
-        panel.add(new JLabel("<html>"
+        JLabel autodetectLabel = new JLabel("<html>"
                 + "<b>Note:</b> " + Meta.NAME + " could not autodetect " + patchType.getGameName() + ".  "
                 + "Autodetection might not work until the game has been run at least once, and might not "
                 + "work for installs from all game platforms.  Note that hex editing isn't actually "
                 + "required to run mods -- the recommended method of enabling text-based mods is by "
                 + "installing PythonSDK.  Click the button above for more information on installing that!"
-                ),
-                cs);
+                );
+        autodetectLabel.setFont(this.fontInfo.getFont());
+        panel.add(autodetectLabel, cs);
         cs.gridy++;
 
         // Finally, a spacer so that the label stays up near the button
@@ -351,15 +367,27 @@ public class HexEditPanel extends GameTweaksPanel {
         OSInfo.OS VIRTUAL_OS = GameDetection.getVirtualOS(patchType);
         final String gameName = patchType.name();
         List<ComponentProvider> actions = new ArrayList<>();
-        actions.add(new SeparatorComponentProvider("Mod support"));
+        actions.add(new SeparatorComponentProvider("Mod support", this.fontInfo));
         File executable = GameDetection.getExe(patchType);
         String win32 = executable.getParent() + "/";
 
-        HexEditSetupAction hexEditSetup = new HexEditSetupAction("Unlock console (legacy)", this, executable, new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.ENABLE_SET_COMMANDS));
+        HexEditSetupAction hexEditSetup = new HexEditSetupAction(
+                "Unlock console (legacy)",
+                this,
+                this.fontInfo,
+                executable,
+                new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.ENABLE_SET_COMMANDS)
+        );
         hexEditSetup.setDescription("Enables the 'set' command in the game console.  Unnecessary if you use PythonSDK!");
         actions.add(hexEditSetup);
 
-        HexEditSetupAction arraySetup = new HexEditSetupAction("Remove array limit", this, executable, new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.DISABLE_ARRAY_LIMIT));
+        HexEditSetupAction arraySetup = new HexEditSetupAction(
+                "Remove array limit",
+                this,
+                this.fontInfo,
+                executable,
+                new HexQuery(VIRTUAL_OS, patchType, HexDictionary.HexType.DISABLE_ARRAY_LIMIT)
+        );
         arraySetup.setDescription("Removes the array-size limit of 100 from object dumps - only useful for mod makers");
         actions.add(arraySetup);
 
@@ -381,8 +409,8 @@ public class HexEditPanel extends GameTweaksPanel {
             return sb.toString().replaceAll("0x", "").split("[\\s,]+");
         }
 
-        public HexEditSetupAction(String name, HexEditPanel panel, File file, HexQuery query) {
-            super(name, (GameTweaksPanel) panel);
+        public HexEditSetupAction(String name, HexEditPanel panel, FontInfo fontInfo, File file, HexQuery query) {
+            super(name, (GameTweaksPanel) panel, fontInfo);
             this.file = file;
             this.query = query;
         }

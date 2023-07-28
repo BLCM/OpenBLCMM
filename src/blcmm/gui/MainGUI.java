@@ -1262,10 +1262,11 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void setupGameFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setupGameFilesButtonActionPerformed
         JDialog dialog = new JDialog(this, "Setup Game Files for Mods");
-        dialog.add(new SetupGameFilesPanel());
+        dialog.add(new SetupGameFilesPanel(MainGUI.fontInfo));
         dialog.setModal(true);
-        dialog.setMinimumSize(new Dimension(650, 400));
-        dialog.setPreferredSize(new Dimension(650, 400));
+        Dimension dialogSize = Utilities.scaleAndClampDialogSize(new Dimension(650, 400), fontInfo, this);
+        dialog.setMinimumSize(dialogSize);
+        dialog.setPreferredSize(dialogSize);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
@@ -1345,16 +1346,26 @@ public final class MainGUI extends ForceClosingJFrame {
      * Displays our INI Tweaks dialog
      */
     public static void showIniTweaks() {
-        IniTweaksPanel panel = new IniTweaksPanel();
-        JOptionPane.showMessageDialog(null, panel, "INI Tweaks", JOptionPane.PLAIN_MESSAGE);
+        IniTweaksPanel panel = new IniTweaksPanel(MainGUI.fontInfo);
+        AdHocDialog.run(MainGUI.INSTANCE,
+                MainGUI.fontInfo,
+                AdHocDialog.IconType.NONE,
+                "INI Tweaks",
+                panel,
+                new Dimension(530, 425));
     }
 
     /**
      * Displays our Hex Edits dialog
      */
     public static void showHexEdits() {
-        HexEditPanel panel = new HexEditPanel();
-        JOptionPane.showMessageDialog(null, panel, "Legacy Hex Edits", JOptionPane.PLAIN_MESSAGE);
+        HexEditPanel panel = new HexEditPanel(MainGUI.fontInfo);
+        AdHocDialog.run(MainGUI.INSTANCE,
+                MainGUI.fontInfo,
+                AdHocDialog.IconType.NONE,
+                "Legacy Hex Edits",
+                panel,
+                new Dimension(530, 425));
     }
 
     /**

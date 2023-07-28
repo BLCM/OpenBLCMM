@@ -52,6 +52,12 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 /**
+ * A custom file-chooser dialog for use in OpenBLCMM.
+ * 
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
  *
  * @author LightChaosman
  */
