@@ -29,6 +29,7 @@
 package blcmm.gui.panels;
 
 import blcmm.data.BehaviorProviderDefinition;
+import blcmm.gui.FontInfo;
 import blcmm.gui.components.EnhancedFormattedTextField;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -49,15 +50,26 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 /**
+ * Integer converter, for use in the BPD Number Processing dialog.
+ *
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
  *
  * @author LightChaosman
  */
 public class IntegerConverter extends javax.swing.JPanel {
 
+    private FontInfo fontInfo;
+
     /**
      * Creates new form IntegerConverter
+     *
+     * @param fontInfo Font information for the dialog to use
      */
-    public IntegerConverter() {
+    public IntegerConverter(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
         initComponents();
         Function<String, Object[]> forw1 = (String s) -> {
             int val = Integer.parseInt(s);
@@ -81,8 +93,12 @@ public class IntegerConverter extends javax.swing.JPanel {
         jPanel3.setLayout(new GridBagLayout());
         JPanel pan1 = new JPanel();
         JPanel pan2 = new JPanel();
-        pan1.setBorder(new TitledBorder(new EtchedBorder(), "ArrayIndexAndLength", TitledBorder.LEFT, TitledBorder.CENTER));
-        pan2.setBorder(new TitledBorder(new EtchedBorder(), "LinkIDAndLinkedBehavior", TitledBorder.LEFT, TitledBorder.CENTER));
+        TitledBorder tb1 = new TitledBorder(new EtchedBorder(), "ArrayIndexAndLength", TitledBorder.LEFT, TitledBorder.CENTER);
+        tb1.setTitleFont(fontInfo.getFont());
+        pan1.setBorder(tb1);
+        TitledBorder tb2 = new TitledBorder(new EtchedBorder(), "LinkIDAndLinkedBehavior", TitledBorder.LEFT, TitledBorder.CENTER);
+        tb2.setTitleFont(fontInfo.getFont());
+        pan2.setBorder(tb2);
         jPanel3.add(pan1, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         jPanel3.add(pan2, new GridBagConstraints(0, 1, 1, 1, 1, 1, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
@@ -138,30 +154,39 @@ public class IntegerConverter extends javax.swing.JPanel {
 
     private void initPanel(JPanel panel, String label1, int min1, int max1, String label2, int min2, int max2, String label3, int min3, int max3,
             Function<String, Object[]> forward, BiFunction<String, String, Object> backward) {
+
+        int inputHeight = (int)(this.fontInfo.getLineHeight()*1.5);
+
         panel.removeAll();
         panel.setLayout(new GridBagLayout());
         JLabel mainLabel = new JLabel(label1);
+        mainLabel.setFont(this.fontInfo.getFont());
         EnhancedFormattedTextField mainText = new EnhancedFormattedTextField<>(
                 EnhancedFormattedTextField.getIntegerValidator(min1, max1), s -> Integer.parseInt(s.trim()));
+        mainText.setFont(this.fontInfo.getFont());
         mainText.setMaximumSize(new Dimension(150, 999));
-        mainText.setMinimumSize(new Dimension(150, 24));
-        mainText.setPreferredSize(new Dimension(150, 24));
+        mainText.setMinimumSize(new Dimension(150, inputHeight));
+        mainText.setPreferredSize(new Dimension(150, inputHeight));
         JPanel leftPanel_______ = BoxComponents(BoxLayout.PAGE_AXIS, mainLabel, mainText);
 
         JLabel topRightLabel = new JLabel(label2);
+        topRightLabel.setFont(this.fontInfo.getFont());
         EnhancedFormattedTextField topRightText = new EnhancedFormattedTextField<>(
                 EnhancedFormattedTextField.getIntegerValidator(min2, max2), s -> Integer.parseInt(s.trim()));
+        topRightText.setFont(this.fontInfo.getFont());
         topRightText.setMaximumSize(new Dimension(150, 999));
-        topRightText.setMinimumSize(new Dimension(150, 24));
-        topRightText.setPreferredSize(new Dimension(150, 24));
+        topRightText.setMinimumSize(new Dimension(150, inputHeight));
+        topRightText.setPreferredSize(new Dimension(150, inputHeight));
         JPanel topRightPanel___ = BoxComponents(BoxLayout.PAGE_AXIS, topRightLabel, topRightText);
 
         JLabel bottomRightLabel = new JLabel(label3);
+        bottomRightLabel.setFont(this.fontInfo.getFont());
         EnhancedFormattedTextField bottomRightText = new EnhancedFormattedTextField<>(
                 EnhancedFormattedTextField.getIntegerValidator(min3, max3), s -> Integer.parseInt(s.trim()));
+        bottomRightText.setFont(this.fontInfo.getFont());
         bottomRightText.setMaximumSize(new Dimension(150, 999));
-        bottomRightText.setMinimumSize(new Dimension(150, 24));
-        bottomRightText.setPreferredSize(new Dimension(150, 24));
+        bottomRightText.setMinimumSize(new Dimension(150, inputHeight));
+        bottomRightText.setPreferredSize(new Dimension(150, inputHeight));
         JPanel bottomRightPanel = BoxComponents(BoxLayout.PAGE_AXIS, bottomRightLabel, bottomRightText);
         mainText.setValue(0);
         topRightText.setValue(0);
@@ -172,12 +197,12 @@ public class IntegerConverter extends javax.swing.JPanel {
         panel.add(bottomRightPanel, new GridBagConstraints(2, 2, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
         JButton forwards = new JButton("→");
-        forwards.setFont(new java.awt.Font("Calibri", 1, 12));
+        forwards.setFont(new java.awt.Font("Calibri", 1, this.fontInfo.getFont().getSize()));
         forwards.setToolTipText("Split");
         forwards.setBorder(new EmptyBorder(5, 8, 5, 8));
 
         JButton backwards = new JButton("←");
-        backwards.setFont(new java.awt.Font("Calibri", 1, 12));
+        backwards.setFont(new java.awt.Font("Calibri", 1, this.fontInfo.getFont().getSize()));
         backwards.setToolTipText("Join");
         backwards.setBorder(new EmptyBorder(5, 8, 5, 8));
 

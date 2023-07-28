@@ -1236,7 +1236,8 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void bpdnumMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bpdnumMenuItemActionPerformed
         ForceClosingJFrame jFrame = new ForceClosingJFrame("Behavior number converter");
-        jFrame.add(new IntegerConverter());
+        jFrame.add(new IntegerConverter(MainGUI.fontInfo));
+        jFrame.setPreferredSize(Utilities.scaleAndClampDialogSize(new Dimension(410, 320), MainGUI.fontInfo, this));
         jFrame.pack();
         jFrame.setLocationRelativeTo(this);
         jFrame.setVisible(true);
