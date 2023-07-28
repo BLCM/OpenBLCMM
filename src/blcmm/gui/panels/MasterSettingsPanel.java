@@ -28,14 +28,21 @@
  */
 package blcmm.gui.panels;
 
+import blcmm.gui.FontInfo;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Utilities;
 import blcmm.utilities.options.Option;
 import javax.swing.BoxLayout;
 
 /**
+ * Master Panel for OpenBLCMM Settings.
  *
- * @author LightChaosman
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
+
+ * @author LightChaosman, apocalyptech
  */
 public class MasterSettingsPanel extends javax.swing.JPanel {
 
@@ -44,21 +51,32 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
     private final ToolSettingsPanel oeSettingsPanel;
     private final ToolSettingsPanel dangerousSettingsPanel;
 
+    private final FontInfo fontInfo;
+
     /**
      * Creates new form MasterSettingsPanel
+     *
+     * @param fontInfo Info about the font that this panel will use.
      */
-    public MasterSettingsPanel() {
+    public MasterSettingsPanel(FontInfo fontInfo) {
         GlobalLogger.log("Opened Master settings Panel");
+        this.fontInfo = fontInfo;
         initComponents();
 
+        // Reset fonts.  updateUI() is required because otherwise, the first
+        // tab often inherits the previous font size, until it gets
+        // mouseover'd.
+        this.masterSettingsTabbedPane.setFont(this.fontInfo.getFont());
+        this.masterSettingsTabbedPane.updateUI();
+
         // General Settings
-        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, masterSettingsTabbedPane);
+        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, fontInfo, masterSettingsTabbedPane);
         toolSettingsPanel.setSize(generalSettingsGuiPanel.getSize());
         generalSettingsGuiPanel.setLayout(new BoxLayout(generalSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         generalSettingsGuiPanel.add(toolSettingsPanel);
 
         // Input Settings
-        inputSettingsPanel = new ToolSettingsPanel(Option.Shown.INPUT, masterSettingsTabbedPane,
+        inputSettingsPanel = new ToolSettingsPanel(Option.Shown.INPUT, fontInfo, masterSettingsTabbedPane,
                 "Choose the mouse clicks used to open object name links in<br/>"
                 + "Object Explorer, into the current tab or into a new tab.<br/>"
                 + "Using the same button for both primary and secondary will<br/>"
@@ -70,7 +88,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         inputSettingsGuiPanel.add(inputSettingsPanel);
 
         // Object Explorer Data
-        oeSettingsPanel = new ToolSettingsPanel(Option.Shown.OE, masterSettingsTabbedPane,
+        oeSettingsPanel = new ToolSettingsPanel(Option.Shown.OE, fontInfo, masterSettingsTabbedPane,
                 "Choose which package categories will be included in the<br/>"
                 + "fulltext and 'refs' searches.  More packages will make<br/>"
                 + "the search take longer."
@@ -80,7 +98,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         oeSettingsGuiPanel.add(oeSettingsPanel);
 
         // Dangerous Settings
-        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, masterSettingsTabbedPane,
+        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, fontInfo, masterSettingsTabbedPane,
                 "The settings on this screen should be left alone unless you know<br/>"
                 + "exactly what they do, and have a strong need to do so."
         );

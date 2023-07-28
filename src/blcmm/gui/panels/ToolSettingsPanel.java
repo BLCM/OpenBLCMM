@@ -28,6 +28,7 @@
  */
 package blcmm.gui.panels;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.theme.Theme;
 import blcmm.utilities.GlobalLogger;
@@ -49,8 +50,14 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
+ * A single tab in our settings panel.
  *
- * @author LightChaosman
+ * Note that we're passing in a Font to use as our base font -- I was unable
+ * to find a reliable way of propagating a default font after the user has
+ * changed the font size in the app, and eventually decided to just use a
+ * sledgehammer instead.
+ *
+ * @author LightChaosman, apocalyptech
  */
 public class ToolSettingsPanel extends JPanel {
 
@@ -59,15 +66,17 @@ public class ToolSettingsPanel extends JPanel {
     private final Component focusAfterResetComponent;
     private boolean needsToolReset = false;
     private boolean needsTreeResize = false;
+    private FontInfo fontInfo;
 
-    public ToolSettingsPanel(Option.Shown shownPanel, Component focusAfterResetComponent) {
-        this(shownPanel, focusAfterResetComponent, null);
+    public ToolSettingsPanel(Option.Shown shownPanel, FontInfo fontInfo, Component focusAfterResetComponent) {
+        this(shownPanel, fontInfo, focusAfterResetComponent, null);
     }
 
-    public ToolSettingsPanel(Option.Shown shownPanel, Component focusAfterResetComponent, String headerText) {
+    public ToolSettingsPanel(Option.Shown shownPanel, FontInfo fontInfo, Component focusAfterResetComponent, String headerText) {
         this.shownPanel = shownPanel;
         this.focusAfterResetComponent = focusAfterResetComponent;
         this.settings = Options.INSTANCE;
+        this.fontInfo = fontInfo;
         generateGUI(headerText);
     }
 
@@ -91,6 +100,7 @@ public class ToolSettingsPanel extends JPanel {
         int y = 0;
         if (headerText != null) {
             JLabel headerLabel = new JLabel("<html><b>" + headerText + "</b></html>");
+            headerLabel.setFont(this.fontInfo.getFont());
             constr.gridx = 0;
             constr.gridy = y;
             constr.gridwidth = 2;
@@ -108,6 +118,12 @@ public class ToolSettingsPanel extends JPanel {
         constr.fill = GridBagConstraints.HORIZONTAL;
         constr.insets.bottom = 0;
 
+        // Dummy button for doing some row-height measurements.  I'm not sure
+        // if setting the font here actually accomplishes anything or not,
+        // but we'll go ahead and try.
+        JButton dummyButton = new JButton("dummy");
+        dummyButton.setFont(this.fontInfo.getFont());
+
         for (Option o : settings.getDisplayedOptionList(this.shownPanel)) {
             constr.gridy = y;
 
@@ -118,13 +134,14 @@ public class ToolSettingsPanel extends JPanel {
             constr.insets.top = y == 0 ? BORDER : 0;
 
             JComponent comp = o.getGUIComponent(this);
+            comp.setFont(this.fontInfo.getFont());
 
             if (o.isOnlyVisual()) {
 
                 constr.gridwidth = 2;
                 constr.insets.right = BORDER;
                 constr.anchor = GridBagConstraints.CENTER;
-                //constr.ipady = new JButton("dummy").getMinimumSize().height - comp.getMinimumSize().height;//Makes every row the same height
+                //constr.ipady = dummyButton.getMinimumSize().height - comp.getMinimumSize().height;//Makes every row the same height
                 this.add(comp, constr);
                 constr.gridwidth = 1;
 
@@ -132,6 +149,7 @@ public class ToolSettingsPanel extends JPanel {
 
                 constr.anchor = GridBagConstraints.WEST;
                 JLabel label1 = new JLabel(o.getDisplayDesc());
+                label1.setFont(this.fontInfo.getFont());
                 this.add(label1, constr);
 
                 constr.gridx = 1;
@@ -139,7 +157,7 @@ public class ToolSettingsPanel extends JPanel {
                 constr.anchor = GridBagConstraints.EAST;
                 constr.insets.right = BORDER;
                 constr.insets.left = SPACING;
-                constr.ipady = new JButton("dummy").getMinimumSize().height - comp.getMinimumSize().height;//Makes every row the same height
+                constr.ipady = dummyButton.getMinimumSize().height - comp.getMinimumSize().height;//Makes every row the same height
                 this.add(comp, constr);
 
                 String tooltipString = o.getTooltip();
@@ -174,6 +192,7 @@ public class ToolSettingsPanel extends JPanel {
         constr.insets.right = BORDER;
         constr.insets.left = SPACING;
         JButton but = new JButton("Restore defaults");
+        but.setFont(this.fontInfo.getFont());
         but.addActionListener(ae -> {
             Options.INSTANCE.restoreDefaults(this.shownPanel);
             for (Component c : inst.getComponents()) {

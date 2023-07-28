@@ -977,8 +977,13 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_objectExplorerButtonActionPerformed
 
     private void settingsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingsMenuItemActionPerformed
-        MasterSettingsPanel panel = new MasterSettingsPanel();
-        JOptionPane.showMessageDialog(this, panel, "Settings", JOptionPane.PLAIN_MESSAGE);
+        MasterSettingsPanel panel = new MasterSettingsPanel(MainGUI.fontInfo);
+        AdHocDialog.run(this,
+                MainGUI.fontInfo,
+                AdHocDialog.IconType.NONE,
+                "Settings",
+                panel,
+                new Dimension(500, 500));
 
         /*
          * We don't actually have anything which does this anymore, and I want

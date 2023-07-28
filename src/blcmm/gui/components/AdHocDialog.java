@@ -118,7 +118,7 @@ public class AdHocDialog {
     private final Component parentComponent;
     private final Font font;
     private final Icon icon;
-    private final Component message;
+    private final Component messageComponent;
     private final JDialog dialog;
     private final JPanel buttonBar;
     private Button result = null;
@@ -210,13 +210,13 @@ public class AdHocDialog {
             // have their own opinions as to what its content would look like.
             // Still, I'll leave it for now.
             ((JLabel)message).setFont(font);
-            this.message = (JLabel)message;
+            this.messageComponent = (JLabel)message;
         } else if (message instanceof String) {
             JLabel messageLabel = new JLabel((String)message);
             messageLabel.setFont(font);
-            this.message = messageLabel;
+            this.messageComponent = messageLabel;
         } else {
-            this.message = (Component)message;
+            this.messageComponent = (Component)message;
         }
 
         // Scale and clamp our dialog size, if we've been given a size
@@ -265,18 +265,16 @@ public class AdHocDialog {
         }
 
         // Contents
-        JScrollPane contentScroll;
-        if (message instanceof JScrollPane) {
-            contentScroll = (JScrollPane)message;
-        } else {
-            contentScroll = new JScrollPane();
-            contentScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            contentScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        Component contentComponent;
+        if (this.messageComponent instanceof JLabel) {
+            contentComponent = new JScrollPane();
+            ((JScrollPane)contentComponent).setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            ((JScrollPane)contentComponent).setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
             ScrollablePanel contentPanel = new ScrollablePanel();
             contentPanel.setScrollableWidth(ScrollablePanel.ScrollableSizeHint.FIT);
             contentPanel.setScrollableHeight(ScrollablePanel.ScrollableSizeHint.STRETCH);
             contentPanel.setLayout(new GridBagLayout());
-            contentPanel.add(this.message, new GridBagConstraints(
+            contentPanel.add(this.messageComponent, new GridBagConstraints(
                     // x, y
                     0, 0,
                     // width, height
@@ -292,11 +290,13 @@ public class AdHocDialog {
                     // pad (x, y)
                     0, 0
             ));
-            contentScroll.setViewportView(contentPanel);
-            contentScroll.setBorder(BorderFactory.createEmptyBorder());
+            ((JScrollPane)contentComponent).setViewportView(contentPanel);
+            ((JScrollPane)contentComponent).setBorder(BorderFactory.createEmptyBorder());
+        } else {
+            contentComponent = (Component)this.messageComponent;
         }
         if (haveSize) {
-            contentScroll.setPreferredSize(paneDimension);
+            contentComponent.setPreferredSize(paneDimension);
         }
         if (this.icon == null) {
             gc.gridx = 0;
@@ -306,11 +306,12 @@ public class AdHocDialog {
             gc.gridx = 1;
         }
         gc.weightx = 500;
+        gc.weighty = 500;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.BOTH;
         gc.ipadx = 5;
         gc.ipady = 5;
-        dialogPanel.add(contentScroll, gc);
+        dialogPanel.add(contentComponent, gc);
 
         // Button bar
         this.buttonBar = new JPanel();
