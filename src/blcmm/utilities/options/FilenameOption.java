@@ -28,6 +28,7 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
@@ -45,6 +46,8 @@ import javax.swing.JFileChooser;
  */
 public class FilenameOption extends Option<String> {
 
+    private FontInfo fontInfo;
+
     /**
      * Constructor for a string option which will not be displayed on the
      * settings panel.
@@ -52,9 +55,11 @@ public class FilenameOption extends Option<String> {
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
      * @param defaultData Default value for the option
+     * @param fontInfo A FontInfo object to scale our file chooser, if needed.
      */
-    public FilenameOption(OptionsBase optionsObj, String name, String defaultData) {
+    public FilenameOption(OptionsBase optionsObj, String name, String defaultData, FontInfo fontInfo) {
         super(optionsObj, name, defaultData);
+        this.fontInfo = fontInfo;
     }
 
     /**
@@ -68,6 +73,7 @@ public class FilenameOption extends Option<String> {
      * @param displayDesc Display description on the settings panel
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
+     * @param fontInfo A FontInfo object to scale our file chooser, if needed.
      */
     public FilenameOption(OptionsBase optionsObj,
             String name,
@@ -75,8 +81,10 @@ public class FilenameOption extends Option<String> {
             Option.Shown shownPanel,
             String displayDesc,
             String callback,
-            String tooltip) {
+            String tooltip,
+            FontInfo fontInfo) {
         super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
+        this.fontInfo = fontInfo;
     }
 
     /**
@@ -113,7 +121,7 @@ public class FilenameOption extends Option<String> {
         FilenameOption option = this;
         JButton but = new JButton("Select file");
         but.addActionListener((ActionEvent ae) -> {
-            JFileChooser fc = new BLCMM_FileChooser(Utilities.getDefaultOpenLocation());
+            JFileChooser fc = new BLCMM_FileChooser(fontInfo, Utilities.getDefaultOpenLocation());
             int returnVal = fc.showOpenDialog(panel);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();

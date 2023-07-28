@@ -155,7 +155,7 @@ public class BLCMMImportOptions extends OptionsBase {
             this.registerOption(new StringListOption(this, optionName.toString(), new String[]{}));
         }
         for (OptionsBase.OptionNames optionName : this.filenameOptions) {
-            this.registerOption(new FilenameOption(this, optionName.toString(), ""));
+            this.registerOption(new FilenameOption(this, optionName.toString(), "", null));
         }
 
     }

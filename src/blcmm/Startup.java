@@ -28,6 +28,7 @@
  */
 package blcmm;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
@@ -40,6 +41,7 @@ import blcmm.utilities.StringTable;
 import blcmm.utilities.Utilities;
 import java.awt.Desktop;
 import java.awt.Dialog;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -186,8 +188,17 @@ public class Startup {
             }
         }
 
+        // Set up the FontInfo object we'll use throughout the app.  It's
+        // tempting to pull the default font size from its Option, and the
+        // font itself from MainGUI, but A) we need this structure before we
+        // even check prefs, and B) we're primarily using this for dialog
+        // scaling, and the dialog sizes we scale from are all based on the
+        // 12-point Dialog font that Apocalyptech uses, so making it more
+        // dynamic doesn't actually make a lot of sense.
+        FontInfo fontInfo = new FontInfo(new Font("Dialog", Font.PLAIN, 12));
+
         // Load options and set theme
-        firstTime();
+        firstTime(fontInfo);
 
         // Make tooltips tolerable
         ToolTipManager.sharedInstance().setInitialDelay(500);
@@ -201,12 +212,12 @@ public class Startup {
         GlobalLogger.log("Default file-open location: " + Utilities.hideUserName(Utilities.getDefaultOpenLocation().toString()));
 
         java.awt.EventQueue.invokeLater(() -> {
-            new MainGUI(file, titlePostfix);
+            new MainGUI(file, titlePostfix, fontInfo);
         });
     }
 
-    private static void firstTime() {
-        if (isFirstTimeRunning()) {
+    private static void firstTime(FontInfo fontInfo) {
+        if (isFirstTimeRunning(fontInfo)) {
             GlobalLogger.log("First-time startup detected");
             MainGUI.setTheme(ThemeManager.getDefaultTheme());
             Options.INSTANCE.setShowHotfixNames(false);
@@ -225,9 +236,9 @@ public class Startup {
      *
      * @return true if this is the first time running the tool
      */
-    private static boolean isFirstTimeRunning() {
+    private static boolean isFirstTimeRunning(FontInfo fontInfo) {
         try {
-            boolean firstTime = Options.loadOptions();
+            boolean firstTime = Options.loadOptions(fontInfo);
             if (Options.INSTANCE.hasLoadErrors()) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("<html>The following errors were encountered while loading options:");

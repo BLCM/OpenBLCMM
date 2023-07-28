@@ -29,6 +29,7 @@
 package blcmm.utilities;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
@@ -339,7 +340,7 @@ public class Options extends OptionsBase {
      *
      * @param optionsFile The file from which to load options.
      */
-    public Options(File optionsFile) {
+    public Options(File optionsFile, FontInfo fontInfo) {
         super(optionsFile);
 
         IGNORE_OPTIONS = new HashSet(Arrays.asList(
@@ -599,7 +600,7 @@ public class Options extends OptionsBase {
         this.registerOption(new StringListOption(this, OptionNames.fileHistory.toString(), new String[]{}));
 
         // Remember previous import location
-        this.registerOption(new FilenameOption(this, OptionNames.lastImport.toString(), ""));
+        this.registerOption(new FilenameOption(this, OptionNames.lastImport.toString(), "", fontInfo));
 
         // Filename truncation length ("recent" menu and MainGUI window title)
         this.registerOption(new IntOption(this, OptionNames.filenameTruncationLength.toString(), 60));
@@ -639,11 +640,12 @@ public class Options extends OptionsBase {
      * if one is not already found. Returns true if the options file was created
      * for the first time.
      *
+     * @param fontInfo A FontInfo object which some Options might need
      * @return
      * @throws FileNotFoundException
      */
-    public static boolean loadOptions() throws FileNotFoundException {
-        INSTANCE = new Options(Paths.get(Utilities.getBLCMMDataDir(), Options.DEFAULT_FILENAME).toFile());
+    public static boolean loadOptions(FontInfo fontInfo) throws FileNotFoundException {
+        INSTANCE = new Options(Paths.get(Utilities.getBLCMMDataDir(), Options.DEFAULT_FILENAME).toFile(), fontInfo);
         return INSTANCE.loadOrCreate();
     }
 

@@ -57,7 +57,7 @@ public class OverwriteCheckerNGTest {
     private SetCommand[] storedCommands;
 
     public OverwriteCheckerNGTest() throws Exception {
-        Options.loadOptions();
+        Options.loadOptions(null);
     }
 
     @BeforeClass

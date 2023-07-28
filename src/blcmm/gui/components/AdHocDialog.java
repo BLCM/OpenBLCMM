@@ -39,15 +39,19 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 /**
@@ -105,6 +109,10 @@ public class AdHocDialog {
     public enum ButtonSet {
         YES_NO,
         OK,
+        // It bothers me that No/Yes is the opposite order from Yes/No, but
+        // that's what JOptionPane does, and I'd like to stay consistent with
+        // the historical behavior.
+        CANCEL_NO_YES,
     }
 
     private final Component parentComponent;
@@ -332,6 +340,11 @@ public class AdHocDialog {
                 this.addButton(Button.YES);
                 this.addButton(Button.NO);
                 break;
+            case CANCEL_NO_YES:
+                this.addButton(Button.CANCEL);
+                this.addButton(Button.NO);
+                this.addButton(Button.YES);
+                break;
             case OK:
             default:
                 this.addButton(Button.OK);
@@ -369,11 +382,26 @@ public class AdHocDialog {
             case CANCEL:
                 label = "Cancel";
                 mnemonic = java.awt.event.KeyEvent.VK_C;
+
+                // If there's a Cancel button, also allow the user to hit Esc
+                // to close the dialog
+                JRootPane rootPane = this.dialog.getRootPane();
+                KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+                rootPane.registerKeyboardAction((ActionEvent ae) -> {
+                        this.result = buttonType;
+                        this.dialog.setVisible(false);
+                    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
                 break;
             case OK:
             default:
                 label = "OK";
                 mnemonic = java.awt.event.KeyEvent.VK_O;
+                // Could add something here, like we do for Cancel, so that
+                // hitting Enter closes the dialog (since in general that'll
+                // be the only button available, when there's "OK"), but I'm
+                // not bothering at the moment because the OK button should
+                // be auto-selected anyway, so hitting Enter already does the
+                // trick unless the user does something to the dialog's focus.
                 break;
         }
         JButton button = new JButton(label);

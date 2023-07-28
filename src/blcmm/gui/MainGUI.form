@@ -317,7 +317,7 @@
                     </Property>
                   </Properties>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CheckBoxTree()"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new CheckBoxTree(MainGUI.fontInfo)"/>
                   </AuxValues>
                 </Component>
               </SubComponents>

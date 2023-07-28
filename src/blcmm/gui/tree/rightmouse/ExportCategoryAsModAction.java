@@ -27,6 +27,7 @@
  */
 package blcmm.gui.tree.rightmouse;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.tree.CheckBoxTree;
@@ -42,8 +43,11 @@ import javax.swing.tree.TreePath;
  */
 public class ExportCategoryAsModAction extends RightMouseButtonAction {
 
-    public ExportCategoryAsModAction(CheckBoxTree tree) {
+    private FontInfo fontInfo;
+
+    public ExportCategoryAsModAction(CheckBoxTree tree, FontInfo fontInfo) {
         super(tree, "Export category as mod", Requirements.NO_REQUIREMENTS);
+        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -61,7 +65,7 @@ public class ExportCategoryAsModAction extends RightMouseButtonAction {
     public void action() {
         tree.resetCheckingState();
         Category c = (Category) ((DefaultMutableTreeNode) tree.getSelectionPaths()[0].getLastPathComponent()).getUserObject();
-        BLCMM_FileChooser fc = new BLCMM_FileChooser(MainGUI.INSTANCE.getExportDialogPath(), c.getName(), true, true);
+        BLCMM_FileChooser fc = new BLCMM_FileChooser(fontInfo, MainGUI.INSTANCE.getExportDialogPath(), c.getName(), true, true);
         int returnVal = fc.showSaveDialog(MainGUI.INSTANCE);
         if (returnVal == BLCMM_FileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();

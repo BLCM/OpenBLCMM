@@ -28,6 +28,8 @@
 package blcmm.gui.components;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
+import blcmm.gui.MainGUI;
 import blcmm.model.PatchIO;
 import blcmm.model.PatchType;
 import blcmm.utilities.AutoBackupper;
@@ -35,6 +37,8 @@ import blcmm.utilities.GameDetection;
 import blcmm.utilities.IconManager;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -55,21 +59,24 @@ import javax.swing.SwingConstants;
 public class BLCMM_FileChooser extends JFileChooser {
 
     private final boolean appendBlcmExtension;
+    private final FontInfo fontInfo;
 
-    public BLCMM_FileChooser(File path) {
-        this(path == null ? null : path.getAbsolutePath(), "", false, false);
+    public BLCMM_FileChooser(FontInfo fontInfo, File path) {
+        this(fontInfo, path == null ? null : path.getAbsolutePath(), "", false, false);
     }
 
-    public BLCMM_FileChooser(File path, String currentFileName, boolean appendBlcmExtension, boolean saveAs) {
-        this(path == null ? null : path.getAbsolutePath(), currentFileName, appendBlcmExtension, saveAs);
+    public BLCMM_FileChooser(FontInfo fontInfo, File path, String currentFileName, boolean appendBlcmExtension, boolean saveAs) {
+        this(fontInfo, path == null ? null : path.getAbsolutePath(), currentFileName, appendBlcmExtension, saveAs);
     }
 
-    public BLCMM_FileChooser(String path, String currentFileName, boolean appendBlcmExtension, boolean saveAs) {
+    public BLCMM_FileChooser(FontInfo fontInfo, String path, String currentFileName, boolean appendBlcmExtension, boolean saveAs) {
         super(path == null ? Utilities.getDefaultOpenLocation().toString() : path);
+        this.fontInfo = fontInfo;
         addDirectoryShortcutsToFileChooser(BLCMM_FileChooser.this);
         this.appendBlcmExtension = appendBlcmExtension;
-        super.setPreferredSize(new Dimension(750, 400));
+        super.setPreferredSize(Utilities.scaleAndClampDialogSize(new Dimension(750, 400), fontInfo, MainGUI.INSTANCE));
         super.setSelectedFile(new File(currentFileName));
+        this.updateFontsizes(this);
         /*
         if (saveAs) {
             super.addChoosableFileFilter(new FilterToolFileFilter());
@@ -77,6 +84,24 @@ public class BLCMM_FileChooser extends JFileChooser {
         }
         */
     }
+
+    /**
+     * Loops through Components contained by `main` to update their font sizes
+     * to the currently-selected font size.
+     *
+     * @param main The Container to update
+     */
+    private void updateFontsizes(Container main) {
+        main.setFont(this.fontInfo.getFont());
+        for (Component c : main.getComponents()) {
+            if (c instanceof Container) {
+                updateFontsizes((Container) c);
+            } else if (c != null) {
+                c.setFont(this.fontInfo.getFont());
+            }
+        }
+    }
+
 
     public PatchIO.SaveFormat getFormat() {
         /*
@@ -145,7 +170,7 @@ public class BLCMM_FileChooser extends JFileChooser {
      *
      * @param fc The FileChooser to add buttons to.
      */
-    private static void addDirectoryShortcutsToFileChooser(JFileChooser fc) {
+    private void addDirectoryShortcutsToFileChooser(JFileChooser fc) {
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -257,8 +282,9 @@ public class BLCMM_FileChooser extends JFileChooser {
      * @param icon
      * @return The JButton
      */
-    private static JButton directoryShortcutButton(JFileChooser fc, String label, String path, Icon icon) {
+    private JButton directoryShortcutButton(JFileChooser fc, String label, String path, Icon icon) {
         JButton button = new JButton(label);
+        button.setFont(this.fontInfo.getFont());
         button.addActionListener(e -> fc.setCurrentDirectory(new File(path)));
         button.setToolTipText(path);
         if (icon != null) {
@@ -295,6 +321,6 @@ public class BLCMM_FileChooser extends JFileChooser {
             return "Structureless File - saves only checked codes and hotfixes (All Files)";
         }
     }
-    
+
     */
 }

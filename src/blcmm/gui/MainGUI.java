@@ -109,6 +109,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIDefaults;
@@ -134,14 +135,8 @@ public final class MainGUI extends ForceClosingJFrame {
 
     public static final String DEFAULT_FONT_NAME = "Dialog", CODE_FONT_NAME = "Monospaced";
     public static MainGUI INSTANCE;
-    private static NimbusLookAndFeel lookAndFeel;
-    private static final FontInfo fontInfo = new FontInfo(
-            // So it's tempting to pull the default font size from its Option,
-            // but the dialog sizes we specify in the code specifically target
-            // a 12-point font size, since that's what apoc uses.  So that's
-            // hardcoded here.
-            new Font(DEFAULT_FONT_NAME, Font.PLAIN, 12)
-    );
+    private static LookAndFeel lookAndFeel;
+    private static FontInfo fontInfo;
 
     private final String titlePostfix;
     private File currentFile;
@@ -171,12 +166,14 @@ public final class MainGUI extends ForceClosingJFrame {
      *
      * @param toOpen The file to open
      * @param titlePostfix A string to add onto the title of this window
+     * @param fontInfo The FontInfo object to use for the app
      */
-    public MainGUI(final File toOpen, final String titlePostfix) {
+    public MainGUI(final File toOpen, final String titlePostfix, FontInfo fontInfo) {
         INSTANCE = this;
         GUI_IO_Handler.MASTER_UI = INSTANCE;
         this.argToOpen = toOpen;
         this.titlePostfix = titlePostfix;
+        MainGUI.fontInfo = fontInfo;
 
         // Load our Nimbus Look-and-Feel early.  We probably don't *have* to do
         // it this early, but it doesn't hurt.
@@ -616,7 +613,7 @@ public final class MainGUI extends ForceClosingJFrame {
         jPanel1 = new javax.swing.JPanel();
         jLayeredPane1 = new javax.swing.JLayeredPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new CheckBoxTree();
+        jTree1 = new CheckBoxTree(MainGUI.fontInfo);
         jPanel2 = new javax.swing.JPanel();
         gameTypePanel = new GameSelectionPanel();
         jSpinner1 = new javax.swing.JSpinner();
@@ -1008,7 +1005,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void importModZipMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importModZipMenuButtonActionPerformed
         ImportAnomalyLog.INSTANCE.clear();
-        JFileChooser fc = new BLCMM_FileChooser(this.getImportDialogPath());
+        JFileChooser fc = new BLCMM_FileChooser(MainGUI.fontInfo, this.getImportDialogPath());
         fc.setFileFilter(new FileNameExtensionFilter("ZIP files", "zip"));
         fc.setDialogTitle("Import Zip Folder");
         int returnVal = fc.showOpenDialog(this);
@@ -1046,7 +1043,7 @@ public final class MainGUI extends ForceClosingJFrame {
                 initial.mkdir();
             }
         }
-        BLCMM_FileChooser chooser = new BLCMM_FileChooser(initial);
+        BLCMM_FileChooser chooser = new BLCMM_FileChooser(MainGUI.fontInfo, initial);
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         chooser.setMultiSelectionEnabled(false);
         chooser.setDialogTitle("Import Mod Folders");
@@ -1064,7 +1061,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void importModMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importModMenuButtonActionPerformed
         ImportAnomalyLog.INSTANCE.clear();
-        JFileChooser fc = new BLCMM_FileChooser(this.getImportDialogPath());
+        JFileChooser fc = new BLCMM_FileChooser(MainGUI.fontInfo, this.getImportDialogPath());
         fc.setMultiSelectionEnabled(true);
         fc.setDialogTitle("Import Mods");
         int returnVal = fc.showOpenDialog(this);
@@ -1092,7 +1089,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
     private void openMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuButtonActionPerformed
         if (this.promptUnsavedContinue()) {
-            JFileChooser fc = new BLCMM_FileChooser(this.getOpenDialogPath());
+            JFileChooser fc = new BLCMM_FileChooser(MainGUI.fontInfo, this.getOpenDialogPath());
             int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
@@ -1366,17 +1363,21 @@ public final class MainGUI extends ForceClosingJFrame {
      */
     public boolean promptUnsavedContinue() {
         if (((CheckBoxTree) jTree1).isChanged()) {
-            int x = JOptionPane.showConfirmDialog(this, "Save unsaved changes?");
+            AdHocDialog.Button x = AdHocDialog.run(
+                    this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.QUESTION,
+                    "Save unsaved changes?",
+                    "Save unsaved changes?",
+                    AdHocDialog.ButtonSet.CANCEL_NO_YES);
             this.requestFocus();
             switch (x) {
-                case JOptionPane.CANCEL_OPTION:
-                    return false;
-                case JOptionPane.NO_OPTION:
+                case NO:
                     return true;
-                case JOptionPane.YES_OPTION:
+                case YES:
                     return this.saveAction();
+                case CANCEL:
                 default:
-                    // Shouldn't be able to get here.  Cancel just to be safe.
                     return false;
             }
         } else {
@@ -1572,9 +1573,9 @@ public final class MainGUI extends ForceClosingJFrame {
     private boolean saveToFileAction() {
         BLCMM_FileChooser fc;
         if (currentFile != null && currentFile.exists()) {
-            fc = new BLCMM_FileChooser(this.getOpenDialogPath(), currentFile.getName(), true, true);
+            fc = new BLCMM_FileChooser(MainGUI.fontInfo, this.getOpenDialogPath(), currentFile.getName(), true, true);
         } else {
-            fc = new BLCMM_FileChooser(this.getOpenDialogPath(), "", true, true);
+            fc = new BLCMM_FileChooser(MainGUI.fontInfo, this.getOpenDialogPath(), "", true, true);
         }
         int returnVal = fc.showSaveDialog(this);
         this.requestFocus();
@@ -1939,7 +1940,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
             }
         }
-        SwingUtilities.updateComponentTreeUI(main);
+        //SwingUtilities.updateComponentTreeUI(main);
     }
 
     /**

@@ -29,6 +29,7 @@
 package blcmm.gui.tree;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.tree.rightmouse.*;
 import blcmm.model.*;
@@ -117,7 +118,7 @@ public final class CheckBoxTree extends JTree {
     private HashSet<TreePath> checkedPaths = new HashSet<>();
     private final CheckboxTreeMouseAdapter adapter;
 
-    public CheckBoxTree() {
+    public CheckBoxTree(FontInfo fontInfo) {
         super(new String[]{"Made by LightChaosman"});
         // Overriding cell renderer by new one defined above
         setFont(new Font(MainGUI.CODE_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()));
@@ -139,7 +140,7 @@ public final class CheckBoxTree extends JTree {
 
         // Calling checking mechanism on mouse click
         final MouseListener orig = this.getMouseListeners()[0];
-        adapter = new CheckboxTreeMouseAdapter(orig, treeTransferHandler, this);
+        adapter = new CheckboxTreeMouseAdapter(orig, treeTransferHandler, this, fontInfo);
         this.removeMouseListener(orig);//We incorporate the original mouselistener in our own.
         this.addMouseListener(adapter);//*/
 
@@ -662,14 +663,14 @@ public final class CheckBoxTree extends JTree {
         private final MouseListener orig;
         private final TreeTransferHandler treeTransferHandler;
 
-        public CheckboxTreeMouseAdapter(MouseListener orig, TreeTransferHandler treeTransferHandler, CheckBoxTree tree) {
+        public CheckboxTreeMouseAdapter(MouseListener orig, TreeTransferHandler treeTransferHandler, CheckBoxTree tree, FontInfo fontInfo) {
             this.orig = orig;
             this.treeTransferHandler = treeTransferHandler;
             this.tree = tree;
-            initializeRightMenuButtons();
+            initializeRightMenuButtons(fontInfo);
         }
 
-        private void initializeRightMenuButtons() {
+        private void initializeRightMenuButtons(FontInfo fontInfo) {
 
             introduceCategoryAction = new IntroduceCategoryAction(tree, KeyEvent.VK_G, true);
             renameCategoryAction = new RenameCategoryAction(tree, KeyEvent.VK_R, true);
@@ -685,12 +686,12 @@ public final class CheckBoxTree extends JTree {
             fullyCollapseAction = new CollapseCategoryCompletelyAction(tree);
             mutuallyExclusiveAction = new MutuallyExclusiveAction(tree);
             lockAction = new LockAction(tree);
-            exportCategeroryAction = new ExportCategoryAsModAction(tree);
+            exportCategeroryAction = new ExportCategoryAsModAction(tree, fontInfo);
             copyModListAction = new CopyModListAction(tree);
             goToOverwriterAction = new GoToOverwriterAction(tree);
             goToPartialOverwrittenAction = new GoToPartialOverwrittenAction(tree);
             goToCompleteOverwrittenAction = new GoToCompleteOverwrittenAction(tree);
-            importModAction = new ImportModAction(tree);
+            importModAction = new ImportModAction(tree, fontInfo);
             List<RightMouseButtonAction> actions2 = new ArrayList<>();
             actions2.add(introduceCategoryAction);
             actions2.add(renameCategoryAction);

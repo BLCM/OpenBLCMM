@@ -29,6 +29,7 @@
 package blcmm.gui.panels;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.GlobalLogger;
@@ -85,13 +86,15 @@ public abstract class GameTweaksPanel extends JPanel {
 
     private abstract class ManualSelectionListener implements ActionListener {
 
+        private final FontInfo fontInfo;
         private final File defaultFile;
         private final String executableBaseName;
         private final String name;
         private final String dirName;
         private final Component parentDialog;
 
-        ManualSelectionListener(Component parentDialog, File defaultFile, String executableBaseName, String name, String dirName) {
+        ManualSelectionListener(FontInfo fontInfo, Component parentDialog, File defaultFile, String executableBaseName, String name, String dirName) {
+            this.fontInfo = fontInfo;
             this.parentDialog = parentDialog;
             this.defaultFile = defaultFile;
             this.executableBaseName = executableBaseName;
@@ -102,6 +105,9 @@ public abstract class GameTweaksPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent evt) {
 
+            // TODO: If we ever use this again, note that none of this has been
+            // checked over for font-scaling correctness (convert JOptionPane
+            // to AdHocDialog, etc)
             String pirateWarningMessage
                     = "<html><b>WARNING:</b> If you are using a pirated version of " + name + ", note that we can provide<br/>"
                     + "<i>NO SUPPORT</i> for " + Meta.NAME + " in the Discord or otherwise.<br/>"
@@ -115,7 +121,7 @@ public abstract class GameTweaksPanel extends JPanel {
                     + "out how to autodetect!)</i>";
             JOptionPane.showMessageDialog(this.parentDialog, pirateWarningMessage, "Don't expect support for pirated versions!", JOptionPane.WARNING_MESSAGE);
 
-            JFileChooser fc = new BLCMM_FileChooser(defaultFile);
+            JFileChooser fc = new BLCMM_FileChooser(fontInfo, defaultFile);
             fc.setFileFilter(new FileFilter() {
                 @Override
                 public boolean accept(File file) {
