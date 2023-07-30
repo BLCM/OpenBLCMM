@@ -27,10 +27,12 @@
  */
 package blcmm.gui.tree.rightmouse;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.tree.CheckBoxTree;
 import blcmm.model.Category;
-import javax.swing.JOptionPane;
+import java.awt.Dimension;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -41,8 +43,11 @@ import javax.swing.tree.TreePath;
  */
 public class RenameCategoryAction extends RightMouseButtonAction {
 
-    public RenameCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
+    private final FontInfo fontInfo;
+
+    public RenameCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
         super(tree, "Rename category", hotkey, ctrl, new Requirements(false, true, false));
+        this.fontInfo = fontInfo;
 
     }
 
@@ -60,7 +65,13 @@ public class RenameCategoryAction extends RightMouseButtonAction {
         TreePath[] paths = tree.getSelectionPaths();
         TreePath path = paths[0];
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-        String name = JOptionPane.showInputDialog(MainGUI.INSTANCE, "Insert new name", node.toString());
+        String name = AdHocDialog.askForString(MainGUI.INSTANCE,
+                this.fontInfo,
+                AdHocDialog.IconType.QUESTION,
+                "New Category Name",
+                "New Category Name",
+                new Dimension(325, 100),
+                node.toString());
         if (name == null) {
             return;
         }

@@ -43,7 +43,7 @@ import javax.swing.tree.TreePath;
  */
 public class ExportCategoryAsModAction extends RightMouseButtonAction {
 
-    private FontInfo fontInfo;
+    private final FontInfo fontInfo;
 
     public ExportCategoryAsModAction(CheckBoxTree tree, FontInfo fontInfo) {
         super(tree, "Export category as mod", Requirements.NO_REQUIREMENTS);

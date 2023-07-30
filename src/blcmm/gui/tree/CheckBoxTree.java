@@ -672,9 +672,9 @@ public final class CheckBoxTree extends JTree {
 
         private void initializeRightMenuButtons(FontInfo fontInfo) {
 
-            introduceCategoryAction = new IntroduceCategoryAction(tree, KeyEvent.VK_G, true);
-            renameCategoryAction = new RenameCategoryAction(tree, KeyEvent.VK_R, true);
-            insertCategoryAction = new AddCategoryAction(tree, KeyEvent.VK_H, true);
+            introduceCategoryAction = new IntroduceCategoryAction(tree, KeyEvent.VK_G, true, fontInfo);
+            renameCategoryAction = new RenameCategoryAction(tree, KeyEvent.VK_R, true, fontInfo);
+            insertCategoryAction = new AddCategoryAction(tree, KeyEvent.VK_H, true, fontInfo);
             insertAction = new InsertAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_PLUS : KeyEvent.VK_INSERT, false);
             deleteAction = new DeleteAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, OSInfo.CURRENT_OS == OSInfo.OS.MAC);
             copyAction = new CopyAction(tree, KeyEvent.VK_C, true);

@@ -27,12 +27,14 @@
  */
 package blcmm.gui.tree.rightmouse;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.tree.CheckBoxTree;
 import blcmm.model.Category;
 import blcmm.model.ModelElement;
+import java.awt.Dimension;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -42,8 +44,11 @@ import javax.swing.tree.TreePath;
  */
 public class IntroduceCategoryAction extends RightMouseButtonAction {
 
-    public IntroduceCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
+    private final FontInfo fontInfo;
+
+    public IntroduceCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
         super(tree, "Wrap in new category", hotkey, ctrl, new Requirements(false, true, false));
+        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -62,7 +67,12 @@ public class IntroduceCategoryAction extends RightMouseButtonAction {
 
     @Override
     public void action() {
-        String name = JOptionPane.showInputDialog(MainGUI.INSTANCE, "Insert category name");
+        String name = AdHocDialog.askForString(MainGUI.INSTANCE,
+                this.fontInfo,
+                AdHocDialog.IconType.QUESTION,
+                "Insert Category Name",
+                "Category Name",
+                new Dimension(325, 100));
         if (name == null) {
             return;
         }

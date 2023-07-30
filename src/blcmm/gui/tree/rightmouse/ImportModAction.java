@@ -53,7 +53,7 @@ public class ImportModAction extends RightMouseButtonAction {
     private Category newParent;
     private DefaultMutableTreeNode parentNode;
 
-    private FontInfo fontInfo;
+    private final FontInfo fontInfo;
 
     public ImportModAction(CheckBoxTree tree, FontInfo fontInfo) {
         super(tree, "Import mod", Requirements.NO_REQUIREMENTS);

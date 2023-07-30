@@ -85,6 +85,14 @@ import javax.swing.UIManager;
  *    dialog.  Note that right now we're probably over-growing the height of
  *    dialogs when large font sizes are being used; will have to look into that.
  *
+ * After having ported more and more things over to this, and discovering more
+ * and more edge cases and little bits of functionality that needed
+ * implementing, I'm actually no longer convinced that writing this from
+ * scratch was the *best* way to go about it; this might've been more concise
+ * if I had just subclassed JOptionPane after all and done some shenanigans to
+ * resize already-rendered components after the fact.  Ah, well, the work is
+ * done.
+ *
  * @author apocalyptech
  */
 public class AdHocDialog {
@@ -623,6 +631,42 @@ public class AdHocDialog {
             String inputLabelText,
             Dimension proposedDimension
             ) {
+        return AdHocDialog.askForString(parentComponent,
+                fontInfo,
+                iconType,
+                title,
+                inputLabelText,
+                proposedDimension,
+                null);
+    }
+
+    /**
+     * A replacement for JOptionPane's "showInputDialog", though this only
+     * supports getting String input, not pulling from a list of options.
+     * This will present the user with a JTextField, with a specified label,
+     * and a "Cancel" and "OK" button.  If the user hits Cancel, this will
+     * return null.
+     *
+     * @param parentComponent Our parent component which launched the dialog
+     * @param fontInfo A FontInfo object describing the user's current font
+     * selection
+     * @param iconType The icon type to show in the dialog
+     * @param title Title of the dialog
+     * @param inputLabelText The label to put above the text field
+     * @param proposedDimension The proposed dimension for the dialog.  This
+     * will get scaled according to the user's font selection, and clamped to
+     * the availability
+     * @param initialValue The initial value for the string.  Can be null.
+     * @return The string input by the user, or null if the user hit Cancel
+     */
+    public static String askForString(Component parentComponent,
+            FontInfo fontInfo,
+            IconType iconType,
+            String title,
+            String inputLabelText,
+            Dimension proposedDimension,
+            String initialValue
+            ) {
 
         // First construct our content
         JPanel panel = new JPanel();
@@ -634,13 +678,20 @@ public class AdHocDialog {
         gc.weighty = 0;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets = new Insets(0, 0, 0, 8);
+        gc.insets = new Insets(10, 0, 0, 8);
         JLabel inputLabel = new JLabel(inputLabelText);
         inputLabel.setFont(fontInfo.getFont());
         panel.add(inputLabel, gc);
         gc.gridy++;
+        gc.weighty = 500;
+        gc.insets = new Insets(3, 0, 0, 8);
         JTextField textField = new JTextField();
         textField.setFont(fontInfo.getFont());
+        if (initialValue != null) {
+            textField.setText(initialValue);
+            textField.setSelectionStart(0);
+            textField.setSelectionEnd(initialValue.length());
+        }
         panel.add(textField, gc);
 
         // Now actually launch the dialog
