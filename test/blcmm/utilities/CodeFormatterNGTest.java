@@ -100,6 +100,12 @@ public class CodeFormatterNGTest {
                 "set foo bar baz set more",
                 "set foo bar baz set more"
             },
+            { "Real example of Set with 'set' in the value",
+                "set Behavior_ConsoleCommand'GD_Soldier_Skills.Guerrilla.Able:BehaviorProviderDefinition_0.Behavior_ConsoleCommand_0' Command"
+                    + " set GD_Soldier_Skills.Guerrilla.Grenadier SkillDescription This Skill [skill]Has been upgraded[-skill].",
+                "set Behavior_ConsoleCommand'GD_Soldier_Skills.Guerrilla.Able:BehaviorProviderDefinition_0.Behavior_ConsoleCommand_0' Command"
+                    + " set GD_Soldier_Skills.Guerrilla.Grenadier SkillDescription This Skill [skill]Has been upgraded[-skill]."
+            },
             { "Two statements",
                 "set foo bar baz\nset one two three",
                 "set foo bar baz\n\nset one two three",
