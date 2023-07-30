@@ -40,6 +40,11 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -51,6 +56,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
@@ -63,8 +69,9 @@ import javax.swing.UIManager;
  *
  * This class does *not* intend to be a drop-in replacement for JOptionPane.
  * It doesn't actually share any method names, and argument ordering is totally
- * different.  In addition to the obvious syntax differences, here's the extra
- * stuff that AdHocDialog supports:
+ * different.  It also doesn't support *all* of what JOptionPane provides --
+ * it's just the bits that OpenBLCMM happened to use.  In addition to the
+ * obvious syntax differences, here's the extra stuff that AdHocDialog supports:
  *
  * 1. Setting a font size.  This will get applied to the buttons on the dialog,
  *    and also to the pane content, if that's a JLabel or String.  This is
@@ -107,12 +114,16 @@ public class AdHocDialog {
      * What "sets" of buttons will we show on the dialog
      */
     public enum ButtonSet {
-        YES_NO,
-        OK,
-        // It bothers me that No/Yes is the opposite order from Yes/No, but
-        // that's what JOptionPane does, and I'd like to stay consistent with
-        // the historical behavior.
-        CANCEL_NO_YES,
+        YES_NO(new Button[] {Button.YES, Button.NO}),
+        YES_NO_CANCEL(new Button[] {Button.YES, Button.NO, Button.CANCEL}),
+        OK(new Button[] {Button.OK}),
+        OK_CANCEL(new Button[] {Button.OK, Button.CANCEL});
+
+        public final Button[] buttons;
+
+        private ButtonSet(Button[] buttons) {
+            this.buttons = buttons;
+        }
     }
 
     private final Component parentComponent;
@@ -329,30 +340,78 @@ public class AdHocDialog {
     }
 
     /**
-     * Actually run the dialog, with the specified ButtonSet as options.  Will
-     * return the Button which was pressed by the user.
+     * Actually run the dialog, with the specified ButtonSet as options.
+     * Will return the Button which was pressed by the user.
      *
      * @param buttonSet The set of Buttons to show to the user
      * @return The Button that the user pressed
      */
     public Button runDialog(ButtonSet buttonSet) {
-        switch (buttonSet) {
-            case YES_NO:
-                this.addButton(Button.YES);
-                this.addButton(Button.NO);
-                break;
-            case CANCEL_NO_YES:
-                this.addButton(Button.CANCEL);
-                this.addButton(Button.NO);
-                this.addButton(Button.YES);
-                break;
-            case OK:
-            default:
-                this.addButton(Button.OK);
-                break;
+        return this.runDialog(buttonSet, null);
+    }
+
+    /**
+     * Actually run the dialog, with the specified ButtonSet as options, and
+     * optionally specifying a component to focus when the dialog is drawn.
+     * Will return the Button which was pressed by the user.  If `toFocus`
+     * is null, the dialog as a whole will be focused.  If no explicit Component
+     * is specified and the dialog uses the `OK` ButtonSet, the `OK` button
+     * will be focused.
+     *
+     * Note that the order of buttons is dependent on OS -- or at least on
+     * the "OptionPane.isYesLast" UIManager default, which for Nimbus at least
+     * happens to be true for everything except Windows.
+     *
+     * @param buttonSet The set of Buttons to show to the user
+     * @param toFocus The component to focus, or null.
+     * @return The Button that the user pressed
+     */
+    public Button runDialog(ButtonSet buttonSet, Component toFocus) {
+        Component altFocus = null;
+
+        // Figure out if we're reversing the order of buttons (which should
+        // happen on Linux + Mac mostly)
+        boolean isYesLast = UIManager.getDefaults().getBoolean("OptionPane.isYesLast");
+        List<Button> loopButtons = Arrays.asList(buttonSet.buttons.clone());
+        if (isYesLast) {
+            Collections.reverse(loopButtons);
+        }
+
+        // Now actually populate our buttons.
+        JButton jButton;
+        for (Button buttonType : loopButtons) {
+            jButton = this.addButton(buttonType);
+            if (loopButtons.size() == 1 && buttonType == Button.OK) {
+                altFocus = (Component)jButton;
+            }
         }
         this.dialog.pack();
         this.dialog.setLocationRelativeTo(this.parentComponent);
+
+        // Make sure that we're focused, alternatively also assigning focus to
+        // a specific component, if we've been told to (or have a sensible
+        // default).  I know we're not really *supposed* to use requestFocus()
+        // like this, but I just can't figure out a way to get these to behave
+        // properly without; it's aggravating.  The jdk20u source for
+        // JOptionPane, itself, includes at least one reference to requestFocus,
+        // though, so in the end I don't feel too bad about it.
+        //
+        // The altFocus2 redirection is to get around the annoying "local
+        // variables referenced from an inner class must be final or effectively
+        // final" error.
+        Component altFocus2 = altFocus;
+        this.dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e){
+                dialog.requestFocus();
+                if (toFocus != null) {
+                    toFocus.requestFocusInWindow();
+                } else if (altFocus2 != null) {
+                    altFocus2.requestFocusInWindow();
+                }
+            }
+        });
+
         this.dialog.setVisible(true);
         this.dialog.dispose();
         return this.result;
@@ -363,7 +422,7 @@ public class AdHocDialog {
      *
      * @param buttonType The Button type to add.
      */
-    private void addButton(Button buttonType) {
+    private JButton addButton(Button buttonType) {
         if (this.buttonAdded) {
             this.buttonBar.add(Box.createHorizontalStrut(7));
         } else {
@@ -371,6 +430,8 @@ public class AdHocDialog {
         }
         String label;
         int mnemonic;
+        JRootPane rootPane;
+        KeyStroke stroke;
         switch (buttonType) {
             case YES:
                 label = "Yes";
@@ -386,8 +447,8 @@ public class AdHocDialog {
 
                 // If there's a Cancel button, also allow the user to hit Esc
                 // to close the dialog
-                JRootPane rootPane = this.dialog.getRootPane();
-                KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+                rootPane = this.dialog.getRootPane();
+                stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
                 rootPane.registerKeyboardAction((ActionEvent ae) -> {
                         this.result = buttonType;
                         this.dialog.setVisible(false);
@@ -397,12 +458,15 @@ public class AdHocDialog {
             default:
                 label = "OK";
                 mnemonic = java.awt.event.KeyEvent.VK_O;
-                // Could add something here, like we do for Cancel, so that
-                // hitting Enter closes the dialog (since in general that'll
-                // be the only button available, when there's "OK"), but I'm
-                // not bothering at the moment because the OK button should
-                // be auto-selected anyway, so hitting Enter already does the
-                // trick unless the user does something to the dialog's focus.
+
+                // If there's an "OK" button, make sure the user can just hit
+                // Enter to confirm/close.
+                rootPane = this.dialog.getRootPane();
+                stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+                rootPane.registerKeyboardAction((ActionEvent ae) -> {
+                        this.result = buttonType;
+                        this.dialog.setVisible(false);
+                    }, stroke, JComponent.WHEN_IN_FOCUSED_WINDOW);
                 break;
         }
         JButton button = new JButton(label);
@@ -413,6 +477,7 @@ public class AdHocDialog {
             this.dialog.setVisible(false);
         });
         this.buttonBar.add(button);
+        return button;
     }
 
     /**
@@ -531,6 +596,68 @@ public class AdHocDialog {
                 title,
                 message);
         return ahd.runDialog(ButtonSet.OK);
+    }
+
+    /**
+     * A replacement for JOptionPane's "showInputDialog", though this only
+     * supports getting String input, not pulling from a list of options.
+     * This will present the user with a JTextField, with a specified label,
+     * and a "Cancel" and "OK" button.  If the user hits Cancel, this will
+     * return null.
+     *
+     * @param parentComponent Our parent component which launched the dialog
+     * @param fontInfo A FontInfo object describing the user's current font
+     * selection
+     * @param iconType The icon type to show in the dialog
+     * @param title Title of the dialog
+     * @param inputLabelText The label to put above the text field
+     * @param proposedDimension The proposed dimension for the dialog.  This
+     * will get scaled according to the user's font selection, and clamped to
+     * the availability
+     * @return The string input by the user, or null if the user hit Cancel
+     */
+    public static String askForString(Component parentComponent,
+            FontInfo fontInfo,
+            IconType iconType,
+            String title,
+            String inputLabelText,
+            Dimension proposedDimension
+            ) {
+
+        // First construct our content
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.weightx = 500;
+        gc.weighty = 0;
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.insets = new Insets(0, 0, 0, 8);
+        JLabel inputLabel = new JLabel(inputLabelText);
+        inputLabel.setFont(fontInfo.getFont());
+        panel.add(inputLabel, gc);
+        gc.gridy++;
+        JTextField textField = new JTextField();
+        textField.setFont(fontInfo.getFont());
+        panel.add(textField, gc);
+
+        // Now actually launch the dialog
+        AdHocDialog ahd = new AdHocDialog(
+                parentComponent,
+                fontInfo,
+                iconType,
+                title,
+                panel,
+                proposedDimension
+        );
+        Button choice = ahd.runDialog(ButtonSet.OK_CANCEL, textField);
+        if (choice == Button.OK) {
+            return textField.getText();
+        } else {
+            return null;
+        }
     }
 
 }

@@ -1174,8 +1174,7 @@ public final class MainGUI extends ForceClosingJFrame {
                 && uninstallFile.exists()
                 ) {
 
-            AdHocDialog.Button choice = AdHocDialog.run(
-                    this,
+            AdHocDialog.Button choice = AdHocDialog.run(this,
                     MainGUI.fontInfo,
                     AdHocDialog.IconType.WARNING,
                     "Proceed with uninstall?",
@@ -1380,13 +1379,12 @@ public final class MainGUI extends ForceClosingJFrame {
      */
     public boolean promptUnsavedContinue() {
         if (((CheckBoxTree) jTree1).isChanged()) {
-            AdHocDialog.Button x = AdHocDialog.run(
-                    this,
+            AdHocDialog.Button x = AdHocDialog.run(this,
                     MainGUI.fontInfo,
                     AdHocDialog.IconType.QUESTION,
                     "Save unsaved changes?",
                     "Save unsaved changes?",
-                    AdHocDialog.ButtonSet.CANCEL_NO_YES);
+                    AdHocDialog.ButtonSet.YES_NO_CANCEL);
             this.requestFocus();
             switch (x) {
                 case NO:
@@ -1789,7 +1787,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private void updateProfileMenu() {
         profileMenu.removeAll();
         JMenuItem newProfileButton = new JMenuItem("New profile");
-        newProfileButton.setFont(newProfileButton.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+        newProfileButton.setFont(MainGUI.fontInfo.getFont());
         newProfileButton.addActionListener(e -> {
             String name1 = promptUserForNewProfileName();
             MainGUI.INSTANCE.requestFocus();
@@ -1802,15 +1800,18 @@ public final class MainGUI extends ForceClosingJFrame {
         });
         profileMenu.add(newProfileButton);
         JMenuItem infoButton = new JMenuItem("What are profiles?");
-        infoButton.setFont(newProfileButton.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+        infoButton.setFont(MainGUI.fontInfo.getFont());
         infoButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(MainGUI.this,
-                    "<html>Profiles are a way to save multiple configurations in the same file.<br/>"
-                    + "Each profile saves what's selected and what's not, so you can go back and<br/>"
-                    + "forth between selection choices easily.  (You may have a set of mods you<br/>"
-                    + "want to use while running Digistruct Peak which you don't want active<br/>"
-                    + "otherwise, for instance.)",
-                    "Profile information", JOptionPane.INFORMATION_MESSAGE);
+            AdHocDialog.run(this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.INFORMATION,
+                    "Profile Information",
+                    "<html>Profiles are a way to save multiple configurations in the same file."
+                    + " Each profile saves what's selected and what's not, so you can go back and"
+                    + " forth between selection choices easily.  (You may have a set of mods you"
+                    + " want to use while running Digistruct Peak which you don't want active"
+                    + " otherwise, for instance.)",
+                    new Dimension(500, 160));
         });
         profileMenu.add(infoButton);
         if (!patch.getProfiles().isEmpty()) {
@@ -1818,7 +1819,7 @@ public final class MainGUI extends ForceClosingJFrame {
             for (final Profile profile : patch.getProfiles()) {
                 String name = profile.getName();
                 JMenuItem menu = new JMenu(name);
-                menu.setFont(menu.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+                menu.setFont(MainGUI.fontInfo.getFont());
                 menu.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -1830,7 +1831,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
                 });
                 JMenuItem renameButton = new JMenuItem("Rename profile");
-                renameButton.setFont(renameButton.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+                renameButton.setFont(MainGUI.fontInfo.getFont());
                 renameButton.addActionListener(e -> {
                     String name1 = promptUserForNewProfileName();
                     MainGUI.INSTANCE.requestFocus();
@@ -1843,11 +1844,17 @@ public final class MainGUI extends ForceClosingJFrame {
                 menu.add(renameButton);
                 if (patch.getProfiles().size() > 1) {
                     JMenuItem deleteButton = new JMenuItem("Delete profile");
-                    deleteButton.setFont(deleteButton.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+                    deleteButton.setFont(MainGUI.fontInfo.getFont());
                     deleteButton.addActionListener(e -> {
-                        int confirm = JOptionPane.showConfirmDialog(MainGUI.INSTANCE, "Are you sure you wish to delete the profile '" + profile.getName() + "'?", "Confirm deletion", JOptionPane.YES_NO_OPTION);
+                        AdHocDialog.Button response = AdHocDialog.run(MainGUI.INSTANCE,
+                                MainGUI.fontInfo,
+                                AdHocDialog.IconType.QUESTION,
+                                "Confirm Deletion",
+                                "<html>Are you sure you wish to delete the profile '" + profile.getName() + "'?",
+                                AdHocDialog.ButtonSet.YES_NO,
+                                new Dimension(380, 120));
                         MainGUI.INSTANCE.requestFocus();
-                        if (confirm != JOptionPane.YES_OPTION) {
+                        if (response != AdHocDialog.Button.YES) {
                             return;
                         }
                         patch.deleteProfile(profile);
@@ -1856,7 +1863,7 @@ public final class MainGUI extends ForceClosingJFrame {
                     menu.add(deleteButton);
                 }
                 if (profile == patch.getCurrentProfile()) {
-                    menu.setFont(menu.getFont().deriveFont(Font.BOLD));
+                    menu.setFont(MainGUI.fontInfo.getFont().deriveFont(Font.BOLD));
                     menu.setForeground(new Color(200, 0, 0));
                     menu.setOpaque(true);
                 }
@@ -1868,7 +1875,12 @@ public final class MainGUI extends ForceClosingJFrame {
     private String promptUserForNewProfileName() {
         String name = null;
         while (name == null) {
-            String input = JOptionPane.showInputDialog(MainGUI.INSTANCE, "Insert name", "Insert name", JOptionPane.QUESTION_MESSAGE);
+            String input = AdHocDialog.askForString(MainGUI.INSTANCE,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.QUESTION,
+                    "Insert name",
+                    "Insert name",
+                    new Dimension(325, 130));
             if (input == null) {
                 return null;
             }
@@ -1884,14 +1896,26 @@ public final class MainGUI extends ForceClosingJFrame {
             if (onlyValidCharacter) {
                 Profile already = patch.getProfile(input);
                 if (input.trim().isEmpty()) {
-                    JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Profile name may not be empty.", "Invalid name", JOptionPane.PLAIN_MESSAGE);
+                    AdHocDialog.run(MainGUI.INSTANCE,
+                            MainGUI.fontInfo,
+                            AdHocDialog.IconType.ERROR,
+                            "Invalid Name",
+                            "<html>Profile name may not be empty.");
                 } else if (already == null) {
                     name = input;//This will break the loop
                 } else {
-                    JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Profile " + input + " already exists", "Profile already exists", JOptionPane.PLAIN_MESSAGE);
+                    AdHocDialog.run(MainGUI.INSTANCE,
+                            MainGUI.fontInfo,
+                            AdHocDialog.IconType.ERROR,
+                            "Profile Already Exists",
+                            "<html>Profile \"" + input + "\" already exists.");
                 }
             } else {
-                JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Profile names may only contain alphanumeric values", "Invalid name", JOptionPane.PLAIN_MESSAGE);
+                AdHocDialog.run(MainGUI.INSTANCE,
+                        MainGUI.fontInfo,
+                        AdHocDialog.IconType.ERROR,
+                        "Invalid Name",
+                        "<html>Profile names may only contain alphanumeric values.");
             }
         }
         return name;
