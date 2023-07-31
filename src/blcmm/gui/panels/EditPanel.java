@@ -140,6 +140,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         }
 
         deformatSpinner = new JSpinner();
+        deformatSpinner.setFont(fontInfo.getFont());
         deformatSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 0, null, 1));
         Dimension d = new Dimension(deformatButton.getPreferredSize().width + deformatSpinner.getPreferredSize().width, deformatButton.getPreferredSize().height + deformatButton.getMargin().top);
         deformatButton.setLayout(new BorderLayout());
