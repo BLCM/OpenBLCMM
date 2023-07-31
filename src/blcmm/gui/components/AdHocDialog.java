@@ -313,6 +313,8 @@ public class AdHocDialog {
             ((JScrollPane)contentComponent).setBorder(BorderFactory.createEmptyBorder());
         } else {
             contentComponent = (Component)this.messageComponent;
+            // This might get overwritten below if we have no icon
+            gc.insets = new Insets(10, 5, 5, 10);
         }
         if (haveSize) {
             contentComponent.setPreferredSize(paneDimension);

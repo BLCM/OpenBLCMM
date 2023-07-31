@@ -27,7 +27,9 @@
  */
 package blcmm.gui.tree.rightmouse;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.tree.CheckBoxTree;
 import blcmm.model.Category;
 import blcmm.model.ModelElement;
@@ -38,7 +40,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -49,8 +50,11 @@ import javax.swing.tree.TreePath;
  */
 public class DeleteAction extends RightMouseButtonAction {
 
-    public DeleteAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
+    private final FontInfo fontInfo;
+
+    public DeleteAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
         super(tree, "Delete", hotkey, ctrl, new Requirements(false, true, false));
+        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -95,12 +99,14 @@ public class DeleteAction extends RightMouseButtonAction {
 
         String items = children + (children > 1 ? " items" : " item");
         String functional = " functional " + (codes > 1 ? "lines" : "line") + " of code";
-        JLabel label = new JLabel("<html>Are you sure you wish to delete these elements?"
-                + (children == 0 ? "" : "<br/>The selection contains " + (children != codes
+        JLabel label = new JLabel("<html><b>Are you sure you wish to delete these elements?</b>"
+                + (children == 0 ? "" : "<br/><br/>The selection contains " + (children != codes
                                 ? (items + (codes > 0 ? (", " + codes + " of which are " + functional) : "") + ".")
                                 : (codes + functional + "."))));
+        label.setFont(this.fontInfo.getFont());
 
         JCheckBox box = new JCheckBox("Do not remind me when only deleting comments");
+        box.setFont(this.fontInfo.getFont());
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.add(label);
@@ -109,10 +115,13 @@ public class DeleteAction extends RightMouseButtonAction {
             panel.add(box);
         }
         if ((Options.INSTANCE.getShowDeletionConfirm() || codes > 0) && children > 0) {
-            int option = JOptionPane.showConfirmDialog(MainGUI.INSTANCE,
+            AdHocDialog.Button option = AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.QUESTION,
+                    "Confirm Deletion",
                     panel,
-                    "Confirm Deletion", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (option != JOptionPane.YES_OPTION) {
+                    AdHocDialog.ButtonSet.YES_NO);
+            if (option != AdHocDialog.Button.YES) {
                 return;
             } else if (box.isSelected()) {
                 Options.INSTANCE.setShowDeleteConfirmation(false);
