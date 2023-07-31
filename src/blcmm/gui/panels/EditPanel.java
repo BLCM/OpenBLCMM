@@ -198,7 +198,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
                 // Create the search dialog
                 if (searchDialog == null || !searchDialog.isDisplayable()) {
                     Window parentWindow = SwingUtilities.getWindowAncestor(EditPanel.this);
-                    searchDialog = new TextSearchDialog(parentWindow, textElement, "", false);
+                    searchDialog = new TextSearchDialog(parentWindow, textElement, "", fontInfo, false);
                     searchDialog.setVisible(true);
                 } else {
                     searchDialog.requestFocus();
@@ -211,7 +211,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
                 // Create the search dialog
                 if (searchDialog == null || !searchDialog.isDisplayable()) {
                     Window parentWindow = SwingUtilities.getWindowAncestor(EditPanel.this);
-                    searchDialog = new TextSearchDialog(parentWindow, textElement, "", true);
+                    searchDialog = new TextSearchDialog(parentWindow, textElement, "", fontInfo, true);
                     searchDialog.setVisible(true);
                 } else {
                     searchDialog.requestFocus();

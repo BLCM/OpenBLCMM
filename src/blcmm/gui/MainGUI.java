@@ -2365,10 +2365,10 @@ public final class MainGUI extends ForceClosingJFrame {
     public void launchObjectExplorerWindow(boolean immediate) {
         if (ObjectExplorer.INSTANCE == null) {
             if (immediate) {
-                new ObjectExplorer(this.dmm).setVisible(true);
+                new ObjectExplorer(this.dmm, this.fontInfo).setVisible(true);
             } else {
                 EventQueue.invokeLater(() -> {
-                    new ObjectExplorer(this.dmm).setVisible(true);
+                    new ObjectExplorer(this.dmm, this.fontInfo).setVisible(true);
                 });
             }
         } else {

@@ -27,13 +27,21 @@
  */
 package blcmm.gui.panels;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.EnhancedFormattedTextField;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Utilities;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -45,7 +53,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.IntStream;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
@@ -61,8 +75,15 @@ public class TextSearchDialog extends javax.swing.JDialog {
     private String previous = "";
     public JTextComponent textcomp;
 
-    public TextSearchDialog(Window parent, JTextComponent textcomponent, String previousSearch) {
-        this(parent, textcomponent, previousSearch, true);
+    private JCheckBox regularExpressionCheckBox;
+    private JCheckBox matchCaseCheckBox;
+    private JCheckBox wrapAroundCheckBox;
+    private JLabel statusLabel;
+    private EnhancedFormattedTextField searchTextField;
+    private JTextField replaceTextField = null;
+
+    public TextSearchDialog(Window parent, JTextComponent textcomponent, String previousSearch, FontInfo fontInfo) {
+        this(parent, textcomponent, previousSearch, fontInfo, true);
     }
 
     /**
@@ -71,9 +92,14 @@ public class TextSearchDialog extends javax.swing.JDialog {
      * @param parent The parent window which we belong to
      * @param textcomponent The text component we read the text from.
      * @param previousSearch The previousSearch so we can update it.
+     * @param fontInfo Information about the font we should use in the dialog.
      * @param replace true iff replace UI elements should be shown
      */
-    public TextSearchDialog(Window parent, JTextComponent textcomponent, String previousSearch, boolean replace) {
+    public TextSearchDialog(Window parent,
+            JTextComponent textcomponent,
+            String previousSearch,
+            FontInfo fontInfo,
+            boolean replace) {
         super(parent);
         super.setModalityType(Dialog.ModalityType.MODELESS);
         this.textcomp = textcomponent;
@@ -81,15 +107,213 @@ public class TextSearchDialog extends javax.swing.JDialog {
         super.setIconImages(MainGUI.INSTANCE.getIconImages());
         super.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initComponents();
-        if (!replace) {
-            replaceTextField.setVisible(false);
-            replaceLabel.setVisible(false);
-            replaceAllButton.setVisible(false);
-            replaceButton.setVisible(false);
+
+        // Main panel
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridBagLayout());
+        getContentPane().add(mainPanel);
+
+        // Layout constraints
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.gridwidth = 1;
+        gc.gridheight = 1;
+        gc.weightx = 0;
+        gc.weighty = 0;
+
+        // Search For Label
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(5, 5, 5, 5);
+        JLabel searchForLabel = new JLabel("Search For:");
+        searchForLabel.setFont(fontInfo.getFont());
+        mainPanel.add(searchForLabel, gc);
+
+        // Search For Input
+        gc.gridx++;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.gridwidth = 2;
+        gc.weightx = 500;
+        this.searchTextField = new EnhancedFormattedTextField<>(this::isValidRegex, s->s);
+        this.searchTextField.setFont(fontInfo.getFont());
+        mainPanel.add(this.searchTextField, gc);
+
+        // Find Prev Button
+        gc.gridx++;
+        gc.gridx++;
+        gc.fill = GridBagConstraints.NONE;
+        gc.weightx = 1;
+        gc.gridwidth = 1;
+        gc.insets = new Insets(5, 2, 5, 0);
+        JButton findPreviousButton = new JButton("<html><b>←</b>");
+        findPreviousButton.setFont(fontInfo.getFont().deriveFont(fontInfo.getFont().getSize2D() + 2f));
+        findPreviousButton.addActionListener((ActionEvent ae) -> {
+            this.searchButtonAction(true);
+        });
+        mainPanel.add(findPreviousButton, gc);
+
+        // Find Next Button
+        gc.gridx++;
+        gc.insets = new Insets(5, 0, 5, 2);
+        JButton findNextButton = new JButton("<html><b>→</b>");
+        findNextButton.setFont(fontInfo.getFont().deriveFont(fontInfo.getFont().getSize2D() + 2f));
+        findNextButton.addActionListener((ActionEvent ae) -> {
+            searchButtonAction(false);
+        });
+        mainPanel.add(findNextButton, gc);
+
+        // If we're including replace-with, then render that.
+        if (replace) {
+
+            // First the label
+            gc.weightx = 0;
+            gc.gridx = 0;
+            gc.gridy++;
+            gc.fill = GridBagConstraints.NONE;
+            gc.insets = new Insets(0, 5, 5, 5);
+            JLabel replaceWithLabel = new JLabel("Replace With:");
+            replaceWithLabel.setFont(fontInfo.getFont());
+            mainPanel.add(replaceWithLabel, gc);
+
+            // Now the box
+            gc.gridx++;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 500;
+            gc.gridwidth = 2;
+            this.replaceTextField = new JTextField();
+            this.replaceTextField.setFont(fontInfo.getFont());
+            mainPanel.add(this.replaceTextField, gc);
+
+            // Now the replace button
+            gc.gridx++;
+            gc.gridx++;
+            gc.weightx = 0;
+            gc.insets = new Insets(0, 2, 5, 2);
+            JButton replaceButton = new JButton("Replace");
+            replaceButton.setFont(fontInfo.getFont());
+            replaceButton.addActionListener((ActionEvent ae) -> {
+                this.replaceButtonActionPerformed();
+            });
+            mainPanel.add(replaceButton, gc);
+
         }
 
-        findPreviousButton.setFont(findPreviousButton.getFont().deriveFont(findPreviousButton.getFont().getSize2D() + 2f));
-        findNextButton.setFont(findNextButton.getFont().deriveFont(findNextButton.getFont().getSize2D() + 2f));
+        // Now a container for our checkbox options
+        gc.gridx = 0;
+        gc.gridy++;
+        gc.weightx = 0;
+        gc.gridwidth = 2;
+        gc.anchor = GridBagConstraints.SOUTHWEST;
+        gc.fill = GridBagConstraints.NONE;
+        gc.insets = new Insets(0, 5, 7, 2);
+        JPanel checkBoxPanel = new JPanel();
+        checkBoxPanel.setLayout(new GridBagLayout());
+        mainPanel.add(checkBoxPanel, gc);
+
+        // Status Label
+        gc.gridx++;
+        gc.gridx++;
+        gc.weightx = 500;
+        gc.weighty = 500;
+        gc.anchor = GridBagConstraints.SOUTH;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.gridwidth = 1;
+        gc.insets = new Insets(0, 2, 7, 2);
+        this.statusLabel = new JLabel() {
+            @Override
+            public void setText(String text) {
+                if (!text.toLowerCase().startsWith("<html>")) {
+                    text = "<html>" + text;
+                }
+                super.setText(text);
+            }
+        };
+        this.statusLabel.setVerticalAlignment(SwingConstants.BOTTOM);
+        this.statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        this.statusLabel.setFont(fontInfo.getFont());
+        mainPanel.add(this.statusLabel, gc);
+
+        // Container for other buttons (Replace All + Cancel)
+        gc.gridx++;
+        gc.weightx = 1;
+        gc.weighty = 0;
+        gc.anchor = GridBagConstraints.SOUTHEAST;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.gridwidth = 2;
+        gc.insets = new Insets(0, 2, 7, 2);
+        JPanel otherButtonPanel = new JPanel();
+        otherButtonPanel.setLayout(new GridBagLayout());
+        mainPanel.add(otherButtonPanel, gc);
+
+        // Add in our checkboxes
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.weightx = 1;
+        gc.anchor = GridBagConstraints.SOUTHWEST;
+        gc.fill = GridBagConstraints.NONE;
+        gc.insets = new Insets(5, 0, 0, 0);
+        this.regularExpressionCheckBox = new JCheckBox("Regular expression");
+        this.regularExpressionCheckBox.setFont(fontInfo.getFont());
+        this.regularExpressionCheckBox.addItemListener((ItemEvent ie) -> {
+            this.searchTextField.updateTooltip();
+        });
+        checkBoxPanel.add(this.regularExpressionCheckBox, gc);
+        gc.gridy++;
+        this.matchCaseCheckBox = new JCheckBox("Match case");
+        this.matchCaseCheckBox.setFont(fontInfo.getFont());
+        checkBoxPanel.add(this.matchCaseCheckBox, gc);
+        gc.gridy++;
+        this.wrapAroundCheckBox = new JCheckBox("Wrap around");
+        this.wrapAroundCheckBox.setFont(fontInfo.getFont());
+        this.wrapAroundCheckBox.setSelected(true);
+        checkBoxPanel.add(this.wrapAroundCheckBox, gc);
+
+        // ... aand our remaining buttons
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.weightx = 1;
+        gc.insets = new Insets(0, 0, 0, 0);
+        if (replace) {
+            gc.anchor = GridBagConstraints.NORTHWEST;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            JButton replaceAllButton = new JButton("Replace All");
+            replaceAllButton.setFont(fontInfo.getFont());
+            replaceAllButton.addActionListener((ActionEvent ae) -> {
+                this.replaceAllButtonActionPerformed();
+            });
+            otherButtonPanel.add(replaceAllButton, gc);
+            gc.gridy++;
+        }
+
+        // Spacer
+        gc.fill = GridBagConstraints.BOTH;
+        gc.weighty = 500;
+        JLabel spacer = new JLabel();
+        otherButtonPanel.add(spacer, gc);
+
+        // And finally the cancel button
+        gc.gridy++;
+        gc.weighty = 0;
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.SOUTHEAST;
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.setFont(fontInfo.getFont());
+        cancelButton.addActionListener((ActionEvent ae) -> {
+            this.dispose();
+        });
+        cancelButton.setVisible(true);
+        otherButtonPanel.add(cancelButton, gc);
+
+        // Set our size
+        this.pack();
+        int height = 130;
+        if (replace) {
+            height += 40;
+        }
+        Dimension size = Utilities.scaleAndClampDialogSize(new Dimension(570, height), fontInfo, parent);
+        this.setPreferredSize(size);
+        this.setMinimumSize(size);
 
         // A keyAdapter to read for an Enter key and then do a Find Next
         KeyAdapter keyAdapater = new KeyAdapter() {
@@ -128,217 +352,16 @@ public class TextSearchDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        cancelButton = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        wrapAroundCheckBox = new javax.swing.JCheckBox();
-        matchCaseCheckBox = new javax.swing.JCheckBox();
-        regularExpressionCheckBox = new javax.swing.JCheckBox();
-        jPanel2 = new javax.swing.JPanel();
-        replaceAllButton = new javax.swing.JButton();
-        replaceButton = new javax.swing.JButton();
-        findPreviousButton = new javax.swing.JButton();
-        findNextButton = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        searchLabel = new javax.swing.JLabel();
-        replaceLabel = new javax.swing.JLabel();
-        replaceTextField = new javax.swing.JTextField();
-        searchTextField = new EnhancedFormattedTextField<>(this::isValidRegex, s->s);
-        statusLabel = new javax.swing.JLabel(){public void setText(String text){if(!text.toLowerCase().startsWith("<thml>")){text = "<html>"+text;}super.setText(text);}};
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Search");
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        wrapAroundCheckBox.setSelected(true);
-        wrapAroundCheckBox.setText("Wrap around");
-
-        matchCaseCheckBox.setText("Match case");
-
-        regularExpressionCheckBox.setText("Regular expression");
-        regularExpressionCheckBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                regularExpressionCheckBoxItemStateChanged(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(wrapAroundCheckBox)
-            .addComponent(matchCaseCheckBox)
-            .addComponent(regularExpressionCheckBox)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(regularExpressionCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(matchCaseCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(wrapAroundCheckBox))
-        );
-
-        replaceAllButton.setText("Replace all");
-        replaceAllButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                replaceAllButtonActionPerformed(evt);
-            }
-        });
-
-        replaceButton.setText("Replace");
-        replaceButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                replaceButtonActionPerformed(evt);
-            }
-        });
-
-        findPreviousButton.setFont(new java.awt.Font("Calibri", 1, 12)); // NOI18N
-        findPreviousButton.setText("←");
-        findPreviousButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                findPreviousButtonActionPerformed(evt);
-            }
-        });
-
-        findNextButton.setFont(new java.awt.Font("Calibri", 1, 12)); // NOI18N
-        findNextButton.setText("→");
-        findNextButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                findNextButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(replaceAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(findPreviousButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(findNextButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(replaceButton, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(findNextButton)
-                    .addComponent(findPreviousButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(replaceButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(replaceAllButton))
-        );
-
-        searchLabel.setText("Search For:");
-
-        replaceLabel.setText("Replace with:");
-
-        replaceTextField.setPreferredSize(new java.awt.Dimension(14, 32));
-
-        searchTextField.setPreferredSize(new java.awt.Dimension(14, 32));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(replaceLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(searchLabel)
-                        .addGap(17, 17, 17)))
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(replaceTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(replaceTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(replaceLabel)))
-        );
-
-        statusLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        statusLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(statusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cancelButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(statusLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
-        );
-
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
         getAccessibleContext().setAccessibleName("Find");
-
-        pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void findNextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findNextButtonActionPerformed
-        searchButtonAction(false);
-    }//GEN-LAST:event_findNextButtonActionPerformed
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // End of variables declaration//GEN-END:variables
 
-    private void findPreviousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findPreviousButtonActionPerformed
-        searchButtonAction(true);
-    }//GEN-LAST:event_findPreviousButtonActionPerformed
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
-    private void replaceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceButtonActionPerformed
+    private void replaceButtonActionPerformed() {
         String search = searchTextField.getText();
         String replacement = replaceTextField.getText();
         if (!isRegex()) {
@@ -397,9 +420,9 @@ public class TextSearchDialog extends javax.swing.JDialog {
                 displayRegexMessage(e);
             }
         }
-    }//GEN-LAST:event_replaceButtonActionPerformed
+    }
 
-    private void replaceAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replaceAllButtonActionPerformed
+    private void replaceAllButtonActionPerformed() {
         String search = searchTextField.getText();
         String replacement = replaceTextField.getText();
         if (!isRegex()) {
@@ -445,31 +468,7 @@ public class TextSearchDialog extends javax.swing.JDialog {
             }
 
         }
-
-    }//GEN-LAST:event_replaceAllButtonActionPerformed
-
-    private void regularExpressionCheckBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_regularExpressionCheckBoxItemStateChanged
-        ((EnhancedFormattedTextField) searchTextField).updateTooltip();
-    }//GEN-LAST:event_regularExpressionCheckBoxItemStateChanged
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton findNextButton;
-    private javax.swing.JButton findPreviousButton;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JCheckBox matchCaseCheckBox;
-    private javax.swing.JCheckBox regularExpressionCheckBox;
-    private javax.swing.JButton replaceAllButton;
-    private javax.swing.JButton replaceButton;
-    private javax.swing.JLabel replaceLabel;
-    private javax.swing.JTextField replaceTextField;
-    private javax.swing.JLabel searchLabel;
-    private javax.swing.JTextField searchTextField;
-    private javax.swing.JLabel statusLabel;
-    private javax.swing.JCheckBox wrapAroundCheckBox;
-    // End of variables declaration//GEN-END:variables
+    }
 
     public void updateTextComponent(JTextComponent textComp) {
         this.textcomp = textComp;

@@ -82,16 +82,18 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     private TextSearchDialog searchDialog = null;
     private DataManagerManager dmm;
     private DataManager dm;
+    private final FontInfo fontInfo;
 
     /**
      * Creates new form DumpFrame
      *
      * @param dmm The DataManagerManager to use for this instance of Object Explorer
      */
-    public ObjectExplorer(DataManagerManager dmm) {
+    public ObjectExplorer(DataManagerManager dmm, FontInfo fontInfo) {
         INSTANCE = this;
         this.dmm = new DataManagerManager(dmm);
         this.dm = null;
+        this.fontInfo = fontInfo;
         GlobalLogger.log("Opened Object Explorer");
         initComponents();
 
@@ -626,7 +628,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if (searchDialog == null || !searchDialog.isDisplayable()) {
-                    searchDialog = new TextSearchDialog(INSTANCE, textElement, "", false);
+                    searchDialog = new TextSearchDialog(INSTANCE, textElement, "", fontInfo, false);
                     searchDialog.setVisible(true);
                 } else {
                     searchDialog.requestFocus();
@@ -637,7 +639,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if (searchDialog == null || !searchDialog.isDisplayable()) {
-                    searchDialog = new TextSearchDialog(INSTANCE, textElement, "", true);
+                    searchDialog = new TextSearchDialog(INSTANCE, textElement, "", fontInfo, true);
                     searchDialog.setVisible(true);
                 } else {
                     searchDialog.requestFocus();
