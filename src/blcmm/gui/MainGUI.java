@@ -1165,7 +1165,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_changelogMenuItemActionPerformed
 
     private void getMoreModsMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getMoreModsMenuButtonActionPerformed
-        Utilities.launchBrowser("https://github.com/BLCM/ModCabinet/wiki", this);
+        Utilities.launchBrowser("https://github.com/BLCM/ModCabinet/wiki", this, MainGUI.fontInfo);
     }//GEN-LAST:event_getMoreModsMenuButtonActionPerformed
 
     private void uninstallMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uninstallMenuItemActionPerformed
@@ -1280,7 +1280,7 @@ public final class MainGUI extends ForceClosingJFrame {
     }//GEN-LAST:event_hexEditsMenuItemActionPerformed
 
     private void getDataPackMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getDataPackMenuButtonActionPerformed
-        Utilities.launchBrowser(Meta.DATA_DOWNLOAD_URL, this);
+        Utilities.launchBrowser(Meta.DATA_DOWNLOAD_URL, this, MainGUI.fontInfo);
     }//GEN-LAST:event_getDataPackMenuButtonActionPerformed
 
     private void gameSelectionAction(ItemEvent e) {

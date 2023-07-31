@@ -30,6 +30,7 @@ package blcmm.utilities;
 
 import blcmm.Meta;
 import blcmm.gui.FontInfo;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
 import java.awt.Component;
@@ -977,7 +978,7 @@ public class Utilities {
      * @param parent The parent Component which generated the launch request
      * @return True if the launch was (apparenty) successful, false otherwise.
      */
-    public static boolean launchBrowser(String urlString, Component parent) {
+    public static boolean launchBrowser(String urlString, Component parent, FontInfo fontInfo) {
         try {
             URI uri = new URI(urlString);
             Desktop.getDesktop().browse(uri);
@@ -999,23 +1000,30 @@ public class Utilities {
             cs.fill = GridBagConstraints.HORIZONTAL;
 
             cs.anchor = GridBagConstraints.CENTER;
-            panel.add(new JLabel("<html><b><font size=+1>Unable to launch browser</font></b>"), cs);
+            JLabel noLaunchLabel = new JLabel("<html><b><font size=+1>Unable to launch browser</font></b>");
+            noLaunchLabel.setFont(fontInfo.getFont());
+            panel.add(noLaunchLabel, cs);
 
             cs.gridy++;
             cs.anchor = GridBagConstraints.WEST;
-            panel.add(new JLabel("<html><font color=\""
+            JLabel exceptionLabel = new JLabel("<html><font color=\""
                     + ThemeManager.getColorHexStringRGB(ThemeManager.ColorType.UINimbusRed)
-                    + "\">" + ex.getMessage() + "</font>"), cs);
+                    + "\">" + ex.getMessage() + "</font>");
+            exceptionLabel.setFont(fontInfo.getFont());
+            panel.add(exceptionLabel, cs);
 
             cs.gridy++;
             cs.insets = new Insets(10, 0, 0, 0);
-            panel.add(new JLabel("<html>You can copy the URL here to open in your browser manually:"), cs);
+            JLabel urlInstructionLabel = new JLabel("<html>You can copy the URL here to open in your browser manually:");
+            urlInstructionLabel.setFont(fontInfo.getFont());
+            panel.add(urlInstructionLabel, cs);
 
             cs.gridy++;
             cs.gridwidth = 1;
             cs.weightx = 100;
             cs.insets = new Insets(0, 10, 0, 0);
             JTextField field = new JTextField(urlString);
+            field.setFont(fontInfo.getFont());
             field.setEditable(false);
             field.setCaretPosition(0);
             field.moveCaretPosition(urlString.length());
@@ -1026,6 +1034,7 @@ public class Utilities {
             cs.weightx = 1;
             cs.insets = new Insets(0, 0, 0, 10);
             JButton button = new JButton("Copy to Clipboard");
+            button.setFont(fontInfo.getFont());
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent evt) {
@@ -1036,9 +1045,12 @@ public class Utilities {
             });
             panel.add(button, cs);
 
-            JOptionPane.showMessageDialog(parent, panel,
+            AdHocDialog.run(parent,
+                    fontInfo,
+                    AdHocDialog.IconType.WARNING,
                     "Error launching Browser",
-                    JOptionPane.WARNING_MESSAGE);
+                    panel,
+                    AdHocDialog.ButtonSet.OK);
             return false;
         }
     }

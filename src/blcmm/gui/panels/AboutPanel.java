@@ -76,10 +76,12 @@ import org.apache.commons.text.WordUtils;
  */
 public final class AboutPanel extends JPanel {
 
+    private final FontInfo fontInfo;
     private final Font currentFont;
 
     public AboutPanel(FontInfo fontInfo) {
         this.setLayout(new GridBagLayout());
+        this.fontInfo = fontInfo;
         this.currentFont = fontInfo.getFont();
 
         int cur_y = 0;
@@ -417,7 +419,7 @@ public final class AboutPanel extends JPanel {
         donateButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Utilities.launchBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US", buttonRef);
+                Utilities.launchBrowser("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YVAJKH5S7WSG4&lc=US", buttonRef, fontInfo);
             }
         });
         donateTabPanel.add(donateButton, new GridBagConstraints(
@@ -480,7 +482,7 @@ public final class AboutPanel extends JPanel {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                Utilities.launchBrowser(remoteURL, buttonRef);
+                Utilities.launchBrowser(remoteURL, buttonRef, fontInfo);
             }
         });
         return button;

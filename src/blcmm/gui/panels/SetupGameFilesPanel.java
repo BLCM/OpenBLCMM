@@ -112,7 +112,7 @@ public final class SetupGameFilesPanel extends JPanel {
         sdkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                Utilities.launchBrowser(sdkURL, parentComponent);
+                Utilities.launchBrowser(sdkURL, parentComponent, fontInfo);
             }
         });
         return sdkButton;

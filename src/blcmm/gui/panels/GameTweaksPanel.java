@@ -211,10 +211,12 @@ public abstract class GameTweaksPanel extends JPanel {
         protected JComponent[] components;
         protected SetupStatus overrideStatus = null;
         private String revertFailMessage = null;
+        private final FontInfo fontInfo;
 
         SetupAction(String name, GameTweaksPanel panel, FontInfo fontInfo) {
             this.name = name;
             this.panel = panel;
+            this.fontInfo = fontInfo;
             statuslabel = new JLabel();
             statuslabel.setFont(fontInfo.getFont());
             button = new JButton();
@@ -377,9 +379,9 @@ public abstract class GameTweaksPanel extends JPanel {
                             // normalized in Utilities.launchBrowser()
                             URL url = e1.getURL();
                             if (url == null) {
-                                Utilities.launchBrowser(e1.getDescription(), ep);
+                                Utilities.launchBrowser(e1.getDescription(), ep, this.fontInfo);
                             } else {
-                                Utilities.launchBrowser(url.toString(), ep);
+                                Utilities.launchBrowser(url.toString(), ep, this.fontInfo);
                             }
                         }
                     });

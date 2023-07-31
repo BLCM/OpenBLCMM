@@ -90,10 +90,26 @@ public class Startup {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
+        // Set up the FontInfo object we'll use throughout the app.  It's
+        // tempting to pull the default font size from its Option, and the
+        // font itself from MainGUI, but A) we need this structure before we
+        // even check prefs, and B) we're primarily using this for dialog
+        // scaling, and the dialog sizes we scale from are all based on the
+        // 12-point Dialog font that Apocalyptech uses, so making it more
+        // dynamic doesn't actually make a lot of sense.
+        //
+        // This is being set up absurdly early because we need to pass it in
+        // to our exception handler, which should be as early as possible.  It's
+        // a bit of a shame that the handler relies on Font stuff, honestly --
+        // the exception handler stuff should probably be as basic as it can
+        // be.  What if the exception's coming from Font-related issues, etc?
+        // Ah, well.  For now, we'll just do it.
+        FontInfo fontInfo = new FontInfo(new Font("Dialog", Font.PLAIN, 12));
+
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> vmArguments = runtimeMxBean.getInputArguments();
-        System.setProperty("sun.awt.exception.handler", MyExceptionHandler.class.getName());
-        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandler(fontInfo));
         if (!confirmIO()) {
             GlobalLogger.log("Closing " + Meta.NAME + " because we can't confirm IO");
             GlobalLogger.markAsPermanentLog();
@@ -187,15 +203,6 @@ public class Startup {
                 }
             }
         }
-
-        // Set up the FontInfo object we'll use throughout the app.  It's
-        // tempting to pull the default font size from its Option, and the
-        // font itself from MainGUI, but A) we need this structure before we
-        // even check prefs, and B) we're primarily using this for dialog
-        // scaling, and the dialog sizes we scale from are all based on the
-        // 12-point Dialog font that Apocalyptech uses, so making it more
-        // dynamic doesn't actually make a lot of sense.
-        FontInfo fontInfo = new FontInfo(new Font("Dialog", Font.PLAIN, 12));
 
         // Load options and set theme
         firstTime(fontInfo);
@@ -394,6 +401,13 @@ public class Startup {
 
     private static class MyExceptionHandler implements Thread.UncaughtExceptionHandler {
 
+        private FontInfo fontInfo;
+
+        public MyExceptionHandler(FontInfo fontInfo) {
+            super();
+            this.fontInfo = fontInfo;
+        }
+
         @Override
         public void uncaughtException(Thread thread, Throwable thrwbl) {
             logError(thrwbl);
@@ -488,9 +502,11 @@ public class Startup {
             text = Utilities.hideUserName(text);
             Icon icon = javax.swing.UIManager.getIcon("OptionPane.errorIcon");
             JLabel label = new JLabel(text);
+            label.setFont(this.fontInfo.getFont());
             label.setIconTextGap(10);
             label.setIcon(icon);
             JButton ok = new JButton("OK");
+            ok.setFont(this.fontInfo.getFont());
 
             JPanel panel = new JPanel();
             panel.setLayout(new GridBagLayout());
@@ -509,9 +525,13 @@ public class Startup {
             c.insets.right = 5;
             if (!memError) {
                 JButton openFile = new JButton("Open log");
+                openFile.setFont(this.fontInfo.getFont());
                 JButton openFolder = new JButton("Open log folder");
+                openFolder.setFont(this.fontInfo.getFont());
                 JButton openBFolder = new JButton("Open backup folder");
+                openBFolder.setFont(this.fontInfo.getFont());
                 JButton openBugReportURL = new JButton("Open Github Issues");
+                openBugReportURL.setFont(this.fontInfo.getFont());
                 panel.add(openBFolder, c);
                 c.gridx++;
                 panel.add(openFolder, c);
@@ -544,7 +564,7 @@ public class Startup {
                     }
                 });
                 openBugReportURL.addActionListener((ActionEvent ae) -> {
-                    Utilities.launchBrowser(Meta.BUGREPORT_URL, panel);
+                    Utilities.launchBrowser(Meta.BUGREPORT_URL, panel, this.fontInfo);
                 });
             }
             panel.add(ok, c);

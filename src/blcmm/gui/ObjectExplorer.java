@@ -376,7 +376,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }//GEN-LAST:event_objectBrowserTreeTreeWillExpand
 
     private void downloadDataPackButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadDataPackButtonActionPerformed
-        Utilities.launchBrowser(Meta.DATA_DOWNLOAD_URL, this);
+        Utilities.launchBrowser(Meta.DATA_DOWNLOAD_URL, this, this.fontInfo);
     }//GEN-LAST:event_downloadDataPackButtonActionPerformed
 
     public JTabbedPane getObjectExplorerTabbedPane() {
