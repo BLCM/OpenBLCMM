@@ -142,7 +142,7 @@ public class TextSearchDialog extends javax.swing.JDialog {
         // Find Prev Button
         gc.gridx++;
         gc.gridx++;
-        gc.fill = GridBagConstraints.NONE;
+        gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 1;
         gc.gridwidth = 1;
         gc.insets = new Insets(5, 2, 5, 0);
