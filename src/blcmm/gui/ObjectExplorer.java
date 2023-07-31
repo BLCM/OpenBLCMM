@@ -696,7 +696,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
         @Override
         protected ObjectExplorerPanel getDefaultNewComponent() {
-            return new ObjectExplorerPanel(dmm);
+            return new ObjectExplorerPanel(dmm, fontInfo);
         }
 
         @Override

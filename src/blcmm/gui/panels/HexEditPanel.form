@@ -74,7 +74,7 @@
     </Container>
     <Component class="javax.swing.JLabel" name="infoLabel">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new InfoLabel(&quot;Mouse over the various options to get more details on what each option does.&quot;)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new InfoLabel(&quot;Mouse over the various options to get more details on what each option does.&quot;, this.fontInfo)"/>
       </AuxValues>
     </Component>
   </SubComponents>

@@ -326,7 +326,9 @@ public final class MainGUI extends ForceClosingJFrame {
         cs.anchor = GridBagConstraints.NORTHEAST;
         JLabel iLabel = new InfoLabel("Hover over the colored elements to see what the colors mean<br/>"
                 + "Use the search box to quickly find relevant pieces of your file<br/>"
-                + "Check the options menu to enable additional features");
+                + "Check the options menu to enable additional features",
+                MainGUI.fontInfo
+        );
         layer2.add(iLabel, cs);
 
         searchField = new DefaultTextTextField("Search");

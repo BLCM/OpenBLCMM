@@ -27,12 +27,13 @@
  */
 package blcmm.gui.components;
 
+import blcmm.gui.FontInfo;
 import blcmm.utilities.OSInfo;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+import javax.swing.JToolTip;
 
 /**
  *
@@ -63,11 +64,14 @@ public class InfoLabel extends JLabel {
             + "Need to dump an object often? Bookmark it using the star next to the search bar!<br/>"
             + "To manage your bookmarks, double click the star.";
 
-    public InfoLabel(String tooltip) {
-        this(tooltip, true);
+    private final FontInfo fontInfo;
+
+    public InfoLabel(String tooltip, FontInfo fontInfo) {
+        this(tooltip, fontInfo, true);
     }
 
-    public InfoLabel(String tooltip, boolean clickable) {
+    public InfoLabel(String tooltip, FontInfo fontInfo, boolean clickable) {
+        this.fontInfo = fontInfo;
         final String tooltip2 = tooltip.toLowerCase().startsWith("<html>") ? tooltip : "<HTML>" + tooltip + "</HTML>";
         super.setToolTipText(tooltip2);
         super.setIcon(new ImageIcon(getClass().getClassLoader().getResource("resources/Qmark.png")));
@@ -75,9 +79,22 @@ public class InfoLabel extends JLabel {
             super.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent me) {
-                    JOptionPane.showMessageDialog(null, tooltip2, "Information", JOptionPane.PLAIN_MESSAGE);
+                    AdHocDialog.run(null,
+                            fontInfo,
+                            AdHocDialog.IconType.INFORMATION,
+                            "Information",
+                            tooltip2,
+                            AdHocDialog.ButtonSet.OK);
                 }
             });
         }
     }
+
+    @Override
+    public JToolTip createToolTip() {
+        JToolTip tip = new JToolTip();
+        tip.setFont(this.fontInfo.getFont());
+        return tip;
+    }
+    
 }

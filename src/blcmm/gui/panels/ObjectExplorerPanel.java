@@ -34,6 +34,7 @@ import blcmm.data.lib.DataManager.Dump;
 import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
+import blcmm.gui.FontInfo;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
@@ -131,14 +132,16 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private DataManagerManager dmm;
     private DataManager dm;
     private Dump currentDump;
+    private final FontInfo fontInfo;
 
     /**
      * Creates new form ObjectExplorerPanel
      *
      * @param dmm The DataManagerManager object we'll use for all data interaction
      */
-    public ObjectExplorerPanel(DataManagerManager dmm) {
+    public ObjectExplorerPanel(DataManagerManager dmm, FontInfo fontInfo) {
         this.dmm = dmm;
+        this.fontInfo = fontInfo;
         initComponents();
         textElement = new HighlightedTextArea(dmm, true);
         textElement.setEditable(true);
@@ -338,7 +341,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         mainProgressBar = new javax.swing.JProgressBar();
         deformatButton = new javax.swing.JButton();
         autoFormatButton = new javax.swing.JButton();
-        infoLabel = new InfoLabel(InfoLabel.OE_SPECIFIC + "<br/><br/>" + InfoLabel.BASIC_1+ InfoLabel.BASIC_3);
+        infoLabel = new InfoLabel(InfoLabel.OE_SPECIFIC + "<br/><br/>" + InfoLabel.BASIC_1+ InfoLabel.BASIC_3, this.fontInfo);
         bookmarkLabel = new javax.swing.JLabel();
         collapseArraysToggleButton = new javax.swing.JToggleButton();
 
