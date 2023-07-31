@@ -27,6 +27,7 @@
  */
 package blcmm.gui.tree.rightmouse;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.panels.EditPanel;
 import blcmm.gui.tree.CheckBoxTree;
@@ -36,7 +37,6 @@ import blcmm.model.ModelElementContainer;
 import blcmm.model.SetCommand;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -48,8 +48,11 @@ import javax.swing.tree.TreePath;
  */
 public class EditAction extends RightMouseButtonAction {
 
-    public EditAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
+    private final FontInfo fontInfo;
+
+    public EditAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
         super(tree, "Edit", hotkey, ctrl, new Requirements(true, false, true));
+        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -92,14 +95,12 @@ public class EditAction extends RightMouseButtonAction {
             }
         }
         EditPanel panel = new EditPanel(tree.getPatch(), parentCategory, inputCodes,
-                allowEdit, "In Readonly Mode (Statement" + (paths.length == 1 ? " is" : "s are") + " Locked)");
+                allowEdit, "In Readonly Mode (Statement" + (paths.length == 1 ? " is" : "s are") + " Locked)",
+                fontInfo);
         panel.setPreferredSize(new Dimension(MainGUI.INSTANCE.getWidth() - 60, MainGUI.INSTANCE.getHeight() - 130));
-        showCustomDialog(panel, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        showCustomDialog(panel, (ActionEvent e) -> {
                 finishEditAction(paths, panel, parentCategory, parentnode, index);
-            }
-        }, true, allowEdit);
+            }, this.fontInfo, true, allowEdit);
     }
 
     private void finishEditAction(TreePath[] paths, EditPanel panel, Category parentCategory, DefaultMutableTreeNode parentnode, int index) {

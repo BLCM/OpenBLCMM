@@ -29,7 +29,9 @@
 package blcmm.gui.panels;
 
 import blcmm.Meta;
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.EnhancedFormattedTextField;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
@@ -75,7 +77,6 @@ import java.util.HashSet;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -101,6 +102,8 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     private final Collection<String> packages;
     private TextSearchDialog searchDialog = null;
 
+    private final FontInfo fontInfo;
+
     /**
      * Creates new form HotfixPanel
      *
@@ -109,10 +112,17 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
      * @param elements
      * @param allowEdit
      * @param disallowEditReason
+     * @param fontInfo
      */
-    public EditPanel(CompletePatch patch, Category parent, List<ModelElement> elements, boolean allowEdit, String disallowEditReason) {
+    public EditPanel(CompletePatch patch,
+            Category parent,
+            List<ModelElement> elements,
+            boolean allowEdit,
+            String disallowEditReason,
+            FontInfo fontInfo) {
         this.commentsOnly = parent.isMutuallyExclusive();
         this.allowEdit = allowEdit;
+        this.fontInfo = fontInfo;
         this.patchType = patch.getType();
         packages = patch.getType().getOnDemandPackages();
         //packages = patch.getType().getOnDemandPackages().stream().map(s -> s.getStreamingPackage()).collect(Collectors.toList());
@@ -174,8 +184,8 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         }
     }
 
-    public EditPanel(CompletePatch patch, Category parent) {
-        this(patch, parent, Collections.emptyList(), true, null);
+    public EditPanel(CompletePatch patch, Category parent, FontInfo fontInfo) {
+        this(patch, parent, Collections.emptyList(), true, null, fontInfo);
     }
 
     /**
@@ -223,7 +233,12 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     }
 
     private void setProperFontSize(Component c) {
-        c.setFont(c.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+        // It seems this does *not* set the font on the main code-edit panel,
+        // which is a good thing since that font's supposed to be monospaced.
+        // That panel *does* scale properly, though, so clearly something else
+        // is handling the font size in there.  Have not bothered to go track
+        // that down, since it's already working.
+        c.setFont(this.fontInfo.getFont());
     }
 
     private void attachAutoComplete() {
@@ -575,20 +590,40 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     private boolean isInputHotfixValid(String name, String newValue, String parameter) throws HeadlessException {
         String check;
         if ((check = validateParameter(parameter)) != null) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, check, "Illegal parameter", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.ERROR,
+                    "Illegal Parameter",
+                    check,
+                    AdHocDialog.ButtonSet.OK);
             return false;
         } else if ((check = validateName(name)) != null) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, check, "Illegal name", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.ERROR,
+                    "Illegal Name",
+                    check,
+                    AdHocDialog.ButtonSet.OK);
             return false;
         }
 
         // Illegal Value
         if (newValue.trim().startsWith("#<")) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Value may not start with '#<'", "Illegal start of value", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.ERROR,
+                    "Illegal start of hotfix",
+                    "Hotfix may not start with '#<'",
+                    AdHocDialog.ButtonSet.OK);
             return false;
         }
         if (newValue.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Value may not be empty", "Illegal value", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.ERROR,
+                    "Illegal Hotfix",
+                    "Hotfix may not be empty",
+                    AdHocDialog.ButtonSet.OK);
             return false;
         }
 
@@ -599,9 +634,12 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
             }
         } catch (Exception e) {
             //e.printStackTrace();
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE,
-                    "Could not parse the code. Check your syntax: " + e.getMessage(),
-                    "Parse error", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.ERROR,
+                    "Parse Error",
+                    "<html>Could not parse the code. Check your syntax:<br/>" + e.getMessage(),
+                    AdHocDialog.ButtonSet.OK);
             return false;
         }
         return true;
@@ -654,16 +692,31 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     private boolean isInputCodeValid(List<ModelElement> elements) {
         for (ModelElement el : elements) {
             if (commentsOnly && !(el instanceof Comment)) {
-                JOptionPane.showMessageDialog(null, "Only comments are allowed in this context.", "Comments only", JOptionPane.ERROR_MESSAGE);
+                AdHocDialog.run(MainGUI.INSTANCE,
+                        this.fontInfo,
+                        AdHocDialog.IconType.ERROR,
+                        "Comments Only",
+                        "Only comments are allowed in this context.",
+                        AdHocDialog.ButtonSet.OK);
                 return false;
             } else if (!isEditingHotfixes() && el instanceof SetCMPCommand) {
-                JOptionPane.showMessageDialog(null, "You need to be making hotfixes to use set_cmp commands.", "No non-hotfix set_cmp commands", JOptionPane.ERROR_MESSAGE);
+                AdHocDialog.run(MainGUI.INSTANCE,
+                        this.fontInfo,
+                        AdHocDialog.IconType.ERROR,
+                        "No non-hotfix set_cmp commands",
+                        "<html>You need to be making hotfixes to use <tt>set_cmp</tt> commands.",
+                        AdHocDialog.ButtonSet.OK);
                 return false;
             }
             String toString = el.toString();
             for (String s : PatchIO.FORBIDDEN_KEYWORDS) {
                 if (toString.contains(s)) {
-                    JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Code may not contain '" + s + "'.", "Illegal code", JOptionPane.ERROR_MESSAGE);
+                    AdHocDialog.run(MainGUI.INSTANCE,
+                            this.fontInfo,
+                            AdHocDialog.IconType.ERROR,
+                            "Illegal code",
+                            "Code may not contain '" + s + "'.",
+                            AdHocDialog.ButtonSet.OK);
                     return false;
                 }
             }
@@ -688,8 +741,14 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
                 }
                 if (((SetCommand) element).getValue().isEmpty()) {
                     if (!skipEmptyCheckCheckBox.isSelected()) {
-                        int answer = JOptionPane.showConfirmDialog(MainGUI.INSTANCE, "Your code has a command without a value, or that is missing the object or field attribute. Continue?", "Missing value", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                        if (answer != JOptionPane.YES_OPTION) {
+                        AdHocDialog.Button answer = AdHocDialog.run(MainGUI.INSTANCE,
+                                this.fontInfo,
+                                AdHocDialog.IconType.QUESTION,
+                                "Missing Value",
+                                "<html>Your code has a command without a value, or that is missing the object or field attribute. Continue?",
+                                AdHocDialog.ButtonSet.YES_NO,
+                                new Dimension(380, 100));
+                        if (answer != AdHocDialog.Button.YES) {
                             return false;
                         }
                         skipEmptyCheckCheckBox.setSelected(true);
@@ -697,11 +756,17 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
                 }
             }
             if (element.getTransientData().getNumberOfOccurences(GlobalListOfProperties.CommentChecker.Exec.class) > 0 && askExec) {
-                int answer = JOptionPane.showConfirmDialog(MainGUI.INSTANCE,
-                        "You entered an 'exec' command.\n"
-                        + "In almost all cases it is prefered to merge mods using " + Meta.NAME + ".\n"
-                        + "Continue anyway?", "exec command", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                if (answer != JOptionPane.YES_OPTION) {
+                AdHocDialog.Button answer = AdHocDialog.run(MainGUI.INSTANCE,
+                        this.fontInfo,
+                        AdHocDialog.IconType.WARNING,
+                        "Confirm \"exec\" Command",
+                        "<html>You entered an '<tt>exec</tt>' command.<br/>"
+                        + "<br/>"
+                        + "In almost all cases it is preferred to merge mods using " + Meta.NAME + "."
+                        + " Continue anyway?",
+                        AdHocDialog.ButtonSet.YES_NO,
+                        new Dimension(470, 130));
+                if (answer != AdHocDialog.Button.YES) {
                     return false;
                 }
                 askExec = false;
@@ -709,24 +774,31 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         }
         StringBuilder sb = new StringBuilder();
         if (!toAsk.isEmpty()) {
-            sb.append("Your code has the following properties:");
+            sb.append("<html>Your code has the following potential problems:<br/>");
             for (PropertyChecker check : toAsk) {
-                sb.append("\n").append(check.getPropertyDescription());
+                sb.append("<li>").append(check.getPropertyDescription()).append("</li>");
             }
+            sb.append("</ul>");
         }
         if (!toAskWarnings.isEmpty()) {
-            if (sb.length() > 0) {
-                sb.append("\n\n");
+            if (sb.length() == 0) {
+                sb.append("<html>");
             }
-            sb.append("Your code has the following warnings:");
+            sb.append("Your code has the following warnings:<br/>");
             for (PropertyChecker check : toAskWarnings) {
-                sb.append("\n").append(check.getPropertyDescription());
+                sb.append("<li>").append(check.getPropertyDescription()).append("</li>");
             }
+            sb.append("</ul>");
         }
         if (sb.length() > 0) {
-            sb.append("\n\nContinue anyway?");
-            int answer = JOptionPane.showConfirmDialog(MainGUI.INSTANCE, sb.toString(), "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if (answer != JOptionPane.YES_OPTION) {
+            sb.append("Continue anyway?");
+            AdHocDialog.Button answer = AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.QUESTION,
+                    "Confirm",
+                    sb.toString(),
+                    AdHocDialog.ButtonSet.YES_NO);
+            if (answer != AdHocDialog.Button.YES) {
                 return false;
             }
         }
@@ -760,8 +832,13 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         if (this.initialText.equals(textElement.getText())) {
             return true;
         } else {
-            int answer = JOptionPane.showConfirmDialog(MainGUI.INSTANCE, "Really discard unsaved changes to this code?", "Discard Changes?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-            return (answer == JOptionPane.YES_OPTION);
+            AdHocDialog.Button answer = AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.QUESTION,
+                    "Discard Changes?",
+                    "<html>Really discard unsaved changes to this code?",
+                    AdHocDialog.ButtonSet.YES_NO);
+            return (answer == AdHocDialog.Button.YES);
         }
     }
 

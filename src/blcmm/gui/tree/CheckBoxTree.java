@@ -675,12 +675,12 @@ public final class CheckBoxTree extends JTree {
             introduceCategoryAction = new IntroduceCategoryAction(tree, KeyEvent.VK_G, true, fontInfo);
             renameCategoryAction = new RenameCategoryAction(tree, KeyEvent.VK_R, true, fontInfo);
             insertCategoryAction = new AddCategoryAction(tree, KeyEvent.VK_H, true, fontInfo);
-            insertAction = new InsertAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_PLUS : KeyEvent.VK_INSERT, false);
+            insertAction = new InsertAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_PLUS : KeyEvent.VK_INSERT, false, fontInfo);
             deleteAction = new DeleteAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, OSInfo.CURRENT_OS == OSInfo.OS.MAC);
             copyAction = new CopyAction(tree, KeyEvent.VK_C, true);
             cutAction = new CutAction(tree, KeyEvent.VK_X, true);
             pasteAction = new PasteAction(tree, KeyEvent.VK_V, true);
-            editAction = new EditAction(tree, KeyEvent.VK_E, true);
+            editAction = new EditAction(tree, KeyEvent.VK_E, true, fontInfo);
             sortAction = new SortCategoryAction(tree);
             fullyExpandAction = new ExpandCategoryCompletelyAction(tree);
             fullyCollapseAction = new CollapseCategoryCompletelyAction(tree);

@@ -27,6 +27,7 @@
  */
 package blcmm.gui.tree.rightmouse;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.ForceClosingJFrame;
 import blcmm.gui.panels.EditPanel;
@@ -228,15 +229,15 @@ public abstract class RightMouseButtonAction {
 
     public abstract void action();
 
-    protected void showCustomDialog(JPanel panel, ActionListener OKAction) {
-        showCustomDialog(panel, OKAction, false, true);
+    protected void showCustomDialog(JPanel panel, ActionListener OKAction, FontInfo fontInfo) {
+        showCustomDialog(panel, OKAction, fontInfo, false, true);
     }
 
-    protected void showCustomDialog(JPanel panel, ActionListener OKAction, boolean isEditWindow) {
-        showCustomDialog(panel, OKAction, isEditWindow, true);
+    protected void showCustomDialog(JPanel panel, ActionListener OKAction, FontInfo fontInfo, boolean isEditWindow) {
+        showCustomDialog(panel, OKAction, fontInfo,isEditWindow, true);
     }
 
-    protected void showCustomDialog(JPanel panel, ActionListener OKAction, boolean isEditWindow, boolean allowEdit) {
+    protected void showCustomDialog(JPanel panel, ActionListener OKAction, FontInfo fontInfo, boolean isEditWindow, boolean allowEdit) {
         final ForceClosingJFrame dialog = new ForceClosingJFrame(allowEdit ? "Edit window" : "Edit window (readonly mode)");
         MainGUI.INSTANCE.setTreeEditable(false);
         dialog.add(panel);
@@ -270,6 +271,7 @@ public abstract class RightMouseButtonAction {
 
         // "OK" Button
         JButton button = new JButton("OK");
+        button.setFont(fontInfo.getFont());
         dialog.add(button, new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.LINE_END, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
         ActionListener okListener;
         if (allowEdit) {
@@ -311,6 +313,7 @@ public abstract class RightMouseButtonAction {
         // Cancel Button - Handled a bit differently so that ESC can trigger
         // the same action.
         JButton cbutton = new JButton();
+        cbutton.setFont(fontInfo.getFont());
         dialog.add(cbutton, new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.LINE_END, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
         AbstractAction cancelAction;
         if (allowEdit) {

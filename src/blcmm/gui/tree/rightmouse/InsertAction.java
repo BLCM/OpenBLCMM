@@ -27,13 +27,13 @@
  */
 package blcmm.gui.tree.rightmouse;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.panels.EditPanel;
 import blcmm.gui.tree.CheckBoxTree;
 import blcmm.model.Category;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -43,8 +43,11 @@ import javax.swing.tree.TreePath;
  */
 public class InsertAction extends RightMouseButtonAction {
 
-    public InsertAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
+    private final FontInfo fontInfo;
+
+    public InsertAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
         super(tree, "Insert", hotkey, ctrl, new Requirements(true, true, true));
+        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -82,19 +85,20 @@ public class InsertAction extends RightMouseButtonAction {
             parentCategory = (Category) parentnode.getUserObject();
             insertIndex = parentnode.getIndex(selectednode) + 1;
         }
-        EditPanel panel = new EditPanel(tree.getPatch(), parentCategory);
+        EditPanel panel = new EditPanel(tree.getPatch(), parentCategory, fontInfo);
+        // I'm actually *not* going to Utilities.scaleAndClampDialogSize() these
+        // dimensions, since they're based on the main window size.  Presumably
+        // users would already have that sized appropriately to their font
+        // scaling.
         panel.setPreferredSize(new Dimension(MainGUI.INSTANCE.getWidth() - 125, MainGUI.INSTANCE.getHeight() - 150));
 
-        showCustomDialog(panel, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        showCustomDialog(panel, (ActionEvent e) -> {
                 addNewElements(panel,
                         parentCategory,
                         insertIndex,
                         parentnode,
                         tree.isSelected(parentnode));
-            }
-        }, true);
+            }, this.fontInfo, true);
     }
 
 }
