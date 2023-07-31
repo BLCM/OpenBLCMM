@@ -267,6 +267,7 @@ public final class MainGUI extends ForceClosingJFrame {
             if (Options.INSTANCE.getCheckForNewVersions() && !Utilities.isCreatorMode()) {
                 versionCheckThread = startupVersionCheckThread();
             }
+            Utilities.setReferenceFrameInsets(this);
         };
         boolean showGUIPriorToLoading = true;
         if (showGUIPriorToLoading) {

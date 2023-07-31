@@ -79,6 +79,7 @@ import java.util.zip.ZipInputStream;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -99,6 +100,15 @@ public class Utilities {
     private static boolean creatorMode = false;
     private static String userDir = null;
     private static String installDirOverride = null;
+
+    /**
+     * "Reference" insets for a top-level JFrame, which should theoretically
+     * give us how much window room is taken up by OS-provided borders and
+     * titlebars, etc.  This is used by `scaleAndClampDialogSize()` to try
+     * and be a little more accurate with its font-based scaling.  This is
+     * currently just set during MainGUI's initialization.
+     */
+    private static Insets referenceFrameInsets = new Insets(0, 0, 0, 0);
 
     static {
         Utilities.setUserDir(System.getProperty("user.dir"));
@@ -1034,6 +1044,22 @@ public class Utilities {
     }
 
     /**
+     * Sets our "reference" insets to the Insets given by the specified JFrame.
+     * This is used by `scaleAndClampDialogSize()` to attempt to be a little
+     * more accurate when computing the font-based scaling, since the
+     * OS-provided titlebar/borders/etc wouldn't be affected by the application
+     * font size.
+     *
+     * At the moment this is only set in MainGUI's initialization routines.
+     *
+     * @param frame The JFrame whose insets we should use as a reference.
+     */
+    public static void setReferenceFrameInsets(JFrame frame) {
+        Utilities.referenceFrameInsets = frame.getInsets();
+        //GlobalLogger.log("Set reference insets: " + Utilities.referenceFrameInsets.toString());
+    }
+
+    /**
      * Returns the maximum Dimensions that we'd want a newly-created dialog to
      * consume on the screen where the Component `c` lives.  This will be 90% of
      * the total "usable" area of the current screen (ie: minus OS taskbars and
@@ -1128,9 +1154,25 @@ public class Utilities {
      * @return The dimensions of the dialog that we'll *actually* use.
      */
     public static Dimension scaleAndClampDialogSize(Dimension proposedSize, FontInfo fontInfo, Component c) {
+
+        // We tend to scale up height a bit too much, in the end, when font
+        // sizes get bigger (and probably get too short when fonts are small).
+        // I chalk it up to the likelihood that there's various non-text
+        // components on whatever's getting scaled.  We don't want to try and
+        // correct this *too* much, since it would depend on the dialog
+        // contents, and I also don't want to bake it into FontInfo itself,
+        // since this correction factor is really only applicable to dialogs.
+        // (Then again, dialogs are also the only place we're actually using
+        // the scaling factor, so eh?).  We're also attempting to omit the
+        // OS-provided window borders when scaling, to try and be a bit more
+        // accurate.
+        double customScaleHeight = ((fontInfo.getScaleHeight()-1)*0.7)+1;
+        int borderWidth = Utilities.referenceFrameInsets.left + Utilities.referenceFrameInsets.right;
+        int borderHeight = Utilities.referenceFrameInsets.top + Utilities.referenceFrameInsets.bottom;
+
         Dimension scaledSize = new Dimension(
-            (int)(proposedSize.width*fontInfo.getScaleWidth()),
-            (int)(proposedSize.height*fontInfo.getScaleHeight())
+            (int)(((proposedSize.width-borderWidth)*fontInfo.getScaleWidth())+borderWidth),
+            (int)(((proposedSize.height-borderHeight)*customScaleHeight)+borderHeight)
         );
         Dimension dialogSize = Utilities.clampProposedDialogSize(scaledSize, c);
         /*
