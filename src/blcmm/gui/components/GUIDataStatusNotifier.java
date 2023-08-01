@@ -31,10 +31,13 @@ package blcmm.gui.components;
 
 import blcmm.Meta;
 import blcmm.data.lib.DataStatusNotifier;
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
+import blcmm.utilities.Utilities;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -70,8 +73,10 @@ public class GUIDataStatusNotifier implements DataStatusNotifier {
     private final JTextPane text;
     private final HTMLDocument doc;
     private JButton okButton;
+    private FontInfo fontInfo;
 
-    public GUIDataStatusNotifier() {
+    public GUIDataStatusNotifier(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
         this.curGame = null;
         this.showingGui = false;
         this.text = new JTextPane();
@@ -235,7 +240,7 @@ public class GUIDataStatusNotifier implements DataStatusNotifier {
 
             this.dialog.add(panel);
             this.dialog.pack();
-            this.dialog.setSize(600, 400);
+            this.dialog.setSize(Utilities.scaleAndClampDialogSize(new Dimension(600, 400), fontInfo, this.dialog));
             this.dialog.setLocationRelativeTo(null);
             this.dialog.setVisible(true);
         }

@@ -208,7 +208,7 @@ public final class MainGUI extends ForceClosingJFrame {
 
             @Override
             protected Object doInBackground() {
-                dmm = new DataManagerManager(PatchType.BL2, new GUIDataStatusNotifier());
+                dmm = new DataManagerManager(PatchType.BL2, new GUIDataStatusNotifier(fontInfo));
                 return null;
             }
 
