@@ -27,8 +27,9 @@
  */
 package blcmm.gui.tree.rightmouse;
 
-import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.FontInfoJButton;
+import blcmm.gui.components.FontInfoJMenuItem;
 import blcmm.gui.components.ForceClosingJFrame;
 import blcmm.gui.panels.EditPanel;
 import blcmm.gui.tree.CheckBoxTree;
@@ -139,7 +140,7 @@ public abstract class RightMouseButtonAction {
             boolean ctrl,
             Requirements reqs) {
         this.tree = tree;
-        this.button = new JMenuItem(buttonName);
+        this.button = new FontInfoJMenuItem(buttonName, tree.getFontInfo());
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -229,15 +230,15 @@ public abstract class RightMouseButtonAction {
 
     public abstract void action();
 
-    protected void showCustomDialog(JPanel panel, ActionListener OKAction, FontInfo fontInfo) {
-        showCustomDialog(panel, OKAction, fontInfo, false, true);
+    protected void showCustomDialog(JPanel panel, ActionListener OKAction) {
+        showCustomDialog(panel, OKAction, false, true);
     }
 
-    protected void showCustomDialog(JPanel panel, ActionListener OKAction, FontInfo fontInfo, boolean isEditWindow) {
-        showCustomDialog(panel, OKAction, fontInfo,isEditWindow, true);
+    protected void showCustomDialog(JPanel panel, ActionListener OKAction, boolean isEditWindow) {
+        showCustomDialog(panel, OKAction, isEditWindow, true);
     }
 
-    protected void showCustomDialog(JPanel panel, ActionListener OKAction, FontInfo fontInfo, boolean isEditWindow, boolean allowEdit) {
+    protected void showCustomDialog(JPanel panel, ActionListener OKAction, boolean isEditWindow, boolean allowEdit) {
         final ForceClosingJFrame dialog = new ForceClosingJFrame(allowEdit ? "Edit window" : "Edit window (readonly mode)");
         MainGUI.INSTANCE.setTreeEditable(false);
         dialog.add(panel);
@@ -270,8 +271,7 @@ public abstract class RightMouseButtonAction {
         });
 
         // "OK" Button
-        JButton button = new JButton("OK");
-        button.setFont(fontInfo.getFont());
+        JButton button = new FontInfoJButton("OK", this.tree.getFontInfo());
         dialog.add(button, new GridBagConstraints(1, 1, 1, 1, 0, 0, GridBagConstraints.LINE_END, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
         ActionListener okListener;
         if (allowEdit) {
@@ -312,8 +312,7 @@ public abstract class RightMouseButtonAction {
 
         // Cancel Button - Handled a bit differently so that ESC can trigger
         // the same action.
-        JButton cbutton = new JButton();
-        cbutton.setFont(fontInfo.getFont());
+        JButton cbutton = new FontInfoJButton(this.tree.getFontInfo());
         dialog.add(cbutton, new GridBagConstraints(2, 1, 1, 1, 0, 0, GridBagConstraints.LINE_END, GridBagConstraints.NONE, new Insets(0, 5, 5, 5), 0, 0));
         AbstractAction cancelAction;
         if (allowEdit) {

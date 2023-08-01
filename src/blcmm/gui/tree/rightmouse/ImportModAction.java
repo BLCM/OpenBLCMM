@@ -27,7 +27,6 @@
  */
 package blcmm.gui.tree.rightmouse;
 
-import blcmm.gui.FontInfo;
 import blcmm.gui.GUI_IO_Handler;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.BLCMM_FileChooser;
@@ -53,11 +52,8 @@ public class ImportModAction extends RightMouseButtonAction {
     private Category newParent;
     private DefaultMutableTreeNode parentNode;
 
-    private final FontInfo fontInfo;
-
-    public ImportModAction(CheckBoxTree tree, FontInfo fontInfo) {
+    public ImportModAction(CheckBoxTree tree) {
         super(tree, "Import mod", Requirements.NO_REQUIREMENTS);
-        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -114,7 +110,7 @@ public class ImportModAction extends RightMouseButtonAction {
                 }
             }
         }
-        BLCMM_FileChooser chooser = new BLCMM_FileChooser(fontInfo, MainGUI.INSTANCE.getImportDialogPath());
+        BLCMM_FileChooser chooser = new BLCMM_FileChooser(this.tree.getFontInfo(), MainGUI.INSTANCE.getImportDialogPath());
         chooser.setDialogTitle("Import Mods");
         int confirm = chooser.showOpenDialog(null);
         final boolean needToDeselect = needToDeselect1;

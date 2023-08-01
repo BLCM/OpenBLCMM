@@ -27,6 +27,7 @@
  */
 package blcmm.gui.tree;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
@@ -75,8 +76,8 @@ class CheckBoxTreeCellRenderer extends DefaultTreeCellRenderer {
     private final ImageIcon EXEC_ICON;
     private final HashMap<Icon, HashMap<Theme, ImageIcon>> iconMap = new HashMap();
 
-    CheckBoxTreeCellRenderer() {
-        setFont(new Font(MainGUI.CODE_FONT_NAME, Options.INSTANCE.getFontsize(), Font.PLAIN));
+    CheckBoxTreeCellRenderer(FontInfo fontInfo) {
+        setFont(new Font(MainGUI.CODE_FONT_NAME, fontInfo.getFont().getSize(), Font.PLAIN));
         LOCK_ICON = new ImageIcon(getClass().getClassLoader().getResource("resources/padlock.png"));
         SPEAKER_ICON = new ImageIcon(getClass().getClassLoader().getResource("resources/speaker.png"));
         EXEC_ICON = new ImageIcon(getClass().getClassLoader().getResource("resources/exec.png"));

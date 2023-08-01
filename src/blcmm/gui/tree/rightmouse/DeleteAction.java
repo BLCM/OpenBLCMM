@@ -27,7 +27,6 @@
  */
 package blcmm.gui.tree.rightmouse;
 
-import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.tree.CheckBoxTree;
@@ -50,11 +49,8 @@ import javax.swing.tree.TreePath;
  */
 public class DeleteAction extends RightMouseButtonAction {
 
-    private final FontInfo fontInfo;
-
-    public DeleteAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
+    public DeleteAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
         super(tree, "Delete", hotkey, ctrl, new Requirements(false, true, false));
-        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -103,10 +99,10 @@ public class DeleteAction extends RightMouseButtonAction {
                 + (children == 0 ? "" : "<br/><br/>The selection contains " + (children != codes
                                 ? (items + (codes > 0 ? (", " + codes + " of which are " + functional) : "") + ".")
                                 : (codes + functional + "."))));
-        label.setFont(this.fontInfo.getFont());
+        label.setFont(this.tree.getFontInfo().getFont());
 
         JCheckBox box = new JCheckBox("Do not remind me when only deleting comments");
-        box.setFont(this.fontInfo.getFont());
+        box.setFont(this.tree.getFontInfo().getFont());
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         panel.add(label);
@@ -116,7 +112,7 @@ public class DeleteAction extends RightMouseButtonAction {
         }
         if ((Options.INSTANCE.getShowDeletionConfirm() || codes > 0) && children > 0) {
             AdHocDialog.Button option = AdHocDialog.run(MainGUI.INSTANCE,
-                    this.fontInfo,
+                    this.tree.getFontInfo(),
                     AdHocDialog.IconType.QUESTION,
                     "Confirm Deletion",
                     panel,

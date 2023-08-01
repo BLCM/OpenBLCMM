@@ -31,6 +31,7 @@ package blcmm.gui.panels;
 import blcmm.data.BehaviorProviderDefinition;
 import blcmm.gui.FontInfo;
 import blcmm.gui.components.EnhancedFormattedTextField;
+import blcmm.gui.components.FontInfoJButton;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -196,12 +197,12 @@ public class IntegerConverter extends javax.swing.JPanel {
         panel.add(topRightPanel___, new GridBagConstraints(2, 1, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
         panel.add(bottomRightPanel, new GridBagConstraints(2, 2, 1, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 0, 0));
 
-        JButton forwards = new JButton("→");
+        JButton forwards = new FontInfoJButton("→", fontInfo);
         forwards.setFont(new java.awt.Font("Calibri", 1, this.fontInfo.getFont().getSize()));
         forwards.setToolTipText("Split");
         forwards.setBorder(new EmptyBorder(5, 8, 5, 8));
 
-        JButton backwards = new JButton("←");
+        JButton backwards = new FontInfoJButton("←", fontInfo);
         backwards.setFont(new java.awt.Font("Calibri", 1, this.fontInfo.getFont().getSize()));
         backwards.setToolTipText("Join");
         backwards.setBorder(new EmptyBorder(5, 8, 5, 8));

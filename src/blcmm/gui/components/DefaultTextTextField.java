@@ -62,6 +62,7 @@ public class DefaultTextTextField extends JTextField {
     @Override
     public JToolTip createToolTip() {
         JToolTip tip = new JToolTip();
+        tip.setComponent(this);
         tip.setFont(this.fontInfo.getFont());
         return tip;
     }

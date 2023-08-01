@@ -27,7 +27,6 @@
  */
 package blcmm.gui.tree.rightmouse;
 
-import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.tree.CheckBoxTree;
@@ -43,11 +42,8 @@ import javax.swing.tree.TreePath;
  */
 public class RenameCategoryAction extends RightMouseButtonAction {
 
-    private final FontInfo fontInfo;
-
-    public RenameCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
+    public RenameCategoryAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
         super(tree, "Rename category", hotkey, ctrl, new Requirements(false, true, false));
-        this.fontInfo = fontInfo;
 
     }
 
@@ -66,7 +62,7 @@ public class RenameCategoryAction extends RightMouseButtonAction {
         TreePath path = paths[0];
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
         String name = AdHocDialog.askForString(MainGUI.INSTANCE,
-                this.fontInfo,
+                this.tree.getFontInfo(),
                 AdHocDialog.IconType.QUESTION,
                 "New Category Name",
                 "New Category Name",

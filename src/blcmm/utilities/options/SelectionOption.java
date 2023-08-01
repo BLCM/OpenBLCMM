@@ -198,6 +198,8 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
                     @Override
                     public Component getListCellRendererComponent(JList<?> jlist, Object o, int i, boolean bln, boolean bln1) {
                         JLabel l = (JLabel) super.getListCellRendererComponent(jlist, o, i, bln, bln1);
+                        // TODO: If we ever start using this again, this'll have to be checked for
+                        // whether or not the tooltip scales w/ font size.
                         l.setToolTipText(table.get(o.toString(), "tooltip"));
                         return l;
                     }

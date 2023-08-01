@@ -93,8 +93,9 @@ public class InfoLabel extends JLabel {
     @Override
     public JToolTip createToolTip() {
         JToolTip tip = new JToolTip();
+        tip.setComponent(this);
         tip.setFont(this.fontInfo.getFont());
         return tip;
     }
-    
+
 }

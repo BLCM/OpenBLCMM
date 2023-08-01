@@ -28,45 +28,59 @@
 package blcmm.gui.components;
 
 import blcmm.gui.FontInfo;
-import java.util.Vector;
-import javax.swing.ComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JMenuItem;
 import javax.swing.JToolTip;
 
 /**
- * An extension to JComboBox which supports scaling the tooltip font based on
+ * An extension to JMenuItem which supports scaling the tooltip font based on
  * the user's font-size selection.  (Only really needed for sessions in which
  * the user's changing the size dynamically.)
  *
  * @author apocalyptech
  */
-public class FontInfoJComboBox<E> extends JComboBox {
+public class FontInfoJMenuItem extends JMenuItem {
 
     private final FontInfo fontInfo;
 
-    public FontInfoJComboBox(FontInfo fontInfo) {
+    public FontInfoJMenuItem(FontInfo fontInfo) {
         super();
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
 
-    public FontInfoJComboBox(ComboBoxModel<E> aModel, FontInfo fontInfo) {
-        super(aModel);
+    public FontInfoJMenuItem(Action a, FontInfo fontInfo) {
+        super(a);
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
 
-    public FontInfoJComboBox(E[] items, FontInfo fontInfo) {
-        super(items);
+    public FontInfoJMenuItem(Icon icon, FontInfo fontInfo) {
+        super(icon);
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
 
-    public FontInfoJComboBox(Vector<E> items, FontInfo fontInfo) {
-        super(items);
+    public FontInfoJMenuItem(String text, FontInfo fontInfo) {
+        super(text);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJMenuItem(String text, Icon icon, FontInfo fontInfo) {
+        super(text, icon);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJMenuItem(String text, int mnemonic, FontInfo fontInfo) {
+        super(text, mnemonic);
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());

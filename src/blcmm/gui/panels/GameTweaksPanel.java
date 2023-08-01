@@ -31,6 +31,9 @@ package blcmm.gui.panels;
 import blcmm.Meta;
 import blcmm.gui.FontInfo;
 import blcmm.gui.components.BLCMM_FileChooser;
+import blcmm.gui.components.FontInfoJButton;
+import blcmm.gui.components.FontInfoJComboBox;
+import blcmm.gui.components.FontInfoJLabel;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.OSInfo;
@@ -55,8 +58,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -200,8 +201,8 @@ public abstract class GameTweaksPanel extends JPanel {
 
         private static boolean shownErrorDialog = false;
 
-        protected final JLabel namelabel, statuslabel;
-        protected final JButton button;
+        protected final FontInfoJLabel namelabel, statuslabel;
+        protected final FontInfoJButton button;
         protected final String name;
         protected final GameTweaksPanel panel;
         protected boolean available = true;
@@ -217,12 +218,9 @@ public abstract class GameTweaksPanel extends JPanel {
             this.name = name;
             this.panel = panel;
             this.fontInfo = fontInfo;
-            statuslabel = new JLabel();
-            statuslabel.setFont(fontInfo.getFont());
-            button = new JButton();
-            button.setFont(fontInfo.getFont());
-            namelabel = new JLabel(name);
-            namelabel.setFont(fontInfo.getFont());
+            statuslabel = new FontInfoJLabel(fontInfo);
+            button = new FontInfoJButton(fontInfo);
+            namelabel = new FontInfoJLabel(name, fontInfo);
             components = new JComponent[]{namelabel, statuslabel, button};
         }
 
@@ -866,7 +864,7 @@ public abstract class GameTweaksPanel extends JPanel {
 
         private final String defaultValue;
         private final Map<String, String> choicesToValuesMap;
-        private final JComboBox combobox;
+        private final FontInfoJComboBox combobox;
         private String current;
         boolean init = false;
         private Object selchoice;
@@ -886,7 +884,7 @@ public abstract class GameTweaksPanel extends JPanel {
             for (int i = 0; i < choices.length; i++) {
                 choicesToValuesMap.put(choices[i], values[i]);
             }
-            combobox = new JComboBox(choices);
+            combobox = new FontInfoJComboBox(choices, fontInfo);
             combobox.setFont(fontInfo.getFont());
 
             ((JLabel) combobox.getRenderer()).setHorizontalAlignment(JLabel.CENTER);

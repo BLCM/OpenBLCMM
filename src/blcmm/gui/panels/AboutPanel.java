@@ -31,6 +31,8 @@ package blcmm.gui.panels;
 import blcmm.Meta;
 import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.FontInfoJButton;
+import blcmm.gui.components.FontInfoJLabel;
 import blcmm.gui.components.ScrollablePanel;
 import blcmm.model.PatchType;
 import blcmm.utilities.GlobalLogger;
@@ -202,9 +204,8 @@ public final class AboutPanel extends JPanel {
         } else {
             buttons.add(this.createURLButton("Download " + Meta.NAME + " v" + newVersion, Meta.RELEASES_URL));
         }
-        JButton clipButton = new JButton();
+        JButton clipButton = new FontInfoJButton(fontInfo);
         clipButton.setText("<html><b><nobr>Copy Info to Clipboard</nobr></b></html>");
-        clipButton.setFont(currentFont);
         clipButton.setToolTipText("Copy Info to Clipboard");
         clipButton.setOpaque(true);
         clipButton.addActionListener(new ActionListener() {
@@ -224,9 +225,8 @@ public final class AboutPanel extends JPanel {
         });
         buttons.add(clipButton);
 
-        JButton logButton = new JButton();
+        JButton logButton = new FontInfoJButton(fontInfo);
         logButton.setText("<html><b><nobr>Open Log Dir</nobr></b></html>");
-        logButton.setFont(currentFont);
         logButton.setToolTipText("Open Log Dir");
         logButton.setOpaque(true);
         logButton.addActionListener(new ActionListener() {
@@ -413,7 +413,7 @@ public final class AboutPanel extends JPanel {
                 // pad (x, y)
                 0, 0));
         // Not using IconManager here since that only returns square images
-        JLabel donateButton = new JLabel(new ImageIcon(AboutPanel.class.getClassLoader().getResource("resources/donate.png")));
+        JLabel donateButton = new FontInfoJLabel(new ImageIcon(AboutPanel.class.getClassLoader().getResource("resources/donate.png")), fontInfo);
         donateButton.setToolTipText("Donate with PayPal");
         AboutPanel buttonRef = this;
         donateButton.addMouseListener(new MouseAdapter() {
@@ -471,11 +471,10 @@ public final class AboutPanel extends JPanel {
      * @return The new JButton
      */
     private JButton createURLButton(String linkText, String remoteURL) {
-        JButton button = new JButton();
+        JButton button = new FontInfoJButton(this.fontInfo);
         //Color linkColor = ThemeManager.getColor(ThemeManager.ColorType.UITextLink);
         //button.setText("<html><font color=\"" + Integer.toHexString(linkColor.getRGB()).substring(2) + "\"><u>" + linkText + "</u></font></html>");
         button.setText("<html><b><nobr>" + linkText + "</nobr></b></html>");
-        button.setFont(this.currentFont);
         button.setOpaque(true);
         button.setToolTipText(remoteURL);
         AboutPanel buttonRef = this;

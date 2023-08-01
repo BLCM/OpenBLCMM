@@ -65,6 +65,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -118,11 +119,14 @@ public final class CheckBoxTree extends JTree {
     private HashSet<TreePath> checkedPaths = new HashSet<>();
     private final CheckboxTreeMouseAdapter adapter;
 
+    private final FontInfo fontInfo;
+
     public CheckBoxTree(FontInfo fontInfo) {
         super(new String[]{"Made by LightChaosman"});
+        this.fontInfo = fontInfo;
         // Overriding cell renderer by new one defined above
         setFont(new Font(MainGUI.CODE_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()));
-        this.setCellRenderer(new CheckBoxTreeCellRenderer());
+        this.setCellRenderer(new CheckBoxTreeCellRenderer(fontInfo));
         this.setRootVisible(true);
         setDragEnabled(true);
         TreeTransferHandler treeTransferHandler = new TreeTransferHandler() {
@@ -140,7 +144,7 @@ public final class CheckBoxTree extends JTree {
 
         // Calling checking mechanism on mouse click
         final MouseListener orig = this.getMouseListeners()[0];
-        adapter = new CheckboxTreeMouseAdapter(orig, treeTransferHandler, this, fontInfo);
+        adapter = new CheckboxTreeMouseAdapter(orig, treeTransferHandler, this);
         this.removeMouseListener(orig);//We incorporate the original mouselistener in our own.
         this.addMouseListener(adapter);//*/
 
@@ -177,6 +181,10 @@ public final class CheckBoxTree extends JTree {
 
     public CompletePatch getPatch() {
         return patch;
+    }
+
+    public FontInfo getFontInfo() {
+        return this.fontInfo;
     }
 
     public boolean isSelected(DefaultMutableTreeNode treenode) {
@@ -635,6 +643,14 @@ public final class CheckBoxTree extends JTree {
         return paths;
     }
 
+    @Override
+    public JToolTip createToolTip() {
+        JToolTip tip = new JToolTip();
+        tip.setComponent(this);
+        tip.setFont(this.fontInfo.getFont());
+        return tip;
+    }
+
     private static class CheckboxTreeMouseAdapter extends MouseAdapter {
 
         private RightMouseButtonAction introduceCategoryAction;
@@ -663,35 +679,35 @@ public final class CheckBoxTree extends JTree {
         private final MouseListener orig;
         private final TreeTransferHandler treeTransferHandler;
 
-        public CheckboxTreeMouseAdapter(MouseListener orig, TreeTransferHandler treeTransferHandler, CheckBoxTree tree, FontInfo fontInfo) {
+        public CheckboxTreeMouseAdapter(MouseListener orig, TreeTransferHandler treeTransferHandler, CheckBoxTree tree) {
             this.orig = orig;
             this.treeTransferHandler = treeTransferHandler;
             this.tree = tree;
-            initializeRightMenuButtons(fontInfo);
+            initializeRightMenuButtons();
         }
 
-        private void initializeRightMenuButtons(FontInfo fontInfo) {
+        private void initializeRightMenuButtons() {
 
-            introduceCategoryAction = new IntroduceCategoryAction(tree, KeyEvent.VK_G, true, fontInfo);
-            renameCategoryAction = new RenameCategoryAction(tree, KeyEvent.VK_R, true, fontInfo);
-            insertCategoryAction = new AddCategoryAction(tree, KeyEvent.VK_H, true, fontInfo);
-            insertAction = new InsertAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_PLUS : KeyEvent.VK_INSERT, false, fontInfo);
-            deleteAction = new DeleteAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, OSInfo.CURRENT_OS == OSInfo.OS.MAC, fontInfo);
+            introduceCategoryAction = new IntroduceCategoryAction(tree, KeyEvent.VK_G, true);
+            renameCategoryAction = new RenameCategoryAction(tree, KeyEvent.VK_R, true);
+            insertCategoryAction = new AddCategoryAction(tree, KeyEvent.VK_H, true);
+            insertAction = new InsertAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_PLUS : KeyEvent.VK_INSERT, false);
+            deleteAction = new DeleteAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, OSInfo.CURRENT_OS == OSInfo.OS.MAC);
             copyAction = new CopyAction(tree, KeyEvent.VK_C, true);
             cutAction = new CutAction(tree, KeyEvent.VK_X, true);
             pasteAction = new PasteAction(tree, KeyEvent.VK_V, true);
-            editAction = new EditAction(tree, KeyEvent.VK_E, true, fontInfo);
+            editAction = new EditAction(tree, KeyEvent.VK_E, true);
             sortAction = new SortCategoryAction(tree);
             fullyExpandAction = new ExpandCategoryCompletelyAction(tree);
             fullyCollapseAction = new CollapseCategoryCompletelyAction(tree);
             mutuallyExclusiveAction = new MutuallyExclusiveAction(tree);
             lockAction = new LockAction(tree);
-            exportCategeroryAction = new ExportCategoryAsModAction(tree, fontInfo);
+            exportCategeroryAction = new ExportCategoryAsModAction(tree);
             copyModListAction = new CopyModListAction(tree);
             goToOverwriterAction = new GoToOverwriterAction(tree);
             goToPartialOverwrittenAction = new GoToPartialOverwrittenAction(tree);
             goToCompleteOverwrittenAction = new GoToCompleteOverwrittenAction(tree);
-            importModAction = new ImportModAction(tree, fontInfo);
+            importModAction = new ImportModAction(tree);
             List<RightMouseButtonAction> actions2 = new ArrayList<>();
             actions2.add(introduceCategoryAction);
             actions2.add(renameCategoryAction);

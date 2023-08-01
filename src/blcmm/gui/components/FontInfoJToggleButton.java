@@ -28,45 +28,73 @@
 package blcmm.gui.components;
 
 import blcmm.gui.FontInfo;
-import java.util.Vector;
-import javax.swing.ComboBoxModel;
-import javax.swing.JComboBox;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.JToggleButton;
 import javax.swing.JToolTip;
 
 /**
- * An extension to JComboBox which supports scaling the tooltip font based on
+ * An extension to JToggleButton which supports scaling the tooltip font based on
  * the user's font-size selection.  (Only really needed for sessions in which
  * the user's changing the size dynamically.)
  *
  * @author apocalyptech
  */
-public class FontInfoJComboBox<E> extends JComboBox {
+public class FontInfoJToggleButton extends JToggleButton {
 
     private final FontInfo fontInfo;
 
-    public FontInfoJComboBox(FontInfo fontInfo) {
+    public FontInfoJToggleButton(FontInfo fontInfo) {
         super();
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
 
-    public FontInfoJComboBox(ComboBoxModel<E> aModel, FontInfo fontInfo) {
-        super(aModel);
+    public FontInfoJToggleButton(Action a, FontInfo fontInfo) {
+        super(a);
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
 
-    public FontInfoJComboBox(E[] items, FontInfo fontInfo) {
-        super(items);
+    public FontInfoJToggleButton(Icon icon, FontInfo fontInfo) {
+        super(icon);
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
 
-    public FontInfoJComboBox(Vector<E> items, FontInfo fontInfo) {
-        super(items);
+    public FontInfoJToggleButton(Icon icon, boolean selected, FontInfo fontInfo) {
+        super(icon, selected);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJToggleButton(String text, FontInfo fontInfo) {
+        super(text);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJToggleButton(String text, boolean selected, FontInfo fontInfo) {
+        super(text, selected);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJToggleButton(String text, Icon icon, FontInfo fontInfo) {
+        super(text, icon);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJToggleButton(String text, Icon icon, boolean selected, FontInfo fontInfo) {
+        super(text, icon, selected);
         this.fontInfo = fontInfo;
         // May as well do this too
         this.setFont(fontInfo.getFont());

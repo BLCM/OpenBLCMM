@@ -30,6 +30,7 @@ package blcmm.gui.panels;
 
 import blcmm.Meta;
 import blcmm.gui.FontInfo;
+import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.Utilities;
 import java.awt.Color;
@@ -103,8 +104,7 @@ public final class SetupGameFilesPanel extends JPanel {
 
     public static JButton getBLModdingDotComRedirectButton(Component parentComponent, FontInfo fontInfo) {
         String sdkURL = "https://borderlandsmodding.com/running-mods/";
-        JButton sdkButton = new JButton();
-        sdkButton.setFont(fontInfo.getFont());
+        JButton sdkButton = new FontInfoJButton(fontInfo);
         Color linkColor = ThemeManager.getColor(ThemeManager.ColorType.UITextLink);
         sdkButton.setText("<html><font color=\"" + Integer.toHexString(linkColor.getRGB()).substring(2) + "\"><u><nobr>Click here for PythonSDK Install Instructions</nobr></u></font></html>");
         sdkButton.setOpaque(true);

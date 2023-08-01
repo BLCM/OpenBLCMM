@@ -27,7 +27,6 @@
  */
 package blcmm.gui.tree.rightmouse;
 
-import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.panels.EditPanel;
 import blcmm.gui.tree.CheckBoxTree;
@@ -43,11 +42,8 @@ import javax.swing.tree.TreePath;
  */
 public class InsertAction extends RightMouseButtonAction {
 
-    private final FontInfo fontInfo;
-
-    public InsertAction(CheckBoxTree tree, int hotkey, boolean ctrl, FontInfo fontInfo) {
+    public InsertAction(CheckBoxTree tree, int hotkey, boolean ctrl) {
         super(tree, "Insert", hotkey, ctrl, new Requirements(true, true, true));
-        this.fontInfo = fontInfo;
     }
 
     @Override
@@ -85,7 +81,7 @@ public class InsertAction extends RightMouseButtonAction {
             parentCategory = (Category) parentnode.getUserObject();
             insertIndex = parentnode.getIndex(selectednode) + 1;
         }
-        EditPanel panel = new EditPanel(tree.getPatch(), parentCategory, fontInfo);
+        EditPanel panel = new EditPanel(tree.getPatch(), parentCategory, this.tree.getFontInfo());
         // I'm actually *not* going to Utilities.scaleAndClampDialogSize() these
         // dimensions, since they're based on the main window size.  Presumably
         // users would already have that sized appropriately to their font
@@ -98,7 +94,7 @@ public class InsertAction extends RightMouseButtonAction {
                         insertIndex,
                         parentnode,
                         tree.isSelected(parentnode));
-            }, this.fontInfo, true);
+            }, true);
     }
 
 }

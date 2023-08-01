@@ -128,6 +128,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="forwardButton">
       <Properties>
@@ -141,6 +144,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="forwardButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="refsButton">
       <Properties>
@@ -150,6 +156,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refsButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JProgressBar" name="mainProgressBar">
     </Component>
@@ -162,6 +171,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deformatButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="autoFormatButton">
       <Properties>
@@ -171,6 +183,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoFormatButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="infoLabel">
       <AuxValues>
@@ -182,6 +197,9 @@
         <Property name="text" type="java.lang.String" value="&#x2606;"/>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt; Click to bookmark the currently dumped object.&lt;br/&gt;&#xa;Double click to manage your bookmarks."/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJLabel(this.fontInfo)"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JToggleButton" name="collapseArraysToggleButton">
       <Properties>
@@ -191,6 +209,9 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapseArraysToggleButtonActionPerformed"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJToggleButton(this.fontInfo)"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

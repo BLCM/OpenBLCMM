@@ -36,6 +36,9 @@ import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
 import blcmm.gui.FontInfo;
 import blcmm.gui.ObjectExplorer;
+import blcmm.gui.components.FontInfoJButton;
+import blcmm.gui.components.FontInfoJLabel;
+import blcmm.gui.components.FontInfoJToggleButton;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
 import blcmm.gui.text.HighlightedTextArea;
@@ -138,6 +141,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
      * Creates new form ObjectExplorerPanel
      *
      * @param dmm The DataManagerManager object we'll use for all data interaction
+     * @param fontInfo the FontInfo object describing the font we'll be using
      */
     public ObjectExplorerPanel(DataManagerManager dmm, FontInfo fontInfo) {
         this.dmm = dmm;
@@ -335,15 +339,15 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
-        backButton = new javax.swing.JButton();
-        forwardButton = new javax.swing.JButton();
-        refsButton = new javax.swing.JButton();
+        backButton = new FontInfoJButton(this.fontInfo);
+        forwardButton = new FontInfoJButton(this.fontInfo);
+        refsButton = new FontInfoJButton(this.fontInfo);
         mainProgressBar = new javax.swing.JProgressBar();
-        deformatButton = new javax.swing.JButton();
-        autoFormatButton = new javax.swing.JButton();
+        deformatButton = new FontInfoJButton(this.fontInfo);
+        autoFormatButton = new FontInfoJButton(this.fontInfo);
         infoLabel = new InfoLabel(InfoLabel.OE_SPECIFIC + "<br/><br/>" + InfoLabel.BASIC_1+ InfoLabel.BASIC_3, this.fontInfo);
-        bookmarkLabel = new javax.swing.JLabel();
-        collapseArraysToggleButton = new javax.swing.JToggleButton();
+        bookmarkLabel = new FontInfoJLabel(this.fontInfo);
+        collapseArraysToggleButton = new FontInfoJToggleButton(this.fontInfo);
 
         jLabel1.setText("Search:");
 
