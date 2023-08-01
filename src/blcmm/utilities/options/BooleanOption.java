@@ -28,9 +28,10 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
+import blcmm.gui.components.FontInfoJCheckBox;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 
@@ -47,10 +48,11 @@ public class BooleanOption extends Option<Boolean> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default value for the option
      */
-    public BooleanOption(OptionsBase optionsObj, String name, boolean defaultData) {
-        super(optionsObj, name, defaultData);
+    public BooleanOption(OptionsBase optionsObj, String name, FontInfo fontInfo, boolean defaultData) {
+        super(optionsObj, name, fontInfo, defaultData);
     }
 
     /**
@@ -59,6 +61,7 @@ public class BooleanOption extends Option<Boolean> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
@@ -67,12 +70,13 @@ public class BooleanOption extends Option<Boolean> {
      */
     public BooleanOption(OptionsBase optionsObj,
             String name,
+            FontInfo fontInfo,
             boolean defaultData,
             Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip) {
-        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
+        super(optionsObj, name, fontInfo, defaultData, shownPanel, displayDesc, callback, tooltip);
     }
 
     /**
@@ -107,7 +111,7 @@ public class BooleanOption extends Option<Boolean> {
     @Override
     public JComponent getGUIComponent(ToolSettingsPanel panel) {
         BooleanOption option = this;
-        JCheckBox check = new JCheckBox();
+        FontInfoJCheckBox check = new FontInfoJCheckBox(this.fontInfo);
         check.setSelected(this.getData());
         check.setHorizontalAlignment(SwingConstants.RIGHT);
         check.addActionListener(ae -> {

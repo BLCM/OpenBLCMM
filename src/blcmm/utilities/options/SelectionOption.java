@@ -28,6 +28,8 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
+import blcmm.gui.components.FontInfoJComboBox;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
 import blcmm.utilities.StringTable;
@@ -58,6 +60,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
@@ -68,6 +71,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      */
     public SelectionOption(OptionsBase optionsObj,
             String name,
+            FontInfo fontInfo,
             O defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -75,7 +79,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             String tooltip,
             O[] options,
             OptionDataConverter<O> converter) {
-        this(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip, null, options, converter);
+        this(optionsObj, name, fontInfo, defaultData, shownPanel, displayDesc, callback, tooltip, null, options, converter);
     }
 
     /**
@@ -84,6 +88,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
@@ -96,6 +101,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      */
     public SelectionOption(OptionsBase optionsObj,
             String name,
+            FontInfo fontInfo,
             O defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -104,7 +110,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             String setupCallback,
             O[] options,
             OptionDataConverter<O> converter) {
-        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip, setupCallback);
+        super(optionsObj, name, fontInfo, defaultData, shownPanel, displayDesc, callback, tooltip, setupCallback);
         this.options = options;
         this.converter = converter;
     }
@@ -141,7 +147,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
     @Override
     public JComponent getGUIComponent(ToolSettingsPanel panel) {
         SelectionOption option = this;
-        JComboBox<O> box = new JComboBox<>(options);
+        FontInfoJComboBox<O> box = new FontInfoJComboBox<>(options, this.fontInfo);
         box.setSelectedItem(this.getData());
         box.addItemListener(ie -> {
             setData((O) box.getSelectedItem());
@@ -165,6 +171,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      *
      * @param optionsObj The Options object we live in
      * @param name The name of the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData The default string
      * @param shownPanel Which panel to show ourselves in
      * @param displayDesc The description to the left of the control
@@ -175,6 +182,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      */
     public static SelectionOption createStringSelectionOption(OptionsBase optionsObj,
             String name,
+            FontInfo fontInfo,
             String defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -182,7 +190,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
             String tooltip,
             StringTable table) {
         StringSelectionOptionDataConverter conv = new StringSelectionOptionDataConverter(defaultData, Arrays.asList(table.keySet().toArray(new String[0])));
-        SelectionOption res = new SelectionOption(optionsObj, name, conv.def, shownPanel, displayDesc, callback, tooltip, conv.options.toArray(new StringSelectionOptionData[0]), conv) {
+        SelectionOption res = new SelectionOption(optionsObj, name, fontInfo, conv.def, shownPanel, displayDesc, callback, tooltip, conv.options.toArray(new StringSelectionOptionData[0]), conv) {
             @Override
             public JComponent getGUIComponent(ToolSettingsPanel panel) {
                 JComboBox guiComponent = (JComboBox) super.getGUIComponent(panel);

@@ -325,12 +325,12 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         jLabel3 = new javax.swing.JLabel();
         hotfixTypeCombobox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
-        parameterTextField = new EnhancedFormattedTextField<>(this::validateParameter,s->s);
+        parameterTextField = new EnhancedFormattedTextField<>(this.fontInfo, this::validateParameter,s->s);
         nameLabel = new javax.swing.JLabel();
         deformatButton = new javax.swing.JButton();
         formatButton = new javax.swing.JButton();
         hotfixCheckbox = new javax.swing.JCheckBox();
-        nameTextField = new EnhancedFormattedTextField<>(this::validateName, s->s);
+        nameTextField = new EnhancedFormattedTextField<>(this.fontInfo, this::validateName, s->s);
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         skipEmptyCheckCheckBox = new javax.swing.JCheckBox();

@@ -93,7 +93,6 @@
                   <Font name="SansSerif" size="13" style="2"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Get more mods"/>
-                <Property name="toolTipText" type="java.lang.String" value="Opens the BLCM github, the place where most mods are stored"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="getMoreModsMenuButtonActionPerformed"/>
@@ -411,7 +410,7 @@
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="themeComboBoxItemStateChanged"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;&gt;(ThemeManager.getAllInstalledThemes().toArray(new Theme[0]))"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJComboBox&lt;&gt;(ThemeManager.getAllInstalledThemes().toArray(new Theme[0]), MainGUI.fontInfo)"/>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Theme&gt;"/>
           </AuxValues>
         </Component>

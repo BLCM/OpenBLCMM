@@ -29,10 +29,11 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
+import blcmm.gui.components.FontInfoJLabel;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 /**
@@ -52,9 +53,10 @@ public class SectionHeaderOption extends Option<Integer> {
      * @param optionsObj The Options object we're contained within
      * @param shownPanel The panel in which we appear
      * @param headerText The header text to display
+     * @param fontInfo Font information to use on the option
      */
-    public SectionHeaderOption(OptionsBase optionsObj, Option.Shown shownPanel, String headerText) {
-        super(optionsObj, "_sectionheaderoption_header_" + Integer.toString(SectionHeaderOption.num_headers), shownPanel);
+    public SectionHeaderOption(OptionsBase optionsObj, Option.Shown shownPanel, String headerText, FontInfo fontInfo) {
+        super(optionsObj, "_sectionheaderoption_header_" + Integer.toString(SectionHeaderOption.num_headers), fontInfo, shownPanel);
         SectionHeaderOption.num_headers++;
         this.headerText = headerText;
     }
@@ -75,7 +77,7 @@ public class SectionHeaderOption extends Option<Integer> {
 
     @Override
     public JComponent getGUIComponent(ToolSettingsPanel panel) {
-        JLabel label = new JLabel("<html><b>" + this.headerText + "</b><hr/>");
+        FontInfoJLabel label = new FontInfoJLabel("<html><b>" + this.headerText + "</b><hr/>", this.fontInfo);
         label.setHorizontalAlignment(SwingConstants.CENTER);
         return label;
     }

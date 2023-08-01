@@ -30,6 +30,7 @@ package blcmm.gui.panels;
 
 import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.FontInfoJLabel;
 import blcmm.gui.theme.Theme;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
@@ -148,8 +149,7 @@ public class ToolSettingsPanel extends JPanel {
             } else {
 
                 constr.anchor = GridBagConstraints.WEST;
-                JLabel label1 = new JLabel(o.getDisplayDesc());
-                label1.setFont(this.fontInfo.getFont());
+                FontInfoJLabel label1 = new FontInfoJLabel(o.getDisplayDesc(), this.fontInfo);
                 this.add(label1, constr);
 
                 constr.gridx = 1;

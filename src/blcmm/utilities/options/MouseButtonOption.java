@@ -29,6 +29,8 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
+import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
 import java.awt.event.MouseAdapter;
@@ -50,6 +52,7 @@ public class MouseButtonOption extends Option<Integer> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
@@ -58,12 +61,13 @@ public class MouseButtonOption extends Option<Integer> {
      */
     public MouseButtonOption(OptionsBase optionsObj,
             String name,
+            FontInfo fontInfo,
             int defaultData,
             Option.Shown shownPanel,
             String displayDesc,
             String callback,
             String tooltip) {
-        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
+        super(optionsObj, name, fontInfo, defaultData, shownPanel, displayDesc, callback, tooltip);
     }
 
     /**
@@ -104,7 +108,7 @@ public class MouseButtonOption extends Option<Integer> {
      */
     @Override
     public JComponent getGUIComponent(ToolSettingsPanel panel) {
-        JButton button = new JButton();
+        FontInfoJButton button = new FontInfoJButton(this.fontInfo);
         this.updateLabel(button);
         button.addMouseListener(new MouseAdapter() {
             @Override

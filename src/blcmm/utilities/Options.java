@@ -140,6 +140,7 @@ public class Options extends OptionsBase {
          *
          * @param options The Options object we live in
          * @param section The section in which to display the options
+         * @param fontInfo Font information to use
          * @param identifier An internal identifier for the button; will show
          *      up in the setting names in our settings file.
          * @param header The header to print in front of the section
@@ -153,6 +154,7 @@ public class Options extends OptionsBase {
          */
         public MouseLinkSection(Options options,
                 Option.Shown section,
+                FontInfo fontInfo,
                 String identifier,
                 String header,
                 int defaultButton,
@@ -172,11 +174,13 @@ public class Options extends OptionsBase {
             this.fieldNameShift = "inputMouseLink" + identifier + "Shift";
             this.fieldNameAlt = "inputMouseLink" + identifier + "Alt";
 
-            options.registerOption(new SectionHeaderOption(options, section, header));
+            options.registerOption(new SectionHeaderOption(options, section, header, fontInfo));
 
             options.registerOption(new MouseButtonOption(
                     options,
-                    this.fieldNameButton, defaultButton,
+                    this.fieldNameButton,
+                    fontInfo,
+                    defaultButton,
                     section, "Mouse Button",
                     null,
                     "<html>Mouse button for clicking on object links.  Click to change<br/>"
@@ -185,7 +189,9 @@ public class Options extends OptionsBase {
 
             options.registerOption(new IntOption(
                     options,
-                    this.fieldNameClicks, defaultNumClicks,
+                    this.fieldNameClicks,
+                    fontInfo,
+                    defaultNumClicks,
                     section, "      Number of Clicks",
                     0, 4,
                     null,
@@ -194,7 +200,9 @@ public class Options extends OptionsBase {
 
             options.registerOption(new SelectionOption<>(
                     options,
-                    this.fieldNameBase, defaultBase,
+                    this.fieldNameBase,
+                    fontInfo,
+                    defaultBase,
                     section,
                     "      Base Action",
                     null,
@@ -212,7 +220,9 @@ public class Options extends OptionsBase {
 
             options.registerOption(new SelectionOption<>(
                     options,
-                    this.fieldNameCtrl, defaultCtrl,
+                    this.fieldNameCtrl,
+                    fontInfo,
+                    defaultCtrl,
                     section,
                     "        ...with Ctrl",
                     null,
@@ -230,7 +240,9 @@ public class Options extends OptionsBase {
 
             options.registerOption(new SelectionOption<>(
                     options,
-                    this.fieldNameMeta, defaultMeta,
+                    this.fieldNameMeta,
+                    fontInfo,
+                    defaultMeta,
                     section,
                     "        ...with Meta/⌘",
                     null,
@@ -248,7 +260,9 @@ public class Options extends OptionsBase {
 
             options.registerOption(new SelectionOption<>(
                     options,
-                    this.fieldNameShift, defaultShift,
+                    this.fieldNameShift,
+                    fontInfo,
+                    defaultShift,
                     section,
                     "        ...with Shift",
                     null,
@@ -266,7 +280,9 @@ public class Options extends OptionsBase {
 
             options.registerOption(new SelectionOption<>(
                     options,
-                    this.fieldNameAlt, defaultAlt,
+                    this.fieldNameAlt,
+                    fontInfo,
+                    defaultAlt,
                     section,
                     "        ...with Alt",
                     null,
@@ -339,6 +355,7 @@ public class Options extends OptionsBase {
      * Construct a fresh Options object.
      *
      * @param optionsFile The file from which to load options.
+     * @param fontInfo Font information to use for the options.
      */
     public Options(File optionsFile, FontInfo fontInfo) {
         super(optionsFile);
@@ -364,7 +381,9 @@ public class Options extends OptionsBase {
         // order in which they'll show up in the panel.
         this.registerOption(new SelectionOption<>(
                 this,
-                OptionNames.theme.toString(), ThemeManager.getTheme("dark"),
+                OptionNames.theme.toString(),
+                fontInfo,
+                ThemeManager.getTheme("dark"),
                 Option.Shown.SETTINGS, "Theme",
                 "setTheme", "Change " + Meta.NAME + "'s color theme",
                 "checkThemeSwitchAllowed",
@@ -377,7 +396,9 @@ public class Options extends OptionsBase {
 
         this.registerOption(new BooleanOption(
                 this,
-                OptionNames.checkForNewVersions.toString(), true,
+                OptionNames.checkForNewVersions.toString(),
+                fontInfo,
+                true,
                 Option.Shown.SETTINGS, "Check for new versions on startup",
                 "toggleCheckForNewVersions",
                 "Check for new versions of " + Meta.NAME + " when the "
@@ -385,14 +406,18 @@ public class Options extends OptionsBase {
 
         this.registerOption(new IntOption(
                 this,
-                OptionNames.fontsize.toString(), 12,
+                OptionNames.fontsize.toString(),
+                fontInfo,
+                12,
                 Option.Shown.SETTINGS, "Application font size",
                 8, 36, "updateFontSizes",
                 "Application font size"));
 
         this.registerOption(new BooleanOption(
                 this,
-                OptionNames.truncateCommands2.toString(), true,
+                OptionNames.truncateCommands2.toString(),
+                fontInfo,
+                true,
                 Option.Shown.SETTINGS, "Truncate commands in tree",
                 "toggleTruncateCommands",
                 "Truncate the value field on set commands, to "
@@ -400,7 +425,9 @@ public class Options extends OptionsBase {
 
         this.registerOption(new IntOption(
                 this,
-                OptionNames.truncateCommandLength.toString(), 100,
+                OptionNames.truncateCommandLength.toString(),
+                fontInfo,
+                100,
                 Option.Shown.SETTINGS, "Truncate length",
                 20, 900, "toggleTruncateCommands",
                 "Truncate the value field on set commands, to "
@@ -408,7 +435,9 @@ public class Options extends OptionsBase {
 
         this.registerOption(new BooleanOption(
                 this,
-                OptionNames.developerMode.toString(), false,
+                OptionNames.developerMode.toString(),
+                fontInfo,
+                false,
                 Option.Shown.SETTINGS, "Enable developer mode",
                 "toggleDeveloperMode",
                 "Enables/Disables changing actual mod code, and authoring "
@@ -416,25 +445,36 @@ public class Options extends OptionsBase {
 
         this.registerOption(new BooleanOption(
                 this,
-                OptionNames.highlightBVCErrors.toString(), true,
+                OptionNames.highlightBVCErrors.toString(),
+                fontInfo,
+                true,
                 Option.Shown.SETTINGS, "Highlight Incomplete BVC Statements",
                 "updateMainGUITreeHighlights",
                 "Toggles highlighting of Incomplete BVC/ID/BVA/BVSC "
                 + "tuples.  This is technically valid syntax, but discouraged "
                 + "for style reasons."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.dragAndDroppableCode.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.dragAndDroppableCode.toString(),
+                fontInfo,
+                true,
                 Option.Shown.SETTINGS, "Enable Dragging & Dropping in Text",
                 null,
                 "Enables/Disables being able to Drag & Drop"
                 + " text into text fields"));
 
-        this.registerOption(new BooleanOption(this, OptionNames.leafSelectionAllowed.toString(), false,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.leafSelectionAllowed.toString(),
+                fontInfo,
+                false,
                 Option.Shown.SETTINGS, "Enable Toggling Individual Statements",
                 null,
                 "Enables/Disables being able to toggle individual statements"));
 
-        this.registerOption(new BooleanOption(this, OptionNames.preferFullObjInOE.toString(), false,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.preferFullObjInOE.toString(),
+                fontInfo,
+                false,
                 Option.Shown.SETTINGS, "Prefer 'full' Object Names in OE Search Field",
                 null,
                 "<html>When viewing dumps in Object Explorer, this will replace the search field"
@@ -447,6 +487,7 @@ public class Options extends OptionsBase {
         this.mouseLinkSections = new MouseLinkSection[] {
             new MouseLinkSection(this,
                     Option.Shown.INPUT,
+                    fontInfo,
                     "Primary",
                     "Primary Button",
                     1,
@@ -459,6 +500,7 @@ public class Options extends OptionsBase {
                     ),
             new MouseLinkSection(this,
                     Option.Shown.INPUT,
+                    fontInfo,
                     "Secondary",
                     "Secondary Button",
                     2,
@@ -473,78 +515,123 @@ public class Options extends OptionsBase {
 
         // Now options in the OE Data area
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchActions.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchActions.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Actions Data",
                 "updateOESearchCategories",
                 "Search \"Actions\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchAI.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchAI.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "AI Data",
                 "updateOESearchCategories",
                 "Search \"AI\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchAnimations.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchAnimations.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Animations Data",
                 "updateOESearchCategories",
                 "Search \"Animations\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchBase.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchBase.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Base Data",
                 "updateOESearchCategories",
                 "Search \"Base\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchBehaviors.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchBehaviors.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Behaviors Data",
                 "updateOESearchCategories",
                 "Search \"Behaviors\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchDialog.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchDialog.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Dialog Data",
                 "updateOESearchCategories",
                 "Search \"Dialog\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchKismets.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchKismets.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Kismets Data",
                 "updateOESearchCategories",
                 "Search \"Kismets\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchMeshes.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchMeshes.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Meshes Data",
                 "updateOESearchCategories",
                 "Search \"Meshes\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchMissions.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchMissions.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Missions Data",
                 "updateOESearchCategories",
                 "Search \"Missions\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchOthers.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchOthers.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Others Data",
                 "updateOESearchCategories",
                 "Search \"Others\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchParticles.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchParticles.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Particles Data",
                 "updateOESearchCategories",
                 "Search \"Particles\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchPopulations.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchPopulations.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Populations Data",
                 "updateOESearchCategories",
                 "Search \"Populations\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchSkins.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchSkins.toString(),
+                fontInfo,
+                true,
                 Option.Shown.OE, "Skins Data",
                 "updateOESearchCategories",
                 "Search \"Skins\" classes during fulltext and refs searches."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchStaticMeshes.toString(), false,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchStaticMeshes.toString(),
+                fontInfo,
+                false,
                 Option.Shown.OE, "<html><font color=\"#C86400\">StaticMeshes Data</font>",
                 "updateOESearchCategories",
                 "Search \"StaticMeshes\" classes during fulltext and refs searches.  "
                 + "This package is only useful in specific circumstances, and is pretty big."));
 
-        this.registerOption(new BooleanOption(this, OptionNames.oeSearchWillowData.toString(), false,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeSearchWillowData.toString(),
+                fontInfo,
+                false,
                 Option.Shown.OE, "<html><font color=\"#C86400\">WillowData Data</font>",
                 "updateOESearchCategories",
                 "Search \"WillowData\" classes during fulltext and refs searches.  "
@@ -552,18 +639,27 @@ public class Options extends OptionsBase {
 
         // Now Dangerous Settings
 
-        this.registerOption(new BooleanOption(this, OptionNames.saveAsOffline.toString(), true,
+        this.registerOption(new BooleanOption(this,
+                OptionNames.saveAsOffline.toString(),
+                fontInfo,
+                true,
                 Option.Shown.DANGEROUS, "Save patch files in 'Offline' Mode",
                 null,
                 "Save patch files in 'Offline' Mode.  This should basically always be selected!"));
 
-        this.registerOption(new IntOption(this, OptionNames.onlineServiceNumber.toString(), 5,
+        this.registerOption(new IntOption(this,
+                OptionNames.onlineServiceNumber.toString(),
+                fontInfo,
+                5,
                 Option.Shown.DANGEROUS, "SparkService for 'Online'-saved Hotfixes",
                 1, 99,
                 null,
                 "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));
 
-        this.registerOption(new IntOption(this, OptionNames.accountDataNumber.toString(), 1,
+        this.registerOption(new IntOption(this,
+                OptionNames.accountDataNumber.toString(),
+                fontInfo,
+                1,
                 Option.Shown.DANGEROUS, "AccountData number for 'Offline'-saved Hotfixes",
                 0, 99,
                 null,
@@ -572,64 +668,64 @@ public class Options extends OptionsBase {
         // Next: options which don't show up on the settings panel.  Order
         // doesn't really matter here.
         // Has the user seen the export warning?
-        this.registerOption(new BooleanOption(this, OptionNames.hasSeenExportWarning.toString(), false));
+        this.registerOption(new BooleanOption(this, OptionNames.hasSeenExportWarning.toString(), fontInfo, false));
 
         // Show confirmation when checking partially checked categories?
-        this.registerOption(new BooleanOption(this, OptionNames.showConfirmPartialCategory.toString(), true));
+        this.registerOption(new BooleanOption(this, OptionNames.showConfirmPartialCategory.toString(), fontInfo, true));
 
         // Backup session information
-        this.registerOption(new IntOption(this, OptionNames.sessionsToKeep.toString(), 5));
-        this.registerOption(new IntOption(this, OptionNames.backupsPerSession.toString(), 10));
-        this.registerOption(new IntOption(this, OptionNames.secondsBetweenBackups.toString(), 120));
+        this.registerOption(new IntOption(this, OptionNames.sessionsToKeep.toString(), fontInfo, 5));
+        this.registerOption(new IntOption(this, OptionNames.backupsPerSession.toString(), fontInfo, 10));
+        this.registerOption(new IntOption(this, OptionNames.secondsBetweenBackups.toString(), fontInfo, 120));
 
         // Is the left pane in OE visible?
-        this.registerOption(new BooleanOption(this, OptionNames.OELeftPaneVisible.toString(), true));
+        this.registerOption(new BooleanOption(this, OptionNames.OELeftPaneVisible.toString(), fontInfo, true));
 
         // Remembered geometry for various windows.
-        this.registerOption(new IntOption(this, OptionNames.mainWindowWidth.toString(), 900));
-        this.registerOption(new IntOption(this, OptionNames.mainWindowHeight.toString(), 630));
-        this.registerOption(new BooleanOption(this, OptionNames.mainWindowMaximized.toString(), false));
+        this.registerOption(new IntOption(this, OptionNames.mainWindowWidth.toString(), fontInfo, 900));
+        this.registerOption(new IntOption(this, OptionNames.mainWindowHeight.toString(), fontInfo, 630));
+        this.registerOption(new BooleanOption(this, OptionNames.mainWindowMaximized.toString(), fontInfo, false));
         // Edit window is modal, and thus isn't really allowed to be maximized.
-        this.registerOption(new IntOption(this, OptionNames.editWindowWidth.toString(), 830));
-        this.registerOption(new IntOption(this, OptionNames.editWindowHeight.toString(), 560));
-        this.registerOption(new IntOption(this, OptionNames.oeWindowWidth.toString(), 1150));
-        this.registerOption(new IntOption(this, OptionNames.oeWindowHeight.toString(), 670));
-        this.registerOption(new BooleanOption(this, OptionNames.oeWindowMaximized.toString(), false));
+        this.registerOption(new IntOption(this, OptionNames.editWindowWidth.toString(), fontInfo, 830));
+        this.registerOption(new IntOption(this, OptionNames.editWindowHeight.toString(), fontInfo, 560));
+        this.registerOption(new IntOption(this, OptionNames.oeWindowWidth.toString(), fontInfo, 1150));
+        this.registerOption(new IntOption(this, OptionNames.oeWindowHeight.toString(), fontInfo, 670));
+        this.registerOption(new BooleanOption(this, OptionNames.oeWindowMaximized.toString(), fontInfo, false));
 
         //Remember previously openened files
-        this.registerOption(new StringListOption(this, OptionNames.fileHistory.toString(), new String[]{}));
+        this.registerOption(new StringListOption(this, OptionNames.fileHistory.toString(), fontInfo, new String[]{}));
 
         // Remember previous import location
-        this.registerOption(new FilenameOption(this, OptionNames.lastImport.toString(), "", fontInfo));
+        this.registerOption(new FilenameOption(this, OptionNames.lastImport.toString(), fontInfo, ""));
 
         // Filename truncation length ("recent" menu and MainGUI window title)
-        this.registerOption(new IntOption(this, OptionNames.filenameTruncationLength.toString(), 60));
+        this.registerOption(new IntOption(this, OptionNames.filenameTruncationLength.toString(), fontInfo, 60));
 
         // Whether or not MUT coloration/notification propagates.  This is just
         // for CJ, who apparently won't shut up about it.  :)
-        this.registerOption(new BooleanOption(this, OptionNames.propagateMUTNotification.toString(), true));
+        this.registerOption(new BooleanOption(this, OptionNames.propagateMUTNotification.toString(), fontInfo, true));
 
         // All of our Object Explorer Bookmarks of queries / objects
-        this.registerOption(new StringListOption(this, OptionNames.BL2Bookmarks.toString(), new String[]{}));
-        this.registerOption(new StringListOption(this, OptionNames.TPSBookmarks.toString(), new String[]{}));
-        this.registerOption(new StringListOption(this, OptionNames.AODKBookmarks.toString(), new String[]{}));
+        this.registerOption(new StringListOption(this, OptionNames.BL2Bookmarks.toString(), fontInfo, new String[]{}));
+        this.registerOption(new StringListOption(this, OptionNames.TPSBookmarks.toString(), fontInfo, new String[]{}));
+        this.registerOption(new StringListOption(this, OptionNames.AODKBookmarks.toString(), fontInfo, new String[]{}));
 
         // The integer storing our 1-time popup messages
-        this.registerOption(new IntOption(this, OptionNames.popupStatus.toString(), 0));
+        this.registerOption(new IntOption(this, OptionNames.popupStatus.toString(), fontInfo, 0));
 
         // A flag determining if we show the hotfix naming checkbox
-        this.registerOption(new BooleanOption(this, OptionNames.showHotfixNames.toString(), true));
+        this.registerOption(new BooleanOption(this, OptionNames.showHotfixNames.toString(), fontInfo, true));
 
         // A flag for if we disabled delete messages.
-        this.registerOption(new BooleanOption(this, OptionNames.showDeleteConfirmation.toString(), true));
+        this.registerOption(new BooleanOption(this, OptionNames.showDeleteConfirmation.toString(), fontInfo, true));
 
         // Timestamp of the datalib DB/Jar files when they was last successfully verified
-        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampDbBL2.toString(), 0));
-        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampDbTPS.toString(), 0));
-        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampDbAODK.toString(), 0));
-        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarBL2.toString(), 0));
-        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarTPS.toString(), 0));
-        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarAODK.toString(), 0));
+        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampDbBL2.toString(), fontInfo, 0));
+        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampDbTPS.toString(), fontInfo, 0));
+        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampDbAODK.toString(), fontInfo, 0));
+        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarBL2.toString(), fontInfo, 0));
+        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarTPS.toString(), fontInfo, 0));
+        this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarAODK.toString(), fontInfo, 0));
 
         // Finally: a bit of aggregation housekeeping
         this.updateOESearchCategories();

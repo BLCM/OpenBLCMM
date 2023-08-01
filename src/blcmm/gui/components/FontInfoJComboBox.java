@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2020  LightChaosman
+ * Copyright (C) 2023 Christopher J. Kucera
  *
  * OpenBLCMM is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,35 +28,48 @@
 package blcmm.gui.components;
 
 import blcmm.gui.FontInfo;
-import blcmm.gui.theme.ThemeManager;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import javax.swing.JTextField;
+import java.util.Vector;
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JToolTip;
 
 /**
+ * An extension to JComboBox which supports scaling the tooltip font based on
+ * the user's font-size selection.  (Only really needed for sessions in which
+ * the user's changing the size dynamically.)
  *
- * @author LightChaosman
+ * @author apocalyptech
  */
-@SuppressWarnings("serial")
-public class DefaultTextTextField extends JTextField {
+public class FontInfoJComboBox<E> extends JComboBox {
 
-    private final String hint;
-    private boolean showingHint;
     private final FontInfo fontInfo;
 
-    public DefaultTextTextField(final String hint, FontInfo fontInfo) {
-        super(hint);
-        this.hint = hint;
-        this.showingHint = true;
+    public FontInfoJComboBox(FontInfo fontInfo) {
+        super();
         this.fontInfo = fontInfo;
-        super.addFocusListener(new MyFocusListener());
-        super.setForeground(ThemeManager.getColor(ThemeManager.ColorType.UINimbusDisabledText));
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
     }
 
-    @Override
-    public String getText() {
-        return showingHint ? "" : super.getText();
+    public FontInfoJComboBox(ComboBoxModel<E> aModel, FontInfo fontInfo) {
+        super(aModel);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJComboBox(E[] items, FontInfo fontInfo) {
+        super(items);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJComboBox(Vector<E> items, FontInfo fontInfo) {
+        super(items);
+        this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
     }
 
     @Override
@@ -64,27 +77,5 @@ public class DefaultTextTextField extends JTextField {
         JToolTip tip = new JToolTip();
         tip.setFont(this.fontInfo.getFont());
         return tip;
-    }
-
-    private class MyFocusListener implements FocusListener {
-
-        @Override
-        public void focusGained(FocusEvent e) {
-            if (getText().isEmpty()) {
-                setText("");
-                setForeground(ThemeManager.getColor(ThemeManager.ColorType.UIText));
-                showingHint = false;
-            }
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-            if (getText().isEmpty()) {
-                setForeground(ThemeManager.getColor(ThemeManager.ColorType.UINimbusDisabledText));
-                setText(hint);
-                showingHint = true;
-
-            }
-        }
     }
 }

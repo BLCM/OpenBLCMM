@@ -125,6 +125,8 @@ public class BLCMMImportOptions extends OptionsBase {
                 this,
                 // Name
                 OptionNames.theme.toString(),
+                // Font Info
+                null,
                 // Default
                 ThemeManager.getTheme("dark"),
                 // Shown Panel
@@ -146,16 +148,16 @@ public class BLCMMImportOptions extends OptionsBase {
 
         // Now all our more-standard ones
         for (OptionsBase.OptionNames optionName : this.intOptions) {
-            this.registerOption(new IntOption(this, optionName.toString(), 0));
+            this.registerOption(new IntOption(this, optionName.toString(), null, 0));
         }
         for (OptionsBase.OptionNames optionName : this.booleanOptions) {
-            this.registerOption(new BooleanOption(this, optionName.toString(), false));
+            this.registerOption(new BooleanOption(this, optionName.toString(), null, false));
         }
         for (OptionsBase.OptionNames optionName : this.stringListOptions) {
-            this.registerOption(new StringListOption(this, optionName.toString(), new String[]{}));
+            this.registerOption(new StringListOption(this, optionName.toString(), null, new String[]{}));
         }
         for (OptionsBase.OptionNames optionName : this.filenameOptions) {
-            this.registerOption(new FilenameOption(this, optionName.toString(), "", null));
+            this.registerOption(new FilenameOption(this, optionName.toString(), null, ""));
         }
 
     }

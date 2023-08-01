@@ -53,7 +53,7 @@ import javax.swing.SwingConstants;
 
 /**
  * A custom file-chooser dialog for use in OpenBLCMM.
- * 
+ *
  * Note that we're passing in a Font to use as our base font -- I was unable
  * to find a reliable way of propagating a default font after the user has
  * changed the font size in the app, and eventually decided to just use a
@@ -289,8 +289,7 @@ public class BLCMM_FileChooser extends JFileChooser {
      * @return The JButton
      */
     private JButton directoryShortcutButton(JFileChooser fc, String label, String path, Icon icon) {
-        JButton button = new JButton(label);
-        button.setFont(this.fontInfo.getFont());
+        JButton button = new FontInfoJButton(label, this.fontInfo);
         button.addActionListener(e -> fc.setCurrentDirectory(new File(path)));
         button.setToolTipText(path);
         if (icon != null) {

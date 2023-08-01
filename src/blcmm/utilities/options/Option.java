@@ -28,6 +28,7 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
 import javax.swing.JComponent;
@@ -72,15 +73,18 @@ public abstract class Option<T> {
 
     protected final OptionsBase optionsObj;
 
+    protected final FontInfo fontInfo;
+
     /**
      * Constructor for an option which won't be displayed on the settings panel.
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key of the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default data for the option
      */
-    public Option(OptionsBase optionsObj, String name, T defaultData) {
-        this(optionsObj, name, defaultData, Shown.NONE, false, null, null, null, null);
+    public Option(OptionsBase optionsObj, String name, FontInfo fontInfo, T defaultData) {
+        this(optionsObj, name, fontInfo, defaultData, Shown.NONE, false, null, null, null, null);
     }
 
     /**
@@ -89,10 +93,11 @@ public abstract class Option<T> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name The name of the option
+     * @param fontInfo Font information to use on the option
      * @param shownPanel The panel on which we'll be shown.
      */
-    public Option(OptionsBase optionsObj, String name, Shown shownPanel) {
-        this(optionsObj, name, null, shownPanel, true, null, null, null, null);
+    public Option(OptionsBase optionsObj, String name, FontInfo fontInfo, Shown shownPanel) {
+        this(optionsObj, name, fontInfo, null, shownPanel, true, null, null, null, null);
     }
 
     /**
@@ -101,6 +106,7 @@ public abstract class Option<T> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key of the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default data for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel.
@@ -109,11 +115,13 @@ public abstract class Option<T> {
      * @param tooltip Tooltip to show on the control
      */
     public Option(OptionsBase optionsObj,
-            String name, T defaultData,
+            String name,
+            FontInfo fontInfo,
+            T defaultData,
             Shown shownPanel,
             String displayDesc,
             String callback, String tooltip) {
-        this(optionsObj, name, defaultData, shownPanel, false, displayDesc, callback, tooltip, null);
+        this(optionsObj, name, fontInfo, defaultData, shownPanel, false, displayDesc, callback, tooltip, null);
     }
 
     /**
@@ -122,6 +130,7 @@ public abstract class Option<T> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key of the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default data for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel.
@@ -132,12 +141,14 @@ public abstract class Option<T> {
      * option. Pass null to let it be set up as usual.
      */
     public Option(OptionsBase optionsObj,
-            String name, T defaultData,
+            String name,
+            FontInfo fontInfo,
+            T defaultData,
             Shown shownPanel,
             String displayDesc,
             String callback, String tooltip,
             String setupCallback) {
-        this(optionsObj, name, defaultData, shownPanel, false, displayDesc, callback, tooltip, null);
+        this(optionsObj, name, fontInfo, defaultData, shownPanel, false, displayDesc, callback, tooltip, null);
     }
 
     /**
@@ -146,6 +157,7 @@ public abstract class Option<T> {
      *
      * @param options The Options that this Option is a part of
      * @param name Key of the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default data for the option
      * @param shownPanel The panel on which to show this option
      * @param onlyVisual True if this element is purely visual, or false if it's
@@ -158,13 +170,16 @@ public abstract class Option<T> {
      * option. Pass null to let it be set up as usual.
      */
     public Option(OptionsBase options,
-            String name, T defaultData,
+            String name,
+            FontInfo fontInfo,
+            T defaultData,
             Shown shownPanel, boolean onlyVisual,
             String displayDesc,
             String callback, String tooltip,
             String setupCallback) {
         this.optionsObj = options;
         this.name = name;
+        this.fontInfo = fontInfo;
         this.defaultData = defaultData;
         this.shownPanel = shownPanel;
         this.onlyVisual = onlyVisual;

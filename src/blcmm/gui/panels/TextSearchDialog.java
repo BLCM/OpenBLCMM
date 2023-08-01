@@ -137,7 +137,7 @@ public class TextSearchDialog extends javax.swing.JDialog {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridwidth = 2;
         gc.weightx = 500;
-        this.searchTextField = new EnhancedFormattedTextField<>(this::isValidRegex, s->s);
+        this.searchTextField = new EnhancedFormattedTextField<>(fontInfo, this::isValidRegex, s->s);
         this.searchTextField.setFont(fontInfo.getFont());
         mainPanel.add(this.searchTextField, gc);
 

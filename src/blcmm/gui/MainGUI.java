@@ -35,6 +35,7 @@ import blcmm.data.lib.DataManagerManager;
 import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.BLCMM_FileChooser;
 import blcmm.gui.components.DefaultTextTextField;
+import blcmm.gui.components.FontInfoJComboBox;
 import blcmm.gui.components.ForceClosingJFrame;
 import blcmm.gui.components.GUIDataStatusNotifier;
 import blcmm.gui.components.GameSelectionPanel;
@@ -331,7 +332,7 @@ public final class MainGUI extends ForceClosingJFrame {
         );
         layer2.add(iLabel, cs);
 
-        searchField = new DefaultTextTextField("Search");
+        searchField = new DefaultTextTextField("Search", MainGUI.fontInfo);
         searchField.setColumns(10);
         searchField.setBorder(new BevelBorder(BevelBorder.RAISED));
         searchField.setToolTipText("Hold shift/ctrl while pressing enter to also search code, not just categories");
@@ -621,7 +622,7 @@ public final class MainGUI extends ForceClosingJFrame {
         gameTypePanel = new GameSelectionPanel();
         fontSizeSpinner = new javax.swing.JSpinner();
         fontSizeLabel = new javax.swing.JLabel();
-        themeComboBox = new javax.swing.JComboBox<>(ThemeManager.getAllInstalledThemes().toArray(new Theme[0]));
+        themeComboBox = new FontInfoJComboBox<>(ThemeManager.getAllInstalledThemes().toArray(new Theme[0]), MainGUI.fontInfo);
         timedLabel = new TimedLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
@@ -815,7 +816,6 @@ public final class MainGUI extends ForceClosingJFrame {
 
         getMoreModsMenuButton.setFont(new java.awt.Font("SansSerif", 2, 13)); // NOI18N
         getMoreModsMenuButton.setText("Get more mods");
-        getMoreModsMenuButton.setToolTipText("Opens the BLCM github, the place where most mods are stored");
         getMoreModsMenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 getMoreModsMenuButtonActionPerformed(evt);

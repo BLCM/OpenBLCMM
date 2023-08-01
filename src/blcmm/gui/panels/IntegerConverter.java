@@ -162,8 +162,8 @@ public class IntegerConverter extends javax.swing.JPanel {
         JLabel mainLabel = new JLabel(label1);
         mainLabel.setFont(this.fontInfo.getFont());
         EnhancedFormattedTextField mainText = new EnhancedFormattedTextField<>(
+                this.fontInfo,
                 EnhancedFormattedTextField.getIntegerValidator(min1, max1), s -> Integer.parseInt(s.trim()));
-        mainText.setFont(this.fontInfo.getFont());
         mainText.setMaximumSize(new Dimension(150, 999));
         mainText.setMinimumSize(new Dimension(150, inputHeight));
         mainText.setPreferredSize(new Dimension(150, inputHeight));
@@ -172,8 +172,8 @@ public class IntegerConverter extends javax.swing.JPanel {
         JLabel topRightLabel = new JLabel(label2);
         topRightLabel.setFont(this.fontInfo.getFont());
         EnhancedFormattedTextField topRightText = new EnhancedFormattedTextField<>(
+                this.fontInfo,
                 EnhancedFormattedTextField.getIntegerValidator(min2, max2), s -> Integer.parseInt(s.trim()));
-        topRightText.setFont(this.fontInfo.getFont());
         topRightText.setMaximumSize(new Dimension(150, 999));
         topRightText.setMinimumSize(new Dimension(150, inputHeight));
         topRightText.setPreferredSize(new Dimension(150, inputHeight));
@@ -182,8 +182,8 @@ public class IntegerConverter extends javax.swing.JPanel {
         JLabel bottomRightLabel = new JLabel(label3);
         bottomRightLabel.setFont(this.fontInfo.getFont());
         EnhancedFormattedTextField bottomRightText = new EnhancedFormattedTextField<>(
+                this.fontInfo,
                 EnhancedFormattedTextField.getIntegerValidator(min3, max3), s -> Integer.parseInt(s.trim()));
-        bottomRightText.setFont(this.fontInfo.getFont());
         bottomRightText.setMaximumSize(new Dimension(150, 999));
         bottomRightText.setMinimumSize(new Dimension(150, inputHeight));
         bottomRightText.setPreferredSize(new Dimension(150, inputHeight));

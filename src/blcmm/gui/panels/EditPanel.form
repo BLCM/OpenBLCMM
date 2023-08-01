@@ -127,7 +127,7 @@
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new EnhancedFormattedTextField&lt;&gt;(this::validateParameter,s-&gt;s)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new EnhancedFormattedTextField&lt;&gt;(this.fontInfo, this::validateParameter,s-&gt;s)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="nameLabel">
@@ -169,7 +169,7 @@
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new EnhancedFormattedTextField&lt;&gt;(this::validateName, s-&gt;s)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new EnhancedFormattedTextField&lt;&gt;(this.fontInfo, this::validateName, s-&gt;s)"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">

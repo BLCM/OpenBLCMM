@@ -27,6 +27,7 @@
  */
 package blcmm.gui.components;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.theme.ThemeManager;
 import java.awt.Color;
 import java.awt.event.FocusAdapter;
@@ -34,6 +35,7 @@ import java.awt.event.FocusEvent;
 import java.text.ParseException;
 import java.util.function.Function;
 import javax.swing.JFormattedTextField;
+import javax.swing.JToolTip;
 
 /**
  *
@@ -42,12 +44,15 @@ import javax.swing.JFormattedTextField;
  */
 public class EnhancedFormattedTextField<T> extends JFormattedTextField {
 
+    private final FontInfo fontInfo;
     private final Function<String, String> customValidator;
     private final Function<String, T> converter;
 
-    public EnhancedFormattedTextField(Function<String, String> customValidator, Function<String, T> converter) {
+    public EnhancedFormattedTextField(FontInfo fontInfo, Function<String, String> customValidator, Function<String, T> converter) {
+        this.fontInfo = fontInfo;
         this.customValidator = customValidator;
         this.converter = converter;
+        this.setFont(fontInfo.getFont());
         super.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
@@ -140,6 +145,13 @@ public class EnhancedFormattedTextField<T> extends JFormattedTextField {
     @Override
     public T getValue() {
         return (T) super.getValue(); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public JToolTip createToolTip() {
+        JToolTip tip = new JToolTip();
+        tip.setFont(this.fontInfo.getFont());
+        return tip;
     }
 
 }

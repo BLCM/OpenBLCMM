@@ -30,12 +30,12 @@ package blcmm.utilities.options;
 
 import blcmm.gui.FontInfo;
 import blcmm.gui.components.BLCMM_FileChooser;
+import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
 import blcmm.utilities.Utilities;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 
@@ -46,20 +46,17 @@ import javax.swing.JFileChooser;
  */
 public class FilenameOption extends Option<String> {
 
-    private FontInfo fontInfo;
-
     /**
      * Constructor for a string option which will not be displayed on the
      * settings panel.
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
-     * @param defaultData Default value for the option
      * @param fontInfo A FontInfo object to scale our file chooser, if needed.
+     * @param defaultData Default value for the option
      */
-    public FilenameOption(OptionsBase optionsObj, String name, String defaultData, FontInfo fontInfo) {
-        super(optionsObj, name, defaultData);
-        this.fontInfo = fontInfo;
+    public FilenameOption(OptionsBase optionsObj, String name, FontInfo fontInfo, String defaultData) {
+        super(optionsObj, name, fontInfo, defaultData);
     }
 
     /**
@@ -68,23 +65,22 @@ public class FilenameOption extends Option<String> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo A FontInfo object to scale our file chooser, if needed.
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
      * @param callback Callback to use when the option is changed
      * @param tooltip Tooltip to show on the control
-     * @param fontInfo A FontInfo object to scale our file chooser, if needed.
      */
     public FilenameOption(OptionsBase optionsObj,
             String name,
+            FontInfo fontInfo,
             String defaultData,
             Option.Shown shownPanel,
             String displayDesc,
             String callback,
-            String tooltip,
-            FontInfo fontInfo) {
-        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
-        this.fontInfo = fontInfo;
+            String tooltip) {
+        super(optionsObj, name, fontInfo, defaultData, shownPanel, displayDesc, callback, tooltip);
     }
 
     /**
@@ -119,7 +115,7 @@ public class FilenameOption extends Option<String> {
     @Override
     public JComponent getGUIComponent(ToolSettingsPanel panel) {
         FilenameOption option = this;
-        JButton but = new JButton("Select file");
+        FontInfoJButton but = new FontInfoJButton("Select file", this.fontInfo);
         but.addActionListener((ActionEvent ae) -> {
             JFileChooser fc = new BLCMM_FileChooser(fontInfo, Utilities.getDefaultOpenLocation());
             int returnVal = fc.showOpenDialog(panel);

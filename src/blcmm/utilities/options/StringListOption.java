@@ -27,6 +27,7 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.model.PatchIO;
 import blcmm.utilities.OptionsBase;
@@ -38,8 +39,8 @@ import javax.swing.JComponent;
  */
 public class StringListOption extends Option<String[]> {
 
-    public StringListOption(OptionsBase optionsObj, String name, String[] defaultData) {
-        super(optionsObj, name, defaultData);
+    public StringListOption(OptionsBase optionsObj, String name, FontInfo fontInfo, String[] defaultData) {
+        super(optionsObj, name, fontInfo, defaultData);
     }
 
     @Override

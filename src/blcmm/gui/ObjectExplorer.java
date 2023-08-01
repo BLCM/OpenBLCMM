@@ -33,6 +33,7 @@ import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
+import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.components.ForceClosingJFrame;
 import blcmm.gui.components.SimpleGameSelectionComboBox;
 import blcmm.gui.components.VariableTabsTabbedPane;
@@ -193,7 +194,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         leftHandPanel = new javax.swing.JPanel();
         gameTypeComboBox = new SimpleGameSelectionComboBox();
         downloadDataPackPanel = new javax.swing.JPanel();
-        downloadDataPackButton = new javax.swing.JButton();
+        downloadDataPackButton = new FontInfoJButton(this.fontInfo);
         leftHandSplitPlane = new javax.swing.JSplitPane();
         classBrowserPanel = new javax.swing.JPanel();
         classBrowserScrollPane = new javax.swing.JScrollPane();
@@ -201,7 +202,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         objectBrowserPanel = new javax.swing.JPanel();
         objectBrowserScrollPane = new javax.swing.JScrollPane();
         objectBrowserTree = new javax.swing.JTree();
-        oePanelTabbedPane = new OETabbedPane();
+        oePanelTabbedPane = new OETabbedPane(this.fontInfo);
 
         setTitle("Object Explorer");
 
@@ -693,6 +694,10 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }
 
     private class OETabbedPane extends VariableTabsTabbedPane<ObjectExplorerPanel> {
+
+        public OETabbedPane(FontInfo fontInfo) {
+            super(fontInfo);
+        }
 
         @Override
         protected ObjectExplorerPanel getDefaultNewComponent() {

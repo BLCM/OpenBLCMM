@@ -28,6 +28,7 @@
  */
 package blcmm.utilities.options;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
 import javax.swing.JComponent;
@@ -51,10 +52,11 @@ public class LongOption extends Option<Long> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default value for the option
      */
-    public LongOption(OptionsBase optionsObj, String name, long defaultData) {
-        super(optionsObj, name, defaultData);
+    public LongOption(OptionsBase optionsObj, String name, FontInfo fontInfo, long defaultData) {
+        super(optionsObj, name, fontInfo, defaultData);
         this.minValue = -1;
         this.maxValue = -1;
     }
@@ -65,6 +67,7 @@ public class LongOption extends Option<Long> {
      *
      * @param optionsObj The Options that this Option is a part of
      * @param name Key for the option
+     * @param fontInfo Font information to use on the option
      * @param defaultData Default value for the option
      * @param shownPanel The panel on which to show this option
      * @param displayDesc Display description on the settings panel
@@ -75,6 +78,7 @@ public class LongOption extends Option<Long> {
      */
     public LongOption(OptionsBase optionsObj,
             String name,
+            FontInfo fontInfo,
             long defaultData,
             Option.Shown shownPanel,
             String displayDesc,
@@ -82,7 +86,7 @@ public class LongOption extends Option<Long> {
             long maxValue,
             String callback,
             String tooltip) {
-        super(optionsObj, name, defaultData, shownPanel, displayDesc, callback, tooltip);
+        super(optionsObj, name, fontInfo, defaultData, shownPanel, displayDesc, callback, tooltip);
         this.minValue = minValue;
         this.maxValue = maxValue;
     }

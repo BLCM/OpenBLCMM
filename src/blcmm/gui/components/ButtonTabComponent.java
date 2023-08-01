@@ -32,6 +32,7 @@ package blcmm.gui.components;
  * @author FromDarkHell
  * @author LightChaosman
  */
+import blcmm.gui.FontInfo;
 import blcmm.utilities.GlobalLogger;
 import java.awt.*;
 import java.awt.event.*;
@@ -42,7 +43,7 @@ public class ButtonTabComponent extends JPanel {
 
     private final JTabbedPane pane;
 
-    public ButtonTabComponent(final JTabbedPane pane) {
+    public ButtonTabComponent(final JTabbedPane pane, FontInfo fontInfo) {
         //unset default flow layout
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if (pane == null) {
@@ -62,12 +63,13 @@ public class ButtonTabComponent extends JPanel {
                 return null;
             }
         };
+        label.setFont(fontInfo.getFont());
 
         add(label);
         //add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 2));
         //tab button
-        TabButton button = new TabButton();
+        TabButton button = new TabButton(fontInfo);
         add(button);
         //add more space to the top of the component
         setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
@@ -75,8 +77,11 @@ public class ButtonTabComponent extends JPanel {
 
     class TabButton extends JButton implements ActionListener {
 
-        public TabButton() {
+        private final FontInfo fontInfo;
+
+        public TabButton(FontInfo fontInfo) {
             int size = 17;
+            this.fontInfo = fontInfo;
             setPreferredSize(new Dimension(size, size));
             setToolTipText("Close this tab");
             //Make the button look the same for all Laf's
@@ -132,6 +137,14 @@ public class ButtonTabComponent extends JPanel {
             g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
             g2.dispose();
         }
+
+        @Override
+        public JToolTip createToolTip() {
+            JToolTip tip = new JToolTip();
+            tip.setFont(this.fontInfo.getFont());
+            return tip;
+        }
+
     }
     private final static MouseListener buttonMouseListener = new MouseAdapter() {
         @Override

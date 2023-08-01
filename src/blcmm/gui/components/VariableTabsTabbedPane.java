@@ -27,6 +27,7 @@
  */
 package blcmm.gui.components;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.panels.ObjectExplorerPanel;
 import blcmm.utilities.GlobalLogger;
@@ -63,13 +64,16 @@ public abstract class VariableTabsTabbedPane<P extends JPanel> extends JTabbedPa
     private Image tabImage = null;
     private Point currentMouseLocation = null;
     private int draggedTabIndex = 0;
+    private final FontInfo fontInfo;
 
-    public VariableTabsTabbedPane() {
+    public VariableTabsTabbedPane(FontInfo fontInfo) {
         super();
         super.add("", getDefaultNewComponent());
+        this.fontInfo = fontInfo;
         JLabel label = new JLabel("  Tab 1  ");
+        label.setFont(fontInfo.getFont());
         usedIndices.add(1);
-        int height = new ButtonTabComponent(VariableTabsTabbedPane.this).getPreferredSize().height;
+        int height = new ButtonTabComponent(VariableTabsTabbedPane.this, fontInfo).getPreferredSize().height;
         label.setPreferredSize(new Dimension(label.getPreferredSize().width, height));
         super.setTabComponentAt(0, label);
         super.add("+", new JPanel());
@@ -186,7 +190,7 @@ public abstract class VariableTabsTabbedPane<P extends JPanel> extends JTabbedPa
                 if (toFocus != null) {
                     EventQueue.invokeLater(toFocus::requestFocus);
                 }
-                ButtonTabComponent buttoncomp = new ButtonTabComponent(VariableTabsTabbedPane.this);
+                ButtonTabComponent buttoncomp = new ButtonTabComponent(VariableTabsTabbedPane.this, this.fontInfo);
                 setTabComponentAt(index2 - 1, buttoncomp);
                 GlobalLogger.log("Object Explorer - added tab " + newTabIndex);
                 usedIndices.add(newTabIndex);
