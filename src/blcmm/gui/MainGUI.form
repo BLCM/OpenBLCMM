@@ -340,7 +340,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="fontSizeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jSpinner1" min="-2" max="-2" attributes="0"/>
+                  <Component id="fontSizeSpinner" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -349,7 +349,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="jSpinner1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="fontSizeSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="fontSizeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="themeComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -380,7 +380,7 @@
             </DimensionLayout>
           </Layout>
         </Container>
-        <Component class="javax.swing.JSpinner" name="jSpinner1">
+        <Component class="javax.swing.JSpinner" name="fontSizeSpinner">
           <Properties>
             <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
               <SpinnerModel initial="12" maximum="36" minimum="8" numberType="java.lang.Integer" stepSize="1" type="number"/>
@@ -393,7 +393,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jSpinner1StateChanged"/>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fontSizeSpinnerStateChanged"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="fontSizeLabel">

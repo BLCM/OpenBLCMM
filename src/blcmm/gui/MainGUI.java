@@ -234,7 +234,7 @@ public final class MainGUI extends ForceClosingJFrame {
         getGameSelectionPanel().addItemListenerToComboBox(this::gameSelectionAction);
 
         themeComboBox.setSelectedItem(Options.INSTANCE.getTheme());
-        jSpinner1.setValue(Options.INSTANCE.getFontsize());
+        fontSizeSpinner.setValue(Options.INSTANCE.getFontsize());
 
         /* To test out changes to our exception handler, this is something that
          * could be uncommented...
@@ -619,7 +619,7 @@ public final class MainGUI extends ForceClosingJFrame {
         jTree1 = new CheckBoxTree(MainGUI.fontInfo);
         jPanel2 = new javax.swing.JPanel();
         gameTypePanel = new GameSelectionPanel();
-        jSpinner1 = new javax.swing.JSpinner();
+        fontSizeSpinner = new javax.swing.JSpinner();
         fontSizeLabel = new javax.swing.JLabel();
         themeComboBox = new javax.swing.JComboBox<>(ThemeManager.getAllInstalledThemes().toArray(new Theme[0]));
         timedLabel = new TimedLabel();
@@ -696,12 +696,12 @@ public final class MainGUI extends ForceClosingJFrame {
             .addGap(0, 24, Short.MAX_VALUE)
         );
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(12, 8, 36, 1));
-        jSpinner1.setMinimumSize(new java.awt.Dimension(40, 20));
-        jSpinner1.setPreferredSize(new java.awt.Dimension(60, 25));
-        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+        fontSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(12, 8, 36, 1));
+        fontSizeSpinner.setMinimumSize(new java.awt.Dimension(40, 20));
+        fontSizeSpinner.setPreferredSize(new java.awt.Dimension(60, 25));
+        fontSizeSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSpinner1StateChanged(evt);
+                fontSizeSpinnerStateChanged(evt);
             }
         });
 
@@ -729,14 +729,14 @@ public final class MainGUI extends ForceClosingJFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fontSizeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(fontSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fontSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(fontSizeLabel)
                         .addComponent(themeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(gameTypePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1255,13 +1255,13 @@ public final class MainGUI extends ForceClosingJFrame {
         jMenuBar1.repaint();
     }//GEN-LAST:event_themeComboBoxItemStateChanged
 
-    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
-        int newSize = (Integer) jSpinner1.getValue();
+    private void fontSizeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fontSizeSpinnerStateChanged
+        int newSize = (Integer) fontSizeSpinner.getValue();
         if (newSize != Options.INSTANCE.getFontsize()) {
             Options.INSTANCE.setFontSize(newSize);
             updateFontSizes();
         }
-    }//GEN-LAST:event_jSpinner1StateChanged
+    }//GEN-LAST:event_fontSizeSpinnerStateChanged
 
     private void setupGameFilesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setupGameFilesButtonActionPerformed
         JDialog dialog = new JDialog(this, "Setup Game Files for Mods");
@@ -1751,6 +1751,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JMenu ToolsMenu;
     private javax.swing.JMenuItem bpdnumMenuItem;
     private javax.swing.JLabel fontSizeLabel;
+    private javax.swing.JSpinner fontSizeSpinner;
     private javax.swing.JPanel gameTypePanel;
     private javax.swing.JMenuItem getDataPackMenuItem;
     private javax.swing.JMenuItem getMoreModsMenuButton;
@@ -1771,7 +1772,6 @@ public final class MainGUI extends ForceClosingJFrame {
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
-    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTree jTree1;
     private javax.swing.JMenuItem newFileMenuButton;
     private javax.swing.JMenuItem objectExplorerButton;
@@ -1958,6 +1958,16 @@ public final class MainGUI extends ForceClosingJFrame {
             updateFontsizes(this);
             ((CheckBoxTree) jTree1).updateFontSizes();
             ((BasicTreeUI) jTree1.getUI()).setLeftChildIndent(15);//Since our icons do not change with font size
+
+            // Our font-size spinner on the main page has a fixed size.
+            // Everything else seems to adjust properly, but not that.  Let's
+            // go ahead and scale it manually
+            Dimension newSize = new Dimension(
+                    (int)(50*MainGUI.fontInfo.getScaleWidth()),
+                    (int)(25*MainGUI.fontInfo.getScaleHeight())
+            );
+            this.fontSizeSpinner.setSize(newSize);
+            this.fontSizeSpinner.setPreferredSize(newSize);
         }
     }
 
