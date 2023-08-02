@@ -44,6 +44,7 @@ import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.Utilities;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -89,6 +90,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
      * Creates new form DumpFrame
      *
      * @param dmm The DataManagerManager to use for this instance of Object Explorer
+     * @param fontInfo The font information we'll use for the dialog.
      */
     public ObjectExplorer(DataManagerManager dmm, FontInfo fontInfo) {
         INSTANCE = this;
@@ -97,6 +99,9 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         this.fontInfo = fontInfo;
         GlobalLogger.log("Opened Object Explorer");
         initComponents();
+
+        // Fix various font sizes
+        this.updateFontsizes(this);
 
         // Setting this tooltip dynamically
         this.downloadDataPackButton.setToolTipText(Meta.DATA_DOWNLOAD_URL);
@@ -179,6 +184,25 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         }
         super.dispose();
     }
+
+    /**
+     * Loops through Components contained by `main` to update their font sizes
+     * to the currently-selected font size.
+     *
+     * @param main The Container to update
+     */
+    private void updateFontsizes(Container main) {
+        main.setFont(this.fontInfo.getFont());
+        for (Component c : main.getComponents()) {
+            c.setFont(c.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+            if (c instanceof Container) {
+                updateFontsizes((Container) c);
+            } else {
+                c.setFont(this.fontInfo.getFont());
+            }
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

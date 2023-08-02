@@ -30,7 +30,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="forwardButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                              <Component id="searchLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="queryTextField" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
@@ -61,7 +61,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="queryTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="searchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="backButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="forwardButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="refsButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -88,7 +88,7 @@
   <SubComponents>
     <Component class="javax.swing.JTextField" name="queryTextField">
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel1">
+    <Component class="javax.swing.JLabel" name="searchLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Search:"/>
       </Properties>

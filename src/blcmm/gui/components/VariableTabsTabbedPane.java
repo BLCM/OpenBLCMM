@@ -70,6 +70,7 @@ public abstract class VariableTabsTabbedPane<P extends JPanel> extends JTabbedPa
         super();
         super.add("", getDefaultNewComponent());
         this.fontInfo = fontInfo;
+        this.setFont(fontInfo.getFont());
         JLabel label = new JLabel("  Tab 1  ");
         label.setFont(fontInfo.getFont());
         usedIndices.add(1);

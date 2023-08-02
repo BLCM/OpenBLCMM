@@ -124,6 +124,18 @@ public final class HighlightedTextArea extends JTextPane {
         }
     }
 
+    /**
+     * Sets the font for the text area.  At the moment this is forcing our
+     * default "code" font, but it *will* inherit the style and size of the
+     * passed-in font.
+     *
+     * @param f The font to base our own font on.
+     */
+    @Override
+    public void setFont(Font f) {
+        super.setFont(new Font(MainGUI.CODE_FONT_NAME, f.getStyle(), f.getSize()));
+    }
+
     @Override
     public String getText() {
         try {

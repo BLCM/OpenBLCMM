@@ -155,6 +155,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         jScrollPane1.getHorizontalScrollBar().setUnitIncrement(16);
         attachAutoComplete();
         deformatSpinner = new JSpinner();
+        deformatSpinner.setFont(fontInfo.getFont());
         deformatSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 0, null, 1));
         deformatButton.setLayout(new BorderLayout());
         Dimension d = new Dimension(deformatButton.getPreferredSize().width + deformatSpinner.getPreferredSize().width - 10, deformatButton.getPreferredSize().height + deformatButton.getMargin().top);
@@ -197,6 +198,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         ObjectExplorer.INSTANCE.addSearch(textElement);
 
         JButton temp = new JButton("Cancel");
+        temp.setFont(this.fontInfo.getFont());
         d = new Dimension(Math.max(temp.getPreferredSize().width, refsButton.getPreferredSize().width), Math.max(temp.getPreferredSize().height, refsButton.getPreferredSize().height));
 
         setFixedSize(refsButton, d);
@@ -335,7 +337,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         queryTextField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        searchLabel = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
@@ -349,7 +351,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         bookmarkLabel = new FontInfoJLabel(this.fontInfo);
         collapseArraysToggleButton = new FontInfoJToggleButton(this.fontInfo);
 
-        jLabel1.setText("Search:");
+        searchLabel.setText("Search:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -438,7 +440,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(forwardButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel1)
+                                .addComponent(searchLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(queryTextField)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -462,7 +464,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(queryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1)
+                        .addComponent(searchLabel)
                         .addComponent(backButton)
                         .addComponent(forwardButton)
                         .addComponent(refsButton)
@@ -673,13 +675,13 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private javax.swing.JButton deformatButton;
     private javax.swing.JButton forwardButton;
     private javax.swing.JLabel infoLabel;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JProgressBar mainProgressBar;
     private javax.swing.JTextField queryTextField;
     private javax.swing.JButton refsButton;
+    private javax.swing.JLabel searchLabel;
     // End of variables declaration//GEN-END:variables
 
     private void attachAutoComplete() {

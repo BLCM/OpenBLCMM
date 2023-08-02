@@ -78,11 +78,15 @@ public class ButtonTabComponent extends JPanel {
     class TabButton extends JButton implements ActionListener {
 
         private final FontInfo fontInfo;
+        private int size = 17;
+        private double xMarginPercent = 0.3;
+        private int xMargin = 5;
 
         public TabButton(FontInfo fontInfo) {
-            int size = 17;
+            this.size = (int)(this.size*fontInfo.getScaleHeight());
+            this.xMargin = (int)(this.size*this.xMarginPercent);
             this.fontInfo = fontInfo;
-            setPreferredSize(new Dimension(size, size));
+            setPreferredSize(new Dimension(this.size, this.size));
             setToolTipText("Close this tab");
             //Make the button look the same for all Laf's
             setUI(new BasicButtonUI());
@@ -132,9 +136,10 @@ public class ButtonTabComponent extends JPanel {
             if (getModel().isRollover()) {
                 g2.setColor(Color.MAGENTA);
             }
-            int delta = 6;
-            g2.drawLine(delta, delta, getWidth() - delta - 1, getHeight() - delta - 1);
-            g2.drawLine(getWidth() - delta - 1, delta, delta, getHeight() - delta - 1);
+            g2.drawLine(this.xMargin, this.xMargin,
+                    getWidth() - this.xMargin - 1, getHeight() - this.xMargin - 1);
+            g2.drawLine(getWidth() - this.xMargin - 1, this.xMargin,
+                    this.xMargin, getHeight() - this.xMargin - 1);
             g2.dispose();
         }
 
