@@ -678,11 +678,11 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         } else if (ueClass == null) {
             objectborder.setTitle("Object Browser");
             objectBrowserPanel.repaint();
-            DefaultMutableTreeNode root = new DefaultMutableTreeNode("");
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("Instructions");
             root.add(new DefaultMutableTreeNode("Select a class above to list objects in that class."));
             root.add(new DefaultMutableTreeNode("Choosing \"Object\" will give you the full object tree."));
             root.add(new DefaultMutableTreeNode("Most mod-useful classes are inside GBXDefinition."));
-            objectBrowserTree.setRootVisible(false);
+            objectBrowserTree.setRootVisible(true);
             objectBrowserTree.setModel(new DefaultTreeModel(root));
             objectBrowserTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         } else {
