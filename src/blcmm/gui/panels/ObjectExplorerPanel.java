@@ -807,7 +807,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         }
         queryTextField.setText(history.get(historyIndex).query);
         textElement.setText(history.get(historyIndex).text);
-        textElement.setCaretPosition(history.get(historyIndex).caret);
+        textElement.setCaretPosition(Math.min(textElement.getText().length(), history.get(historyIndex).caret));
         currentDump = history.get(historyIndex).dump;
         textElement.discardAllUndoData();
         textElement.setProcessUndo(true);

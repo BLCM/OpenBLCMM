@@ -16,6 +16,8 @@ OpenBLCMM Changelog
   (thanks, ernimril from Libera's #java!)
 - Fixed a crash which could occur when unexpected files/directories were found
   in OpenBLCMM's auto-backup dir.
+- Fixed a crash which could occur when going back/forward through Object
+  Explorer search history.
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
   of just the text labels
 - Better handling of URL links, when Java doesn't know how to open a browser
