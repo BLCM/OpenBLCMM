@@ -197,10 +197,13 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         // with the queryTextField Ctrl-F?
         ObjectExplorer.INSTANCE.addSearch(textElement);
 
+        // Set the size of the refs button, so that it doesn't change size when
+        // it flips to "cancel"
         JButton temp = new JButton("Cancel");
         temp.setFont(this.fontInfo.getFont());
-        d = new Dimension(Math.max(temp.getPreferredSize().width, refsButton.getPreferredSize().width), Math.max(temp.getPreferredSize().height, refsButton.getPreferredSize().height));
-
+        d = new Dimension(
+                Math.max(temp.getPreferredSize().width, refsButton.getPreferredSize().width),
+                Math.max(temp.getPreferredSize().height, refsButton.getPreferredSize().height));
         setFixedSize(refsButton, d);
 
         infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -305,6 +308,35 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             }
 
         });
+    }
+
+    /**
+     * A routine to do some cleanup after font sizes have been updated.  We'll
+     * want to make sure that existing tabs are resized properly, that tab-close
+     * icons are redrawn, and any other elements size themselves decently.
+     */
+    public void updateFontsizes() {
+
+        // Update the refs button size.  This is done so that it doesn't change
+        // size when it flips to "cancel"
+        JButton temp = new JButton("Cancel");
+        temp.setFont(this.fontInfo.getFont());
+        JButton temp2 = new JButton("Refs");
+        temp2.setFont(this.fontInfo.getFont());
+        Dimension d = new Dimension(
+            Math.max(temp.getPreferredSize().width, temp2.getPreferredSize().width),
+            Math.max(temp.getPreferredSize().height, temp2.getPreferredSize().height));
+        setFixedSize(refsButton, d);
+
+        // Update the deformat button size.  The *current* preferred size will
+        // include the spinner, so we're using a temp button to get that base.
+        temp = new JButton("Deformat");
+        temp.setFont(this.fontInfo.getFont());
+        d = new Dimension(
+                temp.getPreferredSize().width + this.deformatSpinner.getPreferredSize().width,
+                temp.getPreferredSize().height);
+        setFixedSize(deformatButton, d);
+
     }
 
     public void reloadTabHistory() {

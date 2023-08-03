@@ -27,11 +27,6 @@
  */
 package blcmm.gui.components;
 
-/**
- *
- * @author FromDarkHell
- * @author LightChaosman
- */
 import blcmm.gui.FontInfo;
 import blcmm.utilities.GlobalLogger;
 import java.awt.*;
@@ -39,9 +34,19 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 
+/**
+ * A component to render the tab labels in Object Explorer.  Consists of a
+ * text label which just shows the tab number, plus a tab-close button.  Note
+ * that tab 1 (index 0) is special and does not use this class -- its label
+ * is just a JLabel, and doesn't have the close button.
+ *
+ * @author FromDarkHell
+ * @author LightChaosman
+ */
 public class ButtonTabComponent extends JPanel {
 
     private final JTabbedPane pane;
+    private final TabButton button;
 
     public ButtonTabComponent(final JTabbedPane pane, FontInfo fontInfo) {
         //unset default flow layout
@@ -69,24 +74,39 @@ public class ButtonTabComponent extends JPanel {
         //add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 2));
         //tab button
-        TabButton button = new TabButton(fontInfo);
-        add(button);
+        this.button = new TabButton(fontInfo);
+        add(this.button);
         //add more space to the top of the component
         setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
     }
 
+    /**
+     * Update the close-tab buttons if needed, triggered by font-size changes.
+     * The button will already share the global FontInfo object, so there's
+     * no need to pass any new font information in here.
+     */
+    public void updateCurrentSizes() {
+        this.button.updateCurrentSizes();
+    }
+
+    /**
+     * Tab-close button which gets added on to tabs 2+ in OE.
+     */
     class TabButton extends JButton implements ActionListener {
 
         private final FontInfo fontInfo;
-        private int size = 17;
-        private double xMarginPercent = 0.3;
-        private int xMargin = 5;
+        // Default size is based on our default 12-point font.  The actual
+        // icon will get scaled based on our FontInfo object, which has the
+        // actual font info in it.
+        private final int defaultSize = 17;
+        private final double marginPercent = 0.3;
+
+        private int currentSize;
+        private int currentMargin;
 
         public TabButton(FontInfo fontInfo) {
-            this.size = (int)(this.size*fontInfo.getScaleHeight());
-            this.xMargin = (int)(this.size*this.xMarginPercent);
             this.fontInfo = fontInfo;
-            setPreferredSize(new Dimension(this.size, this.size));
+            this.updateCurrentSizes();
             setToolTipText("Close this tab");
             //Make the button look the same for all Laf's
             setUI(new BasicButtonUI());
@@ -102,6 +122,23 @@ public class ButtonTabComponent extends JPanel {
             setRolloverEnabled(true);
             //Close the proper tab by clicking the button
             addActionListener(this);
+        }
+
+        /**
+         * Updates our size parameters so that the "x" button can resize as
+         * font sizes change.  This is also called from the constructor to set
+         * the initial parameters.  The `invalidate()` call isn't necessary
+         * during the constructor, but it doesn't *hurt*, so no reason to try
+         * and be fancy with that.
+         *
+         * This button will already share the global FontInfo object, so there's
+         * no need to pass any new font information in here.
+         */
+        private void updateCurrentSizes() {
+            this.currentSize = (int)(this.defaultSize*this.fontInfo.getScaleHeight());
+            this.currentMargin = (int)(this.defaultSize*this.marginPercent);
+            this.setPreferredSize(new Dimension(this.currentSize, this.currentSize));
+            this.invalidate();
         }
 
         @Override
@@ -136,10 +173,10 @@ public class ButtonTabComponent extends JPanel {
             if (getModel().isRollover()) {
                 g2.setColor(Color.MAGENTA);
             }
-            g2.drawLine(this.xMargin, this.xMargin,
-                    getWidth() - this.xMargin - 1, getHeight() - this.xMargin - 1);
-            g2.drawLine(getWidth() - this.xMargin - 1, this.xMargin,
-                    this.xMargin, getHeight() - this.xMargin - 1);
+            g2.drawLine(this.currentMargin, this.currentMargin,
+                    getWidth() - this.currentMargin - 1, getHeight() - this.currentMargin - 1);
+            g2.drawLine(getWidth() - this.currentMargin - 1, this.currentMargin,
+                    this.currentMargin, getHeight() - this.currentMargin - 1);
             g2.dispose();
         }
 

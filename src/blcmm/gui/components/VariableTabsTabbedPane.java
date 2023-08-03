@@ -33,7 +33,6 @@ import blcmm.gui.panels.ObjectExplorerPanel;
 import blcmm.utilities.GlobalLogger;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -74,8 +73,13 @@ public abstract class VariableTabsTabbedPane<P extends JPanel> extends JTabbedPa
         JLabel label = new JLabel("  Tab 1  ");
         label.setFont(fontInfo.getFont());
         usedIndices.add(1);
-        int height = new ButtonTabComponent(VariableTabsTabbedPane.this, fontInfo).getPreferredSize().height;
-        label.setPreferredSize(new Dimension(label.getPreferredSize().width, height));
+
+        // We used to explicitly set some sizing on here, but it turned out to
+        // cause annoyances while changing font sizes, and when I commented it
+        // out it seemed to not even be necessary.  So: commenting it out!
+        //int height = new ButtonTabComponent(VariableTabsTabbedPane.this, fontInfo).getPreferredSize().height;
+        //label.setPreferredSize(new Dimension(label.getPreferredSize().width, height));
+
         super.setTabComponentAt(0, label);
         super.add("+", new JPanel());
         installMouseListenerWrapper();

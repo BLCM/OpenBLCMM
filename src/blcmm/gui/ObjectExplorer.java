@@ -33,6 +33,7 @@ import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
+import blcmm.gui.components.ButtonTabComponent;
 import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.components.ForceClosingJFrame;
 import blcmm.gui.components.SimpleGameSelectionComboBox;
@@ -52,11 +53,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SwingWorker;
 import javax.swing.border.TitledBorder;
@@ -186,6 +189,33 @@ public final class ObjectExplorer extends ForceClosingJFrame {
     }
 
     /**
+     * Method for MainGUI to use to dynamically update the OE font sizes in
+     * response to changing the font size.  We'll already have the same
+     * FontInfo instance as MainGUI, so we shouldn't need to pass anything
+     * else.
+     */
+    public void updateFontsizes() {
+
+        // Update all our fonts, recursively
+        this.updateFontsizes(this);
+
+        // Send a resize signal to tab "close" buttons
+        for (int i = 0; i < this.oePanelTabbedPane.getTabCount(); i++) {
+            Component c = this.oePanelTabbedPane.getTabComponentAt(i);
+            if (c instanceof ButtonTabComponent) {
+                ((ButtonTabComponent)c).updateCurrentSizes();
+            }
+        }
+
+        // Do any other custom resize work inside the panel itself
+        ((ObjectExplorerPanel) this.oePanelTabbedPane.getComponentAt(oePanelTabbedPane.getSelectedIndex())).updateFontsizes();
+
+        // Update our two trees to deal with string truncation issues
+        this.updateAllTreeNodes(this.classBrowserTree);
+        this.updateAllTreeNodes(this.objectBrowserTree);
+    }
+
+    /**
      * Loops through Components contained by `main` to update their font sizes
      * to the currently-selected font size.
      *
@@ -199,6 +229,51 @@ public final class ObjectExplorer extends ForceClosingJFrame {
                 updateFontsizes((Container) c);
             } else {
                 c.setFont(this.fontInfo.getFont());
+            }
+        }
+    }
+
+    /**
+     * Update all tree nodes in the specified JTree, in response to its font
+     * size changing.  Without looping through nodes like this, increasing the
+     * font size will lead to truncated items in the tree which end with
+     * ellipses.
+     *
+     * This will additionally automatically scroll the tree to the selected
+     * element, if there is one, since otherwise it might end up offscreen.
+     * (That scrolling *could* be better; seems to put it right at the very
+     * bottom -- it'd be nice to have it in the middle.  Whatever, though.)
+     *
+     * @param tree The tree to refresh
+     */
+    private void updateAllTreeNodes(JTree tree) {
+        DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+        this.updateAllTreeNodes(tree, model, (TreeNode)model.getRoot());
+        TreePath path = tree.getSelectionPath();
+        if (path != null) {
+            tree.scrollPathToVisible(path);
+        }
+    }
+
+    /**
+     * Update all tree nodes in the specified JTree, using the specified model,
+     * starting with the specified node, in response to its font size changing.
+     * Without looping through nodes like this, increasing the font size will
+     * lead to truncated items in the tree which end with ellipses.  `model`
+     * doesn't *really* have to be passed-in here; it can be taken from the
+     * tree itself.  Still, it felt kind of lame to be continually pulling it
+     * out with every recursion, so whatever.
+     *
+     * @param tree The tree to refresh
+     * @param model The model of the tree
+     * @param node The node to start with
+     */
+    private void updateAllTreeNodes(JTree tree, DefaultTreeModel model, TreeNode node) {
+        model.nodeChanged(node);
+        if (node.getChildCount() >= 0) {
+            for (Enumeration e = node.children(); e.hasMoreElements();) {
+                TreeNode n = (TreeNode) e.nextElement();
+                updateAllTreeNodes(tree, model, n);
             }
         }
     }

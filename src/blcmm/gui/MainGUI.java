@@ -1968,6 +1968,12 @@ public final class MainGUI extends ForceClosingJFrame {
             );
             this.fontSizeSpinner.setSize(newSize);
             this.fontSizeSpinner.setPreferredSize(newSize);
+
+            // Update OE as well, if we have it.  (OE should already share our
+            // FontInfo instance, so no need to pass it again.)
+            if (ObjectExplorer.INSTANCE != null) {
+                ObjectExplorer.INSTANCE.updateFontsizes();
+            }
         }
     }
 
