@@ -76,9 +76,12 @@ public class BookmarkTable extends JTable {
             @Override
             public void mouseReleased(MouseEvent e) {
                 String objectName = getSelectedValue();
+                if (objectName == null) {
+                    return;
+                }
                 // Get our object name of our bookmark.
                 if (getSelectedColumn() == getColumnCount() - 1) {
-                    BookmarkTable.this.deleteEntry(getSelectedValue());
+                    BookmarkTable.this.deleteEntry(objectName);
                     return;
                 }
 
@@ -96,7 +99,10 @@ public class BookmarkTable extends JTable {
             public void keyReleased(KeyEvent e) {
                 int keyCode = e.getKeyCode();
                 if (keyCode == KeyEvent.VK_DELETE) {
-                    deleteEntry(getSelectedValue());
+                    String value = getSelectedValue();
+                    if (value != null) {
+                        deleteEntry(value);
+                    }
                 }
             }
         });
@@ -105,9 +111,11 @@ public class BookmarkTable extends JTable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String objectName = getSelectedValue();
-                ObjectExplorer.INSTANCE.dump(new ObjectExplorer.DumpOptions(objectName, false));
-                BookmarkTable.this.currentDump = objectName;
-                BookmarkTable.this.repaint();
+                if (objectName != null) {
+                    ObjectExplorer.INSTANCE.dump(new ObjectExplorer.DumpOptions(objectName, false));
+                    BookmarkTable.this.currentDump = objectName;
+                    BookmarkTable.this.repaint();
+                }
             }
         });
         super.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -115,7 +123,12 @@ public class BookmarkTable extends JTable {
     }
 
     private String getSelectedValue() {
-        return getRowValue(getSelectedRow());
+        int selectedRow = getSelectedRow();
+        if (selectedRow == -1) {
+            return null;
+        } else {
+            return getRowValue(getSelectedRow());
+        }
     }
 
     private String getRowValue(int row) {
