@@ -290,7 +290,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 menu.setOpaque(false);
                 menu.setBorder(null);
                 menu.setFocusable(false);
-                BookmarkTable table = new BookmarkTable(historyIndex > -1 ? history.get(historyIndex).query : null, dmm.getCurrentDataManager());
+                BookmarkTable table = new BookmarkTable(fontInfo, historyIndex > -1 ? history.get(historyIndex).query : null, dmm.getCurrentDataManager());
                 JScrollPane pane = new JScrollPane(table);
                 int horPadding = 6;
                 table.updateBookmarkBrowser();//This gives us an initial guess for the size, we can now fine-tune

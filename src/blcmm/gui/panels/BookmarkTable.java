@@ -30,6 +30,7 @@ package blcmm.gui.panels;
 
 import blcmm.data.lib.DataManager;
 import blcmm.data.lib.DataManager.Dump;
+import blcmm.gui.FontInfo;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.GlobalLogger;
@@ -48,6 +49,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultRowSorter;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -66,10 +69,14 @@ public class BookmarkTable extends JTable {
 
     private String currentDump;
     private DataManager dm;
+    private final FontInfo fontInfo;
 
-    public BookmarkTable(String currentDump, DataManager dm) {
+    public BookmarkTable(FontInfo fontInfo, String currentDump, DataManager dm) {
         this.currentDump = currentDump;
         this.dm = dm;
+        this.fontInfo = fontInfo;
+        this.setFont(fontInfo.getFont());
+        this.getTableHeader().setFont(fontInfo.getFont());
         initModel();
         initRenderers();
         super.addMouseListener(new MouseAdapter() {
@@ -86,7 +93,7 @@ public class BookmarkTable extends JTable {
                 }
 
                 // Either: We double clicked w/ left mouse OR We did a single click w/ middle mouse. Both of these will dump our bookmark.
-                if (objectName != null && SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
                     // Dump our bookmark
                     ObjectExplorer.INSTANCE.dump(new ObjectExplorer.DumpOptions(objectName, false));
                     BookmarkTable.this.currentDump = objectName;
@@ -171,10 +178,10 @@ public class BookmarkTable extends JTable {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 if (getRowValue(row).equals(currentDump)) {
-                    comp.setFont(comp.getFont().deriveFont(Font.BOLD));
+                    comp.setFont(fontInfo.getFont().deriveFont(Font.BOLD));
                     comp.setForeground(ThemeManager.getColor(ThemeManager.ColorType.UINimbusAlertYellow));
                 } else {
-                    comp.setFont(comp.getFont().deriveFont(Font.PLAIN));
+                    comp.setFont(fontInfo.getFont().deriveFont(Font.PLAIN));
                     if (isSelected) {
                         comp.setForeground(new Color(200, 0, 0));
                     } else {
@@ -191,6 +198,7 @@ public class BookmarkTable extends JTable {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 JToggleButton but = new JToggleButton("Delete");
+                but.setFont(fontInfo.getFont());
                 but.setSelected(hasFocus);
                 return but;
             }
@@ -223,6 +231,7 @@ public class BookmarkTable extends JTable {
 
         ((DefaultTableModel) getModel()).setDataVector(data, header);
         updateColumnWidths();
+        updateRowHeight();
         initRenderers();//setDataVector resets these too
 
         repaint();
@@ -236,6 +245,9 @@ public class BookmarkTable extends JTable {
             }
             getColumnModel().getColumn(i).setMinWidth(width + 10);
         }
+        JButton dummyButton = new JButton("Delete");
+        dummyButton.setFont(this.fontInfo.getFont());
+        getColumnModel().getColumn(2).setMinWidth(dummyButton.getPreferredSize().width);
         if (getParent() != null) {//This is where we implement our "fill the horizontal space we have available" scheme
             JScrollPane parent = (JScrollPane) getParent().getParent();//first parent is the viewport
             int availableWidth = parent.getPreferredSize().width;
@@ -247,6 +259,12 @@ public class BookmarkTable extends JTable {
             int otherColums = getColumnModel().getColumn(0).getMinWidth() + getColumnModel().getColumn(2).getPreferredWidth();
             getColumnModel().getColumn(1).setMinWidth(Math.max(getColumnModel().getColumn(1).getMinWidth(), availableWidth - otherColums));
         }
+    }
+
+    private void updateRowHeight() {
+        JLabel dummyLabel = new JLabel("Testing String");
+        dummyLabel.setFont(this.fontInfo.getFont());
+        this.setRowHeight(dummyLabel.getPreferredSize().height);
     }
 
 }
