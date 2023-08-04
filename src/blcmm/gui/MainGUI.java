@@ -2023,6 +2023,12 @@ public final class MainGUI extends ForceClosingJFrame {
      * @param main The Container to update
      */
     private void updateFontsizes(Container main) {
+        // TODO: Right now this is is deriving font size, rather than setting
+        // the FontInfo font directly.  This is what's keeping our JTree as
+        // fixed-width.  If we start supporting having the user set fonts
+        // manually, we'll need to start being more thorough here.  (Object
+        // Explorer has some custom setFont handling on its main text area, to
+        // handle this, so look into that.)
         for (Component c : main.getComponents()) {
             c.setFont(c.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
             if (c instanceof Container) {
@@ -2134,6 +2140,11 @@ public final class MainGUI extends ForceClosingJFrame {
                 final File file = new File(f);
                 String name = truncateFileName(file, Options.INSTANCE.getFilenameTruncationLength());
                 JMenuItem item = new JMenuItem(name);
+                // I had a recent run where these items were doing the
+                // font-size-changing-on-mouseover thing, but I wasn't able to
+                // reproduce it after the fact.  Still, going ahead and manually
+                // setting the font here, just in case.
+                item.setFont(MainGUI.fontInfo.getFont());
                 item.addActionListener(e -> {
                     if (MainGUI.INSTANCE.promptUnsavedContinue()) {
                         if (file.exists()) {
