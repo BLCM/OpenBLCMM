@@ -674,9 +674,10 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             // are selected, but that can lead to some weirdness -- do 'em in order.
             String newText = collapseArrays(deformat(getDocumentText(), 5000));
             if (autoFormatButton.isSelected()) {
-                newText = deformat(newText, 0);
+                this.doFormatAction(newText);
+            } else {
+                textElement.setText(newText);
             }
-            textElement.setText(newText);
         }
     }//GEN-LAST:event_collapseArraysToggleButtonActionPerformed
 
@@ -687,13 +688,24 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             worker.stop();
         }
         if (autoFormatButton.isSelected()) {
-            String ntext = deformat(getDocumentText(), 0);
-            setTextRetainCursor(textElement, ntext);
-            if (historyIndex > -1) {
-                history.get(historyIndex).text = textElement.getText();
-            }
+            this.doFormatAction(getDocumentText());
         }
     }//GEN-LAST:event_autoFormatButtonActionPerformed
+
+    /**
+     * Process a "Format" action on the specified text, updating our text area
+     * with the newly-formatted data.  Will also update our history.  Note
+     * that this method does *not* check for the autoFormatButton state itself.
+     *
+     * @param oldText The original text to format.
+     */
+    private void doFormatAction(String oldText) {
+        String newText = deformat(oldText, 0);
+        setTextRetainCursor(textElement, newText);
+        if (historyIndex > -1) {
+            history.get(historyIndex).text = textElement.getText();
+        }
+    }
 
     public void bookmarkCurrentObject() {
         MouseEvent me = new MouseEvent(bookmarkLabel, 0, 0, 0, 100, 100, 1, false);
