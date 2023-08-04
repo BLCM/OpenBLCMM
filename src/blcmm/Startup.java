@@ -268,34 +268,6 @@ public class Startup {
         return true;
     }
 
-    private static void showFirstTimeOSSpecificMessages() {
-        ArrayList<String> messages = new ArrayList<>();
-        if (OSInfo.CURRENT_OS == OSInfo.OS.MAC || OSInfo.CURRENT_OS == OSInfo.OS.UNIX) {
-            messages.add("On Mac and Linux systems, patches must be run from the 'Press any Key'<br/>"
-                    + "screen, not the main menu.  To correctly execute patches from the console,<br/>"
-                    + "click through to the main menu, hit Escape to go back out to the title<br/>"
-                    + "screen, and execute the patch from there.");
-        }
-        if (OSInfo.CURRENT_OS == OSInfo.OS.UNIX) {
-            messages.add("On Linux, Borderlands can only execute patches with all-lowercase filenames.<br/>"
-                    + "Either save your patch directly with an all-lowercase filename, or use a<br/>"
-                    + "symlink to provide a lowercase version.");
-        }
-        if (messages.size() > 0) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("<html>");
-            sb.append("There are some considerations when running Borderlands mods on non-Windows platforms.<br/>");
-            sb.append("Here are some things to keep in mind:<br/>");
-            sb.append("<ul>");
-            for (String message : messages) {
-                sb.append(String.format("<li>%s<br/><br/></li>", message));
-            }
-            sb.append("</ul>");
-            JOptionPane.showMessageDialog(null, sb.toString(),
-                    "Things To Note", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
     private static boolean confirmIO() {
         File dataDir = new File(Utilities.getBLCMMDataDir());
         if (!dataDir.exists()) {

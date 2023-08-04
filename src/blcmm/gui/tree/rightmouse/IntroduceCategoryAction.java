@@ -72,7 +72,7 @@ public class IntroduceCategoryAction extends RightMouseButtonAction {
         if (name == null) {
             return;
         }
-        if (!isInputCategoryNameValid(name)) {
+        if (!this.isInputCategoryNameValid(name)) {
             return;
         }
         TreePath[] paths = tree.getSelectionPaths();

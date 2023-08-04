@@ -80,7 +80,6 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -984,10 +983,12 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     }
                 };
             } catch (PatternSyntaxException e) {
-                JOptionPane.showMessageDialog(this,
-                        "The regular expression you entered is invalid. Please fix the expression:\" " + e.getDescription() + "\"",
+                AdHocDialog.run(this,
+                        this.fontInfo,
+                        AdHocDialog.IconType.ERROR,
                         "Error in regular expression",
-                        JOptionPane.ERROR_MESSAGE);
+                        "<html>The regular expression you entered is invalid. Please fix the expression:<br/><br/>"
+                        + "<blockquote>" + e.getDescription() + "</blockquote>");
                 worker = null;
             }
         } else {
@@ -1016,7 +1017,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     } else {
                         UEClass ueClass = this.dm.getClassByName(finalClassName);
                         if (ueClass == null) {
-                            JOptionPane.showMessageDialog(ObjectExplorerPanel.this, "The class you tried to search for using \"inclass:\" was unable to be obtained.", "Error in Search", JOptionPane.ERROR_MESSAGE);
+                            AdHocDialog.run(ObjectExplorerPanel.this,
+                                    fontInfo,
+                                    AdHocDialog.IconType.ERROR,
+                                    "Error in Search",
+                                    "<html>The class you tried to search for using \"<tt>inclass:</tt>\" was unable to be obtained.");
                             worker.cancel(true);
                             return new TreeSet<>();
                         } else {
@@ -1168,10 +1173,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             }
         }
         if (ueClass == null) {
-            JOptionPane.showMessageDialog(this,
-                    ("Unfortunately, the class you entered cannot be dumped using " + Meta.NAME + "."),
+            AdHocDialog.run(this,
+                    this.fontInfo,
+                    AdHocDialog.IconType.WARNING,
                     "Unknown class",
-                    JOptionPane.PLAIN_MESSAGE);
+                    "Unfortunately, the class you entered cannot be dumped using " + Meta.NAME + ".");
         }
     }
 

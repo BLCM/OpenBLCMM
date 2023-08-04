@@ -71,7 +71,7 @@ public class RenameCategoryAction extends RightMouseButtonAction {
         if (name == null) {
             return;
         }
-        if (!isInputCategoryNameValid(name)) {
+        if (!this.isInputCategoryNameValid(name)) {
             return;
         }
         Category cat = (Category) node.getUserObject();

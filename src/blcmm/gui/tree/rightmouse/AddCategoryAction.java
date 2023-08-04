@@ -91,7 +91,7 @@ public class AddCategoryAction extends RightMouseButtonAction {
                 "New Category Name",
                 "New Category Name:",
                 new Dimension(325, 100));
-        if (name == null || !isInputCategoryNameValid(name)) {
+        if (name == null || !this.isInputCategoryNameValid(name)) {
             return;
         }
 

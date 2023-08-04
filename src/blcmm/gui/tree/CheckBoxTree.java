@@ -31,6 +31,7 @@ package blcmm.gui.tree;
 import blcmm.Meta;
 import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.tree.rightmouse.*;
 import blcmm.model.*;
 import blcmm.utilities.GlobalLogger;
@@ -62,7 +63,6 @@ import javax.swing.BoxLayout;
 import javax.swing.DropMode;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
@@ -129,7 +129,7 @@ public final class CheckBoxTree extends JTree {
         this.setCellRenderer(new CheckBoxTreeCellRenderer(fontInfo));
         this.setRootVisible(true);
         setDragEnabled(true);
-        TreeTransferHandler treeTransferHandler = new TreeTransferHandler() {
+        TreeTransferHandler treeTransferHandler = new TreeTransferHandler(fontInfo) {
             @Override
             protected void callback() {
                 setChanged(true);
@@ -764,8 +764,10 @@ public final class CheckBoxTree extends JTree {
                                 + "on the code.  Click the checkbox now, to enable it, or<br/>"
                                 + "do so via the Settings dialog.<br/>"
                         );
+                        label.setFont(this.tree.getFontInfo().getFont());
                         JPanel panel = new JPanel();
                         JCheckBox box = new JCheckBox("Enable now");
+                        box.setFont(this.tree.getFontInfo().getFont());
                         box.setHorizontalTextPosition(SwingConstants.LEFT);
 
                         panel.setLayout(new GridBagLayout());
@@ -778,7 +780,11 @@ public final class CheckBoxTree extends JTree {
                         c.gridy = 1;
                         c.insets.top = 10;
                         panel.add(box, c);
-                        JOptionPane.showMessageDialog(null, panel, "Enable developer mode first", JOptionPane.INFORMATION_MESSAGE);
+                        AdHocDialog.run(MainGUI.INSTANCE,
+                                this.tree.getFontInfo(),
+                                AdHocDialog.IconType.INFORMATION,
+                                "Enable developer mode first",
+                                panel);
                         if (box.isSelected()) {
                             Options.INSTANCE.setDeveloperMode(true);
                             MainGUI.INSTANCE.toggleDeveloperMode(true);
@@ -801,12 +807,14 @@ public final class CheckBoxTree extends JTree {
                 if (((DefaultMutableTreeNode) tp.getLastPathComponent()).isLeaf()
                         && !Options.INSTANCE.getLeafSelectionAllowed()
                         && Options.INSTANCE.isInDeveloperMode()) {
-                    int allow = JOptionPane.showConfirmDialog(tree,
-                            Meta.NAME + " usually disallows toggling individual statements.\nEnable that functionality anyway?",
+                    AdHocDialog.Button allow = AdHocDialog.run(tree,
+                            tree.getFontInfo(),
+                            AdHocDialog.IconType.QUESTION,
                             "Allow toggling individual statements?",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE);
-                    if (allow == JOptionPane.YES_OPTION) {
+                            "<html>" + Meta.NAME + " usually disallows toggling individual statements.<br/><br/>"
+                            + "Enable that functionality anyway?",
+                            AdHocDialog.ButtonSet.YES_NO);
+                    if (allow == AdHocDialog.Button.YES) {
                         Options.INSTANCE.setLeafSelectionAllowed(true);
                     }
                     cancelbecauseLeaf = !Options.INSTANCE.getLeafSelectionAllowed();
@@ -833,14 +841,23 @@ public final class CheckBoxTree extends JTree {
                                 GlobalLogger.log("Found a MUT category with no children");
                             }
                         } else {
-                            JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Category '" + valid + "' is mutually exclusive.\n Please explicitly select its child containing this category first.", "Can't check this category", JOptionPane.ERROR_MESSAGE);
+                            AdHocDialog.run(MainGUI.INSTANCE,
+                                    this.tree.getFontInfo(),
+                                    AdHocDialog.IconType.ERROR,
+                                    "Can't check this category",
+                                    "<html>Category '" + valid + "' is mutually exclusive.<br/><br/>"
+                                    + "Please explicitly select its child containing this category first.");
                         }
                     } else if (valid instanceof TreePath) {
                         //This means we're switching from one selection to another, uncheck the returned path
                         tree.checkNode((TreePath) valid, false);
                         tree.checkNode(tp, checkMode);
                     } else if (el.hasLockedAncestor()) {
-                        JOptionPane.showMessageDialog(MainGUI.INSTANCE, "This category is locked, you can not change it", "Can't " + (checkMode ? "" : "un") + "check this category", JOptionPane.ERROR_MESSAGE);
+                        AdHocDialog.run(MainGUI.INSTANCE,
+                                this.tree.getFontInfo(),
+                                AdHocDialog.IconType.ERROR,
+                                "Can't " + (checkMode ? "" : "un") + "check this category",
+                                "This category is locked, you can not change it");
                     } else if (confirmCheck(tp)) {
                         tree.checkNode(tp, checkMode);
                     }
@@ -930,14 +947,22 @@ public final class CheckBoxTree extends JTree {
             if (cn.isSelected && cn.hasChildren && !cn.allChildrenSelected) {
                 JPanel panel = new JPanel();
                 panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-                panel.add(new JLabel("Are you sure you wish to check/uncheck this entire category?"));
+                JLabel confirmLabel = new JLabel("Are you sure you wish to check/uncheck this entire category?");
+                confirmLabel.setFont(this.tree.getFontInfo().getFont());
+                panel.add(confirmLabel);
                 JCheckBox check = new JCheckBox("Do not ask again");
+                check.setFont(this.tree.getFontInfo().getFont());
                 panel.add(check);
-                int res = JOptionPane.showConfirmDialog(null, panel, "Confirm", JOptionPane.YES_NO_OPTION);
+                AdHocDialog.Button res = AdHocDialog.run(MainGUI.INSTANCE,
+                        this.tree.getFontInfo(),
+                        AdHocDialog.IconType.QUESTION,
+                        "Confirm",
+                        panel,
+                        AdHocDialog.ButtonSet.YES_NO);
                 if (check.isSelected()) {
                     Options.INSTANCE.setShowConfirmPartiaclCategory(false);
                 }
-                return res == JOptionPane.YES_OPTION;
+                return res == AdHocDialog.Button.YES;
             }
             return true;
         }

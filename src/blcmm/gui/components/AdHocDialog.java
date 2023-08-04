@@ -392,6 +392,12 @@ public class AdHocDialog {
         JButton jButton;
         for (Button buttonType : loopButtons) {
             jButton = this.addButton(buttonType);
+            // TODO: if we ever decide to set a default button for YES/NO
+            // dialogs, JOptionPane's default was Yes.  We do have one dialog
+            // spawned by GUI_IO_Handler.reportImportResults() which wanted
+            // "No" to be the default, so be sure to check that out too.  For
+            // the time being, I don't expect to be setting defaults at all for
+            // that ButtonSet, though.
             if (loopButtons.size() == 1 && buttonType == Button.OK) {
                 altFocus = (Component)jButton;
             }
@@ -702,6 +708,37 @@ public class AdHocDialog {
      * @param title Title of the dialog
      * @param message The message to show in the dialog
      * @param labels The set of button labels to show to the user
+     * @return The index of the button that the user pressed
+     */
+    public static int run(Component parentComponent,
+            FontInfo fontInfo,
+            IconType iconType,
+            String title,
+            Object message,
+            String[] labels) {
+        AdHocDialog ahd = new AdHocDialog(
+                parentComponent,
+                fontInfo,
+                iconType,
+                title,
+                message,
+                null);
+        return ahd.runCustomDialog(labels, -1);
+    }
+
+    /**
+     * Convenience function to launch a dialog with a specific size set, and
+     * with a custom set of button labels.  No button will be focused by
+     * default.  Will return the index of the button that the user hit, based on
+     * the passed-in labels.
+     *
+     * @param parentComponent Our parent component which launched the dialog
+     * @param fontInfo A FontInfo object describing the user's current font
+     * selection
+     * @param iconType The icon type to show in the dialog
+     * @param title Title of the dialog
+     * @param message The message to show in the dialog
+     * @param labels The set of button labels to show to the user
      * @param proposedDimension The proposed dimension for the dialog.  This
      * will get scaled according to the user's font selection, and clamped to
      * the availability
@@ -726,6 +763,40 @@ public class AdHocDialog {
 
     /**
      * Convenience function to launch a dialog without a specific size set, but
+     * with a custom set of button labels, and with a chosen button focused by
+     * default.  Will return the index of the button that the user hit, based on
+     * the passed-in labels.
+     *
+     * @param parentComponent Our parent component which launched the dialog
+     * @param fontInfo A FontInfo object describing the user's current font
+     * selection
+     * @param iconType The icon type to show in the dialog
+     * @param title Title of the dialog
+     * @param message The message to show in the dialog
+     * @param labels The set of button labels to show to the user
+     * @param defaultSelectedIndex The index of the button which should be
+     * focused by default
+     * @return The index of the button that the user pressed
+     */
+    public static int run(Component parentComponent,
+            FontInfo fontInfo,
+            IconType iconType,
+            String title,
+            Object message,
+            String[] labels,
+            int defaultSelectedIndex) {
+        AdHocDialog ahd = new AdHocDialog(
+                parentComponent,
+                fontInfo,
+                iconType,
+                title,
+                message,
+                null);
+        return ahd.runCustomDialog(labels, defaultSelectedIndex);
+    }
+
+    /**
+     * Convenience function to launch a dialog with a specific size set, and
      * with a custom set of button labels, and with a chosen button focused by
      * default.  Will return the index of the button that the user hit, based on
      * the passed-in labels.

@@ -27,6 +27,7 @@
  */
 package blcmm.gui;
 
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.ProgressDialog;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.Category;
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
@@ -56,6 +56,7 @@ public class GUI_IO_Handler {
 
     public static MainGUI MASTER_UI;
     public static ProgressDialog progressMeter = null;
+    public static FontInfo fontInfo;
 
     /**
      * Given a "modname" read from the mod itself, and the mod's filename,
@@ -125,9 +126,12 @@ public class GUI_IO_Handler {
             // import results dialog will show us what went wrong anyway.
             // Still, may as well show it anyway while doing a single import.
             if (progressMeter == null) {
-                JOptionPane.showMessageDialog(MASTER_UI,
-                        "Unable to open file  " + f.getName() + "\n" + message,
-                        "Error opening file", JOptionPane.ERROR_MESSAGE);
+                AdHocDialog.run(MASTER_UI,
+                        fontInfo,
+                        AdHocDialog.IconType.ERROR,
+                        "Error opening file",
+                        "<html>Unable to open file <tt>" + f.getName() + "</tt><br/><br/>"
+                        +"<blockquote>" + message + "</blockquote>");
             }
         }
         return newpatch;
@@ -147,11 +151,12 @@ public class GUI_IO_Handler {
             // import results dialog will show us what went wrong anyway.
             // Still, may as well show it anyway while doing a single import.
             if (progressMeter == null) {
-                JOptionPane.showMessageDialog(MASTER_UI,
-                        "Unable to parse string\n"
-                        + string + "\n"
-                        + message,
-                        "Error opening file", JOptionPane.ERROR_MESSAGE);
+                AdHocDialog.run(MASTER_UI,
+                        fontInfo,
+                        AdHocDialog.IconType.ERROR,
+                        "Error opening file",
+                        "<html>Unable to parse string: <tt>" + string + "</tt><br/><br/>"
+                        + "<blockquote>" + message + "</blockquote>");
             }
         }
         return newpatch;
@@ -467,17 +472,14 @@ public class GUI_IO_Handler {
                     modPatch = subMod;
                     modname = modPatch.getRoot().getName();
                 } else {
-                    Object[] options = {"Import Individually", "Import as Category", "Cancel"};
-                    int choice = JOptionPane.showOptionDialog(MainGUI.INSTANCE,
-                            "<html>The selected mod file looks like it contains multiple mods exported at once.<br/>"
-                            + "Import them individually, or into a new \"mods\" category?",
+                    int choice = AdHocDialog.run(MASTER_UI,
+                            fontInfo,
+                            AdHocDialog.IconType.QUESTION,
                             "Import as multiple mods, or a single category?",
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null,
-                            options,
-                            options[0]);
-
+                            "<html>The selected mod file looks like it contains multiple mods exported at once.<br/><br/>"
+                            + "Import them individually, or into a new \"mods\" category?",
+                            new String[] {"Import Individually", "Import as Category", "Cancel"},
+                            0);
                     switch (choice) {
 
                         case 0:
@@ -657,7 +659,7 @@ public class GUI_IO_Handler {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         String dialogTitle = "Mod " + (open ? "Open" : "Import") + " Results";
-        int dialogIcon = JOptionPane.INFORMATION_MESSAGE;
+        AdHocDialog.IconType dialogIcon = AdHocDialog.IconType.INFORMATION;
         boolean showDialog = false;
         ArrayList<CompletePatch> canOverwrite = new ArrayList<>();
         ArrayList<CompletePatch> canImportNoCommands = new ArrayList<>();
@@ -679,7 +681,7 @@ public class GUI_IO_Handler {
         // Append any errors we might have.
         if (ImportAnomalyLog.INSTANCE.size() > 0) {
             showDialog = true;
-            dialogIcon = JOptionPane.WARNING_MESSAGE;
+            dialogIcon = AdHocDialog.IconType.WARNING;
             if (number > 1 || (number == 1 && !open)) {
                 sb.append("<br/><br/>");
             }
@@ -773,24 +775,27 @@ public class GUI_IO_Handler {
                     sb.append("changes you have made to the mod, including checking/unchecking folders.");
                 }
 
-                // Using showOptionDialog rather than showConfirmDialog because
-                // we want the default to be "No"
-                Object[] options = {"Yes", "No"};
-                int choice = JOptionPane.showOptionDialog(MASTER_UI, sb.toString(),
+                // The previous JOptionPane version of this dialog used custom
+                // buttons to make "no" the default -- our AdHocDialog doesn't
+                // set a default for Yes/No dialogs, though, so we're just using
+                // the standard now.
+                AdHocDialog.Button choice = AdHocDialog.run(MASTER_UI,
+                        fontInfo,
+                        AdHocDialog.IconType.QUESTION,
                         dialogTitle,
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[1]);
-                if (choice == 0) {
+                        sb.toString(),
+                        AdHocDialog.ButtonSet.YES_NO);
+                if (choice == AdHocDialog.Button.YES) {
                     // A bit improper, but whatever.
                     canOverwrite.addAll(canImportNoCommands);
                     reportImportResults(importAfterUserConfirm(canOverwrite, patch, parent), open, patch);
                 }
             } else {
-                JOptionPane.showMessageDialog(MASTER_UI, sb.toString(),
-                        dialogTitle, dialogIcon);
+                AdHocDialog.run(MASTER_UI,
+                        fontInfo,
+                        dialogIcon,
+                        dialogTitle,
+                        sb.toString());
             }
         }
     }

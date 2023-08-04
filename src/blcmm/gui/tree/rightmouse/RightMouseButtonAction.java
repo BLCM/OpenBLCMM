@@ -28,6 +28,7 @@
 package blcmm.gui.tree.rightmouse;
 
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.components.FontInfoJMenuItem;
 import blcmm.gui.components.ForceClosingJFrame;
@@ -60,7 +61,6 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -95,13 +95,21 @@ public abstract class RightMouseButtonAction {
         return windowAlreadyOpen;
     }
 
-    protected static boolean isInputCategoryNameValid(String name) throws HeadlessException {
+    protected boolean isInputCategoryNameValid(String name) throws HeadlessException {
         if (name.trim().equals("")) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Category name may not be empty", "Invalid category name", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.tree.getFontInfo(),
+                    AdHocDialog.IconType.ERROR,
+                    "Invalid category name",
+                    "Category name may not be empty");
             return false;
         }
         if (name.contains("<") || name.contains(">")) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Category name may not contain '<' or '>'", "Invalid category name", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.tree.getFontInfo(),
+                    AdHocDialog.IconType.ERROR,
+                    "Invalid category name",
+                    "Category name may not contain '<' or '>'");
             return false;
         }
         String invalidname = null;
@@ -112,11 +120,19 @@ public abstract class RightMouseButtonAction {
             }
         }
         if (invalidname != null) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Category name may not equal '" + invalidname + "'", "Invalid category name", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.tree.getFontInfo(),
+                    AdHocDialog.IconType.ERROR,
+                    "Invalid category name",
+                    "Category name may not equal '" + invalidname + "'");
             return false;
         }
         if (name.startsWith("/")) {
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, "Category name may not start with '/'", "Invalid category name", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    this.tree.getFontInfo(),
+                    AdHocDialog.IconType.ERROR,
+                    "Invalid category name",
+                    "Category name may not start with '/'");
             return false;
         }
         return true;

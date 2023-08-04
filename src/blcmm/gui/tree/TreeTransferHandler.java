@@ -27,8 +27,10 @@
  */
 package blcmm.gui.tree;
 
+import blcmm.gui.FontInfo;
 import blcmm.gui.GUI_IO_Handler;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.model.Category;
 import blcmm.model.ModelElement;
 import blcmm.model.SetCommand;
@@ -46,7 +48,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -91,8 +92,10 @@ abstract class TreeTransferHandler extends TransferHandler {
     private boolean intoTool;
     private ImportMode importMode;
     private DefaultMutableTreeNode[] nodesToRemove;
+    private FontInfo fontInfo;
 
-    TreeTransferHandler() {
+    TreeTransferHandler(FontInfo fontInfo) {
+        this.fontInfo = fontInfo;
     }
 
     void mousePressed() {
@@ -317,14 +320,14 @@ abstract class TreeTransferHandler extends TransferHandler {
         if (fileList.size() > 1) {//Opening makes no sense, so do not prompt
             res = 0;
         } else {
-            String openOption = "Open";
-            String importOption = "Import";
-            String cancelOption = "Cancel";
-            String[] options = new String[]{importOption, openOption, cancelOption};
-            res = JOptionPane.showOptionDialog(MainGUI.INSTANCE, "Import as mod on selected location, or open as file?", "Import or open?",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                    options, openOption);
-            if (res == JOptionPane.CLOSED_OPTION || res == 2/*cancel*/) {
+            res = AdHocDialog.run(MainGUI.INSTANCE,
+                    this.fontInfo,
+                    AdHocDialog.IconType.QUESTION,
+                    "Import or open?",
+                    "Import as mod on selected location, or open as file?",
+                    new String[] {"Import", "Open", "Cancel"},
+                    0);
+            if (res == -1 || res == 2/*cancel*/) {
                 return false;
             }
         }

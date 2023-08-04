@@ -171,6 +171,7 @@ public final class MainGUI extends ForceClosingJFrame {
     public MainGUI(final File toOpen, final String titlePostfix, FontInfo fontInfo) {
         INSTANCE = this;
         GUI_IO_Handler.MASTER_UI = INSTANCE;
+        GUI_IO_Handler.fontInfo = fontInfo;
         this.argToOpen = toOpen;
         this.titlePostfix = titlePostfix;
         MainGUI.fontInfo = fontInfo;

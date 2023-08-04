@@ -9,9 +9,10 @@ OpenBLCMM Changelog
   - Code formatting backend got a little bit of an overhaul at the same time.
     Let us know if there's any strange behavior with code processing now!
 - Fixed various font scaling issues with non-default font sizes, and when
-  changing the font size in the app.  Some tooltips may not update their font
-  size until the app is restarted.  **(Work in progress!  Some things are still
-  janky.)**
+  changing the font size in the app.  Object Explorer will dynamically update
+  its font size just like the main window.  A few tooltips may not update their
+  font size until the app is restarted, and some very-early-startup error
+  dialogs may not use the user's font size preference.
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
 - Fixed a crash which could occur when unexpected files/directories were found

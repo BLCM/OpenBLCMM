@@ -126,6 +126,7 @@ public class BLCMM_FileChooser extends JFileChooser {
         if (getFormat() == PatchIO.SaveFormat.STRUCTURELESS) {
             if (!Options.INSTANCE.getHasSeenExportWarning()) {
                 Options.INSTANCE.setHasSeenExportWarning(true);
+                // TODO: if this ever gets uncommented, convert to AdHocDialog
                 JOptionPane.showMessageDialog(this, "This will save ONLY the checked codes and hotfixes.\n"
                         + "All structural information will be deleted.\n"
                         + "All deselected codes & hotfixes will be deleted."
