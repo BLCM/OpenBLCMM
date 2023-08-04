@@ -15,6 +15,7 @@ OpenBLCMM Changelog
   dialogs may not use the user's font size preference.
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
+- Object Explorer will remember the state of the "Collapse Arrays" button.
 - Fixed a crash which could occur when unexpected files/directories were found
   in OpenBLCMM's auto-backup dir.
 - Fixed a crash which could occur when going back/forward through Object

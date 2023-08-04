@@ -705,6 +705,9 @@ public class Options extends OptionsBase {
         // for CJ, who apparently won't shut up about it.  :)
         this.registerOption(new BooleanOption(this, OptionNames.propagateMUTNotification.toString(), fontInfo, true));
 
+        // Object Explorer UI elements.  First, remembering "Collapse" button
+        this.registerOption(new BooleanOption(this, OptionNames.oeCollapseArrays.toString(), fontInfo, false));
+
         // All of our Object Explorer Bookmarks of queries / objects
         this.registerOption(new StringListOption(this, OptionNames.BL2Bookmarks.toString(), fontInfo, new String[]{}));
         this.registerOption(new StringListOption(this, OptionNames.TPSBookmarks.toString(), fontInfo, new String[]{}));
@@ -980,6 +983,14 @@ public class Options extends OptionsBase {
 
     public void setPropagateMUTNotification(boolean propagate) {
         this.setBooleanOptionData(Options.OptionNames.propagateMUTNotification, propagate);
+    }
+
+    public boolean getOECollapseArrays() {
+        return this.getBooleanOptionData(Options.OptionNames.oeCollapseArrays);
+    }
+
+    public void setOECollapseArrays(boolean collapse) {
+        this.setBooleanOptionData(Options.OptionNames.oeCollapseArrays, collapse);
     }
 
     /**

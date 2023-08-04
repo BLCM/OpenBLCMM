@@ -169,6 +169,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         forwardButton.setFont(forwardButton.getFont().deriveFont(forwardButton.getFont().getSize2D() + 2f));
         this.currentDump = null;
 
+        // Set the default state of "collapse arrays"
+        this.collapseArraysToggleButton.setSelected(Options.INSTANCE.getOECollapseArrays());
+
         // Update our UI based on the current game selection
         this.updateGame(true);
 
@@ -659,6 +662,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }
 
     private void collapseArraysToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapseArraysToggleButtonActionPerformed
+        Options.INSTANCE.setOECollapseArrays(collapseArraysToggleButton.isSelected());
         if (collapseArraysToggleButton.isSelected()) {
             textElement.setText(collapseArrays(deformat(getDocumentText(), 5000)));
         }
