@@ -199,6 +199,12 @@ public final class ObjectExplorer extends ForceClosingJFrame {
         // Update all our fonts, recursively
         this.updateFontsizes(this);
 
+        // If OE was started with the lefthand panel hidden, that won't get
+        // picked up by the loop above.
+        if (!leftVisible) {
+            this.updateFontsizes(leftHandPanel);
+        }
+
         // Send a resize signal to tab "close" buttons
         for (int i = 0; i < this.oePanelTabbedPane.getTabCount(); i++) {
             Component c = this.oePanelTabbedPane.getTabComponentAt(i);
