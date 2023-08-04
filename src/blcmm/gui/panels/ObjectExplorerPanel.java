@@ -36,6 +36,7 @@ import blcmm.data.lib.UEClass;
 import blcmm.data.lib.UEObject;
 import blcmm.gui.FontInfo;
 import blcmm.gui.ObjectExplorer;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.components.FontInfoJLabel;
 import blcmm.gui.components.FontInfoJToggleButton;
@@ -251,9 +252,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 }
                 Dump dump = dmm.getCurrentDataManager().getDump(objectToBookmark);
                 if (dump.ueObject == null) {
-                    JOptionPane.showMessageDialog(null, "Only dumpable objects can be bookmarked",
+                    AdHocDialog.run(ObjectExplorer.INSTANCE,
+                            fontInfo,
+                            AdHocDialog.IconType.WARNING,
                             "Bookmark Error",
-                            JOptionPane.WARNING_MESSAGE);
+                            "Only dumpable objects can be bookmarked");
                     return;
                 }
 

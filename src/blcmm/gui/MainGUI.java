@@ -103,7 +103,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -564,10 +563,14 @@ public final class MainGUI extends ForceClosingJFrame {
             if (Startup.isFirstBootAfterCrash()) {
                 File backupFile = AutoBackupper.getMostRecentBackupFile();
                 if (backupFile != null) {
-                    int confirm = JOptionPane.showConfirmDialog(null,
-                            "It appears " + Meta.NAME + " crashed last time.\nWould you like to open the most recent backup file?",
-                            "Open backup file?", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
+                    AdHocDialog.Button confirm = AdHocDialog.run(MainGUI.INSTANCE,
+                            MainGUI.fontInfo,
+                            AdHocDialog.IconType.QUESTION,
+                            "Open backup file?",
+                            "<html>It appears " + Meta.NAME + " crashed last time."
+                            + " Would you like to open the most recent backup file?",
+                            AdHocDialog.ButtonSet.YES_NO);
+                    if (confirm == AdHocDialog.Button.YES) {
                         opened = openPatch(backupFile);
                         currentFile = backupFile;
                     }
@@ -582,12 +585,21 @@ public final class MainGUI extends ForceClosingJFrame {
         } catch (Exception e) {
             GlobalLogger.log(e);
             GlobalLogger.markAsPermanentLog();//should be redundant
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE, String.format(""
-                    + "<html>A fatal error occured while opening " + Meta.NAME + ". It was caused by opening the following file:<br/>"
-                    + "<b>%s</b><br/>"
-                    + "Please send the log file and the file you were trying to open to the devolopers."
-                    + "Try opening a different file, or create a new file.",
-                    Utilities.hideUserName(currentFile.getAbsolutePath())), "Fatal error while opening file", JOptionPane.ERROR_MESSAGE);
+            String fileReport;
+            if (currentFile == null) {
+                fileReport = "<i>(unknown)</i>";
+            } else {
+                fileReport = "<b>" + Utilities.hideUserName(currentFile.getAbsolutePath()) + "</b>";
+            }
+            AdHocDialog.run(MainGUI.INSTANCE,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.ERROR,
+                    "Fatal error while opening file",
+                    "<html>A fatal error occured while opening " + Meta.NAME + ". It was caused by opening the following file:<br/>"
+                        + fileReport + "<br/>"
+                        + "Please send the log file and the file you were trying to open to the developers."
+                        + " Try opening a different file, or create a new file.",
+                    AdHocDialog.ButtonSet.OK);
             currentFile = null;
             opened = false;
         }
@@ -1031,10 +1043,13 @@ public final class MainGUI extends ForceClosingJFrame {
             } catch (IOException ex) {
                 this.cursorNormal();
                 Logger.getLogger(MainGUI.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(this,
-                        "Unable to import zipfile  " + fc.getSelectedFile() + "\n"
-                        + ex.getMessage(),
-                        "Error importing zipfile", JOptionPane.ERROR_MESSAGE);
+                AdHocDialog.run(MainGUI.INSTANCE,
+                        MainGUI.fontInfo,
+                        AdHocDialog.IconType.ERROR,
+                        "Error importing zipfile",
+                        "<html>Unable to import zipfile <tt>" + fc.getSelectedFile() + "</tt>:<br/><br/>"
+                            + ex.getMessage(),
+                        AdHocDialog.ButtonSet.OK);
             }
         }
         this.requestFocus();
@@ -1107,7 +1122,12 @@ public final class MainGUI extends ForceClosingJFrame {
                 if (open) {
                     addCurrentFileToFrontOfPreviousFiles();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Unable to open " + file.getName(), "Error opening file", JOptionPane.ERROR_MESSAGE);
+                    AdHocDialog.run(MainGUI.INSTANCE,
+                            MainGUI.fontInfo,
+                            AdHocDialog.IconType.ERROR,
+                            "Error opening file",
+                            "<html>Unable to open <tt>" + file.getName() + "</tt>",
+                            AdHocDialog.ButtonSet.OK);
                 }
             }
             this.requestFocus();
@@ -1625,26 +1645,27 @@ public final class MainGUI extends ForceClosingJFrame {
     public boolean savePatch(CompletePatch patch, File file, boolean exporting) {
         if (patch != null && openedType != null) {
             if (patch.getType() != openedType) {
-                int choice = JOptionPane.showConfirmDialog(this,
-                        "It seems you are converting " + openedType.getGameNameWithArticle() + " patch to " + patch.getType().getGameNameWithArticle() + " patch.\n"
-                        + "\n"
-                        + "Continue?",
+                AdHocDialog.Button choice = AdHocDialog.run(this,
+                        MainGUI.fontInfo,
+                        AdHocDialog.IconType.QUESTION,
                         "Confirm Patch Type Change",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                );
-                if (choice != JOptionPane.YES_OPTION) {
+                        "<html>It seems you are converting <b>" + openedType.getGameNameWithArticle() + "</b> patch to <b>"
+                            + patch.getType().getGameNameWithArticle() + "</b> patch.<br/><br/>"
+                            + "Continue?",
+                        AdHocDialog.ButtonSet.YES_NO);
+                if (choice != AdHocDialog.Button.YES) {
                     return false;
                 }
             }
         }
         if (file.getAbsolutePath().startsWith(AutoBackupper.getDestination())) {
-            int choice = JOptionPane.showConfirmDialog(this, "It seems you are saving to the backup directory.\n\nContinue?",
+            AdHocDialog.Button choice = AdHocDialog.run(this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.WARNING,
                     "Saving to backup directory",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
-            );
-            if (choice != JOptionPane.YES_OPTION) {
+                    "<html>It seems you are saving to the backup directory.<br/><br/>Continue?",
+                    AdHocDialog.ButtonSet.YES_NO);
+            if (choice != AdHocDialog.Button.YES) {
                 return false;
             }
         }
@@ -1664,27 +1685,44 @@ public final class MainGUI extends ForceClosingJFrame {
             addCurrentFileToFrontOfPreviousFiles();
         }
         if (file.exists() && !file.canWrite()) {
-            int confirm = JOptionPane.showConfirmDialog(this, ""
-                    + "The file " + file.getName() + " appears to be set to read-only.\n"
-                    + "Can not save to a read-only file.\n"
+            AdHocDialog.Button confirm = AdHocDialog.run(this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.WARNING,
+                    "Read-only detected",
+                    "<html>The file <tt>" + file.getName() + "</tt> appears to be set to read-only.<br/><br/>"
                     + "Remove the read-only restriction?",
-                    "Read-only detected", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (confirm == JOptionPane.YES_OPTION) {
-                file.setWritable(true, false);
+                    AdHocDialog.ButtonSet.YES_NO);
+            if (confirm == AdHocDialog.Button.YES) {
+                file.setWritable(true, true);
             }
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             List<String> res = PatchIO.writeToFile(patch, bw, exporting);
             bw.close();
             ((CheckBoxTree) jTree1).setChanged(false);
-            for (String report : res) {
-                JOptionPane.showMessageDialog(null, report, "Warning", JOptionPane.WARNING_MESSAGE);
+            if (res.size() > 0) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("<html>The following warnings occurred while writing:</br>");
+                sb.append("<ul>");
+                for (String report : res) {
+                    sb.append("<li>");
+                    sb.append(report);
+                    sb.append("</li>");
+                }
+                sb.append("</ul>");
+                AdHocDialog.run(this,
+                        MainGUI.fontInfo,
+                        AdHocDialog.IconType.WARNING,
+                        "Warning",
+                        sb.toString());
             }
         } catch (IOException ex) {
             GlobalLogger.log(ex);
-            JOptionPane.showMessageDialog(MainGUI.INSTANCE,
-                    "An error was encountered while saving the file: " + ex.getMessage(),
-                    "Save Error", JOptionPane.ERROR_MESSAGE);
+            AdHocDialog.run(this,
+                    MainGUI.fontInfo,
+                    AdHocDialog.IconType.ERROR,
+                    "Save Error",
+                    "<html>An error was encountered while saving the file:<br/><br/>" + ex.getMessage());
             return false;
         }
         return true;
@@ -2102,16 +2140,18 @@ public final class MainGUI extends ForceClosingJFrame {
                                 currentFile = file;
                                 addCurrentFileToFrontOfPreviousFiles();
                             } else {
-                                JOptionPane.showMessageDialog(MainGUI.INSTANCE,
-                                        "Could not open the specified file.",
+                                AdHocDialog.run(this,
+                                        MainGUI.fontInfo,
+                                        AdHocDialog.IconType.ERROR,
                                         "Error opening file",
-                                        JOptionPane.ERROR_MESSAGE);
+                                        "Could not open the specified file.");
                             }
                         } else {
-                            JOptionPane.showMessageDialog(MainGUI.INSTANCE,
-                                    "The specified file does not exist!",
+                            AdHocDialog.run(this,
+                                    MainGUI.fontInfo,
+                                    AdHocDialog.IconType.ERROR,
                                     "Error opening file",
-                                    JOptionPane.ERROR_MESSAGE);
+                                    "The specified file does not exist!");
                         }
                     }
                 });

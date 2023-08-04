@@ -141,6 +141,7 @@ public class AdHocDialog {
     private final JDialog dialog;
     private final JPanel buttonBar;
     private Button result = null;
+    private int customResult = -1;
     private boolean buttonAdded = false;
 
     // How much extra room does the dialog need, once we've computed the size
@@ -412,7 +413,7 @@ public class AdHocDialog {
         Component altFocus2 = altFocus;
         this.dialog.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowOpened(WindowEvent e){
+            public void windowOpened(WindowEvent e) {
                 dialog.requestFocus();
                 if (toFocus != null) {
                     toFocus.requestFocusInWindow();
@@ -484,6 +485,86 @@ public class AdHocDialog {
         button.setMnemonic(mnemonic);
         button.addActionListener((ActionEvent ae) -> {
             this.result = buttonType;
+            this.dialog.setVisible(false);
+        });
+        this.buttonBar.add(button);
+        return button;
+    }
+
+    /**
+     * Actually run the dialog, with the specified custom labels as buttons,
+     * instead of our usual ButtonSet/Button objects.  This method will return
+     * the index of which button was hit as an integer, with the first button
+     * being 0, the next 1, etc.  If no button was hit (somehow), -1 will be
+     * returned.
+     *
+     * Note that the order of buttons is dependent on OS -- or at least on
+     * the "OptionPane.isYesLast" UIManager default, which for Nimbus at least
+     * happens to be true for everything except Windows.  The returned index
+     * will always match the passed-in order of buttons, though.
+     *
+     * @param labels The custom button labels to use
+     * @param defaultSelectedIndex The index of the button which should be
+     * focused by default, or -1 if no button should be focused.
+     * @return The index of the button that the user pressed
+     */
+    public int runCustomDialog(String[] labels, int defaultSelectedIndex) {
+        // Figure out if we're reversing the order of buttons (which should
+        // happen on Linux + Mac mostly)
+        boolean isYesLast = UIManager.getDefaults().getBoolean("OptionPane.isYesLast");
+        JButton toFocus = null;
+        if (isYesLast) {
+            for (int idx=labels.length-1; idx >= 0; idx--) {
+                JButton thisButton = this.addCustomButton(labels[idx], idx);
+                if (idx == defaultSelectedIndex) {
+                    toFocus = thisButton;
+                }
+            }
+        } else {
+            for (int idx=0; idx < labels.length; idx++) {
+                JButton thisButton = this.addCustomButton(labels[idx], idx);
+                if (idx == defaultSelectedIndex) {
+                    toFocus = thisButton;
+                }
+            }
+        }
+        // See runDialog() for notes on why I'm doing the next statement
+        JButton toFocus2 = toFocus;
+        this.dialog.pack();
+        this.dialog.setLocationRelativeTo(this.parentComponent);
+        this.dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                dialog.requestFocus();
+                if (toFocus2 != null) {
+                    toFocus2.requestFocusInWindow();
+                }
+            }
+        });
+        this.dialog.setVisible(true);
+        this.dialog.dispose();
+        return this.customResult;
+    }
+
+    /**
+     * As a custom button to the button bar at the bottom of the dialog.  The
+     * button will be labelled with a string, and set a custom integer return
+     * value when pressed.
+     *
+     * @param label The label to show on the button
+     * @param returnVal The return value this button is associated with
+     * @return The button which was created
+     */
+    private JButton addCustomButton(String label, int returnVal) {
+        if (this.buttonAdded) {
+            this.buttonBar.add(Box.createHorizontalStrut(7));
+        } else {
+            this.buttonAdded = true;
+        }
+        JButton button = new JButton(label);
+        button.setFont(this.font);
+        button.addActionListener((ActionEvent ae) -> {
+            this.customResult = returnVal;
             this.dialog.setVisible(false);
         });
         this.buttonBar.add(button);
@@ -606,6 +687,79 @@ public class AdHocDialog {
                 title,
                 message);
         return ahd.runDialog(ButtonSet.OK);
+    }
+
+    /**
+     * Convenience function to launch a dialog without a specific size set, but
+     * with a custom set of button labels.  No button will be focused by
+     * default.  Will return the index of the button that the user hit, based on
+     * the passed-in labels.
+     *
+     * @param parentComponent Our parent component which launched the dialog
+     * @param fontInfo A FontInfo object describing the user's current font
+     * selection
+     * @param iconType The icon type to show in the dialog
+     * @param title Title of the dialog
+     * @param message The message to show in the dialog
+     * @param labels The set of button labels to show to the user
+     * @param proposedDimension The proposed dimension for the dialog.  This
+     * will get scaled according to the user's font selection, and clamped to
+     * the availability
+     * @return The index of the button that the user pressed
+     */
+    public static int run(Component parentComponent,
+            FontInfo fontInfo,
+            IconType iconType,
+            String title,
+            Object message,
+            String[] labels,
+            Dimension proposedDimension) {
+        AdHocDialog ahd = new AdHocDialog(
+                parentComponent,
+                fontInfo,
+                iconType,
+                title,
+                message,
+                proposedDimension);
+        return ahd.runCustomDialog(labels, -1);
+    }
+
+    /**
+     * Convenience function to launch a dialog without a specific size set, but
+     * with a custom set of button labels, and with a chosen button focused by
+     * default.  Will return the index of the button that the user hit, based on
+     * the passed-in labels.
+     *
+     * @param parentComponent Our parent component which launched the dialog
+     * @param fontInfo A FontInfo object describing the user's current font
+     * selection
+     * @param iconType The icon type to show in the dialog
+     * @param title Title of the dialog
+     * @param message The message to show in the dialog
+     * @param labels The set of button labels to show to the user
+     * @param defaultSelectedIndex The index of the button which should be
+     * focused by default
+     * @param proposedDimension The proposed dimension for the dialog.  This
+     * will get scaled according to the user's font selection, and clamped to
+     * the availability
+     * @return The index of the button that the user pressed
+     */
+    public static int run(Component parentComponent,
+            FontInfo fontInfo,
+            IconType iconType,
+            String title,
+            Object message,
+            String[] labels,
+            int defaultSelectedIndex,
+            Dimension proposedDimension) {
+        AdHocDialog ahd = new AdHocDialog(
+                parentComponent,
+                fontInfo,
+                iconType,
+                title,
+                message,
+                proposedDimension);
+        return ahd.runCustomDialog(labels, defaultSelectedIndex);
     }
 
     /**

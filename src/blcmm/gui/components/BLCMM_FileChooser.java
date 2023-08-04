@@ -47,7 +47,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -149,15 +148,17 @@ public class BLCMM_FileChooser extends JFileChooser {
 
             // Check to see if the file exists and prompt to overwrite.
             if (f.exists() && getFileSelectionMode() != JFileChooser.DIRECTORIES_ONLY) {
-                int result = JOptionPane.showConfirmDialog(this,
-                        "<html>The file \"<tt>" + f.getName() + "</tt>\" already exists.  Overwrite?",
+                AdHocDialog.Button result = AdHocDialog.run(this,
+                        this.fontInfo,
+                        AdHocDialog.IconType.QUESTION,
                         "Existing File",
-                        JOptionPane.YES_NO_CANCEL_OPTION);
+                        "<html>The file \"<tt>" + f.getName() + "</tt>\" already exists.  Overwrite?",
+                        AdHocDialog.ButtonSet.YES_NO_CANCEL);
                 switch (result) {
-                    case JOptionPane.YES_OPTION:
+                    case YES:
                         super.approveSelection();
                         return;
-                    case JOptionPane.CANCEL_OPTION:
+                    case CANCEL:
                         cancelSelection();
                         return;
                     default:

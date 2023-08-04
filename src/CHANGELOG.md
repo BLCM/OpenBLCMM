@@ -26,6 +26,9 @@ OpenBLCMM Changelog
   form, so it can at least be opened manually.
 - Added a new "Dangerous Settings" option to set the GearboxAccountData
   index used in offline-saved files.
+- If the application tries to write to a readonly file and the user opts to
+  override permissions to write anyway, the write permission will only be
+  granted to the file's owner, if the OS supports that distinction.
 - Tweaked the application icon slightly and introduced a generation script
   for it.
 - Tightened up About dialog display a bit.

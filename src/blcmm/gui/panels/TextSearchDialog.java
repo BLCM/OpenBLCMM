@@ -30,6 +30,7 @@ package blcmm.gui.panels;
 
 import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.EnhancedFormattedTextField;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Utilities;
@@ -57,7 +58,6 @@ import java.util.stream.IntStream;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -83,6 +83,7 @@ public class TextSearchDialog extends javax.swing.JDialog {
     private JLabel statusLabel;
     private EnhancedFormattedTextField searchTextField;
     private JTextField replaceTextField = null;
+    private final FontInfo fontInfo;
 
     public TextSearchDialog(Window parent, JTextComponent textcomponent, String previousSearch, FontInfo fontInfo) {
         this(parent, textcomponent, previousSearch, fontInfo, true);
@@ -106,6 +107,7 @@ public class TextSearchDialog extends javax.swing.JDialog {
         super.setModalityType(Dialog.ModalityType.MODELESS);
         this.textcomp = textcomponent;
         this.previous = previousSearch;
+        this.fontInfo = fontInfo;
         super.setIconImages(MainGUI.INSTANCE.getIconImages());
         super.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         initComponents();
@@ -626,10 +628,12 @@ public class TextSearchDialog extends javax.swing.JDialog {
     }
 
     private void displayRegexMessage(PatternSyntaxException e) {
-        JOptionPane.showMessageDialog(this,
-                "Your regular expression could not be parsed\n\n"
-                + e.getMessage(),
-                "Faulty regular expression", JOptionPane.ERROR_MESSAGE);
+        AdHocDialog.run(this,
+                this.fontInfo,
+                AdHocDialog.IconType.ERROR,
+                "Faulty regular expression",
+                "<html>Your regular expression could not be parsed:<br/><br/>"
+                + "<blockquote>" + e.getMessage() + "</blockquote>");
     }
 
     private String isValidRegex(String arg) {

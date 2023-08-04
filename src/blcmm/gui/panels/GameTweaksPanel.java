@@ -28,21 +28,19 @@
  */
 package blcmm.gui.panels;
 
-import blcmm.Meta;
 import blcmm.gui.FontInfo;
-import blcmm.gui.components.BLCMM_FileChooser;
+import blcmm.gui.components.AdHocDialog;
 import blcmm.gui.components.FontInfoJButton;
 import blcmm.gui.components.FontInfoJComboBox;
 import blcmm.gui.components.FontInfoJLabel;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.GlobalLogger;
-import blcmm.utilities.OSInfo;
 import blcmm.utilities.Utilities;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -60,15 +58,12 @@ import java.util.TreeMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.UIDefaults;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.StyleSheet;
 
@@ -90,6 +85,11 @@ import javax.swing.text.html.StyleSheet;
  */
 public abstract class GameTweaksPanel extends JPanel {
 
+    /*
+     * Commenting this whole inner class.  We're not currently using it, and
+     * with the class commented, we can get rid of our JOptionPane import.
+     * I didn't want to remove it entirely in case we end up wanting to use
+     * it again...
     private abstract class ManualSelectionListener implements ActionListener {
 
         private final FontInfo fontInfo;
@@ -171,6 +171,7 @@ public abstract class GameTweaksPanel extends JPanel {
         //called on succesful selection
         public abstract void callback(File f);
     }
+    /**/
 
     public static interface ComponentProvider {
 
@@ -212,7 +213,7 @@ public abstract class GameTweaksPanel extends JPanel {
         protected JComponent[] components;
         protected SetupStatus overrideStatus = null;
         private String revertFailMessage = null;
-        private final FontInfo fontInfo;
+        protected final FontInfo fontInfo;
 
         SetupAction(String name, GameTweaksPanel panel, FontInfo fontInfo) {
             this.name = name;
@@ -326,10 +327,13 @@ public abstract class GameTweaksPanel extends JPanel {
             if (text != null && !text.isEmpty()) {
                 statuslabel.setToolTipText(Utilities.hideUserName(text));
                 if (!shownErrorDialog) {
-                    JOptionPane.showMessageDialog(null, "One of your selected operations caused an error.\n"
-                            + "No changes were made to the file.\n"
-                            + "Hover over the red `Error` text for more information.", "Error during setup",
-                            JOptionPane.ERROR_MESSAGE);
+                    AdHocDialog.run(this.panel,
+                            this.fontInfo,
+                            AdHocDialog.IconType.ERROR,
+                            "Error during setup",
+                            "<html>One of your selected operations caused an error."
+                            + " No changes were made to the file.<br/><br/>"
+                            + "Hover over the red `Error` text for more information.");
                     shownErrorDialog = true;//could make this an Option
                 }
             }
@@ -361,12 +365,11 @@ public abstract class GameTweaksPanel extends JPanel {
                     JEditorPane ep = new JEditorPane("text/html", "<html><body>" //
                             + disableReason //
                             + "</body></html>");
+                    ep.setFont(this.fontInfo.getFont());
 
                     //styling
-                    JLabel label = new JLabel();
-                    Font font = label.getFont();
                     StyleSheet styleSheet = ((HTMLDocument) ep.getDocument()).getStyleSheet();
-                    styleSheet.addRule("body{font-size:" + font.getSize() + "pt;}");
+                    styleSheet.addRule("body{font-size:" + this.fontInfo.getFont().getSize() + "pt;}");
                     Color c = ThemeManager.getColor(ThemeManager.ColorType.CodeSingleQuote);
                     styleSheet.addRule("a{color: rgb(" + c.getRed() + "," + c.getGreen() + "," + c.getBlue() + ");}");
 
@@ -390,7 +393,11 @@ public abstract class GameTweaksPanel extends JPanel {
                     ep.setEditable(false);
 
                     // show
-                    JOptionPane.showMessageDialog(null, ep);
+                    AdHocDialog.run(this.panel,
+                            this.fontInfo,
+                            AdHocDialog.IconType.INFORMATION,
+                            "Disabled Tweak",
+                            ep);
                 });
             } else {
                 button.setText("-");
@@ -838,16 +845,21 @@ public abstract class GameTweaksPanel extends JPanel {
 
         protected final boolean promptForReadOnlyFile() {
             if (!file.canWrite()) {
-                final String[] options = {"Yes", "No", "Yes, and revert back to readonly when done"};
-                int option = JOptionPane.showOptionDialog(null, "Your " + file.getName() + " is in read-only mode.\n"
+                int option = AdHocDialog.run(this.panel,
+                        this.fontInfo,
+                        AdHocDialog.IconType.QUESTION,
+                        "Read only mode detected",
+                        "<html>The file <tt>" + file.getName() + "</tt> is in read-only mode.<br/><br/>"
                         + "Disregard read-only mode and apply change anyway?",
-                        "Read only mode detected", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                if (option == 1) {
+                        new String[] {"Yes", "Yes, and revert back to readonly when done", "No"},
+                        2,
+                        new Dimension(490, 130));
+                if (option == 2) {
                     return true;
                 }
-                file.setWritable(true, false);
+                file.setWritable(true, true);
                 System.out.println(option);
-                revertReadOnly = option == 2;
+                revertReadOnly = option == 1;
 
             }
             return false;
