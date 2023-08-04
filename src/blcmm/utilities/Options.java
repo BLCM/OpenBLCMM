@@ -705,8 +705,10 @@ public class Options extends OptionsBase {
         // for CJ, who apparently won't shut up about it.  :)
         this.registerOption(new BooleanOption(this, OptionNames.propagateMUTNotification.toString(), fontInfo, true));
 
-        // Object Explorer UI elements.  First, remembering "Collapse" button
+        // Remember the state of various Object Explorer UI elements.
         this.registerOption(new BooleanOption(this, OptionNames.oeCollapseArrays.toString(), fontInfo, false));
+        this.registerOption(new BooleanOption(this, OptionNames.oeAutoFormat.toString(), fontInfo, false));
+        this.registerOption(new IntOption(this, OptionNames.oeDeformatLevel.toString(), fontInfo, 1));
 
         // All of our Object Explorer Bookmarks of queries / objects
         this.registerOption(new StringListOption(this, OptionNames.BL2Bookmarks.toString(), fontInfo, new String[]{}));
@@ -991,6 +993,22 @@ public class Options extends OptionsBase {
 
     public void setOECollapseArrays(boolean collapse) {
         this.setBooleanOptionData(Options.OptionNames.oeCollapseArrays, collapse);
+    }
+
+    public boolean getOEAutoFormat() {
+        return this.getBooleanOptionData(Options.OptionNames.oeAutoFormat);
+    }
+
+    public void setOEAutoFormat(boolean autoFormat) {
+        this.setBooleanOptionData(Options.OptionNames.oeAutoFormat, autoFormat);
+    }
+
+    public int getOEDeformatLevel() {
+        return this.getIntOptionData(Options.OptionNames.oeDeformatLevel);
+    }
+
+    public void setOEDeformatLevel(int deformatLevel) {
+        this.setIntOptionData(Options.OptionNames.oeDeformatLevel, deformatLevel);
     }
 
     /**

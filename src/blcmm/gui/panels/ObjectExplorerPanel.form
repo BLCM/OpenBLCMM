@@ -175,18 +175,6 @@
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JButton" name="autoFormatButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Auto format"/>
-        <Property name="toolTipText" type="java.lang.String" value="Formats the arrays and structs to be more readable"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoFormatButtonActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
-      </AuxValues>
-    </Component>
     <Component class="javax.swing.JLabel" name="infoLabel">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new InfoLabel(InfoLabel.OE_SPECIFIC + &quot;&lt;br/&gt;&lt;br/&gt;&quot; + InfoLabel.BASIC_1+ InfoLabel.BASIC_3, this.fontInfo)"/>
@@ -208,6 +196,18 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="collapseArraysToggleButtonActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJToggleButton(this.fontInfo)"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="autoFormatButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auto format"/>
+        <Property name="toolTipText" type="java.lang.String" value="Formats the arrays and structs to be more readable"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoFormatButtonActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJToggleButton(this.fontInfo)"/>

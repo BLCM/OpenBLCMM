@@ -92,6 +92,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
@@ -169,8 +170,10 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         forwardButton.setFont(forwardButton.getFont().deriveFont(forwardButton.getFont().getSize2D() + 2f));
         this.currentDump = null;
 
-        // Set the default state of "collapse arrays"
+        // Set the default state of a few elements
         this.collapseArraysToggleButton.setSelected(Options.INSTANCE.getOECollapseArrays());
+        this.autoFormatButton.setSelected(Options.INSTANCE.getOEAutoFormat());
+        this.deformatSpinner.setValue(Options.INSTANCE.getOEDeformatLevel());
 
         // Update our UI based on the current game selection
         this.updateGame(true);
@@ -189,6 +192,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     worker.stop();
                 }
             }
+        });
+        this.deformatSpinner.addChangeListener((ChangeEvent ce) -> {
+            Options.INSTANCE.setOEDeformatLevel((int)this.deformatSpinner.getValue());
         });
 
         // Bind the search action to ctrl-F
@@ -383,10 +389,10 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         refsButton = new FontInfoJButton(this.fontInfo);
         mainProgressBar = new javax.swing.JProgressBar();
         deformatButton = new FontInfoJButton(this.fontInfo);
-        autoFormatButton = new FontInfoJButton(this.fontInfo);
         infoLabel = new InfoLabel(InfoLabel.OE_SPECIFIC + "<br/><br/>" + InfoLabel.BASIC_1+ InfoLabel.BASIC_3, this.fontInfo);
         bookmarkLabel = new FontInfoJLabel(this.fontInfo);
         collapseArraysToggleButton = new FontInfoJToggleButton(this.fontInfo);
+        autoFormatButton = new FontInfoJToggleButton(this.fontInfo);
 
         searchLabel.setText("Search:");
 
@@ -440,14 +446,6 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             }
         });
 
-        autoFormatButton.setText("Auto format");
-        autoFormatButton.setToolTipText("Formats the arrays and structs to be more readable");
-        autoFormatButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                autoFormatButtonActionPerformed(evt);
-            }
-        });
-
         bookmarkLabel.setText("☆");
         bookmarkLabel.setToolTipText("<html> Click to bookmark the currently dumped object.<br/>\nDouble click to manage your bookmarks.");
 
@@ -456,6 +454,14 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         collapseArraysToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 collapseArraysToggleButtonActionPerformed(evt);
+            }
+        });
+
+        autoFormatButton.setText("Auto format");
+        autoFormatButton.setToolTipText("Formats the arrays and structs to be more readable");
+        autoFormatButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoFormatButtonActionPerformed(evt);
             }
         });
 
@@ -664,19 +670,28 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     private void collapseArraysToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_collapseArraysToggleButtonActionPerformed
         Options.INSTANCE.setOECollapseArrays(collapseArraysToggleButton.isSelected());
         if (collapseArraysToggleButton.isSelected()) {
-            textElement.setText(collapseArrays(deformat(getDocumentText(), 5000)));
+            // It's tempting to just set the deformat level and do it once, if both buttons
+            // are selected, but that can lead to some weirdness -- do 'em in order.
+            String newText = collapseArrays(deformat(getDocumentText(), 5000));
+            if (autoFormatButton.isSelected()) {
+                newText = deformat(newText, 0);
+            }
+            textElement.setText(newText);
         }
     }//GEN-LAST:event_collapseArraysToggleButtonActionPerformed
 
     private void autoFormatButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoFormatButtonActionPerformed
         GlobalLogger.log("AutoFormat pressed");
+        Options.INSTANCE.setOEAutoFormat(autoFormatButton.isSelected());
         if (worker != null) {
             worker.stop();
         }
-        String ntext = deformat(getDocumentText(), 0);
-        setTextRetainCursor(textElement, ntext);
-        if (historyIndex > -1) {
-            history.get(historyIndex).text = textElement.getText();
+        if (autoFormatButton.isSelected()) {
+            String ntext = deformat(getDocumentText(), 0);
+            setTextRetainCursor(textElement, ntext);
+            if (historyIndex > -1) {
+                history.get(historyIndex).text = textElement.getText();
+            }
         }
     }//GEN-LAST:event_autoFormatButtonActionPerformed
 
@@ -706,7 +721,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton autoFormatButton;
+    private javax.swing.JToggleButton autoFormatButton;
     private javax.swing.JButton backButton;
     private javax.swing.JLabel bookmarkLabel;
     private javax.swing.JToggleButton collapseArraysToggleButton;
@@ -846,6 +861,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         } else {
             if (collapseArraysToggleButton.isSelected()) {
                 text = collapseArrays(text);
+            }
+            if (autoFormatButton.isSelected()) {
+                text = deformat(text, 0);
             }
             currentDump = dump;
             String normalizedQuery;

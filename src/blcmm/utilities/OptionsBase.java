@@ -120,6 +120,8 @@ public abstract class OptionsBase {
         accountDataNumber,
         checkForNewVersions,
         oeCollapseArrays,
+        oeAutoFormat,
+        oeDeformatLevel,
         oeSearchActions,
         oeSearchAI,
         oeSearchAnimations,

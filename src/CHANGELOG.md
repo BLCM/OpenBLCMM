@@ -15,7 +15,9 @@ OpenBLCMM Changelog
   dialogs may not use the user's font size preference.
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
-- Object Explorer will remember the state of the "Collapse Arrays" button.
+- Object Explorer's "Auto format" button is now a toggle (like the "Collapse
+  Arrays" button).  OE will also remember the state of both those buttons
+  between runs, in addition to the selected "Deformat arrays" number.
 - Fixed a crash which could occur when unexpected files/directories were found
   in OpenBLCMM's auto-backup dir.
 - Fixed a crash which could occur when going back/forward through Object
