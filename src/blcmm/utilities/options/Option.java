@@ -148,7 +148,7 @@ public abstract class Option<T> {
             String displayDesc,
             String callback, String tooltip,
             String setupCallback) {
-        this(optionsObj, name, fontInfo, defaultData, shownPanel, false, displayDesc, callback, tooltip, null);
+        this(optionsObj, name, fontInfo, defaultData, shownPanel, false, displayDesc, callback, tooltip, setupCallback);
     }
 
     /**
