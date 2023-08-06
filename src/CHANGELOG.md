@@ -8,6 +8,9 @@ OpenBLCMM Changelog
   a problem for Ezeith's Red Text Explainer mod.)
   - Code formatting backend got a little bit of an overhaul at the same time.
     Let us know if there's any strange behavior with code processing now!
+- Prevent app from aggressively trimming whitespace in `set` commands, which
+  could have affected UI labels which included parentheses (such as in
+  `SkillDescription` attributes, for instance).
 - Fixed various font scaling issues with non-default font sizes, and when
   changing the font size in the app.  Object Explorer will dynamically update
   its font size just like the main window.  A few tooltips may not update their

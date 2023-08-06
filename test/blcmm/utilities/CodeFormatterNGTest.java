@@ -347,7 +347,62 @@ public class CodeFormatterNGTest {
                 Arrays.asList(
                         "# comments  with  some  whitespace"
                 ),
-            }
+            },
+            { "Proper whitespace deletion",
+                "set foo bar ( ( baz = frotz , nitfol = zemdor ) )",
+                Arrays.asList(
+                        "set foo bar ((baz=frotz,nitfol=zemdor))"
+                ),
+            },
+            { "Cautious whitespace deletion",
+                // Make sure we're not getting rid of whitespace we shouldn't.
+                // This statement would be unlikely to be valid, but we still
+                // shouldn't assume that two whitespace-separated strings are
+                // supposed to concat
+                "set foo bar ( ( baz = frotz more , nitfol = zemdor yep ) )",
+                Arrays.asList(
+                        "set foo bar ((baz=frotz more,nitfol=zemdor yep))"
+                ),
+            },
+            { "Cautious whitespace deletion (real example)",
+                // This one basically shouldn't get rid of *any* whitespace
+                // This was submitted as issue #42
+                "set foo SkillDescription You deal increased [skill]Gun Damage[-skill] (actually: [skill]Bullet Damage[-skill] and [skill]Gun Splash[-skill]) to any enemy with more than 50% health remaining.",
+                Arrays.asList(
+                        "set foo SkillDescription You deal increased [skill]Gun Damage[-skill] (actually: [skill]Bullet Damage[-skill] and [skill]Gun Splash[-skill]) to any enemy with more than 50% health remaining."
+                ),
+            },
+            { "Cautious whitespace deletion (real example with legit trims)",
+                // This one does have a couple things which should be trimmed
+                "set foo SkillDescription You deal increased [skill]Gun Damage[-skill] ( actually: [skill]Bullet Damage[-skill] and [skill]Gun Splash[-skill] ) to any enemy with more than 50% health remaining.",
+                Arrays.asList(
+                        "set foo SkillDescription You deal increased [skill]Gun Damage[-skill] (actually: [skill]Bullet Damage[-skill] and [skill]Gun Splash[-skill]) to any enemy with more than 50% health remaining."
+                ),
+            },
+            { "No whitespace stripping in quotes",
+                "set foo bar \"( frotz = nitfol )\"",
+                Arrays.asList(
+                        "set foo bar \"( frotz = nitfol )\""
+                ),
+            },
+            { "No whitespace stripping in quotes -- two values",
+                "set foo bar ( frotz = \" one , two \" , nitfol = \" ( three )\" )",
+                Arrays.asList(
+                        "set foo bar (frotz=\" one , two \",nitfol=\" ( three )\")"
+                ),
+            },
+            { "No whitespace stripping in quotes -- dangling quote",
+                "set foo bar \"( frotz = nitfol )",
+                Arrays.asList(
+                        "set foo bar \"( frotz = nitfol )"
+                ),
+            },
+            { "No whitespace stripping in quotes -- two values, dangling quote",
+                "set foo bar ( frotz = \" one , two \" , nitfol = \" ( three )",
+                Arrays.asList(
+                        "set foo bar (frotz=\" one , two \",nitfol=\" ( three )"
+                ),
+            },
         };
     }
 

@@ -65,6 +65,30 @@ public class CodeFormatter {
         COMMANDS.add("say");
     }
 
+    // A couple of HashSets to help with trimming whitespace when deformatting
+    // code.  Basically, in a statement, we want to retain whitespace unless
+    // we're *actually* compressing syntax down properly.  As far as I can see,
+    // this boils down to just one of four situations:
+    //
+    //   1. When the previous char was (
+    //   2. When the next char is )
+    //   3. When the previous or next char is ,
+    //   4. When the previous or next char is =
+    //
+    // For everything else, it just doens't make sense to cut whitespace.  So,
+    // we're using some HashSets so we can do those char comparisons quickly.
+    private final static HashSet<Character> TRIM_WHITESPACE_PREV = new HashSet<>();
+    private final static HashSet<Character> TRIM_WHITESPACE_NEXT = new HashSet<>();
+    static {
+        TRIM_WHITESPACE_PREV.add('(');
+        TRIM_WHITESPACE_PREV.add(',');
+        TRIM_WHITESPACE_PREV.add('=');
+
+        TRIM_WHITESPACE_NEXT.add(')');
+        TRIM_WHITESPACE_NEXT.add(',');
+        TRIM_WHITESPACE_NEXT.add('=');
+    }
+
     /**
      * Splits freeform user-generated mod code into discrete "parts", ideally
      * separating out statements from each other, keeping comments separate,
@@ -392,10 +416,101 @@ public class CodeFormatter {
     }
     /**/
 
+    /**
+     * Deformat the given `set` statement -- ie: convert it from a potentially
+     * multiline statement into a single line, with whitespace trimmed out as
+     * is reasonable.  All whitespace outside of quoted areas will be reduced
+     * down to a single space, or removed entirely if it makes sense to do so.
+     *
+     * @param original The original, potentially multiline code
+     * @return A deformatted version suitable for inclusion directly into a
+     * BLCM mod file.
+     */
     public static String deFormatCode(String original) {
-        return removeNonQuotedSpaces(original.replaceAll("\n", " "));
+        //return removeNonQuotedSpaces(original.replaceAll("\n", " "));
+        return trimWhitespace(original.replaceAll("\n", " "));
     }
 
+    /**
+     * Trims whitespace from the given original code.  Any quoted sections
+     * will be left as-is, but the rest will go through extra processing.  The
+     * extra processing will collapse any other whitespace down to a single
+     * space, or removed entirely if it makes sense to do so.
+     *
+     * Note that the quoted-section handling does *not* take into account any
+     * quote-quoting behavior which might be valid UE/game syntax.  If such
+     * a syntax exists, I'm not aware of it at time of writing.  So, that
+     * handling is currently quite stupid -- basically just split on quote
+     * marks and apply our whitespace-trimming to the odd tokens, and leave
+     * the even tokens alone.
+     *
+     * @param original The original code to trim
+     * @return A version of the code with whitespace trimmed as much as possible
+     */
+    public static String trimWhitespace(String original) {
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(original, "\"");
+        int tokenCount = 0;
+        while (st.hasMoreTokens()) {
+            if (tokenCount % 2 == 0) {
+                sb.append(trimWhitespaceFromNonQuoted(st.nextToken()));
+            } else {
+                sb.append("\"");
+                sb.append(st.nextToken());
+                // This should theoretically handle a dangling quote
+                if (st.hasMoreTokens()) {
+                    sb.append("\"");
+                }
+            }
+            tokenCount++;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Trims whitespace from a non-quoted section of code.  This will collapse
+     * areas of whitespace down into a single space, or remove the whitespace
+     * altogether if it makes sense to do so.  To know whether to remove the
+     * whitespace entirely, we're making use of a couple of HashSets -- see
+     * the comments in the code up near their definitions for the details of
+     * what we're looking for to make that determination.
+     *
+     * @param original The original non-quoted code area to trim.
+     * @return A version of the code with as much whitespace trimmed as
+     * possible.
+     */
+    public static String trimWhitespaceFromNonQuoted(String original) {
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st = new StringTokenizer(original);
+        String prevToken = null;
+        // StringTokenizer should only be capable of giving us strings which
+        // aren't zero-length, so I'm *not* doing that kind of bounds checking.
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            boolean doWhitespace = true;
+            if (prevToken == null) {
+                doWhitespace = false;
+            } else {
+                if (TRIM_WHITESPACE_PREV.contains(prevToken.charAt(prevToken.length()-1))) {
+                    doWhitespace = false;
+                } else if (TRIM_WHITESPACE_NEXT.contains(token.charAt(0))) {
+                    doWhitespace = false;
+                }
+            }
+            if (doWhitespace) {
+                sb.append(" ");
+            }
+            sb.append(token);
+            prevToken = token;
+        }
+        return sb.toString();
+    }
+
+    /* This used to be called by deFormatCode, to strip out unnecessary
+     * whitespace, while keeping whitespace in quoted sections intact.  This
+     * was well-meaning, and in most cases is fine, but it's too aggressive in
+     * a number of situations.  See my new trimWhitespace*() methods for the
+     * newer implementation of this.
     public static String removeNonQuotedSpaces(String s) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
@@ -414,6 +529,7 @@ public class CodeFormatter {
         }
         return sb.toString();
     }
+    /**/
 
     public static String deFormatCodeInnerNBrackets(String original, final int n) {
         List<Integer> stack = new ArrayList<>();
