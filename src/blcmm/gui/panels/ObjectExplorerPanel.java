@@ -390,7 +390,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         mainProgressBar = new javax.swing.JProgressBar();
         deformatButton = new FontInfoJButton(this.fontInfo);
         infoLabel = new InfoLabel(InfoLabel.OE_SPECIFIC + "<br/><br/>" + InfoLabel.BASIC_1+ InfoLabel.BASIC_3, this.fontInfo);
-        bookmarkLabel = new FontInfoJLabel(this.fontInfo);
+        bookmarkLabel = new FontInfoJLabel(this.fontInfo, 8f);
         collapseArraysToggleButton = new FontInfoJToggleButton(this.fontInfo);
         autoFormatButton = new FontInfoJToggleButton(this.fontInfo);
 

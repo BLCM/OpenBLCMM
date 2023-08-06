@@ -186,7 +186,7 @@
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt; Click to bookmark the currently dumped object.&lt;br/&gt;&#xa;Double click to manage your bookmarks."/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJLabel(this.fontInfo)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJLabel(this.fontInfo, 8f)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JToggleButton" name="collapseArraysToggleButton">

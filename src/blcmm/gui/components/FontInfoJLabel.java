@@ -28,6 +28,7 @@
 package blcmm.gui.components;
 
 import blcmm.gui.FontInfo;
+import java.awt.Font;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JToolTip;
@@ -42,10 +43,19 @@ import javax.swing.JToolTip;
 public class FontInfoJLabel extends JLabel {
 
     private final FontInfo fontInfo;
+    private float extraFontSize = 0;
 
     public FontInfoJLabel(FontInfo fontInfo) {
         super();
         this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJLabel(FontInfo fontInfo, float extraFontSize) {
+        super();
+        this.fontInfo = fontInfo;
+        this.extraFontSize = extraFontSize;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
@@ -91,5 +101,10 @@ public class FontInfoJLabel extends JLabel {
         tip.setComponent(this);
         tip.setFont(this.fontInfo.getFont());
         return tip;
+    }
+
+    @Override
+    public void setFont(Font f) {
+        super.setFont(f.deriveFont(f.getSize2D() + this.extraFontSize));
     }
 }
