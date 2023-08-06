@@ -879,7 +879,7 @@ public class OverwriteCheckerNGTest {
                   new TestData(),
               }
             },
-            { "Full after TPS-specific add-to-array syntax (expected test failure -- should full overwrite)",
+            { "Full after TPS-specific add-to-array syntax (expected test failure -- should full overwrite.  See bug #20)",
               new String[] {"level none set foo bar +(baz)", "level none set foo bar baz"},
               new TestData[] {
                   new TestDataF(1),

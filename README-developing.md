@@ -4,6 +4,7 @@ Developing OpenBLCMM
 - [Development Environment](#development-environment)
   - [OE Datapacks](#oe-datapacks)
   - [Git Branch](#git-branch)
+- [Unit Tests](#unit-tests)
 - [Library Bundling](#library-bundling)
 - [Compiling for Windows](#compiling-for-windows)
 - [Packaging / Release Procedures](#packaging--release-procedures)
@@ -51,6 +52,26 @@ Work on minor bugfix updates are likely to happen out in the main branch,
 but development for future [major/minor updates](https://semver.org/) will
 more likely happen on the `next` branch.  Flip over there if you want to
 see what's being worked on (if anything).
+
+Unit Tests
+----------
+
+OpenBLCMM has vanishingly few of these, alas.  The ones that we have probably
+also veer closer to being more integration test than unit test, to boot.  At
+time of writing, we've got some which cover the detection of overwritten code,
+and some which cover the mod-statement parsing from the code edit window (ie:
+turning user input into sanitized mod statements).
+
+If you're touching either of those things, it'll be good to make sure to run
+the unit tests we have, and even add some new ones if you're fixing bugs in
+there or adding new functionality.  If anything *else* that you're working on
+happens to be a good candidate for unit testing, too, more tests would certainly
+be welcome.
+
+The tests can be run right from Netbeans' "Run" menu.  Note that at the moment
+there are two overwrite-check tests which we expect to fail, related to
+[bug #20](https://github.com/BLCM/OpenBLCMM/issues/20).  If that bug's ever
+fixed up, those two failures should clear themselves out.
 
 Library Bundling
 ----------------
