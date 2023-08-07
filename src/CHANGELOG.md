@@ -4,17 +4,19 @@ OpenBLCMM Changelog
 **v1.4.0** Unreleased
 - Added a new "Input" settings tab which allows users to define the behavior
   of clicking on object name links, in Edit panels and in Object Explorer.
-- Allow the word `set` to appear inside statement values.  (This was always
-  a problem for Ezeith's Red Text Explainer mod.)
-  - Code formatting backend got a little bit of an overhaul at the same time.
+- Code formatting improvements:
+  - Code formatting backend got a bit of an overhaul in general, which looks
+    to have improved performance when editing large `set` statements.
     Let us know if there's any strange behavior with code processing now!
-- Prevent app from aggressively trimming whitespace in `set` commands, which
-  could have affected UI labels which included parentheses (such as in
-  `SkillDescription` attributes, for instance).
+  - Allow the word `set` to appear inside statement values.  (This was always
+    a problem for Ezeith's Red Text Explainer mod.)
+  - Prevent app from aggressively trimming whitespace in `set` commands, which
+    could have affected UI labels which included parentheses (such as in
+    `SkillDescription` attributes, for instance).
 - Fixed various font scaling issues with non-default font sizes, and when
   changing the font size in the app.  Object Explorer will dynamically update
-  its font size just like the main window.  A few tooltips may not update their
-  font size until the app is restarted, and some very-early-startup error
+  its font size just like the main window.  A few tooltips still may not update
+  their font size until the app is restarted, and some very-early-startup error
   dialogs may not use the user's font size preference.
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
@@ -27,11 +29,11 @@ OpenBLCMM Changelog
   Explorer search history.
 - Fixed a crash which could occur when navigating Object Explorer bookmarks.
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
-  of just the text labels
+  of just the text labels.
 - Better handling of URL links, when Java doesn't know how to open a browser
   on the running system.  Will present a dialog with the URL in a copyable
   form, so it can at least be opened manually.
-- Added a new "Dangerous Settings" option to set the GearboxAccountData
+- Added a new "Dangerous Settings" option to set the `GearboxAccountData`
   index used in offline-saved files.
 - If the application tries to write to a readonly file and the user opts to
   override permissions to write anyway, the write permission will only be
