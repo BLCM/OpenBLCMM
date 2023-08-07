@@ -32,6 +32,7 @@ import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEObject;
 import blcmm.gui.MainGUI;
 import blcmm.gui.ObjectExplorer;
+import blcmm.gui.panels.ObjectExplorerPanel;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Options;
 import blcmm.utilities.Options.MouseLinkAction;
@@ -72,14 +73,20 @@ public final class HighlightedTextArea extends JTextPane {
     private final UndoManager undoManager;
     private final DataManagerManager dmm;
     private final AutoCompleteAttacher autoCompleteAttacher;
+    private final ObjectExplorerPanel panel;
 
     public HighlightedTextArea(DataManagerManager dmm, boolean link) {
         this(dmm, link, true);
     }
 
     public HighlightedTextArea(DataManagerManager dmm, boolean link, boolean allowEdit) {
+        this(dmm, link, allowEdit, null);
+    }
+
+    public HighlightedTextArea(DataManagerManager dmm, boolean link, boolean allowEdit, ObjectExplorerPanel panel) {
         super();
         this.dmm = dmm;
+        this.panel = panel;
         //link = false;
         setFont(new Font(MainGUI.CODE_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()));
         setDocument(new myStylizedDocument(link));//Syntax highlighting
@@ -436,9 +443,22 @@ public final class HighlightedTextArea extends JTextPane {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                if (search != null) {
-                    MouseLinkAction a = Options.INSTANCE.processMouseLinkClick(e);
-                    if (a != null) {
+                MouseLinkAction a = Options.INSTANCE.processMouseLinkClick(e);
+                if (a != null) {
+                    if (search == null) {
+                        switch (a) {
+                            case Back:
+                                if (panel != null) {
+                                    panel.doBackButton();
+                                }
+                                break;
+                            case Forward:
+                                if (panel != null) {
+                                    panel.doForwardButton();
+                                }
+                                break;
+                        }
+                    } else {
                         boolean launch = true;
                         boolean newTab = false;
                         switch (a) {

@@ -97,7 +97,9 @@ public class Options extends OptionsBase {
     public enum MouseLinkAction implements SelectionOptionData {
         None("No Action"),
         Current("Current Tab"),
-        New("New Tab");
+        New("New Tab"),
+        Back("Back"),
+        Forward("Forward");
 
         private final String description;
 
@@ -127,6 +129,7 @@ public class Options extends OptionsBase {
 
         private final Options options;
 
+        private final String fieldNameActive;
         private final String fieldNameButton;
         private final String fieldNameClicks;
         private final String fieldNameBase;
@@ -166,6 +169,7 @@ public class Options extends OptionsBase {
                 MouseLinkAction defaultAlt
                 ) {
             this.options = options;
+            this.fieldNameActive = "inputMouseLink" + identifier + "Active";
             this.fieldNameButton = "inputMouseLink" + identifier + "Button";
             this.fieldNameClicks = "inputMouseLink" + identifier + "Clicks";
             this.fieldNameBase = "inputMouseLink" + identifier + "Base";
@@ -175,6 +179,16 @@ public class Options extends OptionsBase {
             this.fieldNameAlt = "inputMouseLink" + identifier + "Alt";
 
             options.registerOption(new SectionHeaderOption(options, section, header, fontInfo));
+
+            options.registerOption(new BooleanOption(
+                    options,
+                    this.fieldNameActive,
+                    fontInfo,
+                    true,
+                    section, "Active?",
+                    null,
+                    "Whether or not to process this button's actions."
+            ));
 
             options.registerOption(new MouseButtonOption(
                     options,
@@ -193,7 +207,7 @@ public class Options extends OptionsBase {
                     fontInfo,
                     defaultNumClicks,
                     section, "      Number of Clicks",
-                    0, 4,
+                    1, 4,
                     null,
                     "Number of clicks to require to load an object link with this button"
             ));
@@ -308,7 +322,8 @@ public class Options extends OptionsBase {
          * @return True if we should handle this event, false otherwise
          */
         private boolean matches(MouseEvent e) {
-            return (e.getButton() == this.options.getMouseButtonOptionData(this.fieldNameButton)
+            return (this.options.getBooleanOptionData(this.fieldNameActive)
+                    && e.getButton() == this.options.getMouseButtonOptionData(this.fieldNameButton)
                     && e.getClickCount() == this.options.getIntOptionData(this.fieldNameClicks)
                     );
         }
@@ -510,6 +525,32 @@ public class Options extends OptionsBase {
                     MouseLinkAction.New,
                     MouseLinkAction.New,
                     MouseLinkAction.New
+                    ),
+            new MouseLinkSection(this,
+                    Option.Shown.INPUT,
+                    fontInfo,
+                    "Extra1",
+                    "Extra Button 1",
+                    4,
+                    1,
+                    MouseLinkAction.Back,
+                    MouseLinkAction.Back,
+                    MouseLinkAction.Back,
+                    MouseLinkAction.Back,
+                    MouseLinkAction.Back
+                    ),
+            new MouseLinkSection(this,
+                    Option.Shown.INPUT,
+                    fontInfo,
+                    "Extra2",
+                    "Extra Button 2",
+                    5,
+                    1,
+                    MouseLinkAction.Forward,
+                    MouseLinkAction.Forward,
+                    MouseLinkAction.Forward,
+                    MouseLinkAction.Forward,
+                    MouseLinkAction.Forward
                     ),
         };
 

@@ -77,11 +77,11 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
         // Input Settings
         inputSettingsPanel = new ToolSettingsPanel(Option.Shown.INPUT, fontInfo, masterSettingsTabbedPane,
-                "Choose the mouse clicks used to open object name links in<br/>"
-                + "Object Explorer, into the current tab or into a new tab.<br/>"
-                + "Using the same button for both primary and secondary will<br/>"
-                + "result in inconsistent behavior.  Set the click count to 0<br/>"
-                + "to disable a button entirely."
+                "Choose the behavior of mouse clicks while viewing/editing<br/>"
+                + "code.  Current/New actions only apply to object links, and<br/>"
+                + "Back/Forward actions only apply in Object Explorer.  Using<br/>"
+                + "the same mouse button for more than one section can result<br/>"
+                + "in inconsistent behavior."
         );
         inputSettingsPanel.setSize(inputSettingsGuiPanel.getSize());
         inputSettingsGuiPanel.setLayout(new BoxLayout(inputSettingsGuiPanel, BoxLayout.PAGE_AXIS));

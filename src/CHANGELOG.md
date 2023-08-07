@@ -2,8 +2,11 @@ OpenBLCMM Changelog
 ===================
 
 **v1.4.0** Unreleased
-- Added a new "Input" settings tab which allows users to define the behavior
-  of clicking on object name links, in Edit panels and in Object Explorer.
+- Added a new "Input" settings tab to configure mouse-click behavior in code
+  edit windows and Object Explorer:
+  - Can configure which buttons open object links in new/current OE tabs.
+  - Can configure mouse buttons to go back/forward in OE history (defaults to
+    Mouse 4 and Mouse 5)
 - Code formatting improvements:
   - Code formatting backend got a bit of an overhaul in general, which looks
     to have improved performance when editing large `set` statements.

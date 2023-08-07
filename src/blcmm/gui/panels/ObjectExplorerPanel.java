@@ -151,7 +151,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         this.dmm = dmm;
         this.fontInfo = fontInfo;
         initComponents();
-        textElement = new HighlightedTextArea(dmm, true);
+        textElement = new HighlightedTextArea(dmm, true, true, this);
         textElement.setEditable(true);
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(textElement);
@@ -561,15 +561,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        reloadTabHistory();
-        historyIndex--;
-        replaceTextByHistory();
+        this.doBackButtonAction();
     }//GEN-LAST:event_backButtonActionPerformed
 
     private void forwardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardButtonActionPerformed
-        reloadTabHistory();
-        historyIndex++;
-        replaceTextByHistory();
+        this.doForwardButtonAction();
     }//GEN-LAST:event_forwardButtonActionPerformed
 
     private void refsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refsButtonActionPerformed
@@ -595,6 +591,48 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         currentDump = null;
         refs(query);
     }//GEN-LAST:event_refsButtonActionPerformed
+
+    /**
+     * Public method to process the back button -- will check to make sure the
+     * button is active before processing.  Used by HighlightedTextArea to
+     * support mouse buttons for back/fwd.
+     */
+    public void doBackButton() {
+        if (this.backButton.isEnabled()) {
+            this.doBackButtonAction();
+        }
+    }
+
+    /**
+     * Private method to process the back button.  Assumes that all checks about
+     * button validity have already been done.
+     */
+    private void doBackButtonAction() {
+        reloadTabHistory();
+        historyIndex--;
+        replaceTextByHistory();
+    }
+
+    /**
+     * Public method to process the forward button -- will check to make sure
+     * the button is active before processing.  Used by HighlightedTextArea to
+     * support mouse buttons for back/fwd.
+     */
+    public void doForwardButton() {
+        if (this.forwardButton.isEnabled()) {
+            this.doForwardButtonAction();
+        }
+    }
+
+    /**
+     * Private method to process the forward button.  Assumes that all checks
+     * about button validity have already been done.
+     */
+    private void doForwardButtonAction() {
+        reloadTabHistory();
+        historyIndex++;
+        replaceTextByHistory();
+    }
 
     private void performSearch() {
         if (worker != null && !worker.stop) {
