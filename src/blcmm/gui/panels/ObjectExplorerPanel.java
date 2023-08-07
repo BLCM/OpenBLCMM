@@ -884,7 +884,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
     private void enterKeyPressed() {
         String query = queryTextField.getText().trim();
-        if (query.isEmpty() || query.equals(previousQuery)) {
+        if (query.isEmpty() || query.equals(previousQuery) || this.dmm.getCurrentDataManager() == null) {
             return;
         }
         //System.out.println(query + " : " + controlState);
