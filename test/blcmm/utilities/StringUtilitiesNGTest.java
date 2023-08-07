@@ -149,12 +149,6 @@ public class StringUtilitiesNGTest {
             boolean expectedOutput) {
         boolean realOutput = StringUtilities.substringStartsWith(initialString, index, searchString);
         assertEquals(realOutput, expectedOutput);
-
-        // May as well test StringBuilder version as well, even though that's
-        // a bit silly
-        StringBuilder sb = new StringBuilder(initialString);
-        realOutput = StringUtilities.substringStartsWith(sb, index, searchString);
-        assertEquals(realOutput, expectedOutput);
     }
 
 

@@ -43,40 +43,33 @@ package blcmm.utilities;
 public class StringUtilities {
 
     /**
-     * Returns whether or not a substring of the given StringBuilder `sb` is
-     * equal to `searchString`.  See the String version below for some more
-     * detailed notes.
-     *
-     * @param sb The StringBuilder in which to search
-     * @param startIndex The start index where we expect to find our search
-     * @param searchString The string we're searching for
-     * @return Whether or not the search string is found at the specified index
-     */
-    public static boolean substringStartsWith(StringBuilder sb, int startIndex, String searchString) {
-        return StringUtilities.substringStartsWith(sb.toString(), startIndex, searchString);
-    }
-
-    /**
-     * Returns whether or not a substring of the given String `s` is equal to
-     * `searchString`.  Really this is checking for substring *equality* but
+     * Returns whether or not a substring of the given CharSequence `s` is equal
+     * to `searchString`.  Really this is checking for substring *equality* but
      * with an assumed substring length.
      *
-     * The original implementation of this function for OpenBLCMM was just
-     * doing a naive `s.substring(startIndex).startsWith(searchString)`, but
-     * it turns out that that's pretty inefficient, probably related to having
-     * to instantiate a new String object for the substring step.  So, this was
-     * streamlined for v1.4.0, and probably more closely resembles the original
-     * BLCMM implementation.  The slower version was noticeable when formatting
-     * large blocks of code in v1.3.× (though v1.4.0 ended up getting rid of
-     * the function making most of the calls in here, so this streamlining isn't
-     * actually necessary to speed that back up, anymore).
+     * OpenBLCMM v1.3.0 had some performance issues related to this method when
+     * doing code formatting, though some v1.4.0 changes bypassed this method
+     * as a bottleneck entirely, prior to discovering that problem.  A couple
+     * of things were done to address it, regardless:
      *
-     * @param s The string in which to search
+     *   1. This originally did a naive `s.substring(startIndex).startsWith(searchString)`,
+     *      which is slower than what we're now doing (potentially as much
+     *      as 2x slower).  In the end, that wasn't the biggest deal, though.
+     *
+     *   2. OpenBLCMM originally had two functions -- one that took a String,
+     *      and another which took a StringBuilder (which did a .toString() to
+     *      pass through to the String version).  *This* is what was being super
+     *      slow, in the end.  The right thing to do is to just use a
+     *      CharSequence instead, which lets us get right to charAt.  To do
+     *      that, we did need to do #1 as well, so at least that wasn't wasted
+     *      effort.
+     *
+     * @param s The charsequence in which to search
      * @param startIndex The start index where we expect to find our search
      * @param searchString The string we're searching for
      * @return Whether or not the search string is found at the specified index
      */
-    public static boolean substringStartsWith(String s, int startIndex, String searchString) {
+    public static boolean substringStartsWith(CharSequence s, int startIndex, String searchString) {
         int endIndex = startIndex + searchString.length();
         if (endIndex > s.length()) {
             return false;
