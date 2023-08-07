@@ -129,7 +129,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backButtonActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo, Font.BOLD, 2f)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="forwardButton">
@@ -145,7 +145,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="forwardButtonActionPerformed"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new FontInfoJButton(this.fontInfo, Font.BOLD, 2f)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JButton" name="refsButton">

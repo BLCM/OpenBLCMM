@@ -51,8 +51,10 @@ import blcmm.utilities.Utilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -143,8 +145,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
      *
      * @param dmm The DataManagerManager object we'll use for all data interaction
      * @param fontInfo the FontInfo object describing the font we'll be using
+     * @param firstTab Whether or not this is the first tab to be created
      */
-    public ObjectExplorerPanel(DataManagerManager dmm, FontInfo fontInfo) {
+    public ObjectExplorerPanel(DataManagerManager dmm, FontInfo fontInfo, boolean firstTab) {
         this.dmm = dmm;
         this.fontInfo = fontInfo;
         initComponents();
@@ -165,9 +168,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         deformatButton.setBorder(null);
         setFixedSize(deformatButton, d);
         backButton.setBorder(new EmptyBorder(5, 8, 5, 8));
-        backButton.setFont(backButton.getFont().deriveFont(backButton.getFont().getSize2D() + 2f));
         forwardButton.setBorder(new EmptyBorder(5, 8, 5, 8));
-        forwardButton.setFont(forwardButton.getFont().deriveFont(forwardButton.getFont().getSize2D() + 2f));
         this.currentDump = null;
 
         // Set the default state of a few elements
@@ -220,10 +221,14 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
         initBookmarks();
         Utilities.changeCTRLMasks(ObjectExplorerPanel.this);
+
+        // Update font sizes.  The recursive sweep isn't actually needed on the
+        // first tab, since ObjectExplorer is already going to recursively do
+        // it.
+        this.updateFontsizes(!firstTab);
     }
 
     private void initBookmarks() {
-        bookmarkLabel.setFont(bookmarkLabel.getFont().deriveFont(bookmarkLabel.getFont().getSize2D() + 8f));
         // This sets up our bookmark button and all of its funky dealings.
         bookmarkLabel.addMouseListener(new MouseAdapter() {
             private final int doubleClickTime = (int) Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
@@ -325,8 +330,18 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
      * A routine to do some cleanup after font sizes have been updated.  We'll
      * want to make sure that existing tabs are resized properly, that tab-close
      * icons are redrawn, and any other elements size themselves decently.
+     *
+     * @param doRecursiveSweep Should we also recursively loop through all our
+     * Components to update their font sizes directly?  This isn't needed for
+     * the initial tab but is useful when creating new ones, if the user's
+     * updated font sizes.
      */
-    public void updateFontsizes() {
+    public void updateFontsizes(boolean doRecursiveSweep) {
+
+        // First do a "general" font-size sweep
+        if (doRecursiveSweep) {
+            this.updateFontsizes(this);
+        }
 
         // Update the refs button size.  This is done so that it doesn't change
         // size when it flips to "cancel"
@@ -348,6 +363,24 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 temp.getPreferredSize().height);
         setFixedSize(deformatButton, d);
 
+    }
+
+    /**
+     * Loops through Components contained by `main` to update their font sizes
+     * to the currently-selected font size.
+     *
+     * @param main The Container to update
+     */
+    private void updateFontsizes(Container main) {
+        main.setFont(this.fontInfo.getFont());
+        for (Component c : main.getComponents()) {
+            c.setFont(c.getFont().deriveFont((float) Options.INSTANCE.getFontsize()));
+            if (c instanceof Container) {
+                updateFontsizes((Container) c);
+            } else {
+                c.setFont(this.fontInfo.getFont());
+            }
+        }
     }
 
     public void reloadTabHistory() {
@@ -384,8 +417,8 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
-        backButton = new FontInfoJButton(this.fontInfo);
-        forwardButton = new FontInfoJButton(this.fontInfo);
+        backButton = new FontInfoJButton(this.fontInfo, Font.BOLD, 2f);
+        forwardButton = new FontInfoJButton(this.fontInfo, Font.BOLD, 2f);
         refsButton = new FontInfoJButton(this.fontInfo);
         mainProgressBar = new javax.swing.JProgressBar();
         deformatButton = new FontInfoJButton(this.fontInfo);

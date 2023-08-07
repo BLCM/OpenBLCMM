@@ -205,16 +205,19 @@ public final class ObjectExplorer extends ForceClosingJFrame {
             this.updateFontsizes(leftHandPanel);
         }
 
-        // Send a resize signal to tab "close" buttons
+        // Send a resize signal to tab "close" buttons, and custom resize work
+        // inside the tabs themselves
         for (int i = 0; i < this.oePanelTabbedPane.getTabCount(); i++) {
             Component c = this.oePanelTabbedPane.getTabComponentAt(i);
             if (c instanceof ButtonTabComponent) {
                 ((ButtonTabComponent)c).updateCurrentSizes();
             }
-        }
 
-        // Do any other custom resize work inside the panel itself
-        ((ObjectExplorerPanel) this.oePanelTabbedPane.getComponentAt(oePanelTabbedPane.getSelectedIndex())).updateFontsizes();
+            c = this.oePanelTabbedPane.getComponentAt(i);
+            if (c instanceof ObjectExplorerPanel) {
+                ((ObjectExplorerPanel) this.oePanelTabbedPane.getComponentAt(i)).updateFontsizes(false);
+            }
+        }
 
         // Update our two trees to deal with string truncation issues
         this.updateAllTreeNodes(this.classBrowserTree);
@@ -806,7 +809,7 @@ public final class ObjectExplorer extends ForceClosingJFrame {
 
         @Override
         protected ObjectExplorerPanel getDefaultNewComponent() {
-            return new ObjectExplorerPanel(dmm, fontInfo);
+            return new ObjectExplorerPanel(dmm, fontInfo, this.getTabCount() == 0);
         }
 
         @Override

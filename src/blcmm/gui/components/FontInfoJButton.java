@@ -28,6 +28,7 @@
 package blcmm.gui.components;
 
 import blcmm.gui.FontInfo;
+import java.awt.Font;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -38,15 +39,32 @@ import javax.swing.JToolTip;
  * the user's font-size selection.  (Only really needed for sessions in which
  * the user's changing the size dynamically.)
  *
+ * This class also includes a single constructor which allows setting a font
+ * style + size modifier which should be applied whenever the label's font
+ * size changes.
+ *
  * @author apocalyptech
  */
 public class FontInfoJButton extends JButton {
 
     private final FontInfo fontInfo;
+    private boolean doExtraStyle = false;
+    private int extraStyle = Font.PLAIN;
+    private float extraFontSize = 0;
 
     public FontInfoJButton(FontInfo fontInfo) {
         super();
         this.fontInfo = fontInfo;
+        // May as well do this too
+        this.setFont(fontInfo.getFont());
+    }
+
+    public FontInfoJButton(FontInfo fontInfo, int extraStyle, float extraFontSize) {
+        super();
+        this.fontInfo = fontInfo;
+        this.doExtraStyle = true;
+        this.extraStyle = extraStyle;
+        this.extraFontSize = extraFontSize;
         // May as well do this too
         this.setFont(fontInfo.getFont());
     }
@@ -85,6 +103,15 @@ public class FontInfoJButton extends JButton {
         tip.setComponent(this);
         tip.setFont(this.fontInfo.getFont());
         return tip;
+    }
+
+    @Override
+    public void setFont(Font f) {
+        if (doExtraStyle) {
+            super.setFont(f.deriveFont(this.extraStyle, f.getSize2D() + this.extraFontSize));
+        } else {
+            super.setFont(f.deriveFont(f.getSize2D() + this.extraFontSize));
+        }
     }
 
 }

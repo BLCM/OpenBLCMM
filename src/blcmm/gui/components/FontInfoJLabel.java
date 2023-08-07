@@ -38,6 +38,9 @@ import javax.swing.JToolTip;
  * the user's font-size selection.  (Only really needed for sessions in which
  * the user's changing the size dynamically.)
  *
+ * This class also includes a single constructor which allows setting a font
+ * size modifier which should be applied whenever the label's font size changes.
+ *
  * @author apocalyptech
  */
 public class FontInfoJLabel extends JLabel {
