@@ -38,6 +38,8 @@ OpenBLCMM Changelog
   granted to the file's owner, if the OS supports that distinction.
 - Tweaked the application icon slightly and introduced a generation script
   for it.
+- Improved performance on an internal substring-matching function, and fixed
+  an edge case in its behavior.
 - Tightened up About dialog display a bit.
 - Updated sqlite-jdbc version to 3.42.0.0
 

@@ -42,16 +42,52 @@ package blcmm.utilities;
  */
 public class StringUtilities {
 
+    /**
+     * Returns whether or not a substring of the given StringBuilder `sb` is
+     * equal to `searchString`.  See the String version below for some more
+     * detailed notes.
+     *
+     * @param sb The StringBuilder in which to search
+     * @param startIndex The start index where we expect to find our search
+     * @param searchString The string we're searching for
+     * @return Whether or not the search string is found at the specified index
+     */
     public static boolean substringStartsWith(StringBuilder sb, int startIndex, String searchString) {
         return StringUtilities.substringStartsWith(sb.toString(), startIndex, searchString);
     }
 
+    /**
+     * Returns whether or not a substring of the given String `s` is equal to
+     * `searchString`.  Really this is checking for substring *equality* but
+     * with an assumed substring length.
+     *
+     * The original implementation of this function for OpenBLCMM was just
+     * doing a naive `s.substring(startIndex).startsWith(searchString)`, but
+     * it turns out that that's pretty inefficient, probably related to having
+     * to instantiate a new String object for the substring step.  So, this was
+     * streamlined for v1.4.0, and probably more closely resembles the original
+     * BLCMM implementation.  The slower version was noticeable when formatting
+     * large blocks of code in v1.3.× (though v1.4.0 ended up getting rid of
+     * the function making most of the calls in here, so this streamlining isn't
+     * actually necessary to speed that back up, anymore).
+     *
+     * @param s The string in which to search
+     * @param startIndex The start index where we expect to find our search
+     * @param searchString The string we're searching for
+     * @return Whether or not the search string is found at the specified index
+     */
     public static boolean substringStartsWith(String s, int startIndex, String searchString) {
         int endIndex = startIndex + searchString.length();
-        if (endIndex >= s.length()) {
+        if (endIndex > s.length()) {
             return false;
         }
-        return s.substring(startIndex, endIndex).equals(searchString);
+        int searchLength = searchString.length();
+        for (int i=0; i<searchLength; i++) {
+            if (s.charAt(startIndex+i) != searchString.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
