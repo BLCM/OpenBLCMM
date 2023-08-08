@@ -368,7 +368,16 @@ public abstract class OptionsBase {
                 }
             }
         }
+        this.postLoadProcessing();
         return (this.loadErrors.isEmpty());
+    }
+
+    /**
+     * A method to do any post-load processing which might need doing.  Empty
+     * in this base class, but intended to be overridden by implementing classes
+     * if need be.
+     */
+    protected void postLoadProcessing() {
     }
 
     /**

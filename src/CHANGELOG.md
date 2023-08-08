@@ -33,6 +33,8 @@ OpenBLCMM Changelog
     Explorer search history.
   - Fixed a crash which could occur when navigating Object Explorer bookmarks.
   - Fixed a crash when triggering a search while no datapack is loaded.
+- Fixed a bug where Object Explorer data category selection wasn't applying
+  properly on app startup.
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
   of just the text labels.
 - Better handling of URL links, when Java doesn't know how to open a browser

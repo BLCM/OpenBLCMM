@@ -773,7 +773,10 @@ public class Options extends OptionsBase {
         this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarTPS.toString(), fontInfo, 0));
         this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampJarAODK.toString(), fontInfo, 0));
 
-        // Finally: a bit of aggregation housekeeping
+        // Finally: a bit of aggregation housekeeping.  Note that at this stage,
+        // this method is just populating with the defaults.  This'll get
+        // called again once our options are actually read from disk, in
+        // postLoadProcessing.
         this.updateOESearchCategories();
     }
 
@@ -789,6 +792,16 @@ public class Options extends OptionsBase {
     public static boolean loadOptions(FontInfo fontInfo) throws FileNotFoundException {
         INSTANCE = new Options(Paths.get(Utilities.getBLCMMDataDir(), Options.DEFAULT_FILENAME).toFile(), fontInfo);
         return INSTANCE.loadOrCreate();
+    }
+
+    /**
+     * Post-load processing.  Once we've loaded from disk, we want to refresh
+     * our OE search category aggregate.
+     */
+    @Override
+    protected void postLoadProcessing() {
+        super.postLoadProcessing();
+        this.updateOESearchCategories();
     }
 
     /**
