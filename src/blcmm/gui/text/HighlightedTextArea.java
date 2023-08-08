@@ -30,6 +30,7 @@ package blcmm.gui.text;
 
 import blcmm.data.lib.DataManagerManager;
 import blcmm.data.lib.UEObject;
+import blcmm.gui.FontInfo;
 import blcmm.gui.MainGUI;
 import blcmm.gui.ObjectExplorer;
 import blcmm.gui.panels.ObjectExplorerPanel;
@@ -49,16 +50,23 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
+import javax.swing.JLabel;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.event.CaretEvent;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.Highlighter;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.TabSet;
+import javax.swing.text.TabStop;
 import javax.swing.undo.CannotRedoException;
 
 /**
@@ -74,22 +82,24 @@ public final class HighlightedTextArea extends JTextPane {
     private final DataManagerManager dmm;
     private final AutoCompleteAttacher autoCompleteAttacher;
     private final ObjectExplorerPanel panel;
+    private final FontInfo fontInfo;
 
-    public HighlightedTextArea(DataManagerManager dmm, boolean link) {
-        this(dmm, link, true);
+    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean link) {
+        this(dmm, fontInfo, link, true);
     }
 
-    public HighlightedTextArea(DataManagerManager dmm, boolean link, boolean allowEdit) {
-        this(dmm, link, allowEdit, null);
+    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean link, boolean allowEdit) {
+        this(dmm, fontInfo, link, allowEdit, null);
     }
 
-    public HighlightedTextArea(DataManagerManager dmm, boolean link, boolean allowEdit, ObjectExplorerPanel panel) {
+    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean link, boolean allowEdit, ObjectExplorerPanel panel) {
         super();
         this.dmm = dmm;
+        this.fontInfo = fontInfo;
         this.panel = panel;
         //link = false;
-        setFont(new Font(MainGUI.CODE_FONT_NAME, Font.PLAIN, Options.INSTANCE.getFontsize()));
         setDocument(new myStylizedDocument(link));//Syntax highlighting
+        setFont(new Font(MainGUI.CODE_FONT_NAME, Font.PLAIN, fontInfo.getFont().getSize()));
         setCaretColor(UIManager.getColor("text"));
 
         if (allowEdit) {
@@ -141,6 +151,34 @@ public final class HighlightedTextArea extends JTextPane {
     @Override
     public void setFont(Font f) {
         super.setFont(new Font(MainGUI.CODE_FONT_NAME, f.getStyle(), f.getSize()));
+
+        // Also set our tab stops, if we can.  We're standardizing on four chars.
+        // Note that JTextPane tab stops are pixel-based, not character-based,
+        // as the widget's only fixed-width if you happen to set a fixed-width
+        // font on it.  We're using "four" as the string to measure, but we
+        // could use any four-character string.
+        //
+        // Note that this ends up getting called in the constructor, during
+        // super(), at which time the document is still null.  Hence checking
+        // for that here.
+        Document d = this.getDocument();
+        if (d != null && d instanceof myStylizedDocument) {
+
+            JLabel tabMeasure = new JLabel("four");
+            tabMeasure.setFont(this.getFont());
+            int tabWidth = tabMeasure.getPreferredSize().width;
+            int currentTab = tabWidth;
+            int numTabs = 30;
+            TabStop[] tabs = new TabStop[numTabs];
+            for (int i=0; i<numTabs; i++) {
+                tabs[i] = new TabStop(currentTab, TabStop.ALIGN_LEFT, TabStop.LEAD_NONE);
+                currentTab += tabWidth;
+            }
+            TabSet tabset = new TabSet(tabs);
+            StyleContext sc = StyleContext.getDefaultStyleContext();
+            AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.TabSet, tabset);
+            ((myStylizedDocument)d).setParagraphAttributes(0, d.getLength(), aset, false);
+        }
     }
 
     @Override

@@ -151,7 +151,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         this.dmm = dmm;
         this.fontInfo = fontInfo;
         initComponents();
-        textElement = new HighlightedTextArea(dmm, true, true, this);
+        textElement = new HighlightedTextArea(dmm, fontInfo, true, true, this);
         textElement.setEditable(true);
         jPanel1.setLayout(new BorderLayout());
         jPanel1.add(textElement);
