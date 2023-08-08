@@ -35,6 +35,8 @@ OpenBLCMM Changelog
   - Fixed a crash when triggering a search while no datapack is loaded.
 - Fixed a bug where Object Explorer data category selection wasn't applying
   properly on app startup.
+- Tabs in comments will render properly in the mod tree (useful for mods which
+  use Command Extensions and include `pyb` statements)
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
   of just the text labels.
 - Better handling of URL links, when Java doesn't know how to open a browser

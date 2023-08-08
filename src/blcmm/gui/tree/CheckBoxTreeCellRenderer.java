@@ -119,7 +119,12 @@ class CheckBoxTreeCellRenderer extends DefaultTreeCellRenderer {
             panel.add(UI, constr);
         }
         Color color = ColorGiver.getColor(modelElement);
-        JLabel label = new JLabel(value.toString());
+        JLabel label;
+        if (modelElement instanceof Comment) {
+            label = new JLabel(value.toString().replaceAll("\t", "    "));
+        } else {
+            label = new JLabel(value.toString());
+        }
         setText(value.toString() + "abcd");
         if (color != null && modelElement instanceof Category) {
             setFont(getFont().deriveFont(Font.BOLD));
