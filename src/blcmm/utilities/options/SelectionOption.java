@@ -32,13 +32,10 @@ import blcmm.gui.FontInfo;
 import blcmm.gui.components.FontInfoJComboBox;
 import blcmm.gui.panels.ToolSettingsPanel;
 import blcmm.utilities.OptionsBase;
-import blcmm.utilities.StringTable;
 import java.awt.Component;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -167,7 +164,8 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      * Creates a string-based selection option, based on entries from a
      * StringTable.  This was used in the original BLCMM to create a dropdown
      * for the launcher's splash screen, but isn't actually currently used
-     * anywhere.
+     * anywhere.  I'm leaving it here just as an example of doing something
+     * fancier with this option, but don't really intend to ever uncomment this.
      *
      * @param optionsObj The Options object we live in
      * @param name The name of the option
@@ -180,6 +178,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
      * @param table The StringTable containing the dropdown data
      * @return The newly-created SelectionOption
      */
+    /*
     public static SelectionOption createStringSelectionOption(OptionsBase optionsObj,
             String name,
             FontInfo fontInfo,
@@ -209,6 +208,7 @@ public class SelectionOption<O extends SelectionOptionData> extends Option<O> {
         };
         return res;
     }
+    /**/
 
     private static class StringSelectionOptionData implements SelectionOptionData {
 
