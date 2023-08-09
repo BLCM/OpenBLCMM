@@ -1359,6 +1359,14 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         StringBuilder output = new StringBuilder();
         int objectCount = 0;
 
+        // Delimiter between attribute name and value
+        String attrValSeparator;
+        if (Options.INSTANCE.getOEColonInGetall()) {
+            attrValSeparator = ": ";
+        } else {
+            attrValSeparator = " ";
+        }
+
         for (UEClass loopClass : this.dm.getSubclassesSet(ueClass)) {
 
             for (JarEntry dataFile : this.dm.getAllDatafilesForClass(loopClass)) {
@@ -1420,7 +1428,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                                 }
                                 if (curAttr.length() == 0) {
                                     curAttr.append(normalizedProperty);
-                                    curAttr.append(": ");
+                                    curAttr.append(attrValSeparator);
                                     if (isArray) {
                                         curAttr.append("(");
                                     }

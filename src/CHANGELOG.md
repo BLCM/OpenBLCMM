@@ -2,11 +2,18 @@ OpenBLCMM Changelog
 ===================
 
 **v1.4.0** Unreleased
-- Added a new "Input" settings tab to configure mouse-click behavior in code
-  edit windows and Object Explorer:
-  - Can configure which buttons open object links in new/current OE tabs.
-  - Can configure mouse buttons to go back/forward in OE history (defaults to
-    Mouse 4 and Mouse 5)
+- New Settings:
+  - Added a new "Input" settings tab to configure mouse-click behavior in code
+    edit windows and Object Explorer:
+    - Can configure which buttons open object links in new/current OE tabs.
+    - Can configure mouse buttons to go back/forward in OE history (defaults to
+      Mouse 4 and Mouse 5)
+  - Added a setting to turn off auto-load of most recently open patch file, when
+    starting the app.
+  - Added a setting to toggle having a colon inbetween the attribute name and
+    its value, when doing a `getall` in Object Explorer.
+  - Added a new "Dangerous Settings" option to set the `GearboxAccountData`
+    index used in offline-saved files.
 - Code formatting improvements:
   - Code formatting backend got a bit of an overhaul in general, which looks
     to have improved performance when editing large `set` statements.
@@ -26,8 +33,6 @@ OpenBLCMM Changelog
 - Object Explorer's "Auto format" button is now a toggle (like the "Collapse
   Arrays" button).  OE will also remember the state of both those buttons
   between runs, in addition to the selected "Deformat arrays" number.
-- Added a setting to turn off auto-load of most recently open patch file, when
-  starting the app.
 - Crashes Fixed:
   - Fixed a crash which could occur when unexpected files/directories were found
     in OpenBLCMM's auto-backup dir.
@@ -50,8 +55,6 @@ OpenBLCMM Changelog
 - Better handling of URL links, when Java doesn't know how to open a browser
   on the running system.  Will present a dialog with the URL in a copyable
   form, so it can at least be opened manually.
-- Added a new "Dangerous Settings" option to set the `GearboxAccountData`
-  index used in offline-saved files.
 - If the application tries to write to a readonly file and the user opts to
   override permissions to write anyway, the write permission will only be
   granted to the file's owner, if the OS supports that distinction.

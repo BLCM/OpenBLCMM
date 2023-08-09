@@ -123,6 +123,7 @@ public abstract class OptionsBase {
         oeCollapseArrays,
         oeAutoFormat,
         oeDeformatLevel,
+        oeColonInGetall,
         oeSearchActions,
         oeSearchAI,
         oeSearchAnimations,

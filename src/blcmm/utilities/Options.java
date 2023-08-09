@@ -507,6 +507,18 @@ public class Options extends OptionsBase {
                 "<html>When starting " + Meta.NAME + ", open the most recently"
                 + " used patch file automatically when starting the app."));
 
+        this.registerOption(new BooleanOption(this,
+                OptionNames.oeColonInGetall.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Show colon delimiter in OE getall",
+                null,
+                "<html>When doing a `getall` in Object Explorer, include a colon"
+                + " inbetween the attribute name and its value.<br/>"
+                + "This looks good while reading the list, but might get in the"
+                + " way if you're copy+pasting into a code window."));
+
         // Now options in the Input Settings area
 
         this.mouseLinkSections = new MouseLinkSection[] {
@@ -1081,6 +1093,14 @@ public class Options extends OptionsBase {
 
     public void setOEDeformatLevel(int deformatLevel) {
         this.setIntOptionData(Options.OptionNames.oeDeformatLevel, deformatLevel);
+    }
+
+    public boolean getOEColonInGetall() {
+        return this.getBooleanOptionData(OptionNames.oeColonInGetall);
+    }
+
+    public void setOEColonInGetall(boolean newPref) {
+        this.setBooleanOptionData(OptionNames.oeColonInGetall, newPref);
     }
 
     /**
