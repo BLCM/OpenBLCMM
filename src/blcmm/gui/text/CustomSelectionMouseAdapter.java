@@ -68,6 +68,9 @@ public class CustomSelectionMouseAdapter extends MouseAdapter {
         delimiters.add('=');
         delimiters.add(' ');
         delimiters.add(',');
+        delimiters.add(';');
+        delimiters.add('(');
+        delimiters.add(')');
         delimiters.add('\t');
         delimiters.add('\n');
         delimiters.add('\r');
@@ -112,6 +115,50 @@ public class CustomSelectionMouseAdapter extends MouseAdapter {
                         break;
                     }
                 }
+
+                // Now for some messy custom tweaks, to make object-name
+                // selection a bit friendlier.  Object dump headers start out
+                // with this:
+                //
+                //    *** Property dump for object 'Type ObjName' ***
+                //
+                // When someone doubleclicks that `Type`, we don't want the
+                // leading apostrophe, and when someone doubleclicks `ObjName`,
+                // we don't want the trailing apostrophe.  However, when
+                // double-clicking "full" object name references like this:
+                //
+                //     Type'ObjName'
+                //
+                // ... we *do* want both apostrophes in there.  So the thought
+                // is: don't ever include a leading apostrophe, and only
+                // include a trailing apostrophe if there's also an apostrophe
+                // somewhere inside the "inner" text.  I'm going to go so far
+                // as to say that we should only do a trailing apostrophe when
+                // there is *exactly* one inner apostrophe.
+
+                // So, omit leading apostrophes:
+                if (text.charAt(selectStart) == '\''
+                        && selectStart < selectEnd-1)
+                {
+                    selectStart++;
+                }
+
+                // ... and do a check if we have a trailing one:
+                if (text.charAt(selectEnd-1) == '\''
+                        && selectEnd-1 > selectStart) {
+                    int innerApostropheCount = 0;
+                    for (int i=selectStart+1; i<selectEnd-2; i++) {
+                        if (text.charAt(i) == '\'') {
+                            innerApostropheCount++;
+                        }
+                    }
+                    //GlobalLogger.log("Inner apostrophe count: " + innerApostropheCount);
+                    if (innerApostropheCount != 1) {
+                        selectEnd--;
+                    }
+                }
+
+                // Finally, update our selection
                 this.component.setSelectionStart(selectStart);
                 this.component.setSelectionEnd(selectEnd);
             }
