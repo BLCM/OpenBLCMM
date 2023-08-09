@@ -2,7 +2,7 @@ OpenBLCMM Changelog
 ===================
 
 **v1.4.0** Unreleased
-- New Settings:
+- Settings changes:
   - Added a new "Input" settings tab to configure mouse-click behavior in code
     edit windows and Object Explorer:
     - Can configure which buttons open object links in new/current OE tabs.
@@ -14,6 +14,7 @@ OpenBLCMM Changelog
     its value, when doing a `getall` in Object Explorer.
   - Added a new "Dangerous Settings" option to set the `GearboxAccountData`
     index used in offline-saved files.
+  - Added some categorization to the "General" settings tab.
 - Code formatting improvements:
   - Code formatting backend got a bit of an overhaul in general, which looks
     to have improved performance when editing large `set` statements.

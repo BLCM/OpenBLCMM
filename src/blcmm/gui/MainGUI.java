@@ -1001,7 +1001,7 @@ public final class MainGUI extends ForceClosingJFrame {
                 AdHocDialog.IconType.NONE,
                 "Settings",
                 panel,
-                new Dimension(500, 500));
+                new Dimension(500, 580));
 
         /*
          * We don't actually have anything which does this anymore, and I want

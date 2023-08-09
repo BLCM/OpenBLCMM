@@ -391,6 +391,11 @@ public class Options extends OptionsBase {
             "splashImage"
         ));
 
+        this.registerOption(new SectionHeaderOption(this,
+                Option.Shown.SETTINGS,
+                "General",
+                fontInfo));
+
         // First up, for simplicity's sake: settings shown on the main
         // settings menu.  The order in which these are registered is the
         // order in which they'll show up in the panel.
@@ -399,7 +404,8 @@ public class Options extends OptionsBase {
                 OptionNames.theme.toString(),
                 fontInfo,
                 ThemeManager.getTheme("dark"),
-                Option.Shown.SETTINGS, "Theme",
+                Option.Shown.SETTINGS,
+                "Theme",
                 "setTheme", "Change " + Meta.NAME + "'s color theme",
                 "checkThemeSwitchAllowed",
                 ThemeManager.getAllInstalledThemes().toArray(new Theme[0]),
@@ -409,93 +415,26 @@ public class Options extends OptionsBase {
                 }
         ));
 
-        this.registerOption(new BooleanOption(
-                this,
-                OptionNames.checkForNewVersions.toString(),
-                fontInfo,
-                true,
-                Option.Shown.SETTINGS, "Check for new versions on startup",
-                "toggleCheckForNewVersions",
-                "Check for new versions of " + Meta.NAME + " when the "
-                + "app starts up."));
-
         this.registerOption(new IntOption(
                 this,
                 OptionNames.fontsize.toString(),
                 fontInfo,
                 12,
-                Option.Shown.SETTINGS, "Application font size",
+                Option.Shown.SETTINGS,
+                "Application font size",
                 8, 36, "updateFontSizes",
                 "Application font size"));
 
         this.registerOption(new BooleanOption(
                 this,
-                OptionNames.truncateCommands2.toString(),
+                OptionNames.checkForNewVersions.toString(),
                 fontInfo,
                 true,
-                Option.Shown.SETTINGS, "Truncate commands in tree",
-                "toggleTruncateCommands",
-                "Truncate the value field on set commands, to "
-                + "reduce horizontal window size."));
-
-        this.registerOption(new IntOption(
-                this,
-                OptionNames.truncateCommandLength.toString(),
-                fontInfo,
-                100,
-                Option.Shown.SETTINGS, "Truncate length",
-                20, 900, "toggleTruncateCommands",
-                "Truncate the value field on set commands, to "
-                + "reduce horizontal window size."));
-
-        this.registerOption(new BooleanOption(
-                this,
-                OptionNames.developerMode.toString(),
-                fontInfo,
-                false,
-                Option.Shown.SETTINGS, "Enable developer mode",
-                "toggleDeveloperMode",
-                "Enables/Disables changing actual mod code, and authoring "
-                + "mods inside " + Meta.NAME + "."));
-
-        this.registerOption(new BooleanOption(
-                this,
-                OptionNames.highlightBVCErrors.toString(),
-                fontInfo,
-                true,
-                Option.Shown.SETTINGS, "Highlight Incomplete BVC Statements",
-                "updateMainGUITreeHighlights",
-                "Toggles highlighting of Incomplete BVC/ID/BVA/BVSC "
-                + "tuples.  This is technically valid syntax, but discouraged "
-                + "for style reasons."));
-
-        this.registerOption(new BooleanOption(this,
-                OptionNames.dragAndDroppableCode.toString(),
-                fontInfo,
-                true,
-                Option.Shown.SETTINGS, "Enable Dragging & Dropping in Text",
-                null,
-                "Enables/Disables being able to Drag & Drop"
-                + " text into text fields"));
-
-        this.registerOption(new BooleanOption(this,
-                OptionNames.leafSelectionAllowed.toString(),
-                fontInfo,
-                false,
-                Option.Shown.SETTINGS, "Enable Toggling Individual Statements",
-                null,
-                "Enables/Disables being able to toggle individual statements"));
-
-        this.registerOption(new BooleanOption(this,
-                OptionNames.preferFullObjInOE.toString(),
-                fontInfo,
-                false,
-                Option.Shown.SETTINGS, "Prefer 'full' Object Names in OE Search Field",
-                null,
-                "<html>When viewing dumps in Object Explorer, this will replace the search field"
-                + " with the 'full' object name, including class type.<br/>"
-                + "<b>Note:</b> This will limit autocomplete results to the specified type,"
-                + " when the class type is present."));
+                Option.Shown.SETTINGS,
+                "Check for new versions on startup",
+                "toggleCheckForNewVersions",
+                "Check for new versions of " + Meta.NAME + " when the "
+                + "app starts up."));
 
         this.registerOption(new BooleanOption(this,
                 OptionNames.openLatestPatchOnStart.toString(),
@@ -506,6 +445,92 @@ public class Options extends OptionsBase {
                 null,
                 "<html>When starting " + Meta.NAME + ", open the most recently"
                 + " used patch file automatically when starting the app."));
+
+        this.registerOption(new SectionHeaderOption(this,
+                Option.Shown.SETTINGS,
+                "Modding",
+                fontInfo));
+
+        this.registerOption(new BooleanOption(
+                this,
+                OptionNames.developerMode.toString(),
+                fontInfo,
+                false,
+                Option.Shown.SETTINGS,
+                "Enable developer mode",
+                "toggleDeveloperMode",
+                "Enables/Disables changing actual mod code, and authoring "
+                + "mods inside " + Meta.NAME + "."));
+
+        this.registerOption(new BooleanOption(
+                this,
+                OptionNames.truncateCommands2.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Truncate commands in tree",
+                "toggleTruncateCommands",
+                "Truncate the value field on set commands, to "
+                + "reduce horizontal window size."));
+
+        this.registerOption(new IntOption(
+                this,
+                OptionNames.truncateCommandLength.toString(),
+                fontInfo,
+                100,
+                Option.Shown.SETTINGS,
+                "Truncate length",
+                20, 900, "toggleTruncateCommands",
+                "Truncate the value field on set commands, to "
+                + "reduce horizontal window size."));
+
+        this.registerOption(new BooleanOption(
+                this,
+                OptionNames.highlightBVCErrors.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Highlight Incomplete BVC Statements",
+                "updateMainGUITreeHighlights",
+                "Toggles highlighting of Incomplete BVC/ID/BVA/BVSC "
+                + "tuples.  This is technically valid syntax, but discouraged "
+                + "for style reasons."));
+
+        this.registerOption(new BooleanOption(this,
+                OptionNames.leafSelectionAllowed.toString(),
+                fontInfo,
+                false,
+                Option.Shown.SETTINGS,
+                "Enable Toggling Individual Statements",
+                null,
+                "Enables/Disables being able to toggle individual statements"));
+
+        this.registerOption(new BooleanOption(this,
+                OptionNames.dragAndDroppableCode.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Enable Dragging & Dropping in Text",
+                null,
+                "Enables/Disables being able to Drag & Drop"
+                + " text into text fields"));
+
+        this.registerOption(new SectionHeaderOption(this,
+                Option.Shown.SETTINGS,
+                "Object Explorer",
+                fontInfo));
+
+        this.registerOption(new BooleanOption(this,
+                OptionNames.preferFullObjInOE.toString(),
+                fontInfo,
+                false,
+                Option.Shown.SETTINGS,
+                "Prefer 'full' Object Names in OE Search Field",
+                null,
+                "<html>When viewing dumps in Object Explorer, this will replace the search field"
+                + " with the 'full' object name, including class type.<br/>"
+                + "<b>Note:</b> This will limit autocomplete results to the specified type,"
+                + " when the class type is present."));
 
         this.registerOption(new BooleanOption(this,
                 OptionNames.oeColonInGetall.toString(),
@@ -582,7 +607,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchActions.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Actions Data",
+                Option.Shown.OE,
+                "Actions Data",
                 "updateOESearchCategories",
                 "Search \"Actions\" classes during fulltext and refs searches."));
 
@@ -590,7 +616,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchAI.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "AI Data",
+                Option.Shown.OE,
+                "AI Data",
                 "updateOESearchCategories",
                 "Search \"AI\" classes during fulltext and refs searches."));
 
@@ -598,7 +625,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchAnimations.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Animations Data",
+                Option.Shown.OE,
+                "Animations Data",
                 "updateOESearchCategories",
                 "Search \"Animations\" classes during fulltext and refs searches."));
 
@@ -606,7 +634,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchBase.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Base Data",
+                Option.Shown.OE,
+                "Base Data",
                 "updateOESearchCategories",
                 "Search \"Base\" classes during fulltext and refs searches."));
 
@@ -614,7 +643,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchBehaviors.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Behaviors Data",
+                Option.Shown.OE,
+                "Behaviors Data",
                 "updateOESearchCategories",
                 "Search \"Behaviors\" classes during fulltext and refs searches."));
 
@@ -622,7 +652,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchDialog.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Dialog Data",
+                Option.Shown.OE,
+                "Dialog Data",
                 "updateOESearchCategories",
                 "Search \"Dialog\" classes during fulltext and refs searches."));
 
@@ -630,7 +661,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchKismets.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Kismets Data",
+                Option.Shown.OE,
+                "Kismets Data",
                 "updateOESearchCategories",
                 "Search \"Kismets\" classes during fulltext and refs searches."));
 
@@ -638,7 +670,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchMeshes.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Meshes Data",
+                Option.Shown.OE,
+                "Meshes Data",
                 "updateOESearchCategories",
                 "Search \"Meshes\" classes during fulltext and refs searches."));
 
@@ -646,7 +679,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchMissions.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Missions Data",
+                Option.Shown.OE,
+                "Missions Data",
                 "updateOESearchCategories",
                 "Search \"Missions\" classes during fulltext and refs searches."));
 
@@ -654,7 +688,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchOthers.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Others Data",
+                Option.Shown.OE,
+                "Others Data",
                 "updateOESearchCategories",
                 "Search \"Others\" classes during fulltext and refs searches."));
 
@@ -662,7 +697,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchParticles.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Particles Data",
+                Option.Shown.OE,
+                "Particles Data",
                 "updateOESearchCategories",
                 "Search \"Particles\" classes during fulltext and refs searches."));
 
@@ -670,7 +706,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchPopulations.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Populations Data",
+                Option.Shown.OE,
+                "Populations Data",
                 "updateOESearchCategories",
                 "Search \"Populations\" classes during fulltext and refs searches."));
 
@@ -678,7 +715,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchSkins.toString(),
                 fontInfo,
                 true,
-                Option.Shown.OE, "Skins Data",
+                Option.Shown.OE,
+                "Skins Data",
                 "updateOESearchCategories",
                 "Search \"Skins\" classes during fulltext and refs searches."));
 
@@ -686,7 +724,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchStaticMeshes.toString(),
                 fontInfo,
                 false,
-                Option.Shown.OE, "<html><font color=\"#C86400\">StaticMeshes Data</font>",
+                Option.Shown.OE,
+                "<html><font color=\"#C86400\">StaticMeshes Data</font>",
                 "updateOESearchCategories",
                 "Search \"StaticMeshes\" classes during fulltext and refs searches.  "
                 + "This package is only useful in specific circumstances, and is pretty big."));
@@ -695,7 +734,8 @@ public class Options extends OptionsBase {
                 OptionNames.oeSearchWillowData.toString(),
                 fontInfo,
                 false,
-                Option.Shown.OE, "<html><font color=\"#C86400\">WillowData Data</font>",
+                Option.Shown.OE,
+                "<html><font color=\"#C86400\">WillowData Data</font>",
                 "updateOESearchCategories",
                 "Search \"WillowData\" classes during fulltext and refs searches.  "
                 + "This package is only useful in specific circumstances."));
@@ -706,7 +746,8 @@ public class Options extends OptionsBase {
                 OptionNames.saveAsOffline.toString(),
                 fontInfo,
                 true,
-                Option.Shown.DANGEROUS, "Save patch files in 'Offline' Mode",
+                Option.Shown.DANGEROUS,
+                "Save patch files in 'Offline' Mode",
                 null,
                 "Save patch files in 'Offline' Mode.  This should basically always be selected!"));
 
@@ -714,7 +755,8 @@ public class Options extends OptionsBase {
                 OptionNames.onlineServiceNumber.toString(),
                 fontInfo,
                 5,
-                Option.Shown.DANGEROUS, "SparkService for 'Online'-saved Hotfixes",
+                Option.Shown.DANGEROUS,
+                "SparkService for 'Online'-saved Hotfixes",
                 1, 99,
                 null,
                 "When saving patchfiles in 'Online' mode, which SparkService index should be used?"));
@@ -723,7 +765,8 @@ public class Options extends OptionsBase {
                 OptionNames.accountDataNumber.toString(),
                 fontInfo,
                 1,
-                Option.Shown.DANGEROUS, "AccountData number for 'Offline'-saved Hotfixes",
+                Option.Shown.DANGEROUS,
+                "AccountData number for 'Offline'-saved Hotfixes",
                 0, 99,
                 null,
                 "When saving patchfiles in 'Offline' mode, which GearboxAccountData number should be used?"));
