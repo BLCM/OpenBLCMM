@@ -497,6 +497,16 @@ public class Options extends OptionsBase {
                 + "<b>Note:</b> This will limit autocomplete results to the specified type,"
                 + " when the class type is present."));
 
+        this.registerOption(new BooleanOption(this,
+                OptionNames.openLatestPatchOnStart.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Open Most Recent File On Start",
+                null,
+                "<html>When starting " + Meta.NAME + ", open the most recently"
+                + " used patch file automatically when starting the app."));
+
         // Now options in the Input Settings area
 
         this.mouseLinkSections = new MouseLinkSection[] {
@@ -893,6 +903,14 @@ public class Options extends OptionsBase {
 
     public void setPreferFullObjInOE(boolean newPref) {
         this.setBooleanOptionData(OptionNames.preferFullObjInOE, newPref);
+    }
+
+    public boolean getOpenLatestPatchOnStart() {
+        return this.getBooleanOptionData(OptionNames.openLatestPatchOnStart);
+    }
+
+    public void setOpenLatestPatchOnStart(boolean newPref) {
+        this.setBooleanOptionData(OptionNames.openLatestPatchOnStart, newPref);
     }
 
     // Next up: non-user-settable options.  Doing gets/sets for these even

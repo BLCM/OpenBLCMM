@@ -579,9 +579,11 @@ public final class MainGUI extends ForceClosingJFrame {
             }
             //If that fails - use the file history (i.e. app was opened without a given file)
             if (!opened) {
-                String file = files.length > 0 ? files[0] : "";
-                currentFile = new File(file);
-                opened = openPatch(currentFile);
+                if (Options.INSTANCE.getOpenLatestPatchOnStart()) {
+                    String file = files.length > 0 ? files[0] : "";
+                    currentFile = new File(file);
+                    opened = openPatch(currentFile);
+                }
             }
         } catch (Exception e) {
             GlobalLogger.log(e);

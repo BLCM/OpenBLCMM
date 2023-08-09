@@ -119,6 +119,7 @@ public abstract class OptionsBase {
         onlineServiceNumber,
         accountDataNumber,
         checkForNewVersions,
+        openLatestPatchOnStart,
         oeCollapseArrays,
         oeAutoFormat,
         oeDeformatLevel,

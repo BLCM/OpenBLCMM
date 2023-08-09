@@ -26,6 +26,8 @@ OpenBLCMM Changelog
 - Object Explorer's "Auto format" button is now a toggle (like the "Collapse
   Arrays" button).  OE will also remember the state of both those buttons
   between runs, in addition to the selected "Deformat arrays" number.
+- Added a setting to turn off auto-load of most recently open patch file, when
+  starting the app.
 - Crashes Fixed:
   - Fixed a crash which could occur when unexpected files/directories were found
     in OpenBLCMM's auto-backup dir.
