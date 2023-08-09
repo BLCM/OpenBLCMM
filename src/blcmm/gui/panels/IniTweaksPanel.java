@@ -228,7 +228,7 @@ public class IniTweaksPanel extends GameTweaksPanel {
         return new File(GameDetection.getPathToINIFiles(type) + toQuery);
     }
 
-    private static boolean fileIsNoneNullAndExists(File f) {
+    private static boolean fileIsNotNullAndExists(File f) {
         return f != null && f.exists();
     }
 
@@ -245,10 +245,10 @@ public class IniTweaksPanel extends GameTweaksPanel {
                 panel = AODKPanel;
                 break;
         }
-        if (!fileIsNoneNullAndExists(getConfigFile("WillowInput.ini", type))) {
+        if (!fileIsNotNullAndExists(getConfigFile("WillowInput.ini", type))) {
             initPanel(panel, null);
             String gameLabel = type.toString();
-            JLabel label = new JLabel("<html><body style='width: 5in;'>"
+            JLabel label = new JLabel("<html>"
                     + "<center><b>Note:<b><br/>" + Meta.NAME + " found an executable for " + gameLabel + ", but no configuration files.<br/>"
                     + "Please run " + gameLabel + " once, then restart " + Meta.NAME + ".");
             label.setFont(this.fontInfo.getFont());

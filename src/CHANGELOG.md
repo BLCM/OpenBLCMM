@@ -37,6 +37,9 @@ OpenBLCMM Changelog
   - Fixed a crash when triggering a search while no datapack is loaded.
 - Fixed a bug where Object Explorer data category selection wasn't applying
   properly on app startup.
+- Game INI file detection on Linux will try case-insensitive file matching if
+  the canonical case version isn't found (to support Wineroot
+  case-insensitivity)
 - Tabs in comments will render properly in the mod tree (useful for mods which
   use Command Extensions and include `pyb` statements), and normalized tab stops
   to four characters in code edit dialogs and Object Explorer.

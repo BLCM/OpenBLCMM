@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -737,7 +738,7 @@ public class GameDetection {
     }
 
     public static String getPathToINIFiles(PatchType type) {
-        String res = getGameConfigPathWithPostfix(type, "WillowGame\\Config\\");
+        String res = unixFixCaseInsensitive(getGameConfigPathWithPostfix(type, "WillowGame\\Config\\"));
         if (!LOGGED_INI.contains(type)) {
             GlobalLogger.log("Path to INI files of " + type.toString() + ": " + Utilities.hideUserName(res));
             LOGGED_INI.add(type);
@@ -773,6 +774,79 @@ public class GameDetection {
             postfix = postfix.toLowerCase();
         }
         return gamedir + postfix;
+    }
+
+    /**
+     * This is a hideous little routine to attempt to find case-insensitive
+     * matches for paths on Linux which may not exist in their given form.
+     * Returns a possibly-case-normalized path, or just the original path if
+     * an alternative wasn't found.
+     *
+     * We had a bug for some INI detection that was somehow not working, and
+     * it turned out to be due to a "My games" (note the lowercase G) in the
+     * path.  The game itself would launch fine, since Wine has a case-
+     * insensitive layer somewhere deep in its code, but any "native" Linux
+     * call wouldn't find it.
+     *
+     * So, if we can't find the given path, we'll loop through all the
+     * steps in the path to see if we can find case-insensitive matches to try.
+     * Technically we should only be doing this once the path gets into a
+     * Wine root, but I'm fine with that.
+     *
+     * Note that this is hardly used anywhere at the moment; the EXE detection
+     * itself is pretty complex and I can't bring myself to debug changes to it
+     * at the moment.  So this is really only used in INI detection at the
+     * moment.
+     *
+     * @param path The path to check
+     * @return A possibly-case-normalized path, or the original path
+     */
+    private static String unixFixCaseInsensitive(String path) {
+        if (OSInfo.CURRENT_OS == OSInfo.OS.UNIX) {
+            // First just check to see if it exists as-is
+            File f = new File(path);
+            if (f.exists()) {
+                return path;
+            }
+
+            // If not, loop through each path entry, and if an entry isn't
+            // found, see if we can do a case-insensitive match.  Technically
+            // we should only be doing this inside Wine roots, but whatever.
+            File constructed = new File("");
+            File testFile;
+            String pathComponent;
+            boolean foundMatch;
+            for (Path p : f.toPath()) {
+                pathComponent = p.toString();
+                testFile = new File(constructed.getPath() + "/" + pathComponent);
+                foundMatch = false;
+                if (testFile.exists()) {
+                    foundMatch = true;
+                } else {
+                    if (constructed.isDirectory()) {
+                        for (String s : constructed.list()) {
+                            if (pathComponent.equalsIgnoreCase(s)) {
+                                testFile = new File(constructed.getPath() + "/" + s);
+                                foundMatch = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (foundMatch) {
+                    constructed = testFile;
+                } else {
+                    return path;
+                }
+            }
+            if (path.endsWith("/")) {
+                return constructed.getPath() + "/";
+            } else {
+                return constructed.getPath();
+            }
+        } else {
+            return path;
+        }
     }
 
     private static File[] getLogFiles(PatchType type) {
