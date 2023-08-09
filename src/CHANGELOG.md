@@ -38,6 +38,8 @@ OpenBLCMM Changelog
 - Tabs in comments will render properly in the mod tree (useful for mods which
   use Command Extensions and include `pyb` statements), and normalized tab stops
   to four characters in code edit dialogs and Object Explorer.
+- Double-clicking to select text in Object Explorer or code edit dialogs should
+  always select the entire object name, if appropriate.
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
   of just the text labels.
 - Better handling of URL links, when Java doesn't know how to open a browser

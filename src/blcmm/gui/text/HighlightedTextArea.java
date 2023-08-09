@@ -41,7 +41,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -476,7 +475,7 @@ public final class HighlightedTextArea extends JTextPane {
         for (MouseListener l : ls) {
             removeMouseListener(l);
         }
-        MouseAdapter adapter = new MouseAdapter() {
+        CustomSelectionMouseAdapter adapter = new CustomSelectionMouseAdapter(this) {
             String search = null;
 
             @Override
@@ -531,6 +530,7 @@ public final class HighlightedTextArea extends JTextPane {
 
             @Override
             public void mouseClicked(MouseEvent me) {
+                super.mouseClicked(me);
                 for (MouseListener l : ls) {
                     l.mouseClicked(me);
                 }
