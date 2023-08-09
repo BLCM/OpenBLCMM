@@ -405,6 +405,31 @@ public class AdHocDialog {
         this.dialog.pack();
         this.dialog.setLocationRelativeTo(this.parentComponent);
 
+        // Depending on our ButtonSet, we may actually want to support the
+        // dialog close event
+        final Button onCloseButton;
+        switch (buttonSet) {
+            case OK_CANCEL:
+            case YES_NO_CANCEL:
+                onCloseButton = Button.CANCEL;
+                break;
+            case OK:
+                onCloseButton = Button.OK;
+                break;
+            default:
+                onCloseButton = null;
+                break;
+        }
+        if (onCloseButton != null) {
+            this.dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            this.dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    result = onCloseButton;
+                }
+            });
+        }
+
         // Make sure that we're focused, alternatively also assigning focus to
         // a specific component, if we've been told to (or have a sensible
         // default).  I know we're not really *supposed* to use requestFocus()

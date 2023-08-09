@@ -43,6 +43,7 @@ OpenBLCMM Changelog
   - Fixed a crash when triggering a search while no datapack is loaded.
 - Fixed a bug where Object Explorer data category selection wasn't applying
   properly on app startup.
+- Dialogs should be closeable with the OS "window close" button when possible.
 - Game INI file detection on Linux will try case-insensitive file matching if
   the canonical case version isn't found (to support Wineroot
   case-insensitivity)
