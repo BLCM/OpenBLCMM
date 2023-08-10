@@ -12,6 +12,7 @@ easier for native Windows users, feel free to send in a PR!
 
 * [The Short Version](#the-short-version)
 * [Compiling for Windows](#compiling-for-windows)
+  * [Normalizing JSON](#normalizing-json)
   * [Installing/Using Those Components](#installingusing-those-components)
   * [Vanilla GraalVM](#vanilla-graalvm)
 * [Post-Compile Processing](#post-compile-processing)
@@ -31,9 +32,10 @@ installed:
 
 1. [Visual Studio](https://visualstudio.microsoft.com/) and its C++ components.
 2. [Liberica NIK](https://bell-sw.com/pages/downloads/native-image-kit/#downloads).
-3. [WinRun4J](https://winrun4j.sourceforge.net), if you want to set an EXE icon
+3. [jq](https://jqlang.github.io/jq/) (can install with `winget install jqlang.jq`)
+4. [WinRun4J](https://winrun4j.sourceforge.net), if you want to set an EXE icon
     1. Note that you'll have to get `RCEDIT64.exe` into your `%PATH%` manually.
-4. [Inno Setup](https://jrsoftware.org/isinfo.php)
+5. [Inno Setup](https://jrsoftware.org/isinfo.php)
 
 Then:
 
@@ -149,6 +151,29 @@ zipped up and distributed!
 `sun.java2d.d3d.D3DRenderQueue.flushNow` method not being found, but that
 *is* required to be in the native-image config files, otherwise selecting
 the main folder dropdown in file dialogs will crash the EXE.
+
+### Normalizing JSON
+
+The version of GraalVM / Liberica NIK that the project was first using
+(Liberica NIK 22) generated JSON files which were pretty easy to compare
+against each other -- each method and field tended to be on its own line.
+As of Liberica NIK 23, it's generating more compact JSON which isn't as
+friendly to humans wanting to see what's changed from run to run.
+
+So, our `native-agent-new.bat` and `native-agent-merge.bat` scripts now
+run the outputted JSON through [jq](https://jqlang.github.io/jq/) once
+they're done, to normalize the output.  It's not quite the same formatting
+that GraalVM had been doing previously, but it keeps things in a format
+which makes diffing much easier.  Those batch files will refuse to run
+unless they find `jq-win64.exe` in your `%PATH%`.  If you install jq
+using `winget install jqlang.jq`, make sure to check the checkbox asking
+about the path.  You may need to restart your cmd.exe/Powershell in order
+to pick up the path changes.
+
+The actual commands we're using, for each JSON file, are:
+
+    jq . file.json > file.json.new
+    move /Y file.json.new file.json
 
 ### Installing/Using Those Components
 
