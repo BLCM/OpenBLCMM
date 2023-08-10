@@ -41,7 +41,14 @@ import javax.swing.BoxLayout;
  * to find a reliable way of propagating a default font after the user has
  * changed the font size in the app, and eventually decided to just use a
  * sledgehammer instead.
-
+ *
+ * Note that this panel does *not*, itself, update its font size as the user
+ * changes the font in the main settings tab, even though the rest of the
+ * app will do a "live" resize.  The GUI elements just get too weirdly
+ * scrunched up unless the window is also resized, and I basically just don't
+ * *want* to resize the window -- I think that'd end up feeling weird to the
+ * user, and has too much possibility of behaving unpredictably.
+ *
  * @author LightChaosman, apocalyptech
  */
 public class MasterSettingsPanel extends javax.swing.JPanel {
@@ -60,7 +67,10 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
      */
     public MasterSettingsPanel(FontInfo fontInfo) {
         GlobalLogger.log("Opened Master settings Panel");
-        this.fontInfo = fontInfo;
+        // We're making a *copy* of our fontInfo object because we intentionally
+        // want to *not* resize fonts while changing the app font size in here,
+        // and otherwise the reset-defaults button would use the new font size.
+        this.fontInfo = fontInfo.copy();
         initComponents();
 
         // Reset fonts.  updateUI() is required because otherwise, the first
@@ -70,13 +80,13 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         this.masterSettingsTabbedPane.updateUI();
 
         // General Settings
-        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, fontInfo, masterSettingsTabbedPane);
+        toolSettingsPanel = new ToolSettingsPanel(Option.Shown.SETTINGS, this.fontInfo, masterSettingsTabbedPane);
         toolSettingsPanel.setSize(generalSettingsGuiPanel.getSize());
         generalSettingsGuiPanel.setLayout(new BoxLayout(generalSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         generalSettingsGuiPanel.add(toolSettingsPanel);
 
         // Input Settings
-        inputSettingsPanel = new ToolSettingsPanel(Option.Shown.INPUT, fontInfo, masterSettingsTabbedPane,
+        inputSettingsPanel = new ToolSettingsPanel(Option.Shown.INPUT, this.fontInfo, masterSettingsTabbedPane,
                 "Choose the behavior of mouse clicks while viewing/editing<br/>"
                 + "code.  Current/New actions only apply to object links, and<br/>"
                 + "Back/Forward actions only apply in Object Explorer.  Using<br/>"
@@ -88,7 +98,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         inputSettingsGuiPanel.add(inputSettingsPanel);
 
         // Object Explorer Data
-        oeSettingsPanel = new ToolSettingsPanel(Option.Shown.OE, fontInfo, masterSettingsTabbedPane,
+        oeSettingsPanel = new ToolSettingsPanel(Option.Shown.OE, this.fontInfo, masterSettingsTabbedPane,
                 "Choose which package categories will be included in the<br/>"
                 + "fulltext and 'refs' searches.  More packages will make<br/>"
                 + "the search take longer."
@@ -98,7 +108,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         oeSettingsGuiPanel.add(oeSettingsPanel);
 
         // Dangerous Settings
-        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, fontInfo, masterSettingsTabbedPane,
+        dangerousSettingsPanel = new ToolSettingsPanel(Option.Shown.DANGEROUS, this.fontInfo, masterSettingsTabbedPane,
                 "The settings on this screen should be left alone unless you know<br/>"
                 + "exactly what they do, and have a strong need to do so."
         );

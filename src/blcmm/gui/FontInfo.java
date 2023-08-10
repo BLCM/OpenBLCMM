@@ -84,6 +84,27 @@ public class FontInfo {
     }
 
     /**
+     * Returns a copy of this FontInfo object, in case a dialog or some other
+     * element wants to hold on to its original font even if the app as a
+     * whole gets updated.  Basically only ever intended to be used in the
+     * settings menu, which is intentionally isolated from changing fonts
+     * due to the GUI getting too weird without window size changes, and me
+     * not wanting to deal with attempting to resize a "live" window.  This
+     * is needed because of how the default-reset button works; it would
+     * otherwise assume the new font size.
+     *
+     * @return A copy of this FontInfo object.
+     */
+    public FontInfo copy() {
+        FontInfo newInfo = new FontInfo(this.defaultFont);
+        newInfo.font = this.font;
+        newInfo.scaleHeight = this.scaleHeight;
+        newInfo.scaleWidth = this.scaleWidth;
+        newInfo.lineHeight = this.lineHeight;
+        return newInfo;
+    }
+
+    /**
      * Get the currently-selected user font.
      *
      * @return The user-selected font.
