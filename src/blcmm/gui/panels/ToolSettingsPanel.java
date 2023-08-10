@@ -327,10 +327,6 @@ public class ToolSettingsPanel extends JPanel {
 
     private void updateOESearchCategories(Option option, JComponent component) {
         this.settings.updateOESearchCategories();
-        // NOTE: Even though OE maintains its own DMM, the individual DataManager
-        // objects are shared between them, so this single call effectively
-        // updates both.
-        MainGUI.INSTANCE.getDMM().updateDataManagersSelectedClasses();
     }
 
     /**

@@ -30,6 +30,7 @@ package blcmm.utilities;
 
 import blcmm.Meta;
 import blcmm.gui.FontInfo;
+import blcmm.gui.MainGUI;
 import blcmm.gui.theme.Theme;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.model.PatchType;
@@ -881,6 +882,9 @@ public class Options extends OptionsBase {
                 o.restoreDefault();
             }
         }
+        // Trigger post-load processing.  This will nearly always be overkill,
+        // but it's easier than doing a more targetted update.
+        this.postLoadProcessing();
         this.save();
     }
 
@@ -1276,6 +1280,12 @@ public class Options extends OptionsBase {
             if (this.getBooleanOptionData(oeSearch.option)) {
                 this.activeSearchCategories.add(oeSearch);
             }
+        }
+        // NOTE: Even though OE maintains its own DMM, the individual DataManager
+        // objects are shared between them, so this single call effectively
+        // updates both.
+        if (MainGUI.INSTANCE != null) {
+            MainGUI.INSTANCE.getDMM().updateDataManagersSelectedClasses();
         }
     }
 
