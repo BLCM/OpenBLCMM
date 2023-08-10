@@ -56,6 +56,8 @@ OpenBLCMM Changelog
   closed.
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
   of just the text labels.
+- Object Explorer will display the list of active data categories when a search
+  produces no results.
 - Better handling of URL links, when Java doesn't know how to open a browser
   on the running system.  Will present a dialog with the URL in a copyable
   form, so it can at least be opened manually.

@@ -71,6 +71,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -1695,14 +1696,25 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     }
                 }
                 if (textElement.getText().length() == 0) {
-                    textElement.setText(
-                            "No results found for the specified query in " + dm.getPatchType().name() + " data.\n"
-                            + "\n"
-                            + "You can try adding to the list of categories to search in the Settings menu via\n"
-                            + "the main " + Meta.NAME + " window, in case the objects you're looking for are\n"
-                            + "excluded by the current settings.  The app does not have to be restarted when the\n"
-                            + "categories have changed -- just click some checkboxes and try again!\n"
-                    );
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("No results found for the specified query in " + dm.getPatchType().name() + " data.\n");
+                    sb.append("\n");
+                    sb.append("Active search categories:\n");
+                    sb.append("\n");
+                    Set<Options.OESearch> activeCats = Options.INSTANCE.getOESearchCategories();
+                    for (Options.OESearch searchType : Options.OESearch.values()) {
+                        sb.append("\t");
+                        sb.append(activeCats.contains(searchType) ? "YES" : " NO");
+                        sb.append(" - ");
+                        sb.append(searchType.name());
+                        sb.append("\n");
+                    }
+                    sb.append("\n");
+                    sb.append("You can try adding to the list of categories to search in the Settings menu via\n");
+                    sb.append("the main " + Meta.NAME + " window, in case the objects you're looking for are\n");
+                    sb.append("excluded by the current settings.  The app does not have to be restarted when the\n");
+                    sb.append("categories have changed -- just click some checkboxes and try again!\n");
+                    textElement.setText(sb.toString());
                 }
                 return null;
             } catch (BadLocationException e2) {
