@@ -147,10 +147,12 @@ Once the compilation process is done, you should have an `OpenBLCMM.exe`
 and a collection of DLL files (ten of them, currently).  These can be
 zipped up and distributed!
 
-**Note:** The compilation process will currently complain about a
-`sun.java2d.d3d.D3DRenderQueue.flushNow` method not being found, but that
-*is* required to be in the native-image config files, otherwise selecting
-the main folder dropdown in file dialogs will crash the EXE.
+**Note:** Liberica NIK 23 currently complains about a *lot* of classes
+not being found, right near the beginning of the compilation process.  It
+starts out with a couple of warnings about `sun.java2d.d3d.D3DRenderQueue.flushNow`
+and then proceeds to list just about everything AWT/Swing related from
+inside `reflect-config.json`.  Still, the compilation process seems to work
+fine anyway, and the EXE runs just fine, too.
 
 ### Normalizing JSON
 
@@ -188,7 +190,7 @@ on Windows.
        writing, I'd installed "Desktop development with C++", available
        via `Tools -> Get Tools and Features` if you don't already have it.
 2. Install [Liberica NIK](https://bell-sw.com/pages/downloads/native-image-kit/#downloads).
-   We're using "NIK 22 (JDK 17)" at time of writing.  (You don't actually
+   We're using "NIK 23 (JDK 17)" at time of writing.  (You don't actually
    need the "regular" Liberica JDK package once you have that NIK package
    installed.)
 3. Launch the Visual Studio `cmd.exe` shortcut "x64 Native Tools Command Prompt"
