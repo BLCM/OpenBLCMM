@@ -94,7 +94,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new InfoLabel(InfoLabel.BASIC_1+InfoLabel.BASIC_2_EDIT_ONLY+InfoLabel.BASIC_3, this.fontInfo)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new InfoLabel(InfoLabel.BASIC_1+InfoLabel.BASIC_2_EDIT_ONLY+InfoLabel.BASIC_3, this.fontInfo, this)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">

@@ -321,7 +321,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        jLabel6 = new InfoLabel(InfoLabel.BASIC_1+InfoLabel.BASIC_2_EDIT_ONLY+InfoLabel.BASIC_3, this.fontInfo);
+        jLabel6 = new InfoLabel(InfoLabel.BASIC_1+InfoLabel.BASIC_2_EDIT_ONLY+InfoLabel.BASIC_3, this.fontInfo, this);
         jLabel3 = new javax.swing.JLabel();
         hotfixTypeCombobox = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();

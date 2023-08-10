@@ -29,6 +29,7 @@ package blcmm.gui.components;
 
 import blcmm.gui.FontInfo;
 import blcmm.utilities.OSInfo;
+import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
@@ -66,11 +67,11 @@ public class InfoLabel extends JLabel {
 
     private final FontInfo fontInfo;
 
-    public InfoLabel(String tooltip, FontInfo fontInfo) {
-        this(tooltip, fontInfo, true);
+    public InfoLabel(String tooltip, FontInfo fontInfo, Component parentComponent) {
+        this(tooltip, fontInfo, parentComponent, true);
     }
 
-    public InfoLabel(String tooltip, FontInfo fontInfo, boolean clickable) {
+    public InfoLabel(String tooltip, FontInfo fontInfo, Component parentComponent, boolean clickable) {
         this.fontInfo = fontInfo;
         final String tooltip2 = tooltip.toLowerCase().startsWith("<html>") ? tooltip : "<HTML>" + tooltip + "</HTML>";
         super.setToolTipText(tooltip2);
@@ -79,7 +80,7 @@ public class InfoLabel extends JLabel {
             super.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent me) {
-                    AdHocDialog.run(null,
+                    AdHocDialog.run(parentComponent,
                             fontInfo,
                             AdHocDialog.IconType.INFORMATION,
                             "Information",

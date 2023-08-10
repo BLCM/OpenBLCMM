@@ -167,7 +167,7 @@ public class IniTweaksPanel extends GameTweaksPanel {
 
         titleLabel = new javax.swing.JLabel();
         masterPanel = new javax.swing.JPanel();
-        infoLabel = new InfoLabel("Mouse over the various options to get more details on what each option does.", this.fontInfo);
+        infoLabel = new InfoLabel("Mouse over the various options to get more details on what each option does.", this.fontInfo, this);
 
         setPreferredSize(new java.awt.Dimension(500, 350));
 

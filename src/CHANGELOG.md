@@ -52,6 +52,8 @@ OpenBLCMM Changelog
   to four characters in code edit dialogs and Object Explorer.
 - Double-clicking to select text in Object Explorer or code edit dialogs should
   always select the entire object name, if appropriate.
+- Window focus should always return to the original window once a dialog is
+  closed.
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
   of just the text labels.
 - Better handling of URL links, when Java doesn't know how to open a browser

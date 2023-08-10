@@ -456,6 +456,12 @@ public class AdHocDialog {
 
         this.dialog.setVisible(true);
         this.dialog.dispose();
+
+        // I know that .requestFocus() is kind of discouraged, but it seems
+        // necessary sometimes to avoid post-dialog-close focus weirdness.
+        if (this.parentComponent != null) {
+            this.parentComponent.requestFocus();
+        }
         return this.result;
     }
 
@@ -574,6 +580,12 @@ public class AdHocDialog {
         });
         this.dialog.setVisible(true);
         this.dialog.dispose();
+
+        // I know that .requestFocus() is kind of discouraged, but it seems
+        // necessary sometimes to avoid post-dialog-close focus weirdness.
+        if (this.parentComponent != null) {
+            this.parentComponent.requestFocus();
+        }
         return this.customResult;
     }
 

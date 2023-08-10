@@ -328,7 +328,8 @@ public final class MainGUI extends ForceClosingJFrame {
         JLabel iLabel = new InfoLabel("Hover over the colored elements to see what the colors mean<br/>"
                 + "Use the search box to quickly find relevant pieces of your file<br/>"
                 + "Check the options menu to enable additional features",
-                MainGUI.fontInfo
+                MainGUI.fontInfo,
+                this
         );
         layer2.add(iLabel, cs);
 

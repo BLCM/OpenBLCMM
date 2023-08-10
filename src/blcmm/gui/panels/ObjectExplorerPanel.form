@@ -177,7 +177,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="infoLabel">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new InfoLabel(InfoLabel.OE_SPECIFIC + &quot;&lt;br/&gt;&lt;br/&gt;&quot; + InfoLabel.BASIC_1+ InfoLabel.BASIC_3, this.fontInfo)"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new InfoLabel(InfoLabel.OE_SPECIFIC + &quot;&lt;br/&gt;&lt;br/&gt;&quot; + InfoLabel.BASIC_1+ InfoLabel.BASIC_3, this.fontInfo, this)"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="bookmarkLabel">
