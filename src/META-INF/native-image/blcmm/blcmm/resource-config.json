@@ -60,6 +60,48 @@
       },
       {
         "pattern": "\\Qresources/speaker.png\\E"
+      },
+      {
+        "pattern": "java.base:\\Qjava/util/currency.data\\E"
+      },
+      {
+        "pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt67b/nfkc.nrm\\E"
+      },
+      {
+        "pattern": "java.base:\\Qjdk/internal/icu/impl/data/icudt67b/uprops.icu\\E"
+      },
+      {
+        "pattern": "java.base:\\Qsun/net/idn/uidna.spp\\E"
+      },
+      {
+        "pattern": "java.base:\\Qsun/text/resources/LineBreakIteratorData\\E"
+      },
+      {
+        "pattern": "java.base:\\Qsun/text/resources/WordBreakIteratorData\\E"
+      },
+      {
+        "pattern": "java.datatransfer:\\Qsun/datatransfer/resources/flavormap.properties\\E"
+      },
+      {
+        "pattern": "java.desktop:\\Qjavax/swing/text/html/default.css\\E"
+      },
+      {
+        "pattern": "java.desktop:\\Qjavax/swing/text/html/parser/html32.bdtd\\E"
+      },
+      {
+        "pattern": "java.desktop:\\Qsun/awt/resources/cursors/CopyDrop32x32.gif\\E"
+      },
+      {
+        "pattern": "java.desktop:\\Qsun/awt/resources/cursors/LinkDrop32x32.gif\\E"
+      },
+      {
+        "pattern": "java.desktop:\\Qsun/awt/resources/cursors/MoveDrop32x32.gif\\E"
+      },
+      {
+        "pattern": "java.desktop:\\Qsun/awt/resources/cursors/cursors.properties\\E"
+      },
+      {
+        "pattern": "java.desktop:\\Qsun/awt/resources/cursors/invalid32x32.gif\\E"
       }
     ]
   },

@@ -1,5 +1,170 @@
 [
   {
+    "name": "ArrowButton"
+  },
+  {
+    "name": "Button"
+  },
+  {
+    "name": "CheckBox"
+  },
+  {
+    "name": "CheckBoxMenuItem"
+  },
+  {
+    "name": "ColorChooser"
+  },
+  {
+    "name": "ComboBox"
+  },
+  {
+    "name": "DesktopIcon"
+  },
+  {
+    "name": "DesktopPane"
+  },
+  {
+    "name": "EditorPane"
+  },
+  {
+    "name": "FileChooser"
+  },
+  {
+    "name": "FormattedTextField"
+  },
+  {
+    "name": "InternalFrame"
+  },
+  {
+    "name": "InternalFrameTitlePane"
+  },
+  {
+    "name": "Label"
+  },
+  {
+    "name": "List"
+  },
+  {
+    "name": "Menu"
+  },
+  {
+    "name": "MenuBar"
+  },
+  {
+    "name": "MenuItem"
+  },
+  {
+    "name": "MenuItemAccelerator"
+  },
+  {
+    "name": "OptionPane"
+  },
+  {
+    "name": "Panel"
+  },
+  {
+    "name": "PasswordField"
+  },
+  {
+    "name": "PopupMenu"
+  },
+  {
+    "name": "PopupMenuSeparator"
+  },
+  {
+    "name": "ProgressBar"
+  },
+  {
+    "name": "RadioButton"
+  },
+  {
+    "name": "RadioButtonMenuItem"
+  },
+  {
+    "name": "RootPane"
+  },
+  {
+    "name": "ScrollBar"
+  },
+  {
+    "name": "ScrollBarThumb"
+  },
+  {
+    "name": "ScrollBarTrack"
+  },
+  {
+    "name": "ScrollPane"
+  },
+  {
+    "name": "Separator"
+  },
+  {
+    "name": "Slider"
+  },
+  {
+    "name": "SliderThumb"
+  },
+  {
+    "name": "SliderTrack"
+  },
+  {
+    "name": "Spinner"
+  },
+  {
+    "name": "SplitPane"
+  },
+  {
+    "name": "SplitPaneDivider"
+  },
+  {
+    "name": "TabbedPane"
+  },
+  {
+    "name": "TabbedPaneContent"
+  },
+  {
+    "name": "TabbedPaneTab"
+  },
+  {
+    "name": "TabbedPaneTabArea"
+  },
+  {
+    "name": "Table"
+  },
+  {
+    "name": "TableHeader"
+  },
+  {
+    "name": "TextArea"
+  },
+  {
+    "name": "TextField"
+  },
+  {
+    "name": "TextPane"
+  },
+  {
+    "name": "ToggleButton"
+  },
+  {
+    "name": "ToolBar"
+  },
+  {
+    "name": "ToolBarSeparator"
+  },
+  {
+    "name": "ToolTip"
+  },
+  {
+    "name": "Tree"
+  },
+  {
+    "name": "TreeCell"
+  },
+  {
+    "name": "Viewport"
+  },
+  {
     "name": "[B"
   },
   {
@@ -27,6 +192,438 @@
     "name": "[Lsun.security.pkcs.SignerInfo;"
   },
   {
+    "name": "blcmm.gui.MainGUI",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.ObjectExplorer",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.ObjectExplorer$OETabbedPane",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.BLCMM_FileChooser",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.BoldJTabbedPane",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.ButtonTabComponent",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.ButtonTabComponent$1",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.ButtonTabComponent$TabButton",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.DefaultTextTextField",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.EnhancedFormattedTextField",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.FontInfoJButton",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.FontInfoJCheckBox",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.FontInfoJComboBox",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.FontInfoJLabel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.FontInfoJMenuItem",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.FontInfoJToggleButton",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.ForceClosingJFrame",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.GameSelectionPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.GameSelectionPanel$1",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.InfoLabel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.ScrollablePanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.SimpleGameSelectionComboBox",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.SimpleGameSelectionComboBox$1",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.TimedLabel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.components.VariableTabsTabbedPane",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.AboutPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.EditPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.GameTweaksPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.HexEditPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.IniTweaksPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.IntegerConverter",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.MasterSettingsPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.ObjectExplorerPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.SetupGameFilesPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.TextSearchDialog",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.TextSearchDialog$1",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
     "name": "blcmm.gui.panels.ToolSettingsPanel",
     "queryAllDeclaredMethods": true,
     "methods": [
@@ -35,6 +632,13 @@
         "parameterTypes": [
           "blcmm.utilities.options.Option",
           "javax.swing.JComponent"
+        ]
+      },
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
         ]
       },
       {
@@ -84,6 +688,78 @@
         "parameterTypes": [
           "blcmm.utilities.options.Option",
           "javax.swing.JComponent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.text.AutoCompleteList",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.text.HighlightedTextArea",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.tree.CheckBoxTree",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.tree.CheckBoxTreeCellRenderer",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.tree.TristateCheckBox",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.utilities.options.SelectionOption$1",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
         ]
       }
     ]
@@ -796,6 +1472,14 @@
     "name": "java.lang.String"
   },
   {
+    "name": "java.lang.Thread",
+    "fields": [
+      {
+        "name": "threadLocalRandomProbe"
+      }
+    ]
+  },
+  {
     "name": "java.net.URL"
   },
   {
@@ -844,6 +1528,25 @@
     "name": "java.util.List"
   },
   {
+    "name": "java.util.concurrent.atomic.AtomicBoolean",
+    "fields": [
+      {
+        "name": "value"
+      }
+    ]
+  },
+  {
+    "name": "java.util.concurrent.atomic.Striped64",
+    "fields": [
+      {
+        "name": "base"
+      },
+      {
+        "name": "cellsBusy"
+      }
+    ]
+  },
+  {
     "name": "javax.imageio.spi.ImageReaderSpi"
   },
   {
@@ -883,6 +1586,9 @@
     ]
   },
   {
+    "name": "javax.swing.JArrowButton"
+  },
+  {
     "name": "javax.swing.JButton"
   },
   {
@@ -896,6 +1602,9 @@
   },
   {
     "name": "javax.swing.JComboBox"
+  },
+  {
+    "name": "javax.swing.JDesktopIcon"
   },
   {
     "name": "javax.swing.JDesktopPane"
@@ -913,6 +1622,9 @@
     "name": "javax.swing.JInternalFrame"
   },
   {
+    "name": "javax.swing.JInternalFrameTitlePane"
+  },
+  {
     "name": "javax.swing.JLabel"
   },
   {
@@ -928,6 +1640,9 @@
     "name": "javax.swing.JMenuItem"
   },
   {
+    "name": "javax.swing.JMenuItemAccelerator"
+  },
+  {
     "name": "javax.swing.JOptionPane"
   },
   {
@@ -938,6 +1653,9 @@
   },
   {
     "name": "javax.swing.JPopupMenu"
+  },
+  {
+    "name": "javax.swing.JPopupMenuSeparator"
   },
   {
     "name": "javax.swing.JProgressBar"
@@ -955,6 +1673,12 @@
     "name": "javax.swing.JScrollBar"
   },
   {
+    "name": "javax.swing.JScrollBarThumb"
+  },
+  {
+    "name": "javax.swing.JScrollBarTrack"
+  },
+  {
     "name": "javax.swing.JScrollPane"
   },
   {
@@ -964,16 +1688,37 @@
     "name": "javax.swing.JSlider"
   },
   {
+    "name": "javax.swing.JSliderThumb"
+  },
+  {
+    "name": "javax.swing.JSliderTrack"
+  },
+  {
     "name": "javax.swing.JSpinner"
   },
   {
     "name": "javax.swing.JSplitPane"
   },
   {
+    "name": "javax.swing.JSplitPaneDivider"
+  },
+  {
     "name": "javax.swing.JTabbedPane"
   },
   {
+    "name": "javax.swing.JTabbedPaneContent"
+  },
+  {
+    "name": "javax.swing.JTabbedPaneTab"
+  },
+  {
+    "name": "javax.swing.JTabbedPaneTabArea"
+  },
+  {
     "name": "javax.swing.JTable"
+  },
+  {
+    "name": "javax.swing.JTableHeader"
   },
   {
     "name": "javax.swing.JTextArea"
@@ -991,10 +1736,16 @@
     "name": "javax.swing.JToolBar"
   },
   {
+    "name": "javax.swing.JToolBarSeparator"
+  },
+  {
     "name": "javax.swing.JToolTip"
   },
   {
     "name": "javax.swing.JTree"
+  },
+  {
+    "name": "javax.swing.JTreeCell"
   },
   {
     "name": "javax.swing.JViewport"
@@ -1078,6 +1829,17 @@
   },
   {
     "name": "javax.swing.plaf.basic.BasicTableUI",
+    "methods": [
+      {
+        "name": "loadActionMap",
+        "parameterTypes": [
+          "javax.swing.plaf.basic.LazyActionMap"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "javax.swing.plaf.basic.BasicTreeUI",
     "methods": [
       {
         "name": "loadActionMap",

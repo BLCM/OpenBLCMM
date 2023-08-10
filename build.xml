@@ -157,6 +157,13 @@
                 <zipfileset src="${sqlite-jdbc.wildcard}"/>
                 <compositemapper>
                     <globmapper from="META-INF/MANIFEST.MF" to="META-INF/sqlite-jdbc-MANIFEST.MF" />
+                    <!--
+                        Move the sqlite-jdbc native-image helper class up to the top.  This feels
+                        quite improper, but I haven't figured out a better way to have the
+                        compilation Actually Work, with 3.42.0.  (3.41.0 handled this differently
+                        and didn't require doing this.
+                    -->
+                    <globmapper from="META-INF/versions/9/org/sqlite/nativeimage/*.class" to="org/sqlite/nativeimage/*.class" />
                     <globmapper from="*" to="*" />
                 </compositemapper>
             </mappedresources>
@@ -172,6 +179,9 @@
             <!-- Include a basic manifest -->
             <manifest>
                 <attribute name="Main-Class" value="${main.class}"/>
+                <!-- A couple of attempts to get sqlite-jdbc 3.42.0 to compile w/ native-image -->
+                <!--<attribute name="Export-Package" value="META-INF.versions.9,META-INF.versions.9.org.sqlite.nativeimage"/>-->
+                <!--<attribute name="Class-Path" value="META-INF/versions/9/"/>-->
             </manifest>
 
         </jar>

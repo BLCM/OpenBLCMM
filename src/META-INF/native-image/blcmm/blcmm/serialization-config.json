@@ -1,7 +1,16 @@
 {
   "types": [
     {
+      "name": "java.lang.Object[]"
+    },
+    {
       "name": "java.lang.String"
+    },
+    {
+      "name": "javax.swing.tree.DefaultMutableTreeNode"
+    },
+    {
+      "name": "javax.swing.tree.DefaultMutableTreeNode[]"
     }
   ],
   "lambdaCapturingTypes": [],

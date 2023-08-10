@@ -43,6 +43,9 @@
     ]
   },
   {
+    "name": "java.awt.Canvas"
+  },
+  {
     "name": "java.awt.Color",
     "methods": [
       {
