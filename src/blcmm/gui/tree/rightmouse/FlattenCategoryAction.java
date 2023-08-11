@@ -51,7 +51,7 @@ import javax.swing.tree.TreePath;
 public class FlattenCategoryAction extends RightMouseButtonAction {
 
     public FlattenCategoryAction(CheckBoxTree tree) {
-        super(tree, "Totally flatten category", new Requirements(true, true, false));
+        super(tree, "Flatten category contents", new Requirements(true, true, false));
     }
 
     @Override
@@ -82,19 +82,16 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
             return false;
         }
 
-        // Don't allow on the top-level element
-        TreePath parentPath = path.getParentPath();
-        if (parentPath == null) {
-            return false;
-        }
-
         // Also don't allow if *we* are the top level inside a MUT
-        DefaultMutableTreeNode parent = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
-        if (!(parent.getUserObject() instanceof Category)) {
-            return false;
-        }
-        if (((Category) parent.getUserObject()).isMutuallyExclusive()) {
-            return false;
+        TreePath parentPath = path.getParentPath();
+        if (parentPath != null) {
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode)parentPath.getLastPathComponent();
+            if (!(parent.getUserObject() instanceof Category)) {
+                return false;
+            }
+            if (((Category) parent.getUserObject()).isMutuallyExclusive()) {
+                return false;
+            }
         }
 
         // Also don't allow if any of our *children* are mutually exclusive, or
@@ -107,6 +104,19 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
                     || checker instanceof GlobalListOfProperties.LockChecker) {
                 return false;
             }
+        }
+
+        // Finally, also don't allow running this if there are no categories
+        // to flatten.
+        boolean foundCategories = false;
+        for (ModelElement me : cat.getElements()) {
+            if (me instanceof Category) {
+                foundCategories = true;
+                break;
+            }
+        }
+        if (!foundCategories) {
+            return false;
         }
 
         // Otherwise, we're good!
@@ -123,21 +133,11 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
         }
 
         // Gather some info
-        TreePath parentPath = paths[0].getParentPath();
-        if (parentPath == null) {
-            return;
-        }
-        DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) parentPath.getLastPathComponent();
-        if (!(parentNode.getUserObject() instanceof Category)) {
-            return;
-        }
-        Category parentCategory = (Category)parentNode.getUserObject();
-        DefaultMutableTreeNode toRemove = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
-        int toRemoveIndex = parentNode.getIndex(toRemove);
-        Category toRemoveCategory = (Category)toRemove.getUserObject();
+        DefaultMutableTreeNode actionNode = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
+        Category actionCategory = (Category)actionNode.getUserObject();
 
         // Show a confirmation dialog
-        int commandCount = toRemoveCategory.getNumberOfCommandsDescendants();
+        int commandCount = actionCategory.getNumberOfCommandsDescendants();
         String plural = "s";
         if (commandCount == 1) {
             plural = "";
@@ -146,9 +146,9 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
                 this.tree.getFontInfo(),
                 AdHocDialog.IconType.QUESTION,
                 "Really flatten category?",
-                "<html>This action will completely 'flatten' the specified category, replacing the"
-                + " category with a list of every comment and command found within, and removing"
-                + " all nested categories.  This will result in"
+                "<html>This action will completely 'flatten' the specified category, removing"
+                + " all sub-categories and leaving behind a flat list of every comment and"
+                + " command found within.  This will result in"
                 + " <b>" + commandCount + " command" + plural + "</b>"
                 + " being shuffled around.<br/><br/>"
                 + "Proceed?",
@@ -158,25 +158,68 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
             return;
         }
 
+        // The current CompletePatch implementation presents a couple of
+        // challenges for the most straightforward implementation of this,
+        // relating to how it checks for and enforces various parent/child
+        // relationships.  Rather than try to fight through those (and
+        // potentially have to start modifying CompletePatch, something I'm
+        // a bit hesitant to touch without real good reason), we're gonna do
+        // this slightly stupidly, instead.  Find all direct Category
+        // children and process them individually, leaving direct comments
+        // and commands alone.
+
+        ArrayList<DefaultMutableTreeNode> catsToFlatten = new ArrayList<> ();
+        Enumeration children = actionNode.children();
+        while (children.hasMoreElements()) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
+            if (child.getUserObject() instanceof Category) {
+                catsToFlatten.add(child);
+            }
+        }
+        for (DefaultMutableTreeNode child : catsToFlatten) {
+            this.flattenNode(child, actionNode, actionCategory);
+        }
+
+        // Finish and clean up
+        refreshNode(actionNode);
+        tree.setChanged(true);
+    }
+
+    /**
+     * Inner routine to recursively flatten a category, replacing it with its
+     * previous contents.  Basically a supercharged version of
+     * RemoveCategoryAction.
+     *
+     * There's no real *need* to pass newParentCategory -- we could just
+     * derive it from newParentNode, after all -- but we've already casted it
+     * prior to calling in here, so we may as well pass it.
+     *
+     * @param flattenNode The node containing a category to flatten
+     * @param newParentNode The new parent node where the contents will go
+     * @param newParentCategory The new parent Category object itself.
+     */
+    private void flattenNode(DefaultMutableTreeNode flattenNode,
+            DefaultMutableTreeNode newParentNode,
+            Category newParentCategory) {
+
+        Category flattenCategory = (Category) flattenNode.getUserObject();
+        int toRemoveIndex = newParentNode.getIndex(flattenNode);
+
         // Walk the tree and gather our gigantic list of children.  Note that
         // the count of children here may be larger than the transient command
         // descendents we reported on above, since comments may be in here too.
         ArrayList<TreeNode> children = new ArrayList<> ();
         ArrayList<TreeNode> categories = new ArrayList<> ();
-        getChildrenRecursive(toRemove, children, categories);
+        getChildrenRecursive(flattenNode, children, categories);
 
         // Now do some work.
         tree.removeNodesFromTheirParents(children.toArray(new DefaultMutableTreeNode[0]));
         tree.removeNodesFromTheirParents(categories.toArray(new DefaultMutableTreeNode[0]));
-        tree.getPatch().removeElementFromParentCategory(toRemoveCategory);
+        tree.getPatch().removeElementFromParentCategory(flattenCategory);
         for (TreeNode child : children) {
             ModelElement el = (ModelElement)((DefaultMutableTreeNode)child).getUserObject();
-            tree.getPatch().insertElementInto(el, parentCategory, toRemoveIndex++);
+            tree.getPatch().insertElementInto(el, newParentCategory, toRemoveIndex++);
         }
-
-        // Finish and clean up
-        refreshNode(parentNode);
-        tree.setChanged(true);
 
     }
 
@@ -184,8 +227,7 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
      * Given a starting point in the tree, recursively walk the tree, adding
      * to a couple of lists.  `foundNodes` will contain any commands/comments
      * found in the tree, and `foundCategories` will contain any categories
-     * found in the tree.  The starting point itself will be added to the
-     * `foundCategories` list.
+     * found in the tree.
      *
      * @param start The starting point in the tree
      * @param foundNodes A list of non-Category nodes to add to

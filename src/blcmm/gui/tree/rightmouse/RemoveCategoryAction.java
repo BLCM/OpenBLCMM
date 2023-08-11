@@ -45,7 +45,7 @@ import javax.swing.tree.TreePath;
 public class RemoveCategoryAction extends RightMouseButtonAction {
 
     public RemoveCategoryAction(CheckBoxTree tree) {
-        super(tree, "Flatten/Remove single category", new Requirements(false, true, false));
+        super(tree, "Replace category with contents", new Requirements(false, true, false));
     }
 
     @Override
