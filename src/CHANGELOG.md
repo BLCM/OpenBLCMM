@@ -41,15 +41,6 @@ OpenBLCMM Changelog
 - Object Explorer's "Auto format" button is now a toggle (like the "Collapse
   Arrays" button).  OE will also remember the state of both those buttons
   between runs, in addition to the selected "Deformat arrays" number.
-- Crashes Fixed:
-  - Fixed a crash which could occur when unexpected files/directories were found
-    in OpenBLCMM's auto-backup dir.
-  - Fixed a crash which could occur when going back/forward through Object
-    Explorer search history.
-  - Fixed a crash which could occur when navigating Object Explorer bookmarks.
-  - Fixed a crash when triggering a search while no datapack is loaded.
-  - Fixed a crash when updating the OE Data category selections while an OE
-    search is running.
 - New actions available on the main mod tree:
   - "Replace Category With Contents" - Replaces a category/folder with its
     contents.  Cannot be done on mutually-exclusive categories, or on locked
@@ -60,8 +51,20 @@ OpenBLCMM Changelog
     removed.  This cannot be done if there are any mutually-exclusive or locked
     categories down the tree from the category to be flattened, or if the
     category itself is mutually exclusive or locked.
+- Crashes Fixed:
+  - Fixed a crash which could occur when unexpected files/directories were found
+    in OpenBLCMM's auto-backup dir.
+  - Fixed a crash which could occur when going back/forward through Object
+    Explorer search history.
+  - Fixed a crash which could occur when navigating Object Explorer bookmarks.
+  - Fixed a crash when triggering a search while no datapack is loaded.
+  - Fixed a crash when updating the OE Data category selections while an OE
+    search is running.
 - Fixed a bug where Object Explorer data category selection wasn't applying
   properly on app startup.
+- "Restore Defaults" button in settings should apply all reset settings
+  immediately, and update windows if needed (such as for theme or font size
+  resets).
 - Dialogs should be closeable with the OS "window close" button when possible.
 - Game INI file detection on Linux will try case-insensitive file matching if
   the canonical case version isn't found (to support Wineroot

@@ -42,6 +42,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -68,6 +70,7 @@ public class ToolSettingsPanel extends JPanel {
     private boolean needsToolReset = false;
     private boolean needsTreeResize = false;
     private FontInfo fontInfo;
+    private HashMap<Option, JComponent> componentCache;
 
     public ToolSettingsPanel(Option.Shown shownPanel, FontInfo fontInfo, Component focusAfterResetComponent) {
         this(shownPanel, fontInfo, focusAfterResetComponent, null);
@@ -84,6 +87,7 @@ public class ToolSettingsPanel extends JPanel {
     private void generateGUI(String headerText) throws NumberFormatException {
 
         final ToolSettingsPanel inst = this;
+        this.componentCache = new HashMap<> ();
 
         this.setLayout(new GridBagLayout());
         GridBagConstraints constr = new GridBagConstraints();
@@ -148,6 +152,8 @@ public class ToolSettingsPanel extends JPanel {
 
             } else {
 
+                this.componentCache.put(o, comp);
+
                 constr.anchor = GridBagConstraints.WEST;
                 FontInfoJLabel label1 = new FontInfoJLabel(o.getDisplayDesc(), this.fontInfo);
                 this.add(label1, constr);
@@ -199,6 +205,13 @@ public class ToolSettingsPanel extends JPanel {
                 inst.remove(c);
             }
             generateGUI(headerText);
+
+            // Activate any callbacks we might have -- otherwise some of our
+            // restored-to-default settings might not actually apply (like
+            // font size, or theme, etc)
+            for (Map.Entry<Option, JComponent> e : this.componentCache.entrySet()) {
+                callBack(e.getKey(), e.getValue());
+            }
 
             // So for *some* reason, on our "Dangerous settings" tab, if we don't
             // trigger a focus change like this, the GUI appears frozen up after
