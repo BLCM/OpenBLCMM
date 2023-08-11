@@ -982,11 +982,11 @@ public class Options extends OptionsBase {
         this.setBooleanOptionData(OptionNames.hasSeenExportWarning, hasSeenExportWarning);
     }
 
-    public boolean getShowConfirmPartiaclCategory() {
+    public boolean getShowConfirmPartialCategory() {
         return this.getBooleanOptionData(OptionNames.showConfirmPartialCategory);
     }
 
-    public void setShowConfirmPartiaclCategory(boolean b) {
+    public void setShowConfirmPartialCategory(boolean b) {
         this.setBooleanOptionData(OptionNames.showConfirmPartialCategory, b);
     }
 

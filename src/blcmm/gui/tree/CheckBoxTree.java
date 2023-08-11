@@ -947,7 +947,7 @@ public final class CheckBoxTree extends JTree {
 
         private boolean confirmCheck(TreePath tp) {
             CheckedNode cn = tree.nodesCheckingState.get(tp);
-            if (!Options.INSTANCE.getShowConfirmPartiaclCategory()) {
+            if (!Options.INSTANCE.getShowConfirmPartialCategory()) {
                 return true;
             }
             if (cn.isSelected && cn.hasChildren && !cn.allChildrenSelected) {
@@ -966,7 +966,7 @@ public final class CheckBoxTree extends JTree {
                         panel,
                         AdHocDialog.ButtonSet.YES_NO);
                 if (check.isSelected()) {
-                    Options.INSTANCE.setShowConfirmPartiaclCategory(false);
+                    Options.INSTANCE.setShowConfirmPartialCategory(false);
                 }
                 return res == AdHocDialog.Button.YES;
             }
