@@ -1574,20 +1574,13 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         boolean stop = false;
         protected final DataManager dm;
         final String query;
-        private final Set<Options.OESearch> activeCategories;
-        private final TreeSet<UEClass> availableClasses;
+        private boolean showCategoriesOnNotFound = false;
+        private Set<Options.OESearch> _activeCategories;
+        private TreeSet<UEClass> _availableClasses;
 
         /**
          * A new Worker, using the specified DataManager and with the given
          * query.
-         *
-         * Note that we're making a *copy* of our active category/class state,
-         * from Options and DataManager respectively, because it's possible to
-         * edit settings mid-search.  If that happens and we're using the "live"
-         * variables, we'll get a concurrency exception.  Really it's only
-         * the class list that we really need to worry about, but if we don't
-         * also cache the active categories, our active-categories-during-search
-         * report (shown when there are no results) could be wrong.
          *
          * @param dm A DataManager to use
          * @param query The query to run
@@ -1595,16 +1588,47 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         public Worker(DataManager dm, String query) {
             this.dm = dm;
             this.query = query;
-            this.activeCategories = new HashSet<>(Options.INSTANCE.getOESearchCategories());
-            this.availableClasses = (TreeSet<UEClass>)this.dm.getAllClassesByEnabledCategory().clone();
+            this._activeCategories = null;
+            this._availableClasses = null;
+        }
+
+        /**
+         * Ensures our active category + available class structures are
+         * populated.
+         *
+         * We're making a *copy* of our active category/class state, from
+         * Options and DataManager respectively, because it's possible to edit
+         * settings mid-search.  If that happens and we're using the "live"
+         * variables, we'll get a concurrency exception.  Really it's only
+         * the class list that we really need to worry about, but if we don't
+         * also cache the active categories, our active-categories-during-search
+         * report (shown when there are no results) could be wrong.
+         *
+         * We're not *always* going to cache this info, though, since there is
+         * at least one query type (using "inclass:") which doesn't make use
+         * of these, so it'd be silly to do the work.  Also, this way if
+         * something *does* request this info, we can set a boolean to define
+         * whether or not we should show the category info when results aren't
+         * found.
+         */
+        private void ensureCategoryClassCache() {
+            this.showCategoriesOnNotFound = true;
+            if (this._activeCategories == null) {
+                this._activeCategories = new HashSet<>(Options.INSTANCE.getOESearchCategories());
+            }
+            if (this._availableClasses == null) {
+                this._availableClasses = (TreeSet<UEClass>)this.dm.getAllClassesByEnabledCategory().clone();
+            }
         }
 
         protected TreeSet<UEClass> getAvailableClasses() {
-            return this.availableClasses;
+            this.ensureCategoryClassCache();
+            return this._availableClasses;
         }
 
         protected Set<Options.OESearch> getActiveCategories() {
-            return this.activeCategories;
+            this.ensureCategoryClassCache();
+            return this._activeCategories;
         }
 
         public abstract void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException;
@@ -1722,22 +1746,24 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                 if (textElement.getText().length() == 0) {
                     StringBuilder sb = new StringBuilder();
                     sb.append("No results found for the specified query in " + dm.getPatchType().name() + " data.\n");
-                    sb.append("\n");
-                    sb.append("Active search categories:\n");
-                    sb.append("\n");
-                    Set<Options.OESearch> activeCats = this.getActiveCategories();
-                    for (Options.OESearch searchType : Options.OESearch.values()) {
-                        sb.append("\t");
-                        sb.append(activeCats.contains(searchType) ? "YES" : " NO");
-                        sb.append(" - ");
-                        sb.append(searchType.name());
+                    if (this.showCategoriesOnNotFound) {
                         sb.append("\n");
+                        sb.append("Active search categories:\n");
+                        sb.append("\n");
+                        Set<Options.OESearch> activeCats = this.getActiveCategories();
+                        for (Options.OESearch searchType : Options.OESearch.values()) {
+                            sb.append("\t");
+                            sb.append(activeCats.contains(searchType) ? "YES" : " NO");
+                            sb.append(" - ");
+                            sb.append(searchType.name());
+                            sb.append("\n");
+                        }
+                        sb.append("\n");
+                        sb.append("You can try adding to the list of categories to search in the Settings menu via\n");
+                        sb.append("the main " + Meta.NAME + " window, in case the objects you're looking for are\n");
+                        sb.append("excluded by the current settings.  The app does not have to be restarted when the\n");
+                        sb.append("categories have changed -- just click some checkboxes and try again!\n");
                     }
-                    sb.append("\n");
-                    sb.append("You can try adding to the list of categories to search in the Settings menu via\n");
-                    sb.append("the main " + Meta.NAME + " window, in case the objects you're looking for are\n");
-                    sb.append("excluded by the current settings.  The app does not have to be restarted when the\n");
-                    sb.append("categories have changed -- just click some checkboxes and try again!\n");
                     textElement.setText(sb.toString());
                 }
                 return null;
