@@ -41,6 +41,8 @@ OpenBLCMM Changelog
     Explorer search history.
   - Fixed a crash which could occur when navigating Object Explorer bookmarks.
   - Fixed a crash when triggering a search while no datapack is loaded.
+  - Fixed a crash when updating the OE Data category selections while an OE
+    search is running.
 - Fixed a bug where Object Explorer data category selection wasn't applying
   properly on app startup.
 - Dialogs should be closeable with the OS "window close" button when possible.

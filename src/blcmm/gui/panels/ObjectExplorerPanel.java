@@ -69,6 +69,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -1573,14 +1574,37 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         boolean stop = false;
         protected final DataManager dm;
         final String query;
+        private final Set<Options.OESearch> activeCategories;
+        private final TreeSet<UEClass> availableClasses;
 
+        /**
+         * A new Worker, using the specified DataManager and with the given
+         * query.
+         *
+         * Note that we're making a *copy* of our active category/class state,
+         * from Options and DataManager respectively, because it's possible to
+         * edit settings mid-search.  If that happens and we're using the "live"
+         * variables, we'll get a concurrency exception.  Really it's only
+         * the class list that we really need to worry about, but if we don't
+         * also cache the active categories, our active-categories-during-search
+         * report (shown when there are no results) could be wrong.
+         *
+         * @param dm A DataManager to use
+         * @param query The query to run
+         */
         public Worker(DataManager dm, String query) {
             this.dm = dm;
             this.query = query;
+            this.activeCategories = new HashSet<>(Options.INSTANCE.getOESearchCategories());
+            this.availableClasses = (TreeSet<UEClass>)this.dm.getAllClassesByEnabledCategory().clone();
         }
 
         protected TreeSet<UEClass> getAvailableClasses() {
-            return this.dm.getAllClassesByEnabledCategory();
+            return this.availableClasses;
+        }
+
+        protected Set<Options.OESearch> getActiveCategories() {
+            return this.activeCategories;
         }
 
         public abstract void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException;
@@ -1701,7 +1725,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                     sb.append("\n");
                     sb.append("Active search categories:\n");
                     sb.append("\n");
-                    Set<Options.OESearch> activeCats = Options.INSTANCE.getOESearchCategories();
+                    Set<Options.OESearch> activeCats = this.getActiveCategories();
                     for (Options.OESearch searchType : Options.OESearch.values()) {
                         sb.append("\t");
                         sb.append(activeCats.contains(searchType) ? "YES" : " NO");
