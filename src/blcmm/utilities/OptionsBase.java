@@ -114,7 +114,11 @@ public abstract class OptionsBase {
         popupStatus,
         showHotfixNames,
         dragAndDroppableCode,
+        // This one is actually *just* for confirming if it's only comments being deleted
         showDeleteConfirmation,
+        // *This* one is for showing delete confirmations in general
+        showFullDeleteConfirmation,
+        showFlattenCategoryConfirmation,
         saveAsOffline,
         onlineServiceNumber,
         accountDataNumber,

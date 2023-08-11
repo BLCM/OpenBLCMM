@@ -447,6 +447,17 @@ public class Options extends OptionsBase {
                 "<html>When starting " + Meta.NAME + ", open the most recently"
                 + " used patch file automatically when starting the app."));
 
+        this.registerOption(new BooleanOption(this,
+                OptionNames.showConfirmPartialCategory.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Confirm complex checkbox selection",
+                null,
+                "<html>If a category has a mix of checked and unchecked statements, should<br/>"
+                + Meta.NAME + " ask for confirmation before checking/unchecking<br/>"
+                + "the entire category?"));
+
         this.registerOption(new SectionHeaderOption(this,
                 Option.Shown.SETTINGS,
                 "Modding",
@@ -515,6 +526,24 @@ public class Options extends OptionsBase {
                 null,
                 "Enables/Disables being able to Drag & Drop"
                 + " text into text fields"));
+
+        this.registerOption(new BooleanOption(this,
+                OptionNames.showFullDeleteConfirmation.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Confirm deletion actions",
+                null,
+                "<html>Show a confirmation dialog when deleting code."));
+
+        this.registerOption(new BooleanOption(this,
+                OptionNames.showFlattenCategoryConfirmation.toString(),
+                fontInfo,
+                true,
+                Option.Shown.SETTINGS,
+                "Confirm flatten category actions",
+                null,
+                "<html>Show a confirmation dialog when flattening categories."));
 
         this.registerOption(new SectionHeaderOption(this,
                 Option.Shown.SETTINGS,
@@ -776,9 +805,6 @@ public class Options extends OptionsBase {
         // doesn't really matter here.
         // Has the user seen the export warning?
         this.registerOption(new BooleanOption(this, OptionNames.hasSeenExportWarning.toString(), fontInfo, false));
-
-        // Show confirmation when checking partially checked categories?
-        this.registerOption(new BooleanOption(this, OptionNames.showConfirmPartialCategory.toString(), fontInfo, true));
 
         // Backup session information
         this.registerOption(new IntOption(this, OptionNames.sessionsToKeep.toString(), fontInfo, 5));
@@ -1194,12 +1220,28 @@ public class Options extends OptionsBase {
         this.setBooleanOptionData(OptionNames.dragAndDroppableCode, status);
     }
 
-    public boolean getShowDeletionConfirm() {
+    public boolean getShowCommentOnlyDeletionConfirm() {
         return this.getBooleanOptionData(OptionNames.showDeleteConfirmation);
     }
 
-    public void setShowDeleteConfirmation(boolean status) {
+    public void setShowCommentOnlyDeleteConfirmation(boolean status) {
         this.setBooleanOptionData(OptionNames.showDeleteConfirmation, status);
+    }
+
+    public boolean getShowFullDeletionConfirm() {
+        return this.getBooleanOptionData(OptionNames.showFullDeleteConfirmation);
+    }
+
+    public void setShowFullDeleteConfirmation(boolean status) {
+        this.setBooleanOptionData(OptionNames.showFullDeleteConfirmation, status);
+    }
+
+    public boolean getShowFlattenCategoryConfirm() {
+        return this.getBooleanOptionData(OptionNames.showFlattenCategoryConfirmation);
+    }
+
+    public void setShowFlattenCategoryConfirmation(boolean status) {
+        this.setBooleanOptionData(OptionNames.showFlattenCategoryConfirmation, status);
     }
 
     public boolean getSaveAsOffline() {

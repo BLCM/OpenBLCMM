@@ -34,6 +34,7 @@ import blcmm.model.Category;
 import blcmm.model.ModelElement;
 import blcmm.model.properties.GlobalListOfProperties;
 import blcmm.model.properties.PropertyChecker;
+import blcmm.utilities.Options;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -136,26 +137,28 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
         DefaultMutableTreeNode actionNode = (DefaultMutableTreeNode) paths[0].getLastPathComponent();
         Category actionCategory = (Category)actionNode.getUserObject();
 
-        // Show a confirmation dialog
-        int commandCount = actionCategory.getNumberOfCommandsDescendants();
-        String plural = "s";
-        if (commandCount == 1) {
-            plural = "";
-        }
-        AdHocDialog.Button response = AdHocDialog.run(MainGUI.INSTANCE,
-                this.tree.getFontInfo(),
-                AdHocDialog.IconType.QUESTION,
-                "Really flatten category?",
-                "<html>This action will completely 'flatten' the specified category, removing"
-                + " all sub-categories and leaving behind a flat list of every comment and"
-                + " command found within.  This will result in"
-                + " <b>" + commandCount + " command" + plural + "</b>"
-                + " being shuffled around.<br/><br/>"
-                + "Proceed?",
-                AdHocDialog.ButtonSet.YES_NO_CANCEL,
-                new Dimension(530, 180));
-        if (response != AdHocDialog.Button.YES) {
-            return;
+        // Show a confirmation dialog, unless we've been told not to.
+        if (Options.INSTANCE.getShowFlattenCategoryConfirm()) {
+            int commandCount = actionCategory.getNumberOfCommandsDescendants();
+            String plural = "s";
+            if (commandCount == 1) {
+                plural = "";
+            }
+            AdHocDialog.Button response = AdHocDialog.run(MainGUI.INSTANCE,
+                    this.tree.getFontInfo(),
+                    AdHocDialog.IconType.QUESTION,
+                    "Really flatten category?",
+                    "<html>This action will completely 'flatten' the specified category, removing"
+                    + " all sub-categories and leaving behind a flat list of every comment and"
+                    + " command found within.  This will result in"
+                    + " <b>" + commandCount + " command" + plural + "</b>"
+                    + " being shuffled around.<br/><br/>"
+                    + "Proceed?",
+                    AdHocDialog.ButtonSet.YES_NO_CANCEL,
+                    new Dimension(530, 180));
+            if (response != AdHocDialog.Button.YES) {
+                return;
+            }
         }
 
         // The current CompletePatch implementation presents a couple of

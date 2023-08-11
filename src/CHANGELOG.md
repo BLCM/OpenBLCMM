@@ -8,6 +8,10 @@ OpenBLCMM Changelog
     - Can configure which buttons open object links in new/current OE tabs.
     - Can configure mouse buttons to go back/forward in OE history (defaults to
       Mouse 4 and Mouse 5)
+  - Added settings to control whether or not OpenBLCMM asks for confirmation
+    when doing destructive actions like Delete and Flatten, and exposed the
+    setting for asking for checkbox confirmation when a mixed-state tree is
+    checked.
   - Added a setting to turn off auto-load of most recently open patch file, when
     starting the app.
   - Added a setting to toggle having a colon inbetween the attribute name and

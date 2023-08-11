@@ -110,17 +110,19 @@ public class DeleteAction extends RightMouseButtonAction {
             panel.add(Box.createVerticalStrut(5));
             panel.add(box);
         }
-        if ((Options.INSTANCE.getShowDeletionConfirm() || codes > 0) && children > 0) {
-            AdHocDialog.Button option = AdHocDialog.run(MainGUI.INSTANCE,
-                    this.tree.getFontInfo(),
-                    AdHocDialog.IconType.QUESTION,
-                    "Confirm Deletion",
-                    panel,
-                    AdHocDialog.ButtonSet.YES_NO);
-            if (option != AdHocDialog.Button.YES) {
-                return;
-            } else if (box.isSelected()) {
-                Options.INSTANCE.setShowDeleteConfirmation(false);
+        if (Options.INSTANCE.getShowFullDeletionConfirm()) {
+            if ((Options.INSTANCE.getShowCommentOnlyDeletionConfirm() || codes > 0) && children > 0) {
+                AdHocDialog.Button option = AdHocDialog.run(MainGUI.INSTANCE,
+                        this.tree.getFontInfo(),
+                        AdHocDialog.IconType.QUESTION,
+                        "Confirm Deletion",
+                        panel,
+                        AdHocDialog.ButtonSet.YES_NO);
+                if (option != AdHocDialog.Button.YES) {
+                    return;
+                } else if (box.isSelected()) {
+                    Options.INSTANCE.setShowCommentOnlyDeleteConfirmation(false);
+                }
             }
         }
 
