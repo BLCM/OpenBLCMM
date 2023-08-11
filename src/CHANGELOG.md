@@ -85,7 +85,9 @@ OpenBLCMM Changelog
 - Improved performance on an internal substring-matching function, and fixed
   an edge case in its behavior.
 - Tightened up About dialog display a bit.
-- Updated sqlite-jdbc version to 3.42.0.0
+- Third-party software version updates:
+  - Updated sqlite-jdbc version to 3.42.0.0
+  - Windows EXE building with Liberica NIK 23 JDK 17
 
 **v1.3.3** May 26, 2023
  - Fixed a startup crash issue for Windows users whose system username has a
