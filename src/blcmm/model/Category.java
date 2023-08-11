@@ -113,6 +113,7 @@ public class Category extends ModelElementContainer<ModelElement> {
 
     public void setLocked(boolean locked) {
         this.locked = locked;
+        transientData.updateByChangingOwnProperty(GlobalListOfProperties.CLASS_TO_INSTANCE_MAP.get(GlobalListOfProperties.LockChecker.class).get(0));
     }
 
     public boolean isLocked() {

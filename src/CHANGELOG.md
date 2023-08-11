@@ -47,6 +47,11 @@ OpenBLCMM Changelog
   - "Flatten/Remove Single Category" - Basically replaces a category/folder with
     its contents.  Cannot be done on mutually-exclusive categories, or on locked
     categories.
+  - "Totally Flatten Category" - Completely replaces a category with a flattened
+    list of all the comments/statements found within.  Will completely remove
+    the tree structure under the category.  This cannot be done if there are any
+    mutually-exclusive or locked categories down the tree from the category to
+    be flattened, or if the category itself is mutually exclusive or locked.
 - Fixed a bug where Object Explorer data category selection wasn't applying
   properly on app startup.
 - Dialogs should be closeable with the OS "window close" button when possible.

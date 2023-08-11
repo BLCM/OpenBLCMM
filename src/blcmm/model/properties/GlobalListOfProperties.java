@@ -157,6 +157,7 @@ public class GlobalListOfProperties {
         checkers.add(new LeafTypeCommandChecker());
         checkers.add(new LeafTypeCommentChecker());
         checkers.add(new LeafSelectedChecker());
+        checkers.add(new LockChecker());
 
         for (PropertyChecker property : checkers) {
             if (property.isDependantOnChildren()) {
@@ -841,6 +842,29 @@ public class GlobalListOfProperties {
         public String getPropertyDescription() {
             return "This folder contains mutually-exclusive options";
         }
+    }
+
+    public static class LockChecker extends PropertyChecker {
+
+        public LockChecker() {
+            super(true, false);
+        }
+
+        @Override
+        public boolean checkProperty(ModelElement element) {
+            return element instanceof Category && ((Category) element).isLocked();
+        }
+
+        @Override
+        public DescType getPropertyDescriptionType() {
+            return DescType.Invisible;
+        }
+
+        @Override
+        public String getPropertyDescription() {
+            return "This folder contains locked options";
+        }
+
     }
 
     public static class CompleteClassChecker extends InformationalPropertyChecker {

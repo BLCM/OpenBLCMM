@@ -657,6 +657,7 @@ public final class CheckBoxTree extends JTree {
         private RightMouseButtonAction renameCategoryAction;
         private RightMouseButtonAction insertCategoryAction;
         private RightMouseButtonAction removeCategoryAction;
+        private RightMouseButtonAction flattenCategoryAction;
         private RightMouseButtonAction insertAction;
         private RightMouseButtonAction deleteAction;
         private RightMouseButtonAction copyAction;
@@ -693,6 +694,7 @@ public final class CheckBoxTree extends JTree {
             renameCategoryAction = new RenameCategoryAction(tree, KeyEvent.VK_R, true);
             insertCategoryAction = new AddCategoryAction(tree, KeyEvent.VK_H, true);
             removeCategoryAction = new RemoveCategoryAction(tree);
+            flattenCategoryAction = new FlattenCategoryAction(tree);
             insertAction = new InsertAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_PLUS : KeyEvent.VK_INSERT, false);
             deleteAction = new DeleteAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, OSInfo.CURRENT_OS == OSInfo.OS.MAC);
             copyAction = new CopyAction(tree, KeyEvent.VK_C, true);
@@ -715,6 +717,7 @@ public final class CheckBoxTree extends JTree {
             actions2.add(renameCategoryAction);
             actions2.add(insertCategoryAction);
             actions2.add(removeCategoryAction);
+            actions2.add(flattenCategoryAction);
             actions2.add(insertAction);
             actions2.add(deleteAction);
             actions2.add(copyAction);
