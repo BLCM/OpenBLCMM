@@ -43,6 +43,10 @@ OpenBLCMM Changelog
   - Fixed a crash when triggering a search while no datapack is loaded.
   - Fixed a crash when updating the OE Data category selections while an OE
     search is running.
+- New actions available on the main mod tree:
+  - "Flatten/Remove Single Category" - Basically replaces a category/folder with
+    its contents.  Cannot be done on mutually-exclusive categories, or on locked
+    categories.
 - Fixed a bug where Object Explorer data category selection wasn't applying
   properly on app startup.
 - Dialogs should be closeable with the OS "window close" button when possible.

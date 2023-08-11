@@ -445,6 +445,21 @@ public abstract class RightMouseButtonAction {
         tree.setChanged(true);
     }
 
+    /**
+     * A class to define "basic" requirements for a RightMouseButtonAction to
+     * be available to the user.  There are currently three booleans:
+     *
+     *   1. devmode: True if developer mode is required for the action, or
+     *      False if it's an action which can be done whenever.
+     *   2. unlocked: True if the selected element must be unlocked, or False
+     *      if the action can be taken on a locked element.
+     *   3. window: True if the action can't be performed while a code edit
+     *      window is open, or False if it can be done at any time.  Honestly
+     *      I actually have no idea what this even means, really, because the
+     *      tree gets locked whenever the edit window's open anyway, so I don't
+     *      think *any* of our actions are usable with an open edit dialog?
+     *      Possibly this requirement predates disabling the tree?
+     */
     public static class Requirements {
 
         public static final Requirements NO_REQUIREMENTS = new Requirements(false, false, false);
