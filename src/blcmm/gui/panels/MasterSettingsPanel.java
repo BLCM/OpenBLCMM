@@ -28,6 +28,7 @@
  */
 package blcmm.gui.panels;
 
+import blcmm.Meta;
 import blcmm.gui.FontInfo;
 import blcmm.utilities.GlobalLogger;
 import blcmm.utilities.Utilities;
@@ -54,6 +55,7 @@ import javax.swing.BoxLayout;
 public class MasterSettingsPanel extends javax.swing.JPanel {
 
     private final ToolSettingsPanel toolSettingsPanel;
+    private final ToolSettingsPanel confirmationSettingsPanel;
     private final ToolSettingsPanel inputSettingsPanel;
     private final ToolSettingsPanel oeSettingsPanel;
     private final ToolSettingsPanel dangerousSettingsPanel;
@@ -84,6 +86,16 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         toolSettingsPanel.setSize(generalSettingsGuiPanel.getSize());
         generalSettingsGuiPanel.setLayout(new BoxLayout(generalSettingsGuiPanel, BoxLayout.PAGE_AXIS));
         generalSettingsGuiPanel.add(toolSettingsPanel);
+
+        // Confirmations Settings
+        confirmationSettingsPanel = new ToolSettingsPanel(Option.Shown.CONFIRMATIONS, this.fontInfo, masterSettingsTabbedPane,
+                "These settings control the behavior of various confirmations<br/>"
+                + "which are shown when using " + Meta.NAME + ".  Click on any<br/>"
+                + "option to disable the associated confirmation dialog."
+        );
+        confirmationSettingsPanel.setSize(confirmationSettingsGuiPanel.getSize());
+        confirmationSettingsGuiPanel.setLayout(new BoxLayout(confirmationSettingsGuiPanel, BoxLayout.PAGE_AXIS));
+        confirmationSettingsGuiPanel.add(confirmationSettingsPanel);
 
         // Input Settings
         inputSettingsPanel = new ToolSettingsPanel(Option.Shown.INPUT, this.fontInfo, masterSettingsTabbedPane,
@@ -117,6 +129,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         dangerousSettingsGuiPanel.add(dangerousSettingsPanel);
 
         generalSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        confirmationSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        inputSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         autoupdateSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         dangerousSettingsGuiScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -135,6 +149,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         masterSettingsTabbedPane = new blcmm.gui.components.BoldJTabbedPane();
         generalSettingsGuiScrollPane = new javax.swing.JScrollPane();
         generalSettingsGuiPanel = new javax.swing.JPanel();
+        confirmationSettingsGuiScrollPane = new javax.swing.JScrollPane();
+        confirmationSettingsGuiPanel = new javax.swing.JPanel();
         inputSettingsGuiScrollPane = new javax.swing.JScrollPane();
         inputSettingsGuiPanel = new javax.swing.JPanel();
         autoupdateSettingsGuiScrollPane = new javax.swing.JScrollPane();
@@ -160,6 +176,21 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         generalSettingsGuiScrollPane.setViewportView(generalSettingsGuiPanel);
 
         masterSettingsTabbedPane.addTab("General", generalSettingsGuiScrollPane);
+
+        javax.swing.GroupLayout confirmationSettingsGuiPanelLayout = new javax.swing.GroupLayout(confirmationSettingsGuiPanel);
+        confirmationSettingsGuiPanel.setLayout(confirmationSettingsGuiPanelLayout);
+        confirmationSettingsGuiPanelLayout.setHorizontalGroup(
+            confirmationSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 454, Short.MAX_VALUE)
+        );
+        confirmationSettingsGuiPanelLayout.setVerticalGroup(
+            confirmationSettingsGuiPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 373, Short.MAX_VALUE)
+        );
+
+        confirmationSettingsGuiScrollPane.setViewportView(confirmationSettingsGuiPanel);
+
+        masterSettingsTabbedPane.addTab("Confirmations", confirmationSettingsGuiScrollPane);
 
         javax.swing.GroupLayout inputSettingsGuiPanelLayout = new javax.swing.GroupLayout(inputSettingsGuiPanel);
         inputSettingsGuiPanel.setLayout(inputSettingsGuiPanelLayout);
@@ -214,7 +245,7 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(masterSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 344, Short.MAX_VALUE)
+            .addComponent(masterSettingsTabbedPane)
         );
 
         masterSettingsTabbedPane.getAccessibleContext().setAccessibleName("Settings");
@@ -222,6 +253,8 @@ public class MasterSettingsPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane autoupdateSettingsGuiScrollPane;
+    private javax.swing.JPanel confirmationSettingsGuiPanel;
+    private javax.swing.JScrollPane confirmationSettingsGuiScrollPane;
     private javax.swing.JPanel dangerousSettingsGuiPanel;
     private javax.swing.JScrollPane dangerousSettingsGuiScrollPane;
     private javax.swing.JPanel generalSettingsGuiPanel;

@@ -447,17 +447,6 @@ public class Options extends OptionsBase {
                 "<html>When starting " + Meta.NAME + ", open the most recently"
                 + " used patch file automatically when starting the app."));
 
-        this.registerOption(new BooleanOption(this,
-                OptionNames.showConfirmPartialCategory.toString(),
-                fontInfo,
-                true,
-                Option.Shown.SETTINGS,
-                "Confirm complex checkbox selection",
-                null,
-                "<html>If a category has a mix of checked and unchecked statements, should<br/>"
-                + Meta.NAME + " ask for confirmation before checking/unchecking<br/>"
-                + "the entire category?"));
-
         this.registerOption(new SectionHeaderOption(this,
                 Option.Shown.SETTINGS,
                 "Modding",
@@ -527,24 +516,6 @@ public class Options extends OptionsBase {
                 "Enables/Disables being able to Drag & Drop"
                 + " text into text fields"));
 
-        this.registerOption(new BooleanOption(this,
-                OptionNames.showFullDeleteConfirmation.toString(),
-                fontInfo,
-                true,
-                Option.Shown.SETTINGS,
-                "Confirm deletion actions",
-                null,
-                "<html>Show a confirmation dialog when deleting code."));
-
-        this.registerOption(new BooleanOption(this,
-                OptionNames.showFlattenCategoryConfirmation.toString(),
-                fontInfo,
-                true,
-                Option.Shown.SETTINGS,
-                "Confirm flatten category actions",
-                null,
-                "<html>Show a confirmation dialog when flattening categories."));
-
         this.registerOption(new SectionHeaderOption(this,
                 Option.Shown.SETTINGS,
                 "Object Explorer",
@@ -573,6 +544,55 @@ public class Options extends OptionsBase {
                 + " inbetween the attribute name and its value.<br/>"
                 + "This looks good while reading the list, but might get in the"
                 + " way if you're copy+pasting into a code window."));
+
+        // Now options in the Confirmations Settings area
+
+        this.registerOption(new SectionHeaderOption(this,
+                Option.Shown.CONFIRMATIONS,
+                "General",
+                fontInfo));
+
+        this.registerOption(new InverseBooleanOption(this,
+                OptionNames.showConfirmPartialCategory.toString(),
+                fontInfo,
+                true,
+                Option.Shown.CONFIRMATIONS,
+                "Disable complex checkbox confirmation",
+                null,
+                "<html>Disable the confirmation dialog when checking/unchecking a category<br/>"
+                + "which contains a mix of checked/unchecked content."));
+
+        this.registerOption(new SectionHeaderOption(this,
+                Option.Shown.CONFIRMATIONS,
+                "Modding",
+                fontInfo));
+
+        this.registerOption(new InverseBooleanOption(this,
+                OptionNames.showDeleteConfirmation.toString(),
+                fontInfo,
+                true,
+                Option.Shown.CONFIRMATIONS,
+                "Disable comment-only \"Delete\" confirmation",
+                null,
+                "<html>Disable confirmation dialogs when only deleting comments."));
+
+        this.registerOption(new InverseBooleanOption(this,
+                OptionNames.showFullDeleteConfirmation.toString(),
+                fontInfo,
+                true,
+                Option.Shown.CONFIRMATIONS,
+                "Disable global \"Delete\" confirmation",
+                null,
+                "<html>Disable the global confirmation dialog when deleting code."));
+
+        this.registerOption(new InverseBooleanOption(this,
+                OptionNames.showFlattenCategoryConfirmation.toString(),
+                fontInfo,
+                true,
+                Option.Shown.CONFIRMATIONS,
+                "Disable \"Flatten category\" confirmation",
+                null,
+                "<html>Disable the confirmation dialog when flattening categories."));
 
         // Now options in the Input Settings area
 
@@ -853,9 +873,6 @@ public class Options extends OptionsBase {
 
         // A flag determining if we show the hotfix naming checkbox
         this.registerOption(new BooleanOption(this, OptionNames.showHotfixNames.toString(), fontInfo, true));
-
-        // A flag for if we disabled delete messages.
-        this.registerOption(new BooleanOption(this, OptionNames.showDeleteConfirmation.toString(), fontInfo, true));
 
         // Timestamp of the datalib DB/Jar files when they was last successfully verified
         this.registerOption(new LongOption(this, OptionNames.oeDataSuccessTimestampDbBL2.toString(), fontInfo, 0));

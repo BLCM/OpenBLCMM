@@ -46,6 +46,7 @@ public abstract class Option<T> {
     public enum Shown {
         NONE,
         SETTINGS,
+        CONFIRMATIONS,
         INPUT,
         OE,
         DANGEROUS
