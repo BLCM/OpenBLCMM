@@ -43,11 +43,9 @@ are requested.
   Used by BLCMM for handling map merges.  This is the same version as was
   present in the original BLCMM versions, since it's just the raw data.
 
-* `<gamedir>/Icon.png` - Official game icons, though I'm honestly not sure
-  exactly where they originally came from.  These appear to be the official
-  icons from the game, and used by Steam, but the highest res I can extract
-  from any source of mine is 64x64, whereas the BL2+TPS versions here are
-  256x256.  The AoDK version is the crummy low-res version from the EXE,
-  though I'm hoping to get permission to use [this great icon](https://www.steamgriddb.com/icon/10266)
-  instead.
-
+* `<gamedir>/Icon.png` - For BL2 and TPS, these are the official game icons,
+  though the official icons you can currently get from Steam are only 64x64.
+  I'm pretty sure that that Steam originally provided 256x256 versions of the
+  icons, though, which is where these had come from.  The AoDK icon was created
+  by [Julia @ steamgriddb.com](https://www.steamgriddb.com/icon/10266), and is
+  used here by their kind permission!

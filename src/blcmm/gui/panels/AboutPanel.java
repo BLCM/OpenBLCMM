@@ -338,6 +338,7 @@ public final class AboutPanel extends JPanel {
         JScrollPane aboutScroller = new JScrollPane();
         aboutScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         aboutScroller.setViewportView(aboutTabPanel);
+        aboutScroller.getVerticalScrollBar().setUnitIncrement(16);
         tabs.add("About/Credits", aboutScroller);
 
         // Third-party resources tab
@@ -358,6 +359,7 @@ public final class AboutPanel extends JPanel {
                 + "</ul>"
                 + "<b>Resources</b><br/>"
                 + "<ul>"
+                + "<li>Custom Assault on Dragon Keep icon from Julia @ steamgriddb.com, used with permission</li>"
                 + "<li>Some icons from Dave Gandy's Font Awesome set, available under CC BY 3.0</li>"
                 + "<li>An icon from Fathema Khanom's User Interface set, available under Flaticon's Free License</li>"
                 + "<li>An icon from Smashicons' Essential Collection set, available under Flaticon's Free License</li>"
@@ -389,6 +391,7 @@ public final class AboutPanel extends JPanel {
                 0, 0));
         JScrollPane thirdScroller = new JScrollPane();
         thirdScroller.setViewportView(thirdTabPanel);
+        thirdScroller.getVerticalScrollBar().setUnitIncrement(16);
         tabs.add("Third-Party Resources", thirdScroller);
 
         // Donate Tab
@@ -439,6 +442,7 @@ public final class AboutPanel extends JPanel {
                 0, 0));
         JScrollPane donateScroller = new JScrollPane();
         donateScroller.setViewportView(donateTabPanel);
+        donateScroller.getVerticalScrollBar().setUnitIncrement(16);
         tabs.add("Donate", donateScroller);
 
         // "OK" Button

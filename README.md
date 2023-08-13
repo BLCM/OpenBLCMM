@@ -148,6 +148,8 @@ OpenBLCMM makes use of the following third party libraries/resources:
     [ScrollablePanel.java](https://tips4java.wordpress.com/2009/12/20/scrollable-panel/),
     available without restriction.
 - **Resources**:
+  - Custom Assault on Dragon Keep icon from [Julia @ steamgriddb.com](https://www.steamgriddb.com/icon/10266),
+    used with permission.
   - Some icons from [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)'s
     [Font Awesome set](http://www.flaticon.com/packs/font-awesome), available under
     CC BY 3.0.

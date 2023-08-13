@@ -56,6 +56,8 @@ OpenBLCMM Changelog
     removed.  This cannot be done if there are any mutually-exclusive or locked
     categories down the tree from the category to be flattened, or if the
     category itself is mutually exclusive or locked.
+- Updated Assault on Dragon Keep icon with a custom icon designed by Julia at
+  steamgriddb.com (used with permission).
 - Crashes Fixed:
   - Fixed a crash which could occur when unexpected files/directories were found
     in OpenBLCMM's auto-backup dir.
