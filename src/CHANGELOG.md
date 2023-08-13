@@ -22,6 +22,11 @@ OpenBLCMM Changelog
   - Added a new "Dangerous Settings" option to set the `GearboxAccountData`
     index used in offline-saved files.
   - Added some categorization to the "General" settings tab.
+  - "Restore Defaults" button in settings should apply all reset settings
+    immediately, and update windows if needed (such as for theme or font size
+    resets).
+  - Fixed a bug where Object Explorer data category selection wasn't applying
+    properly on app startup.
 - Code formatting improvements:
   - Code formatting backend got a bit of an overhaul in general, which looks
     to have improved performance when editing large `set` statements.
@@ -60,11 +65,6 @@ OpenBLCMM Changelog
   - Fixed a crash when triggering a search while no datapack is loaded.
   - Fixed a crash when updating the OE Data category selections while an OE
     search is running.
-- Fixed a bug where Object Explorer data category selection wasn't applying
-  properly on app startup.
-- "Restore Defaults" button in settings should apply all reset settings
-  immediately, and update windows if needed (such as for theme or font size
-  resets).
 - Dialogs should be closeable with the OS "window close" button when possible.
 - Game INI file detection on Linux will try case-insensitive file matching if
   the canonical case version isn't found (to support Wineroot
@@ -93,6 +93,7 @@ OpenBLCMM Changelog
 - Tightened up About dialog display a bit.
 - Third-party software version updates:
   - Updated sqlite-jdbc version to 3.42.0.0
+  - Updated Apache Commons Lang to 3.13.0
   - Windows EXE building with Liberica NIK 23 JDK 17
 
 **v1.3.3** May 26, 2023
