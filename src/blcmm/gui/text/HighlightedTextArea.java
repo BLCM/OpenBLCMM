@@ -83,21 +83,21 @@ public final class HighlightedTextArea extends JTextPane {
     private final ObjectExplorerPanel panel;
     private final FontInfo fontInfo;
 
-    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean link) {
-        this(dmm, fontInfo, link, true);
+    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo) {
+        this(dmm, fontInfo, true);
     }
 
-    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean link, boolean allowEdit) {
-        this(dmm, fontInfo, link, allowEdit, null);
+    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean allowEdit) {
+        this(dmm, fontInfo, allowEdit, null);
     }
 
-    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean link, boolean allowEdit, ObjectExplorerPanel panel) {
+    public HighlightedTextArea(DataManagerManager dmm, FontInfo fontInfo, boolean allowEdit, ObjectExplorerPanel panel) {
         super();
         this.dmm = dmm;
         this.fontInfo = fontInfo;
         this.panel = panel;
         //link = false;
-        setDocument(new myStylizedDocument(link));//Syntax highlighting
+        setDocument(new myStylizedDocument());//Syntax highlighting
         setFont(new Font(MainGUI.CODE_FONT_NAME, Font.PLAIN, fontInfo.getFont().getSize()));
         setCaretColor(UIManager.getColor("text"));
 
@@ -135,9 +135,7 @@ public final class HighlightedTextArea extends JTextPane {
             // can still use keyboard easily to select/copy text, if wanted.
             this.getCaret().setVisible(true);
         }
-        if (link) {
-            addLink();
-        }
+        addMouseListeners();
     }
 
     /**
@@ -470,7 +468,7 @@ public final class HighlightedTextArea extends JTextPane {
         }
     }
 
-    private void addLink() {
+    private void addMouseListeners() {
         MouseListener[] ls = getMouseListeners();
         for (MouseListener l : ls) {
             removeMouseListener(l);

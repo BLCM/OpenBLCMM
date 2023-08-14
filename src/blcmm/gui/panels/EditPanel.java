@@ -130,7 +130,7 @@ public class EditPanel extends javax.swing.JPanel implements InputValidator, Can
         this.patchType.getLevels().forEach(map -> levelnames.add(map.code));
 
         initComponents();
-        textElement = new HighlightedTextArea(MainGUI.INSTANCE.getDMM(), fontInfo, true, allowEdit);
+        textElement = new HighlightedTextArea(MainGUI.INSTANCE.getDMM(), fontInfo, allowEdit);
         jPanel2.setLayout(new BorderLayout());
         jPanel2.add(textElement);
         jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);

@@ -56,11 +56,9 @@ public class myStylizedDocument extends DefaultStyledDocument {
     private final MutableAttributeSet quotedouble;
     private final MutableAttributeSet quote;
     private final HashSet<String> keywords;
-    final boolean link;
 
-    public myStylizedDocument(boolean link) {
+    public myStylizedDocument() {
         doc = this;
-        this.link = link;
         rootElement = doc.getDefaultRootElement();
         putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
 
@@ -245,7 +243,7 @@ public class myStylizedDocument extends DefaultStyledDocument {
                 String clazz = token.substring(0, index);
                 String rest = token.substring(index + 1, endindex);
                 doc.setCharacterAttributes(startOffset + index, endindex - index + 1, quote, false);
-                if (!clazz.equals("Class") && !clazz.equals("Package") && clazz.length() > 0 && link) {
+                if (!clazz.equals("Class") && !clazz.equals("Package") && clazz.length() > 0) {
                     MutableAttributeSet link2 = new SimpleAttributeSet();
                     link2.addAttribute("URL", token);
                     StyleConstants.setUnderline(link2, true);
