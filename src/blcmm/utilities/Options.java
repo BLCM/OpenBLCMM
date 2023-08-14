@@ -628,7 +628,9 @@ public class Options extends OptionsBase {
                     fontInfo,
                     "Extra1",
                     "Extra Button 1",
-                    4,
+                    // These seem to get reported differently on Win vs. Linux.
+                    // No idea what they show up as on Mac.
+                    OSInfo.CURRENT_OS == OSInfo.OS.UNIX ? 6 : 4,
                     1,
                     MouseLinkAction.Back,
                     MouseLinkAction.Back,
@@ -641,7 +643,9 @@ public class Options extends OptionsBase {
                     fontInfo,
                     "Extra2",
                     "Extra Button 2",
-                    5,
+                    // These seem to get reported differently on Win vs. Linux.
+                    // No idea what they show up as on Mac.
+                    OSInfo.CURRENT_OS == OSInfo.OS.UNIX ? 7 : 5,
                     1,
                     MouseLinkAction.Forward,
                     MouseLinkAction.Forward,

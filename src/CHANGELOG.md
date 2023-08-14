@@ -6,8 +6,8 @@ OpenBLCMM Changelog
   - Added a new "Input" settings tab to configure mouse-click behavior in code
     edit windows and Object Explorer:
     - Can configure which buttons open object links in new/current OE tabs.
-    - Can configure mouse buttons to go back/forward in OE history (defaults to
-      Mouse 4 and Mouse 5)
+    - Can configure mouse buttons to go back/forward in OE history (will be
+      enabled by default)
   - Added a new "Confirmations" settings tab to configure which warnings /
     confirmations get shown to the user.  The current available settings are:
     - Confirmation when checking or unchecking a tree which contains a mix of
