@@ -9,6 +9,9 @@
     "name": "[Lsun.awt.shell.ShellFolderColumnInfo;"
   },
   {
+    "name": "[Lsun.font.FontConfigManager$FontConfigFont;"
+  },
+  {
     "name": "[Lsun.java2d.loops.GraphicsPrimitive;"
   },
   {
@@ -47,6 +50,11 @@
   },
   {
     "name": "java.awt.Color",
+    "fields": [
+      {
+        "name": "value"
+      }
+    ],
     "methods": [
       {
         "name": "getRGB",
@@ -82,6 +90,12 @@
         "name": "height"
       },
       {
+        "name": "isPacked"
+      },
+      {
+        "name": "name"
+      },
+      {
         "name": "parent"
       },
       {
@@ -107,6 +121,10 @@
       },
       {
         "name": "getLocationOnScreen_NoTreeLock",
+        "parameterTypes": []
+      },
+      {
+        "name": "getParent_NoClientCode",
         "parameterTypes": []
       },
       {
@@ -143,6 +161,20 @@
         "parameterTypes": [
           "long"
         ]
+      }
+    ]
+  },
+  {
+    "name": "java.awt.Desktop$Action",
+    "fields": [
+      {
+        "name": "BROWSE"
+      },
+      {
+        "name": "MAIL"
+      },
+      {
+        "name": "OPEN"
       }
     ]
   },
@@ -239,6 +271,19 @@
     "fields": [
       {
         "name": "undecorated"
+      }
+    ]
+  },
+  {
+    "name": "java.awt.GraphicsEnvironment",
+    "methods": [
+      {
+        "name": "getLocalGraphicsEnvironment",
+        "parameterTypes": []
+      },
+      {
+        "name": "isHeadless",
+        "parameterTypes": []
       }
     ]
   },
@@ -416,6 +461,9 @@
     "fields": [
       {
         "name": "extendedKeyCode"
+      },
+      {
+        "name": "isProxyActive"
       },
       {
         "name": "keyChar"
@@ -712,6 +760,16 @@
           "int",
           "int"
         ]
+      },
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "int",
+          "int",
+          "int",
+          "int",
+          "int"
+        ]
       }
     ]
   },
@@ -857,10 +915,25 @@
     ]
   },
   {
+    "name": "java.lang.System",
+    "methods": [
+      {
+        "name": "load",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      }
+    ]
+  },
+  {
     "name": "java.lang.Thread",
     "methods": [
       {
         "name": "currentThread",
+        "parameterTypes": []
+      },
+      {
+        "name": "yield",
         "parameterTypes": []
       }
     ]
@@ -888,6 +961,10 @@
         "parameterTypes": [
           "java.lang.Object"
         ]
+      },
+      {
+        "name": "clear",
+        "parameterTypes": []
       }
     ]
   },
@@ -1153,6 +1230,28 @@
     "name": "sun.awt.SunToolkit",
     "methods": [
       {
+        "name": "awtLock",
+        "parameterTypes": []
+      },
+      {
+        "name": "awtLockNotify",
+        "parameterTypes": []
+      },
+      {
+        "name": "awtLockNotifyAll",
+        "parameterTypes": []
+      },
+      {
+        "name": "awtLockWait",
+        "parameterTypes": [
+          "long"
+        ]
+      },
+      {
+        "name": "awtUnlock",
+        "parameterTypes": []
+      },
+      {
         "name": "isTouchKeyboardAutoShowEnabled",
         "parameterTypes": []
       }
@@ -1209,6 +1308,122 @@
         "parameterTypes": [
           "boolean"
         ]
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11.XBaseWindow",
+    "fields": [
+      {
+        "name": "window"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getWindow",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11.XContentWindow"
+  },
+  {
+    "name": "sun.awt.X11.XDesktopPeer",
+    "fields": [
+      {
+        "name": "supportedActions"
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11.XDialogPeer"
+  },
+  {
+    "name": "sun.awt.X11.XErrorHandlerUtil",
+    "methods": [
+      {
+        "name": "globalErrorHandler",
+        "parameterTypes": [
+          "long",
+          "long"
+        ]
+      },
+      {
+        "name": "init",
+        "parameterTypes": [
+          "long"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11.XFramePeer"
+  },
+  {
+    "name": "sun.awt.X11.XRootWindow",
+    "methods": [
+      {
+        "name": "getXRootWindow",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11.XToolkit",
+    "fields": [
+      {
+        "name": "modLockIsShiftLock"
+      },
+      {
+        "name": "numLockMask"
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11.XWindow",
+    "fields": [
+      {
+        "name": "drawState"
+      },
+      {
+        "name": "graphicsConfig"
+      },
+      {
+        "name": "target"
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11.XWindowPeer"
+  },
+  {
+    "name": "sun.awt.X11GraphicsConfig",
+    "fields": [
+      {
+        "name": "aData"
+      },
+      {
+        "name": "bitsPerPixel"
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11GraphicsDevice",
+    "methods": [
+      {
+        "name": "addDoubleBufferVisual",
+        "parameterTypes": [
+          "int"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "sun.awt.X11InputMethodBase",
+    "fields": [
+      {
+        "name": "pData"
       }
     ]
   },
@@ -1789,6 +2004,54 @@
     ]
   },
   {
+    "name": "sun.font.FontConfigManager$FcCompFont",
+    "fields": [
+      {
+        "name": "allFonts"
+      },
+      {
+        "name": "fcName"
+      },
+      {
+        "name": "firstFont"
+      }
+    ]
+  },
+  {
+    "name": "sun.font.FontConfigManager$FontConfigFont",
+    "fields": [
+      {
+        "name": "familyName"
+      },
+      {
+        "name": "fontFile"
+      },
+      {
+        "name": "fullName"
+      },
+      {
+        "name": "styleStr"
+      }
+    ],
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.font.FontConfigManager$FontConfigInfo",
+    "fields": [
+      {
+        "name": "cacheDirs"
+      },
+      {
+        "name": "fcVersion"
+      }
+    ]
+  },
+  {
     "name": "sun.font.FontStrike",
     "methods": [
       {
@@ -1950,6 +2213,15 @@
       },
       {
         "name": "strokeHint"
+      }
+    ]
+  },
+  {
+    "name": "sun.java2d.SunGraphicsEnvironment",
+    "methods": [
+      {
+        "name": "isDisplayLocal",
+        "parameterTypes": []
       }
     ]
   },
@@ -2503,6 +2775,31 @@
       },
       {
         "name": "setHighDPIAware"
+      }
+    ]
+  },
+  {
+    "name": "sun.java2d.xr.XRBackendNative",
+    "fields": [
+      {
+        "name": "FMTPTR_A8"
+      },
+      {
+        "name": "FMTPTR_ARGB32"
+      },
+      {
+        "name": "MASK_XIMG"
+      }
+    ]
+  },
+  {
+    "name": "sun.java2d.xr.XRSurfaceData",
+    "fields": [
+      {
+        "name": "picture"
+      },
+      {
+        "name": "xid"
       }
     ]
   },

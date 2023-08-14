@@ -432,6 +432,18 @@
     ]
   },
   {
+    "name": "blcmm.gui.components.ProgressDialog",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
     "name": "blcmm.gui.components.ScrollablePanel",
     "methods": [
       {
@@ -493,6 +505,30 @@
   },
   {
     "name": "blcmm.gui.panels.AboutPanel",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.BookmarkTable",
+    "methods": [
+      {
+        "name": "coalesceEvents",
+        "parameterTypes": [
+          "java.awt.AWTEvent",
+          "java.awt.AWTEvent"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "blcmm.gui.panels.BookmarkTable$5",
     "methods": [
       {
         "name": "coalesceEvents",
@@ -1383,6 +1419,9 @@
         "name": "VK_R"
       },
       {
+        "name": "VK_RETURN"
+      },
+      {
         "name": "VK_RIGHT"
       },
       {
@@ -1529,6 +1568,14 @@
   },
   {
     "name": "java.util.concurrent.atomic.AtomicBoolean",
+    "fields": [
+      {
+        "name": "value"
+      }
+    ]
+  },
+  {
+    "name": "java.util.concurrent.atomic.AtomicReference",
     "fields": [
       {
         "name": "value"
@@ -2572,6 +2619,15 @@
     ]
   },
   {
+    "name": "sun.awt.shell.ShellFolderManager",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
     "name": "sun.awt.shell.Win32ShellFolderManager2",
     "methods": [
       {
@@ -2723,6 +2779,21 @@
       {
         "name": "<init>",
         "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "sun.security.provider.NativePRNG",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      },
+      {
+        "name": "<init>",
+        "parameterTypes": [
+          "java.security.SecureRandomParameters"
+        ]
       }
     ]
   },
