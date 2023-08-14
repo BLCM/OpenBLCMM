@@ -7,6 +7,7 @@ Developing OpenBLCMM
 - [Unit Tests](#unit-tests)
 - [Library Bundling](#library-bundling)
 - [Compiling for Windows](#compiling-for-windows)
+- [Compiling for Steam Deck](#compiling-for-steam-deck)
 - [Packaging / Release Procedures](#packaging--release-procedures)
   - [Pre-Release Checks](#pre-release-checks)
   - [Actual Release](#actual-release)
@@ -111,6 +112,15 @@ information on compiling the "native" EXE version (and its installer)
 for Windows.  The Packaging section below does go through many of those
 same steps, too.
 
+Compiling for Steam Deck
+------------------------
+
+See the [`steamos-processing` directory](steamos-processing/) for
+information on compiling the native binary version, intended for use
+on Steam Deck.  (The binary will likely work on most other Linux
+systems too, but Linux users are encouraged to use the Pure Java
+version.)
+
 Packaging / Release Procedures
 ------------------------------
 
@@ -120,9 +130,10 @@ is being done on Linux, and the Windows components are done inside
 a Windows VM.  It's assumed that you have a full git checkout of the
 project on the Windows side as well, though!
 
-Also on the Windows side, make sure you've got the various bits of
-software installed as detailed on the [Windows Processing
-README](windows-processing/README.md).
+Also on the Windows and SteamOS side, make sure you've got the various
+bits of software installed as detailed on the [Windows Processing
+README](windows-processing/README.md) and [SteamOS Processing
+README](steamos-processing/README.md).
 
 The various batch files, shell scripts, and Inno Setup runs mentioned
 here *should* be runnable right in-place.
@@ -150,11 +161,23 @@ compilation on Windows, since that process is a bit finnicky.
        directory).
     5. Double-click the new `store/OpenBLCMM.exe` and interact with the new parts of the
        app.  So long as there's no crashing, it should theoretically be good.
+4. Do the same thing on a SteamOS VM (or even a real Steam Deck):
+    1. Transfer `store/OpenBLCMM.jar` to SteamOS, also in the `store/` dir).
+    2. On SteamOS, run `native-agent.sh` (inside the `steamos-processing`
+       directory) to run the agent.  Interact with it.
+    3. Once done, compare `src/META-INF/native-image/blcmm/blcmm` and commit if needed.
+       Rebuild the project if there were and re-transfer `store/OpenBLCMM.jar`
+    4. Compile to native binary using `native-compile.sh` (inside the
+       `steamos-processing` directory).
+    5. Run `store/steamos/OpenBLCMM` to doublecheck, though note that the compiled
+       version might require more CPU flags than the VM supports, if you're running
+       SteamOS in a VM.  In that case, can just try running it on a Linux desktop.
 
 ### Actual Release
 
-Once we're sure that the compiled Windows EXE works fine, we can proceed.  Some of
-these steps are redundant if you've just gone through the full pre-release check
+Once we're sure that the compiled Windows EXE + SteamOS builds work fine, we can
+proceed.  Some of these steps are redundant if you've just gone through the full
+pre-release check
 section.
 
 1. Make sure that `src/blcmm/Meta.java` and `windows-processing/openblcmm.iss`
@@ -166,32 +189,43 @@ section.
    "beta" releases)*
     1. Push the tag with `git push --tags`
 4. Transfer `store/OpenBLCMM.jar` to Windows VM (also in the `store` directory)
-5. On Windows VM, start a Visual Studio "x64 Native Tools Command Prompt" and
-   compile with `native-compile.bat` (inside the `windows-processing` directory).
-    1. Creates `OpenBLCMM.exe` and a number of required DLLs in the same dir, and
-       also copies those files into a `compiled` directory.
-    2. Do a quick spot-check that the compiled `OpenBLCMM.exe` launches fine
-6. On Windows VM, open `openblcmm.iss` with Inno Setup and click on "Compile"
-    1. Creates `store/OpenBLCMM-<version>-Installer.exe`
-    2. Double-check that the installer works properly, and that the installed
-       version launches fine.
-7. Transfer back from the Windows VM, into `store`:
-    1. The `store/compiled` directory
-    2. `store/OpenBLCMM-<version>-Installer.exe`
-8. Back on Linux, run `release-processing/finish-release.py`
-    1. This will create `store/OpenBLCMM-<version>-Windows.zip` and a bunch of
+    1. On Windows VM, start a Visual Studio "x64 Native Tools Command Prompt" and
+       compile with `native-compile.bat` (inside the `windows-processing` directory).
+        1. Creates `OpenBLCMM.exe` and a number of required DLLs in the same dir, and
+           also copies those files into a `compiled` directory.
+        2. Do a quick spot-check that the compiled `OpenBLCMM.exe` launches fine
+    2. On Windows VM, open `openblcmm.iss` with Inno Setup and click on "Compile"
+        1. Creates `store/OpenBLCMM-<version>-Installer.exe`
+        2. Double-check that the installer works properly, and that the installed
+           version launches fine.
+    3. Transfer back from the Windows VM, into `store`:
+        1. The `store/compiled` directory
+        2. `store/OpenBLCMM-<version>-Installer.exe`
+5. Transfer `store/OpenBLCMM.jar` to SteamOS VM or Steam Deck (also in the `store`
+   directory)
+    1. On SteamOS, compile with `native-compile.sh` (inside the `steamos-processing`
+       directory).
+        1. Creates `steamos/OpenBLCMM` and a number of required `.so` libraries in
+           the same dir.
+        2. Do a quick spot-check that the compiled version launches fine.
+    2. Transfer the `store/steamos` directory back to the build host.
+6. Back on Linux, run `release-processing/finish-release.py`
+    1. This will create `store/OpenBLCMM-<version>-Windows.zip`,
+       `store/OpenBLCMM-<version>-SteamDeck.tgz`, and a bunch of
        `store/OpenBLCMM-<version>-Java-<OS>.zip` files
     2. Doublecheck the contents of those.  The "Windows" one should have the
-       EXE, ten DLLs, and a README and LICENSE file.  The various "Java" ones
-       should have the Jarfile, README, LICENSE, and whatever OS-specific launch
-       scripts are necessary.
-9. Create a new github release and upload all five packaged releases:
+       EXE, ten DLLs, and README+LICENSE+CHANGELOG files.  The "SteamDeck" one
+       should have the binary, ten `.so` files, and the README+LICENSE+CHANGELOG.
+       The various "Java" ones should have the Jarfile, README+LICENSE+CHANGELOG,
+       and whatever OS-specific launch scripts are necessary.
+7. Create a new github release and upload all six packaged releases:
     1. `store/OpenBLCMM-<version>-Installer.exe`
     2. `store/OpenBLCMM-<version>-Windows.zip`
     3. `store/OpenBLCMM-<version>-Java-Windows.zip`
     4. `store/OpenBLCMM-<version>-Java-Linux.zip`
     5. `store/OpenBLCMM-<version>-Java-Mac.zip`
-10. Update `openblcmm-latest.txt` wherever that ends up living For Real.  This is
+    6. `store/OpenBLCMM-<version>-SteamDeck.zip`
+8. Update `openblcmm-latest.txt` wherever that ends up living For Real.  This is
     what will make existing OpenBLCMM installations report that a new version is
     available.
 

@@ -136,6 +136,8 @@ for filename in os.listdir('.'):
 if version is None:
     raise RuntimeError('No installer EXE found')
 
+to_report = [installer]
+
 # Make sure we've got our expected DLLs and EXEs in there
 exe_count = 0
 dll_count = 0
@@ -154,7 +156,23 @@ if dll_count != 10:
 if other_count != 0:
     raise RuntimeError(f'Invalid other count in `compiled`: {other_count}')
 
-to_report = [installer]
+# Also check our SteamOS compile dir!
+binary_count = 0
+so_count = 0
+other_count = 0
+for filename in os.listdir('steamos'):
+    if filename.endswith('.so'):
+        so_count += 1
+    elif filename == 'OpenBLCMM':
+        binary_count += 1
+    else:
+        other_count += 1
+if binary_count != 1:
+    raise RuntimeError(f'Invalid binary count in `steamos`: {exe_count}')
+if so_count != 10:
+    raise RuntimeError(f'Invalid .so count in `steamos`: {dll_count}')
+if other_count != 0:
+    raise RuntimeError(f'Invalid other count in `steamos`: {other_count}')
 
 # Zip up the non-installer EXE version
 print('Creating non-installer EXE Zip...')
@@ -203,6 +221,20 @@ for pj in pure_javas:
     print('')
     to_report.append(pj.zipfile)
 
+# Tar up the Steam Deck version
+print('Creating Steam Deck tgz...')
+base_steamos_tgz = f'{app_name}-{version}-SteamDeck'
+full_steamos_tgz = f'{base_steamos_tgz}.tgz'
+shutil.move('steamos', base_steamos_tgz)
+for filename in included_files_base:
+    shutil.copy2(filename, base_steamos_tgz)
+subprocess.run(['tar', '-zcvf',
+    full_steamos_tgz,
+    base_steamos_tgz,
+    ])
+print('')
+to_report.append(full_steamos_tgz)
+
 # Output our release text to slap in the 'releases' area
 release_with_version = f'{release_openblcmm}/download/v{version}'
 print('Release Files')
@@ -223,6 +255,14 @@ for pj in pure_javas:
     for point in pj.extra_points:
         print(f'  - {point}')
     print('')
+print('### Steam Deck (experimental!)')
+print('')
+print(f'- **TGZ Archive** - [`{full_steamos_tgz}`]({release_with_version}/{full_steamos_tgz})')
+print('  - This is an experimental compiled version for Steam Deck which may theoretically make it easier to run OpenBLCMM on the Steam Deck.  At time of writing, there has been no testing on **actual** Steam Deck machines.  There are a couple of known bugs with this release:')
+print('    - The fonts in the app look pretty ugly.')
+print('    - Actions which open a URL won\'t work unless you\'ve manually installed `gvfs` using `pacman` (note that that install will *not* survive upgrades)')
+print('  - Assuming this ends up working all right for folks, we may try to wrap this up in Flatpak for even easier installation on the Deck.  Please let us know how it goes!')
+print('')
 print('### Object Explorer Data Packs')
 print('')
 print(f'- **Datapack Releases**: {release_data}')
