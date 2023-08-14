@@ -144,10 +144,14 @@ These are just some checks to be done before officially cutting a release.
 The vast majority of this is just checking out the GraalVM/Liberica native
 compilation on Windows, since that process is a bit finnicky.
 
-1. Build the project from Netbeans.  This will produce `store/OpenBLCMM.jar`
+1. Development is typically done using the most recently-supported Java verison, but it
+   wouldn't hurt to make sure the project compiles cleanly on the *oldest*-supported
+   Java version as well.  Switch the project properties and do a Clean-and-build to
+   verify.  Don't forget to switch back and Clean-and-build again when done.
+2. Build the project from Netbeans.  This will produce `store/OpenBLCMM.jar`
    at the end.
-2. Double-check running that Jar natively (`java -jar OpenBLCMM.jar`)
-3. Depending on what's changed, doublecheck that the GraalVM/Liberica Native Image
+3. Double-check running that Jar natively (`java -jar OpenBLCMM.jar`)
+4. Depending on what's changed, doublecheck that the GraalVM/Liberica Native Image
    configs are still sufficient:
     1. Transfer `store/OpenBLCMM.jar` to a Windows VM (also in the `store/` dir).
     2. On the Windows VM, run `native-agent-merge.bat` (inside the `windows-processing`
@@ -161,7 +165,7 @@ compilation on Windows, since that process is a bit finnicky.
        directory).
     5. Double-click the new `store/OpenBLCMM.exe` and interact with the new parts of the
        app.  So long as there's no crashing, it should theoretically be good.
-4. Do the same thing on a SteamOS VM (or even a real Steam Deck):
+5. Do the same thing on a SteamOS VM (or even a real Steam Deck):
     1. Transfer `store/OpenBLCMM.jar` to SteamOS, also in the `store/` dir).
     2. On SteamOS, run `native-agent.sh` (inside the `steamos-processing`
        directory) to run the agent.  Interact with it.
