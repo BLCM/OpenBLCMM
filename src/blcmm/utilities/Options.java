@@ -860,7 +860,7 @@ public class Options extends OptionsBase {
 
         // Remember the state of various Object Explorer UI elements.
         this.registerOption(new BooleanOption(this, OptionNames.oeCollapseArrays.toString(), fontInfo, false));
-        this.registerOption(new BooleanOption(this, OptionNames.oeAutoFormat.toString(), fontInfo, false));
+        this.registerOption(new BooleanOption(this, OptionNames.oeAutoFormat.toString(), fontInfo, true));
         this.registerOption(new IntOption(this, OptionNames.oeDeformatLevel.toString(), fontInfo, 1));
 
         // All of our Object Explorer Bookmarks of queries / objects

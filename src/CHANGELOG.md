@@ -44,8 +44,9 @@ OpenBLCMM Changelog
 - Fixed search box placement when maximizing and un-maximizing the main window
   (thanks, ernimril from Libera's #java!)
 - Object Explorer's "Auto format" button is now a toggle (like the "Collapse
-  Arrays" button).  OE will also remember the state of both those buttons
-  between runs, in addition to the selected "Deformat arrays" number.
+  Arrays" button), and will be on by default.  OE will also remember the state
+  of both those buttons between runs, in addition to the selected "Deformat
+  arrays" number.
 - New actions available on the main mod tree:
   - "Replace Category With Contents" - Replaces a category/folder with its
     contents.  Cannot be done on mutually-exclusive categories, or on locked
