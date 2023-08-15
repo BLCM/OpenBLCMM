@@ -44,7 +44,7 @@ public class Meta {
     /**
      * App version.  Should follow https://semver.org/ conventions.
      */
-    public static final String VERSION = "1.4.0-alpha";
+    public static final String VERSION = "1.4.0-rc.1";
 
     /**
      * User data directory for storing prefs, extracted data, etc.  If NAME
