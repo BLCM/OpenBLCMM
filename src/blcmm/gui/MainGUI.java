@@ -1197,7 +1197,7 @@ public final class MainGUI extends ForceClosingJFrame {
     private void uninstallMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uninstallMenuItemActionPerformed
         File uninstallFile = Paths.get(Utilities.getMainInstallDir().toString(), "unins000.exe").toFile();
         if (OSInfo.CURRENT_OS == OSInfo.OS.WINDOWS
-                && System.getProperty("java.vm.version").startsWith("GraalVM")
+                && System.getProperty("java.vm.name").startsWith("Substrate")
                 && uninstallFile.exists()
                 ) {
 
