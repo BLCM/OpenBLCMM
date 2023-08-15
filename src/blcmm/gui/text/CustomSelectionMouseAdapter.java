@@ -31,7 +31,6 @@ package blcmm.gui.text;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -42,39 +41,11 @@ import javax.swing.text.JTextComponent;
  * `SMG_Bandit_2_Uncommon`, for instance, you'll either select `SMG_Bandit`
  * or `Uncommon`.  This class allows the entire string to be selected, instead.
  *
- * The list of selection delimiters is quite a bit wider than the default
- * behavior -- this will also select entire URLs and the like.  The list of
- * delimiters is stored in a static HashSet near the top of the class, and
- * could possibly use expanding, though I think the current set is pretty good.
- *
- * The "better" way to solve this would be to figure out where AWT/Swing or
- * whatever keeps its definitions of what characters are part of a "word," and
- * then override those.  I'm not sure if such a thing is possible to override,
- * and got tired of digging through ever-more-obscure APIs, so I just went
- * ahead with this, instead.
- *
  * @author apocalyptech
  */
 public class CustomSelectionMouseAdapter extends MouseAdapter {
 
     private final JTextComponent component;
-
-    /**
-     * The set of delimiters which are considered boundaries of a "word," in
-     * terms of a double-click selection.
-     */
-    private final static HashSet<Character> delimiters = new HashSet<> ();
-    static {
-        delimiters.add('=');
-        delimiters.add(' ');
-        delimiters.add(',');
-        delimiters.add(';');
-        delimiters.add('(');
-        delimiters.add(')');
-        delimiters.add('\t');
-        delimiters.add('\n');
-        delimiters.add('\r');
-    }
 
     public CustomSelectionMouseAdapter(JTextComponent component) {
         this.component = component;
@@ -106,12 +77,12 @@ public class CustomSelectionMouseAdapter extends MouseAdapter {
                 String text = this.component.getText();
                 int maxSelect = text.length();
                 for (; selectStart > 0; selectStart--) {
-                    if (delimiters.contains(text.charAt(selectStart-1))) {
+                    if (CustomSelectionDefinition.delimiters.contains(text.charAt(selectStart-1))) {
                         break;
                     }
                 }
                 for (; selectEnd < maxSelect; selectEnd++) {
-                    if (delimiters.contains(text.charAt(selectEnd))) {
+                    if (CustomSelectionDefinition.delimiters.contains(text.charAt(selectEnd))) {
                         break;
                     }
                 }

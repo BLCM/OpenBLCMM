@@ -135,7 +135,7 @@ public final class HighlightedTextArea extends JTextPane {
             // can still use keyboard easily to select/copy text, if wanted.
             this.getCaret().setVisible(true);
         }
-        addMouseListeners();
+        addEventListeners();
     }
 
     /**
@@ -468,11 +468,26 @@ public final class HighlightedTextArea extends JTextPane {
         }
     }
 
-    private void addMouseListeners() {
+    /**
+     * Attaches some custom event listeners to ourselves.  The mouse listener
+     * will watch for link clicks, back/forward actions, and double-click-to-
+     * select actions.  The key listener will watch for Ctrl-Shift-Left/Right
+     * actions (for selecting text).
+     *
+     * This does some funky stuff to any existing MouseListeners, which I don't
+     * quite understand.  Still, may as well leave it there, I guess?  I opted
+     * to *not* do that for the existing KeyListeners, when adding that in.
+     * Perhaps I should've?
+     */
+    private void addEventListeners() {
+
+        // Clear out existing MouseListeners (but we'll call them manually later).
         MouseListener[] ls = getMouseListeners();
         for (MouseListener l : ls) {
             removeMouseListener(l);
         }
+
+        // Now add our new one.
         CustomSelectionMouseAdapter adapter = new CustomSelectionMouseAdapter(this) {
             String search = null;
 
@@ -575,6 +590,10 @@ public final class HighlightedTextArea extends JTextPane {
         };
         this.addMouseListener(adapter);
         this.addMouseMotionListener(adapter);
+
+        // ... and add our own.
+        this.addKeyListener(new CustomSelectionKeyAdapter(this));
+
     }
 
 }

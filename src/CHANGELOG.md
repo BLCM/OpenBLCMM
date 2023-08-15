@@ -75,8 +75,9 @@ OpenBLCMM Changelog
 - Tabs in comments will render properly in the mod tree (useful for mods which
   use Command Extensions and include `pyb` statements), and normalized tab stops
   to four characters in code edit dialogs and Object Explorer.
-- Double-clicking to select text in Object Explorer or code edit dialogs should
-  always select the entire object name, if appropriate.
+- Double-clicking to select text in Object Explorer or code edit dialogs, and
+  using Ctrl-Shift-Left/Right to select text, should always select the entire
+  object name, if appropriate.
 - Window focus should always return to the original window once a dialog is
   closed.
 - INI Tweaks dialog tooltips added to the buttons/dropdowns as well, instead
