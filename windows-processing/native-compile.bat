@@ -7,7 +7,7 @@ echo Compiling using native-image
 echo ----------------------------
 echo.
 pushd ..\store
-call native-image -jar OpenBLCMM.jar
+call native-image -march=compatibility -jar OpenBLCMM.jar
 echo.
 
 echo Setting icon on EXE
