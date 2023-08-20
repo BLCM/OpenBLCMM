@@ -108,12 +108,15 @@ We've got a [document with notes about developing OpenBLCMM](README-developing.m
 if you'd like to help out, want to build it yourself, or are just curious.
 Enjoy!
 
-TODO
-====
+Bugs / Feature Requests / TODO
+==============================
 
-- [TODO items which I hope to sort out in the near-term](https://github.com/BLCM/OpenBLCMM/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement+-label%3A%22needs+investigation%22+)
-- [TODO items which are a bit more long-term, and might not happen](https://github.com/BLCM/OpenBLCMM/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement+label%3A%22needs+investigation%22+)
-- [Current bugs](https://github.com/BLCM/OpenBLCMM/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+Bugs, Feature Requests, and TODO type things should all be tracked at the
+[OpenBLCMM Github Issues page](https://github.com/BLCM/OpenBLCMM/issues).  If
+an Issue has a `target-*` tag applied to it, it's slated to be taken care of
+by the specified release number in the tag -- if not, we haven't really
+prioritized it yet.   Note, of course, that priorities can change, and those
+target tags might come and go over time.
 
 Contributions
 =============
