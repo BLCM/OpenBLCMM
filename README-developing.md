@@ -189,8 +189,7 @@ section.
 2. "Clean and Build" the project from Netbeans.  This will produce
    `store/OpenBLCMM.jar` at the end.
     1. Do one more quick spot-check that the built Jar works (`java -jar OpenBLCMM.jar`)
-3. Tag the release in git.  *(Not actually doing that for the current
-   "beta" releases)*
+3. Tag the release in git.
     1. Push the tag with `git push --tags`
 4. Transfer `store/OpenBLCMM.jar` to Windows VM (also in the `store` directory)
     1. On Windows VM, start a Visual Studio "x64 Native Tools Command Prompt" and

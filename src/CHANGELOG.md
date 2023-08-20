@@ -1,7 +1,7 @@
 OpenBLCMM Changelog
 ===================
 
-**v1.4.0** Unreleased
+**v1.4.0** August 20, 2023
 - Settings changes:
   - Added a new "Input" settings tab to configure mouse-click behavior in code
     edit windows and Object Explorer:
