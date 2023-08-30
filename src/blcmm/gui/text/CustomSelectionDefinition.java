@@ -66,9 +66,20 @@ public class CustomSelectionDefinition {
         delimiters.add(';');
         delimiters.add('(');
         delimiters.add(')');
+        // Originally we'd excluded square brakets because I thought it'd be
+        // useful to be able to copy whole attributes (including array indexes)
+        // but it's apparently too annoying in other contexts.  So, square
+        // brackets are in.
+        delimiters.add('[');
+        delimiters.add(']');
         delimiters.add('\t');
         delimiters.add('\n');
         delimiters.add('\r');
+        // Note that we very explicitly *don't* want to add apostrophe to the
+        // list of delimiters, because that's used by fully-formed object
+        // references, and we want to select all of that, when we can.  Double
+        // quote marks will be useful to delimit, though, so add that in.
+        delimiters.add('"');
     }
 
 }

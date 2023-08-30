@@ -1,6 +1,10 @@
 OpenBLCMM Changelog
 ===================
 
+**v1.4.1** *(unreleased)*
+- Updated text double-click-to-select and ctrl-shift-left/right behavior to
+  consider double quotes and square brackets to be word delimiters.
+
 **v1.4.0** August 20, 2023
 - Settings changes:
   - Added a new "Input" settings tab to configure mouse-click behavior in code
