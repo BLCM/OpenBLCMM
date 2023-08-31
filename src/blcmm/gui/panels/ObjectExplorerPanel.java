@@ -43,7 +43,7 @@ import blcmm.gui.components.FontInfoJToggleButton;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
 import blcmm.gui.text.CustomComponentKeySelectionAction;
-import blcmm.gui.text.CustomSelectionMouseAdapter;
+import blcmm.gui.text.CustomComponentMouseSelectionAction;
 import blcmm.gui.text.HighlightedTextArea;
 import blcmm.gui.theme.ThemeManager;
 import blcmm.utilities.CodeFormatter;
@@ -184,7 +184,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         this.updateGame(true);
 
         // Double-click on our query textbox should select the entire word
-        queryTextField.addMouseListener(new CustomSelectionMouseAdapter(queryTextField));
+        CustomComponentMouseSelectionAction.addToComponent(queryTextField);
+
+        // Also support our custom ctrl-shift-arrow selections
         CustomComponentKeySelectionAction.addToComponent(queryTextField);
 
         // Attach some handlers to various UI elements

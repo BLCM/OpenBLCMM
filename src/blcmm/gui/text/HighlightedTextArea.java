@@ -41,6 +41,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -470,9 +471,9 @@ public final class HighlightedTextArea extends JTextPane {
 
     /**
      * Attaches some custom event listeners to ourselves.  The mouse listener
-     * will watch for link clicks, back/forward actions, and double-click-to-
-     * select actions.  The key listener will watch for Ctrl-Shift-Left/Right
-     * actions (for selecting text).
+     * will watch for link clicks and back/forward actions.  Then we're adding
+     * in our custom selection actions (for double-click-to-select and
+     * ctrl-shift-left/right), via a couple of custom classes.
      *
      * This does some funky stuff to any existing MouseListeners, which I don't
      * quite understand.  Still, may as well leave it there, I guess?  I opted
@@ -488,7 +489,7 @@ public final class HighlightedTextArea extends JTextPane {
         }
 
         // Now add our new one.
-        CustomSelectionMouseAdapter adapter = new CustomSelectionMouseAdapter(this) {
+        MouseAdapter adapter = new MouseAdapter() {
             String search = null;
 
             @Override
@@ -590,6 +591,9 @@ public final class HighlightedTextArea extends JTextPane {
         };
         this.addMouseListener(adapter);
         this.addMouseMotionListener(adapter);
+
+        // Now override the default double-click-to-select behavior.
+        CustomComponentMouseSelectionAction.addToComponent(this);
 
         // ... and add our keyboard-based ctrl-shift-(arrow) selection helpers.
         CustomComponentKeySelectionAction.addToComponent(this);

@@ -55,8 +55,8 @@ import javax.swing.text.JTextComponent;
  *   3. Will skip over newlines when consuming whitespace, rather than requiring
  *      a manual expansion with each line
  *
- * See also: CustomSelectionMouseAdapter, which provides similar improvements
- * to the double-click-to-select behavior.
+ * See also: CustomComponentMouseSelectionAction, which provides similar
+ * improvements to the double-click-to-select behavior.
  *
  * @author apocalyptech
  */

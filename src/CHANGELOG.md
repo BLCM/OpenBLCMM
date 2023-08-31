@@ -2,12 +2,16 @@ OpenBLCMM Changelog
 ===================
 
 **v1.4.1** *(unreleased)*
-- Updated text double-click-to-select and ctrl-shift-left/right behavior to
-  consider double quotes and square brackets to be word delimiters.
-- Tightened up ctrl-shift-left/right behavior in general (actually nearly a
-  complete rewrite of that component).  Should behave much more naturally
-  around whitespace, groups of similar non-word characters, and fixed a bug
-  where it would sometimes select too much text.
+- Various updates to double-click-to-select and ctrl-shift-left/right selection
+  mechanics:
+  - Both were nearly completely rewritten with a better method of overwriting
+    the default Java implementation.
+  - Double quotes and square brackets are now considered word delimiters.
+  - Ctrl-shift-arrow should behave much more naturally around whitespace and
+    groups of similar non-word characters.
+  - Fixed a bug where ctrl-shift-arrow would sometimes select too much text
+  - Double-click-to-select should work even if the "end" of the word to be
+    selected is scrolled off the right side of the dialog.
 
 **v1.4.0** August 20, 2023
 - Settings changes:
