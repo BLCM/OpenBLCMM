@@ -4,6 +4,10 @@ OpenBLCMM Changelog
 **v1.4.1** *(unreleased)*
 - Updated text double-click-to-select and ctrl-shift-left/right behavior to
   consider double quotes and square brackets to be word delimiters.
+- Tightened up ctrl-shift-left/right behavior in general (actually nearly a
+  complete rewrite of that component).  Should behave much more naturally
+  around whitespace, groups of similar non-word characters, and fixed a bug
+  where it would sometimes select too much text.
 
 **v1.4.0** August 20, 2023
 - Settings changes:

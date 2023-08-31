@@ -42,7 +42,7 @@ import blcmm.gui.components.FontInfoJLabel;
 import blcmm.gui.components.FontInfoJToggleButton;
 import blcmm.gui.components.InfoLabel;
 import blcmm.gui.text.AutoCompleteAttacher;
-import blcmm.gui.text.CustomSelectionKeyAdapter;
+import blcmm.gui.text.CustomComponentKeySelectionAction;
 import blcmm.gui.text.CustomSelectionMouseAdapter;
 import blcmm.gui.text.HighlightedTextArea;
 import blcmm.gui.theme.ThemeManager;
@@ -185,7 +185,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
 
         // Double-click on our query textbox should select the entire word
         queryTextField.addMouseListener(new CustomSelectionMouseAdapter(queryTextField));
-        queryTextField.addKeyListener(new CustomSelectionKeyAdapter(queryTextField));
+        CustomComponentKeySelectionAction.addToComponent(queryTextField);
 
         // Attach some handlers to various UI elements
         queryTextField.getActionMap().put("Search", new AbstractAction("Search") {

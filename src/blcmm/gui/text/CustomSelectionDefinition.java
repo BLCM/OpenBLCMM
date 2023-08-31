@@ -82,4 +82,17 @@ public class CustomSelectionDefinition {
         delimiters.add('"');
     }
 
+    /**
+     * Also, the set of delimiters which are specifically whitespace.  For
+     * our ctrl-shift-(left|right) handling, we want to handle these a bit
+     * differently.  This is intended to be a subset of `delimiters`.
+     */
+    public final static HashSet<Character> whitespace = new HashSet<> ();
+    static {
+        whitespace.add(' ');
+        whitespace.add('\t');
+        whitespace.add('\n');
+        whitespace.add('\r');
+    }
+
 }

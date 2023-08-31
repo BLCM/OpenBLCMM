@@ -41,6 +41,9 @@ import javax.swing.text.JTextComponent;
  * `SMG_Bandit_2_Uncommon`, for instance, you'll either select `SMG_Bandit`
  * or `Uncommon`.  This class allows the entire string to be selected, instead.
  *
+ * See also: CustomComponentKeySelectionAction, which provides similar
+ * improvements to the keyboard-based ctrl-shift-(arrow) selection mechanism.
+ *
  * @author apocalyptech
  */
 public class CustomSelectionMouseAdapter extends MouseAdapter {

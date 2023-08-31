@@ -591,8 +591,8 @@ public final class HighlightedTextArea extends JTextPane {
         this.addMouseListener(adapter);
         this.addMouseMotionListener(adapter);
 
-        // ... and add our own.
-        this.addKeyListener(new CustomSelectionKeyAdapter(this));
+        // ... and add our keyboard-based ctrl-shift-(arrow) selection helpers.
+        CustomComponentKeySelectionAction.addToComponent(this);
 
     }
 
