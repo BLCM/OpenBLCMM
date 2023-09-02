@@ -591,7 +591,14 @@ public class TextSearchDialog extends javax.swing.JDialog {
         if (SwingUtilities.getWindowAncestor(textcomp).getFocusOwner() != textcomp) {
             EventQueue.invokeLater(() -> {
                 textcomp.requestFocus(true);//Get the focus to the text element
-                EventQueue.invokeLater(() -> curFocus.requestFocus());//Later, get it back to us
+                EventQueue.invokeLater(() -> {
+                    // This can sometimes be null, most often if the user is clicking
+                    // "next" a bunch really quickly.  (Or, presumably, "prev").
+                    // Anyway, if it's null, just cope without doing anything.
+                    if (curFocus != null) {
+                        curFocus.requestFocus();
+                    }
+                });//Later, get it back to us
             });
 
         }
