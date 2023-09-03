@@ -70,6 +70,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -1581,6 +1582,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         final String query;
         private boolean showCategoriesOnNotFound = false;
         private Set<Options.OESearch> _activeCategories;
+        private Set<Options.OESearch> _inactiveCategories;
         private TreeSet<UEClass> _availableClasses;
 
         /**
@@ -1594,6 +1596,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             this.dm = dm;
             this.query = query;
             this._activeCategories = null;
+            this._inactiveCategories = null;
             this._availableClasses = null;
         }
 
@@ -1621,6 +1624,9 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
             if (this._activeCategories == null) {
                 this._activeCategories = new HashSet<>(Options.INSTANCE.getOESearchCategories());
             }
+            if (this._inactiveCategories == null) {
+                this._inactiveCategories = new HashSet<>(Options.INSTANCE.getOESearchInactiveCategories());
+            }
             if (this._availableClasses == null) {
                 this._availableClasses = (TreeSet<UEClass>)this.dm.getAllClassesByEnabledCategory().clone();
             }
@@ -1634,6 +1640,11 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
         protected Set<Options.OESearch> getActiveCategories() {
             this.ensureCategoryClassCache();
             return this._activeCategories;
+        }
+
+        protected Set<Options.OESearch> getInactiveCategories() {
+            this.ensureCategoryClassCache();
+            return this._inactiveCategories;
         }
 
         public abstract void loop(BufferedReader br, TreeMap<String, Boolean> matches) throws IOException;
@@ -1699,7 +1710,7 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                             // processing markup, and I thought maybe if all the text was injected into
                             // the document at once, we'd get the performance back.  In the end, that
                             // didn't really help much.  (Or, well, maybe it helped, but it was still way
-                            // slower than the previous method.  Anyway, I like this method better
+                            // slower than the previous method.)  Anyway, I like this method better
                             // anyway, so I'm keeping it, but the previous method remains commented
                             // below, in case this turns out to have any weird side-effects I haven't
                             // noticed yet.
@@ -1770,6 +1781,36 @@ public class ObjectExplorerPanel extends javax.swing.JPanel {
                         sb.append("categories have changed -- just click some checkboxes and try again!\n");
                     }
                     textElement.setText(sb.toString());
+                } else {
+                    Set<Options.OESearch> activeCats = this.getActiveCategories();
+                    Set<Options.OESearch> inactiveCats = this.getInactiveCategories();
+                    StringBuilder sb = new StringBuilder();
+                    if (inactiveCats.isEmpty()) {
+                        sb.append("All available categories were searched!\n");
+                    } else {
+                        List<String> list = new ArrayList<> ();
+                        if (!activeCats.isEmpty()) {
+                            sb.append("Categories searched: ");
+                            for (Options.OESearch search : activeCats) {
+                                list.add(search.name());
+                            }
+                            Collections.sort(list);
+                            sb.append(String.join(", ", list));
+                            sb.append("\n");
+                        }
+                        if (!inactiveCats.isEmpty()) {
+                            list.clear();
+                            sb.append("Categories skipped: ");
+                            for (Options.OESearch search : inactiveCats) {
+                                list.add(search.name());
+                            }
+                            Collections.sort(list);
+                            sb.append(String.join(", ", list));
+                            sb.append("\n");
+                        }
+                    }
+                    Document doc = textElement.getStyledDocument();
+                    doc.insertString(0, sb.toString(), null);
                 }
                 return null;
             } catch (BadLocationException e2) {

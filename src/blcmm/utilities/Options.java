@@ -368,6 +368,12 @@ public class Options extends OptionsBase {
     private HashSet<OESearch> activeSearchCategories = new HashSet<>();
 
     /**
+     * Likewise, a HashSet which collects the currently-INACTIVE OE Search/Refs
+     * categories.
+     */
+    private HashSet<OESearch> inactiveSearchCategories = new HashSet<>();
+
+    /**
      * Construct a fresh Options object.
      *
      * @param optionsFile The file from which to load options.
@@ -1340,9 +1346,12 @@ public class Options extends OptionsBase {
 
     public final void updateOESearchCategories() {
         this.activeSearchCategories.clear();
+        this.inactiveSearchCategories.clear();
         for (OESearch oeSearch : OESearch.values()) {
             if (this.getBooleanOptionData(oeSearch.option)) {
                 this.activeSearchCategories.add(oeSearch);
+            } else {
+                this.inactiveSearchCategories.add(oeSearch);
             }
         }
         // NOTE: Even though OE maintains its own DMM, the individual DataManager
@@ -1355,6 +1364,10 @@ public class Options extends OptionsBase {
 
     public Set<OESearch> getOESearchCategories() {
         return this.activeSearchCategories;
+    }
+
+    public Set<OESearch> getOESearchInactiveCategories() {
+        return this.inactiveSearchCategories;
     }
 
     /**

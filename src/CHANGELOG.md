@@ -22,6 +22,8 @@ OpenBLCMM Changelog
   - Fixed a bug where ctrl-shift-arrow would sometimes select too much text
   - Double-click-to-select should work even if the "end" of the word to be
     selected is scrolled off the right side of the dialog.
+- Added a report of which data categories were used when doing fulltext or refs
+  searches in Object Explorer, even when results have been found.
 
 **v1.4.0** August 20, 2023
 - Settings changes:
