@@ -53,6 +53,24 @@ import javax.swing.tree.TreePath;
  */
 public class FlattenCategoryAction extends RightMouseButtonAction {
 
+    /**
+     * While processing categories to be flattened, we also want to keep track
+     * of the *original* index in which the category used to be placed, so that
+     * we can keep track of offsets for other categories which are yet to be
+     * processed.  This basically just acts as a simple tuple for us to keep
+     * track of both the node, and its original position.
+     */
+    private class FlattenedCategoryHelper {
+
+        public DefaultMutableTreeNode node;
+        public int initialPosition;
+
+        public FlattenedCategoryHelper(DefaultMutableTreeNode node, int initialPosition) {
+            this.node = node;
+            this.initialPosition = initialPosition;
+        }
+    }
+
     public FlattenCategoryAction(CheckBoxTree tree) {
         super(tree, "Flatten category contents", new Requirements(true, true, false));
     }
@@ -173,16 +191,21 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
         // children and process them individually, leaving direct comments
         // and commands alone.
 
-        ArrayList<DefaultMutableTreeNode> catsToFlatten = new ArrayList<> ();
+        ArrayList<FlattenedCategoryHelper> catsToFlatten = new ArrayList<> ();
         Enumeration children = actionNode.children();
+        int index = 0;
         while (children.hasMoreElements()) {
             DefaultMutableTreeNode child = (DefaultMutableTreeNode) children.nextElement();
             if (child.getUserObject() instanceof Category) {
-                catsToFlatten.add(child);
+                catsToFlatten.add(new FlattenedCategoryHelper(child, index));
             }
+            index++;
         }
-        for (DefaultMutableTreeNode child : catsToFlatten) {
-            this.flattenNode(child, actionNode, actionCategory);
+        int offset = 0;
+        for (FlattenedCategoryHelper helper : catsToFlatten) {
+            //Category cat = (Category)helper.node.getUserObject();
+            //GlobalLogger.log("Processing category \"" + cat.getName() + "\" at initial pos " + helper.initialPosition + " with offset " + offset + " (" + (helper.initialPosition + offset) + ")");
+            offset += this.flattenNode(helper, actionCategory, offset);
         }
 
         // Finish and clean up
@@ -199,16 +222,19 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
      * derive it from newParentNode, after all -- but we've already casted it
      * prior to calling in here, so we may as well pass it.
      *
-     * @param flattenNode The node containing a category to flatten
-     * @param newParentNode The new parent node where the contents will go
+     * @param helper The FlattenedCategoryHelper describing this node and where it is
      * @param newParentCategory The new parent Category object itself.
+     * @param offset The current offset between our original index and where we'll
+     *               be now.
+     * @return The extra offset added by flattening this category
      */
-    private void flattenNode(DefaultMutableTreeNode flattenNode,
-            DefaultMutableTreeNode newParentNode,
-            Category newParentCategory) {
+    private int flattenNode(FlattenedCategoryHelper helper,
+            Category newParentCategory,
+            int offset) {
 
+        DefaultMutableTreeNode flattenNode = helper.node;
         Category flattenCategory = (Category) flattenNode.getUserObject();
-        int toRemoveIndex = newParentNode.getIndex(flattenNode);
+        int toRemoveIndex = helper.initialPosition + offset;
 
         // Walk the tree and gather our gigantic list of children.  Note that
         // the count of children here may be larger than the transient command
@@ -221,10 +247,17 @@ public class FlattenCategoryAction extends RightMouseButtonAction {
         tree.removeNodesFromTheirParents(children.toArray(new DefaultMutableTreeNode[0]));
         tree.removeNodesFromTheirParents(categories.toArray(new DefaultMutableTreeNode[0]));
         tree.getPatch().removeElementFromParentCategory(flattenCategory);
+        // Our initial offset is -1 because the category itself used to take up a space, so
+        // if the category was *empty*, we're actually getting rid of a line, or if there
+        // was only a single statement, we've got the *same* number of lines.
+        int newOffset = -1;
         for (TreeNode child : children) {
             ModelElement el = (ModelElement)((DefaultMutableTreeNode)child).getUserObject();
             tree.getPatch().insertElementInto(el, newParentCategory, toRemoveIndex++);
+            newOffset++;
         }
+
+        return newOffset;
 
     }
 
