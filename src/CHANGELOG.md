@@ -6,6 +6,12 @@ OpenBLCMM Changelog
   in Object Explorer dumps or code edit window.
 - Fixed "Flatten category contents" action to always leave statements in the
   same order they started in.
+- Added "Enable" and "Disable" actions, available via the right-click menu or
+  with Ctrl-B / Ctrl-D, respectively.  This is in addition to the usual
+  checkboxes, and allows you to check/uncheck multiple lines at the same time.
+  These actions will not be available if any of the selections are top-level
+  entries in a Mutually Exclusive category.  Note that toggling individual
+  statements still requires the appropriate setting activated.
 - Various updates to double-click-to-select and ctrl-shift-left/right selection
   mechanics:
   - Both were nearly completely rewritten with a better method of overwriting

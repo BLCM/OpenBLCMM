@@ -651,6 +651,36 @@ public final class CheckBoxTree extends JTree {
         return tip;
     }
 
+    /**
+     * Show a dialog confirming if the user really wants to enable a category
+     * which contains potentially a lot of statements.  This is used by the
+     * checkbox itself, but also by EnableAction.
+     *
+     * @param dialogText The text to show on the dialog (EditAction is a bit
+     *                   more verbose.)
+     * @return True if the user does want to proceed, False otherwise.
+     */
+    public boolean confirmEnableCategory(String dialogText) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        JLabel confirmLabel = new JLabel(dialogText);
+        confirmLabel.setFont(this.getFontInfo().getFont());
+        panel.add(confirmLabel);
+        JCheckBox check = new JCheckBox("Do not ask again");
+        check.setFont(this.getFontInfo().getFont());
+        panel.add(check);
+        AdHocDialog.Button res = AdHocDialog.run(MainGUI.INSTANCE,
+                this.getFontInfo(),
+                AdHocDialog.IconType.QUESTION,
+                "Confirm",
+                panel,
+                AdHocDialog.ButtonSet.YES_NO);
+        if (check.isSelected()) {
+            Options.INSTANCE.setShowConfirmPartialCategory(false);
+        }
+        return res == AdHocDialog.Button.YES;
+    }
+
     private static class CheckboxTreeMouseAdapter extends MouseAdapter {
 
         private RightMouseButtonAction introduceCategoryAction;
@@ -658,6 +688,8 @@ public final class CheckBoxTree extends JTree {
         private RightMouseButtonAction insertCategoryAction;
         private RightMouseButtonAction removeCategoryAction;
         private RightMouseButtonAction flattenCategoryAction;
+        private RightMouseButtonAction enableAction;
+        private RightMouseButtonAction disableAction;
         private RightMouseButtonAction insertAction;
         private RightMouseButtonAction deleteAction;
         private RightMouseButtonAction copyAction;
@@ -695,6 +727,8 @@ public final class CheckBoxTree extends JTree {
             insertCategoryAction = new AddCategoryAction(tree, KeyEvent.VK_H, true);
             removeCategoryAction = new RemoveCategoryAction(tree);
             flattenCategoryAction = new FlattenCategoryAction(tree);
+            enableAction = new EnableAction(tree, KeyEvent.VK_B, true, true, "Enable");
+            disableAction = new EnableAction(tree, KeyEvent.VK_D, true, false, "Disable");
             insertAction = new InsertAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_PLUS : KeyEvent.VK_INSERT, false);
             deleteAction = new DeleteAction(tree, OSInfo.CURRENT_OS == OSInfo.OS.MAC ? KeyEvent.VK_BACK_SPACE : KeyEvent.VK_DELETE, OSInfo.CURRENT_OS == OSInfo.OS.MAC);
             copyAction = new CopyAction(tree, KeyEvent.VK_C, true);
@@ -718,6 +752,8 @@ public final class CheckBoxTree extends JTree {
             actions2.add(insertCategoryAction);
             actions2.add(removeCategoryAction);
             actions2.add(flattenCategoryAction);
+            actions2.add(enableAction);
+            actions2.add(disableAction);
             actions2.add(insertAction);
             actions2.add(deleteAction);
             actions2.add(copyAction);
@@ -951,24 +987,7 @@ public final class CheckBoxTree extends JTree {
                 return true;
             }
             if (cn.isSelected && cn.hasChildren && !cn.allChildrenSelected) {
-                JPanel panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-                JLabel confirmLabel = new JLabel("Are you sure you wish to check/uncheck this entire category?");
-                confirmLabel.setFont(this.tree.getFontInfo().getFont());
-                panel.add(confirmLabel);
-                JCheckBox check = new JCheckBox("Do not ask again");
-                check.setFont(this.tree.getFontInfo().getFont());
-                panel.add(check);
-                AdHocDialog.Button res = AdHocDialog.run(MainGUI.INSTANCE,
-                        this.tree.getFontInfo(),
-                        AdHocDialog.IconType.QUESTION,
-                        "Confirm",
-                        panel,
-                        AdHocDialog.ButtonSet.YES_NO);
-                if (check.isSelected()) {
-                    Options.INSTANCE.setShowConfirmPartialCategory(false);
-                }
-                return res == AdHocDialog.Button.YES;
+                return this.tree.confirmEnableCategory("Are you sure you wish to check/uncheck this entire category?");
             }
             return true;
         }

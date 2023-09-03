@@ -560,7 +560,8 @@ public class Options extends OptionsBase {
                 "Disable complex checkbox confirmation",
                 null,
                 "<html>Disable the confirmation dialog when checking/unchecking a category<br/>"
-                + "which contains a mix of checked/unchecked content."));
+                + "which contains a mix of checked/unchecked content, or when checking/<br/>"
+                + "unchecking various categories at once."));
 
         this.registerOption(new SectionHeaderOption(this,
                 Option.Shown.CONFIRMATIONS,
