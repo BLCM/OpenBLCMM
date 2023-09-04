@@ -1,7 +1,7 @@
 OpenBLCMM Changelog
 ===================
 
-**v1.4.1** *(unreleased)*
+**v1.4.1** September 4, 2023
 - Fixed a crash which could happen when hitting next/prev quickly when searching
   in Object Explorer dumps or code edit window.
 - Fixed "Flatten category contents" action to always leave statements in the
