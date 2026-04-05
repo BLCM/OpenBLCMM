@@ -11,6 +11,17 @@ In 2023, OpenBLCMM development was started to fix up some longstanding
 issues with BLCMM, and to provide a fully-opensource version of the entire
 BLCMM application.
 
+**WARNING:** This project is totally unaffiliated with the presumably-AI-generated
+site at `blcmm.com`.  That site does technically have a disclaimer at the bottom
+saying that it's not an official site, but: if you arrived at this project via
+links to that site, make sure you never visit it in the future.  There is no
+guarantee that that site won't turn hostile in the future, and we are not in
+communication with whoever put it up.  The site
+[borderlandsmodding.com](https://borderlandsmodding.com), however, can be trusted
+(and does not pretend to be an official OpenBLCMM site).  borderlandsmodding.com
+was created by the main community Borderlands modding team which built OpenBLCMM
+in the first place.
+
 Download / Install
 ==================
 
